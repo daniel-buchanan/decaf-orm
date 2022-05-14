@@ -4,12 +4,7 @@ namespace pdq.core
 {
 	public interface IBuilder
 	{
-
+		string GetSql();
 	}
-
-	public interface IBuilder<T> : IBuilder
-    {
-
-    }
 }
 

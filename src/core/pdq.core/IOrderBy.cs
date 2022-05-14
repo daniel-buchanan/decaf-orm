@@ -1,12 +1,12 @@
 ﻿using System;
 namespace pdq.core
 {
-	public interface IOrderBy : IBuilder<IOrderBy>
+	public interface IOrderBy 
 	{
 		IOrderByThen OrderBy(string column, string tableAlias, OrderBy orderBy);
 	}
 
-	public interface IOrderByThen : IBuilder<IOrderByThen>
+	public interface IOrderByThen
     {
 		IOrderByThen ThenBy(string column, string tableAlias, OrderBy orderBy);
 	}

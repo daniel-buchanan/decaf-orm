@@ -1,5 +1,5 @@
 ﻿using System;
-namespace pdq.core
+namespace pdq.core.common
 {
 	public interface ITransient : IDisposable
 	{

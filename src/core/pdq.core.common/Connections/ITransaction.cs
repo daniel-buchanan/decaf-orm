@@ -1,5 +1,5 @@
 ﻿using System;
-namespace pdq.core.Connections
+namespace pdq.core.common.Connections
 {
 	public interface ITransaction : IDisposable
 	{

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace pdq.core.Connections
+namespace pdq.core.common.Connections
 {
 	public interface ITransactionFactory
 	{

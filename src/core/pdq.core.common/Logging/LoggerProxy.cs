@@ -1,7 +1,4 @@
-﻿using System;
-using pdq.core.Enums;
-
-namespace pdq.core.Logging
+﻿namespace pdq.core.common.Logging
 {
 	public abstract class LoggerProxy : ILoggerProxy
 	{

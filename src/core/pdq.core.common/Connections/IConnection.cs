@@ -1,5 +1,5 @@
 ﻿using System;
-namespace pdq.core.Connections
+namespace pdq.core.common.Connections
 {
 	public interface IConnection : IDisposable, IAsyncDisposable
 	{
@@ -11,5 +11,10 @@ namespace pdq.core.Connections
 
 		internal string GetHash();
 	}
+
+	public interface IConnection<T> : IConnection
+    {
+		T GetUnderlyingConnection();
+    }
 }
 

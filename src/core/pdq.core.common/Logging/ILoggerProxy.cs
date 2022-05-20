@@ -1,5 +1,5 @@
 ﻿using System;
-namespace pdq.core.Logging
+namespace pdq.core.common.Logging
 {
 	public interface ILoggerProxy
 	{

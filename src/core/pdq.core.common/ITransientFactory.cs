@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace pdq.core
+namespace pdq.core.common
 {
 	public interface ITransientFactory
 	{

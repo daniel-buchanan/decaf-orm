@@ -4,6 +4,6 @@
 		ISelectColumn<ISelectFrom>,
 		IJoinTo<ISelectFrom>
 	{
-		IWhere Where(IWhereItem where);
+		ISelectFrom Where(IWhere where);
 	}
 }

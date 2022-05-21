@@ -1,10 +1,12 @@
 ﻿using System;
+
 namespace pdq.core.common
 {
-	public interface ITransient : IDisposable
+    public interface IQueryContext
 	{
 		Guid Id { get; }
 
-		IQuery Query();
+		QueryType Kind { get; }
 	}
 }
+

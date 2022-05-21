@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using pdq.core.Connections;
-using pdq.core.Logging;
+using pdq.core.common.Connections;
+using pdq.core.common.Logging;
 
-namespace pdq.core.Implementation
+namespace pdq.core.common
 {
 	public sealed class TransientFactory : ITransientFactory
 	{

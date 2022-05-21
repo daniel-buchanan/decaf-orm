@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using pdq.core.common;
+
+namespace pdq.core.state
+{
+    public interface IUpdateQueryContext : IQueryContext
+    {
+		Table Table { get; }
+
+		IReadOnlyCollection<Tuple<Column, IUpdateValueSource>> Updates { get; }
+
+		IUpdateSource Source { get; }
+
+		IWhere WhereClause { get; }
+
+		IReadOnlyCollection<Output> Outputs { get; }
+    }
+}
+

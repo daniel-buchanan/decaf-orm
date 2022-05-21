@@ -1,4 +1,6 @@
-﻿namespace pdq.core.state.ValueSources.update
+﻿using System;
+
+namespace pdq.core.state.ValueSources.update
 {
 	public abstract class StaticValueSource : IUpdateValueSource
 	{

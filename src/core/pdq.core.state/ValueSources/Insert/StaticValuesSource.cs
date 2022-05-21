@@ -1,4 +1,8 @@
-﻿namespace pdq.core.state.ValueSources.Insert
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace pdq.core.state.ValueSources.Insert
 {
 	public class StaticValuesSource : IInsertSource
 	{

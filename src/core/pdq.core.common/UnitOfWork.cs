@@ -1,4 +1,4 @@
-﻿using pdq.core.Logging;
+﻿using pdq.core.common.Logging;
 
 namespace pdq.core.common
 {

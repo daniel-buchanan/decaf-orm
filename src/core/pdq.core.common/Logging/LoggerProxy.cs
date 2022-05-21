@@ -1,4 +1,6 @@
-﻿namespace pdq.core.common.Logging
+﻿using System;
+
+namespace pdq.core.common.Logging
 {
 	public abstract class LoggerProxy : ILoggerProxy
 	{

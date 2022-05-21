@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using pdq.core.Implementation;
-using pdq.core.Logging;
+using pdq.core.common.Logging;
+using pdq.core.common;
 
 namespace pdq.core
 {

@@ -1,4 +1,4 @@
-﻿namespace pdq.core
+﻿namespace pdq.core.state
 {
 	public enum JoinType
 	{

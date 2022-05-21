@@ -1,4 +1,4 @@
-﻿using pdq.core.Enums;
+﻿using pdq.core.common;
 
 namespace pdq.core.Attributes
 {

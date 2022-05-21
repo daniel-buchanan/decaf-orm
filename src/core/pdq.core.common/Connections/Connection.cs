@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using pdq.core.Connections;
-using pdq.core.Logging;
+using pdq.core.common.Logging;
 
 namespace pdq.core.common.Connections
 {

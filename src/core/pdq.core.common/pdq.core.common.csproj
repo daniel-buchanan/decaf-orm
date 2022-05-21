@@ -2,16 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Connections\" />
-    <None Remove="Logging\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Connections\" />
-    <Folder Include="Logging\" />
-  </ItemGroup>
 </Project>

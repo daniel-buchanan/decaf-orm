@@ -91,19 +91,6 @@ namespace pdq.core.common.Connections
 
         protected abstract Task<string> ConstructConnectionString();
 
-        protected TProp SetProperty<TObject, TProp>(Func<TObject, TProp> func, TProp value)
-        {
-
-
-            if (property != null && port != 0)
-            {
-                throw new ConnectionModificationException($"{nameof(Port)} cannot be modified once ConnectionDetails instance created");
-            }
-
-            property = value;
-            return property;
-        }
-
         string IConnectionDetails.GetHash()
         {
             throw new NotImplementedException();

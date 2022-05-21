@@ -1,4 +1,7 @@
-﻿namespace pdq.core.state
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace pdq.core.state
 {
 	public abstract class Where : IWhere
 	{

@@ -1,4 +1,8 @@
-﻿namespace pdq.core.state.Conditionals
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace pdq.core.state.Conditionals
 {
 	public abstract class Values : Where
 	{

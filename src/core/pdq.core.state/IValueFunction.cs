@@ -3,7 +3,7 @@ using pdq.core.common;
 
 namespace pdq.core.state
 {
-	public interface IValueFunction
+	public interface IValueFunction : IWhere
     {
 		ValueFunction Type { get; }
 

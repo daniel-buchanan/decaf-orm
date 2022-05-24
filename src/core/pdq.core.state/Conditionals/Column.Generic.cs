@@ -5,7 +5,10 @@ namespace pdq.core.state.Conditionals
 {
     public class Column<T> : Where
     {
-		internal Column(state.Column column, EqualityOperator op, T value)
+		internal Column(
+			state.Column column,
+			EqualityOperator op,
+			T value)
 			: base()
 		{
 			ValueFunction = null;
@@ -15,7 +18,11 @@ namespace pdq.core.state.Conditionals
 			ValueType = typeof(T);
 		}
 
-		internal Column(state.Column column, EqualityOperator op, IValueFunction valueFunction, T value)
+		internal Column(
+			state.Column column,
+			EqualityOperator op,
+			IValueFunction valueFunction,
+			T value)
 			: base()
 		{
 			ValueFunction = valueFunction;

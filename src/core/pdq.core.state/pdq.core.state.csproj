@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="pdq.core" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\pdq.core.common\pdq.core.common.csproj" />
   </ItemGroup>
 </Project>

@@ -14,4 +14,7 @@
     <ProjectReference Include="..\pdq.core.common\pdq.core.common.csproj" />
     <ProjectReference Include="..\pdq.core.state\pdq.core.state.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Implementation\Helpers\FieldExpressionHelper.cs" />
+  </ItemGroup>
 </Project>

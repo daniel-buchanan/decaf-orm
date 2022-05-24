@@ -1,9 +1,9 @@
 ﻿using System;
 using pdq.core.common;
 
-namespace pdq.core.state.ValueFunctions
+namespace pdq.core.state.Conditionals.ValueFunctions
 {
-	public abstract class ValueFunction<T> : IValueFunction<T>
+	public abstract class ValueFunction<T> : Where, IValueFunction<T>
 	{
 		protected ValueFunction(ValueFunction type, params object[] arguments)
 		{

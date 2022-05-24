@@ -1,9 +1,9 @@
 ﻿using System;
 using pdq.core.common;
 
-namespace pdq.core.state.ValueFunctions
+namespace pdq.core.state.Conditionals.ValueFunctions
 {
-	public class DatePart : ValueFunction<DateTime>
+	public class DatePart : ValueFunction<int>
 	{
 		private DatePart(common.DatePart part)
 			: base(ValueFunction.DatePart, part)

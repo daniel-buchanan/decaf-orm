@@ -1,6 +1,6 @@
 ﻿using pdq.core.common;
 
-namespace pdq.core.state.ValueFunctions
+namespace pdq.core.state.Conditionals.ValueFunctions
 {
 	public class ToUpper : ValueFunction<string>
 	{

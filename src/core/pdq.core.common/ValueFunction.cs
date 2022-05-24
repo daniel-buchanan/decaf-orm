@@ -6,7 +6,8 @@
 		ToLower,
 		ToUpper,
 		DatePart,
-		Substring
+		Substring,
+		Contains
 	}
 }
 

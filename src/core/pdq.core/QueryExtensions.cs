@@ -1,5 +1,4 @@
-﻿using System;
-using pdq.core.common;
+﻿using pdq.core.common;
 using pdq.core.state;
 
 namespace pdq.core
@@ -9,7 +8,9 @@ namespace pdq.core
 		public static IDelete Delete(this IQuery query)
         {
 			var context = DeleteQueryContext.Create();
-			query.SetContext(context);
+			var iq = (IQueryInternal)query;
+			iq.SetContext(context);
+			return iq.GetFluent<IDelete>();
         }
 	}
 }

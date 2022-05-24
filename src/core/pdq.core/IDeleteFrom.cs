@@ -1,6 +1,6 @@
 ﻿namespace pdq.core
 {
-	public interface IDeleteFrom
+	public interface IDeleteFrom : IBuilder
 	{
 		IDeleteFrom Where(state.IWhere where);
 	}

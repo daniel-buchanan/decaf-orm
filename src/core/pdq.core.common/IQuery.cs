@@ -7,8 +7,6 @@ namespace pdq.core.common
 		Guid Id { get; }
 
 		QueryStatus Status { get; }
-
-		internal void SetContext(IQueryContext context);
 	}
 }
 

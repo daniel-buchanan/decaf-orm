@@ -27,14 +27,19 @@ namespace pdq.core.common
 
 		public IQueryContext? Context { get; private set; }
 
-        void IQuery.SetContext(IQueryContext context)
+		public static IQuery Create(ILoggerProxy logger, ITransient transient) => new Query(logger, transient);
+
+		internal void SetContext(IQueryContext context)
         {
 			Context = context;
 
 			this.logger.Debug($"Query({Id}) :: Context set to {context.Id} - {context.Kind}");
         }
 
-        public static IQuery Create(ILoggerProxy logger, ITransient transient) => new Query(logger, transient);
+        internal T GetFluent<T>()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

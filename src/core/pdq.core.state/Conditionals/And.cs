@@ -1,4 +1,4 @@
-﻿namespace pdq.core.state.Conditionals
+﻿namespace pdq.state.Conditionals
 {
 	public class And : Where
 	{

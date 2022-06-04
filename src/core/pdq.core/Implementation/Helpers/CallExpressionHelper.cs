@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using pdq.core.common;
-using pdq.core.state.Conditionals;
-using pdq.core.state.Conditionals.ValueFunctions;
+using pdq.common;
+using pdq.state.Conditionals;
+using pdq.state.Conditionals.ValueFunctions;
 
-namespace pdq.core.Implementation.Helpers
+namespace pdq.Implementation.Helpers
 {
     class CallExpressionHelper
     {
@@ -147,7 +147,7 @@ namespace pdq.core.Implementation.Helpers
             return ValueFunction.None;
         }
 
-        private state.IValueFunction? ConvertMethodNameToValueFunctionImpl(ValueFunction function)
+        private state.IValueFunction ConvertMethodNameToValueFunctionImpl(ValueFunction function)
         {
             switch(function)
             {
@@ -157,7 +157,7 @@ namespace pdq.core.Implementation.Helpers
             }
         }
 
-        private state.IWhere? ParseCaseCall(
+        private state.IWhere ParseCaseCall(
             ExpressionType nodeType,
             MethodCallExpression callExpr,
             Expression nonCallExpr)

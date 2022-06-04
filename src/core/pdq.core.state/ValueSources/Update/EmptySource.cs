@@ -1,4 +1,4 @@
-﻿namespace pdq.core.state.ValueSources.Update
+﻿namespace pdq.state.ValueSources.Update
 {
 	public class EmptySource : IUpdateSource
 	{

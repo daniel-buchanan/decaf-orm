@@ -7,15 +7,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EA0A3240-4A8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{AF343303-15C8-4717-9767-6991C1350A83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pdq.core", "src\core\pdq.core\pdq.core.csproj", "{A20C403D-1CF1-4F29-B262-8F5200F5F024}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pdq", "src\core\pdq.core\pdq.csproj", "{A20C403D-1CF1-4F29-B262-8F5200F5F024}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extensions", "extensions", "{E05FFFC2-0043-4BBB-A8AB-3E54D3C1D58B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pdq.services", "src\extensions\pdq.services\pdq.services.csproj", "{C0DD414A-E18B-4440-99FF-226408AE5C1F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pdq.core.state", "src\core\pdq.core.state\pdq.core.state.csproj", "{2080F560-5B41-4D68-997D-1747DC9C4EC5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pdq.state", "src\core\pdq.core.state\pdq.state.csproj", "{2080F560-5B41-4D68-997D-1747DC9C4EC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pdq.core.common", "src\core\pdq.core.common\pdq.core.common.csproj", "{E37E4D99-9C27-4510-8B46-CB76899B6444}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pdq.common", "src\core\pdq.core.common\pdq.common.csproj", "{E37E4D99-9C27-4510-8B46-CB76899B6444}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

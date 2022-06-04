@@ -1,5 +1,5 @@
 ﻿using System;
-namespace pdq.core.common.Connections
+namespace pdq.common.Connections
 {
 	public class ConnectionModificationException : Exception
 	{

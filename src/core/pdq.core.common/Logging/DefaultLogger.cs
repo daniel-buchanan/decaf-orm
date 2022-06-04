@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace pdq.core.common.Logging
+namespace pdq.common.Logging
 {
 	public class DefaultLogger : LoggerProxy
 	{

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace pdq.core.common.Connections
+namespace pdq.common.Connections
 {
 	public abstract class ConnectionDetails : IConnectionDetails
 	{
-        private string? connectionString;
-        private string? hostname;
+        private string connectionString;
+        private string hostname;
         private int? port;
-        private string? databaseName;
+        private string databaseName;
 
 		protected ConnectionDetails()
 		{

@@ -1,6 +1,6 @@
-﻿using pdq.core.common.Logging;
+﻿using pdq.common.Logging;
 
-namespace pdq.core.common
+namespace pdq.common
 {
 	public class UnitOfWork : IUnitOfWork
 	{

@@ -1,4 +1,4 @@
-﻿namespace pdq.core.state.ValueSources.Insert
+﻿namespace pdq.state.ValueSources.Insert
 {
 	public class QueryValuesSource : IInsertSource
 	{

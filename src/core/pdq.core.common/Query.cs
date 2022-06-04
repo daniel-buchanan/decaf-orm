@@ -1,9 +1,9 @@
 ﻿using System;
-using pdq.core.common.Logging;
+using pdq.common.Logging;
 
-namespace pdq.core.common
+namespace pdq.common
 {
-	public class Query : IQuery
+	public class Query : IQuery, IQueryInternal
 	{
 		private readonly ILoggerProxy logger;
 		private readonly ITransient transient;
@@ -25,18 +25,9 @@ namespace pdq.core.common
 
 		public QueryStatus Status { get; private set; }
 
-		public IQueryContext? Context { get; private set; }
+        public static IQuery Create(ILoggerProxy logger, ITransient transient) => new Query(logger, transient);
 
-		public static IQuery Create(ILoggerProxy logger, ITransient transient) => new Query(logger, transient);
-
-		internal void SetContext(IQueryContext context)
-        {
-			Context = context;
-
-			this.logger.Debug($"Query({Id}) :: Context set to {context.Id} - {context.Kind}");
-        }
-
-		internal T GetFluent<T>() where T : IFluentApi, new() => this.transient.GetFluent<T>();
+		string IQueryInternal.GetHash() => this.Id.ToString("N");
     }
 }
 

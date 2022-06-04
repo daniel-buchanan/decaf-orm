@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace pdq.core.common
+namespace pdq.common
 {
 	public interface IConnectionDetails : IDisposable, IAsyncDisposable
 	{

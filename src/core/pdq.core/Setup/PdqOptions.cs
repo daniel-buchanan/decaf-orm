@@ -1,6 +1,6 @@
-﻿using pdq.core.common.Logging;
+﻿using pdq.common.Logging;
 
-namespace pdq.core
+namespace pdq
 {
 	public class PdqOptions
 	{

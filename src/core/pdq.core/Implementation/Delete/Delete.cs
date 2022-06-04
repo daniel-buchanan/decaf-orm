@@ -1,21 +1,38 @@
-﻿using pdq.core.common;
-using pdq.core.state;
+﻿using pdq.common;
+using pdq.state;
 
-namespace pdq.core.Implementation.Delete
+namespace pdq.Implementation.Delete
 {
-	internal class Delete : DeleteBase, IDelete
+	internal class Delete : IDelete, IDeleteFrom
 	{
-		public Delete(
-            IQueryInternal query,
-            IDeleteQueryContext context)
-            : base(query, context)
-		{
-		}
+        private readonly IQueryInternal query;
+        private readonly IDeleteQueryContext context;
 
-        public IDeleteFrom From(string name, string? alias = null, string? schema = null)
+        private Delete(IQueryInternal query)
         {
-            Context.From(Table.Create(name, alias, schema));
-            return Query.GetFluent<IDeleteFrom>();
+            this.query = query;
+            this.context = DeleteQueryContext.Create();
+        }
+
+        public static Delete Create(IQueryInternal query) => new Delete(query);
+
+        public void Dispose() => this.context.Dispose();
+
+        public IDeleteFrom From(string name, string alias = null, string schema = null)
+        {
+            context.From(Table.Create(name, alias, schema));
+            return this;
+        }
+
+        public IDeleteFrom Where(state.IWhere where)
+        {
+            context.Where(where);
+            return this;
+        }
+
+        public string GetSql()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -6,10 +6,10 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.CSharp.RuntimeBinder;
-using pdq.core.Attributes;
-using pdq.core.common;
+using pdq.Attributes;
+using pdq.common;
 
-namespace pdq.core.Implementation.Helpers
+namespace pdq.Implementation.Helpers
 {
     internal class ReflectionHelper
     {

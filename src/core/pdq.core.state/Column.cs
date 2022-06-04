@@ -1,5 +1,5 @@
 ﻿using System;
-namespace pdq.core.state
+namespace pdq.state
 {
 	public class Column
 	{
@@ -7,7 +7,7 @@ namespace pdq.core.state
 
 		public Table Table { get; private set; }
 
-		public string? NewName { get; private set; }
+		public string NewName { get; private set; }
 
 		protected Column(string name, Table table)
 		{
@@ -24,7 +24,7 @@ namespace pdq.core.state
 
         public static Column Create(string name, Table table, string newName) => new Column(name, table, newName);
 
-        public static Column Create(string name, string table, string alias) => new Column(name, Table.Create(name, alias));
+        public static Column Create(string name, string table, string alias) => new Column(name, Table.Create(table, alias));
     }
 }
 

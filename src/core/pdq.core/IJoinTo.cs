@@ -1,7 +1,7 @@
 ﻿using System;
-using pdq.core.state;
+using pdq.state;
 
-namespace pdq.core
+namespace pdq
 {
 	public interface IJoinTo<T>
 	{

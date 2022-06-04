@@ -1,12 +1,15 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
-namespace pdq.core.common
+namespace pdq.common
 {
-	public interface ITransientFactory
+	public interface ITransientFactory : IDisposable
 	{
 		ITransient Create(IConnectionDetails connectionDetails);
 
 		Task<ITransient> CreateAsync(IConnectionDetails connectionDetails);
+
+		internal void NotifyTransientDisposed(Guid id);
 	}
 }
 

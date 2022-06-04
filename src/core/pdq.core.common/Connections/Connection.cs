@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using pdq.core.common.Logging;
+using pdq.common.Logging;
 
-namespace pdq.core.common.Connections
+namespace pdq.common.Connections
 {
 	public class Connection : IConnection
 	{

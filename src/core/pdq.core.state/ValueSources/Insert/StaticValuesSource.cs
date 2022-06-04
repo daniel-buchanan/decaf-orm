@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace pdq.core.state.ValueSources.Insert
+namespace pdq.state.ValueSources.Insert
 {
 	public class StaticValuesSource : IInsertSource
 	{

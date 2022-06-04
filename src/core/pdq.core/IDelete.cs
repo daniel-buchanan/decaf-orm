@@ -1,9 +1,8 @@
-﻿using System;
-namespace pdq.core
+﻿namespace pdq
 {
 	public interface IDelete : IBuilder
 	{
-		IDeleteFrom From(string name, string? alias = null, string? schema = null);
+		IDeleteFrom From(string name, string alias = null, string schema = null);
 	}
 }
 

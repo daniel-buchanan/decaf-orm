@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace pdq.core.state.Conditionals
+namespace pdq.state.Conditionals
 {
 	public abstract class Values : Where
 	{

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace pdq.core.state
+namespace pdq.state
 {
 	public interface IWhere
 	{

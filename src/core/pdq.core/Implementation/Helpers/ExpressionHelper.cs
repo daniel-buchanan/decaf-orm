@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
-using pdq.core.common;
-using pdq.core.state.Conditionals;
+using pdq.common;
+using pdq.state.Conditionals;
 
-namespace pdq.core.Implementation.Helpers
+namespace pdq.Implementation.Helpers
 {
     internal class ExpressionHelper
     {

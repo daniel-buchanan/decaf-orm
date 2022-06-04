@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace pdq.core
+namespace pdq
 {
 	public interface IBuilder
 	{

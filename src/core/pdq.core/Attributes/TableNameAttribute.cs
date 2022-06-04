@@ -1,5 +1,5 @@
 ﻿using System;
-namespace pdq.core.Attributes
+namespace pdq.Attributes
 {
 	public class TableNameAttribute : Attribute
 	{

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace pdq.core.common
+namespace pdq.common
 {
-    public interface IQueryContext
+    public interface IQueryContext : IDisposable
 	{
 		Guid Id { get; }
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using pdq.core.common;
+using pdq.common;
 
-namespace pdq.core.state
+namespace pdq.state
 {
     public interface IUpdateQueryContext : IQueryContext
     {

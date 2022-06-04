@@ -1,11 +1,11 @@
-﻿using pdq.core.common;
+﻿using pdq.common;
 
-namespace pdq.core.state
+namespace pdq.state
 {
 	public class DeleteQueryContext : QueryContext, IDeleteQueryContext
 	{
-		private Table? table;
-		private IWhere? where;
+		private Table table;
+		private IWhere where;
 
 		private DeleteQueryContext() : base(QueryType.Delete)
         {
@@ -13,9 +13,9 @@ namespace pdq.core.state
 			this.where = null;
         }
 
-		public Table? Table => this.table;
+		public Table Table => this.table;
 
-		public IWhere? WhereClause => this.where;
+		public IWhere WhereClause => this.where;
 
 		public IDeleteQueryContext From(Table table)
         {
@@ -30,6 +30,12 @@ namespace pdq.core.state
         }
 
 		public static IDeleteQueryContext Create() => new DeleteQueryContext();
+
+        public override void Dispose()
+        {
+			this.table = null;
+			this.where = null;
+        }
     }
 }
 

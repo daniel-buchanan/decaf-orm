@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace pdq.core.state.Conditionals
+namespace pdq.state.Conditionals
 {
 	public abstract class Between : Where
 	{

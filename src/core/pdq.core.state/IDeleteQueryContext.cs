@@ -1,13 +1,13 @@
-﻿using pdq.core.common;
+﻿using pdq.common;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.core")]
-namespace pdq.core.state
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq")]
+namespace pdq.state
 {
     public interface IDeleteQueryContext : IQueryContext
     {
-		Table? Table { get; }
+		Table Table { get; }
 
-		IWhere? WhereClause { get; }
+		IWhere WhereClause { get; }
 
 		IDeleteQueryContext From(Table table);
 

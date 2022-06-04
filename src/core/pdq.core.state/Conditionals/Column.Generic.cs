@@ -1,7 +1,7 @@
 ﻿using System;
-using pdq.core.common;
+using pdq.common;
 
-namespace pdq.core.state.Conditionals
+namespace pdq.state.Conditionals
 {
     public class Column<T> : Where
     {

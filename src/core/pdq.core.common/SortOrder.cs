@@ -1,5 +1,5 @@
 ﻿using System;
-namespace pdq.core.common
+namespace pdq.common
 {
 	public enum SortOrder
 	{

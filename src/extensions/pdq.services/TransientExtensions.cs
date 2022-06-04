@@ -1,6 +1,6 @@
 ﻿using System;
-using pdq.core;
-using pdq.core.common;
+using pdq;
+using pdq.common;
 
 namespace pdq.services
 {

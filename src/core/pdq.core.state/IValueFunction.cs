@@ -1,7 +1,7 @@
 ﻿using System;
-using pdq.core.common;
+using pdq.common;
 
-namespace pdq.core.state
+namespace pdq.state
 {
 	public interface IValueFunction : IWhere
     {

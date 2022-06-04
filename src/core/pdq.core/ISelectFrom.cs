@@ -1,4 +1,4 @@
-﻿namespace pdq.core
+﻿namespace pdq
 {
 	public interface ISelectFrom :
 		ISelectColumn<ISelectFrom>,

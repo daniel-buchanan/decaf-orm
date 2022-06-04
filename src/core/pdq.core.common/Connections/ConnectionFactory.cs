@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using pdq.core.common.Logging;
+using pdq.common.Logging;
 
-namespace pdq.core.common.Connections
+namespace pdq.common.Connections
 {
 	public abstract class ConnectionFactory : IConnectionFactory
 	{
         private readonly ILoggerProxy logger;
-        private IDictionary<string, IConnection>? connections;
+        private IDictionary<string, IConnection> connections;
 
         /// <summary>
         /// Create an instance of a ConnectionFactory.
@@ -45,7 +45,7 @@ namespace pdq.core.common.Connections
 
             if (this.connections == null)
                 this.connections = new Dictionary<string, IConnection>();
-            string? hash;
+            string hash = null;
 
             try
             {

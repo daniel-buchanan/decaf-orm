@@ -1,6 +1,6 @@
-﻿using pdq.core.common;
+﻿using pdq.common;
 
-namespace pdq.core.Attributes
+namespace pdq.Attributes
 {
     public class IgnoreColumnFor
     {

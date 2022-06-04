@@ -1,4 +1,4 @@
-﻿namespace pdq.core.common.Logging
+﻿namespace pdq.common.Logging
 {
 	public enum LogLevel
 	{

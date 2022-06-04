@@ -1,36 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using pdq.core.common.Connections;
-using pdq.core.common.Logging;
+using pdq.common.Connections;
+using pdq.common.Logging;
 
-namespace pdq.core.common
+namespace pdq.common
 {
 	public class Transient : ITransient
 	{
         private readonly IConnection connection;
         private readonly ITransaction transaction;
+        private readonly ITransientFactory factory;
         private readonly ILoggerProxy logger;
-        private readonly IFluentApiCache fluentApiCache;
         private readonly List<IQuery> queries;
 
-		public Transient(
+		private Transient(
+            ITransientFactory factory,
             ITransaction transaction,
-            ILoggerProxy logger,
-            IFluentApiCache fluentApiCache)
+            ILoggerProxy logger)
 		{
+            this.factory = factory;
             this.connection = transaction.Connection;
             this.transaction = transaction;
             this.logger = logger;
-            this.fluentApiCache = fluentApiCache;
             this.queries = new List<IQuery>();
 
             Id = Guid.NewGuid();
-
             this.logger.Debug($"Transient({Id}) :: Created");
 		}
 
         public Guid Id { get; private set; }
+
+        public static ITransient Create(
+            ITransientFactory factory,
+            ITransaction transaction,
+            ILoggerProxy logger) => new Transient(factory, transaction, logger);
 
         public void Dispose()
         {
@@ -67,16 +71,16 @@ namespace pdq.core.common
             }
 
             this.logger.Debug($"Transient({Id}) :: Disposed");
+            this.factory.NotifyTransientDisposed(this.Id);
         }
 
         public IQuery Query()
         {
             var query = common.Query.Create(logger, this);
+            this.logger.Debug($"Transient({Id}) :: Creating new Query");
             this.queries.Add(query);
             return query;
         }
-
-        T ITransient.GetFluent<T>() => this.fluentApiCache.Get<T>();
     }
 }
 

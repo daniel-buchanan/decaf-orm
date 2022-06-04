@@ -1,6 +1,6 @@
-﻿using pdq.core.common;
+﻿using pdq.common;
 
-namespace pdq.core.state
+namespace pdq.state
 {
 	public class OrderBy : Column
 	{

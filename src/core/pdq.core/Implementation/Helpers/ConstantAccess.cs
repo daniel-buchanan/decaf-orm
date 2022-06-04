@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace pdq.core.Implementation.Helpers
+namespace pdq.Implementation.Helpers
 {
     class ConstantAccess
     {

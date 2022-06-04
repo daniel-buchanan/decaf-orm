@@ -1,7 +1,7 @@
 ﻿using System;
-using pdq.core.common;
+using pdq.common;
 
-namespace pdq.core.state
+namespace pdq.state
 {
 	public abstract class QueryContext : IQueryContext
 	{
@@ -14,6 +14,8 @@ namespace pdq.core.state
         public Guid Id { get; private set; }
 
         public QueryType Kind { get; private set; }
+
+		public abstract void Dispose();
     }
 }
 

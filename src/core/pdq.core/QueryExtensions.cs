@@ -1,16 +1,13 @@
-﻿using pdq.core.common;
-using pdq.core.state;
+﻿using pdq.common;
 
-namespace pdq.core
+namespace pdq
 {
 	public static class QueryExtensions
 	{
 		public static IDelete Delete(this IQuery query)
         {
-			var iq = (IQueryInternal)query;
-			var context = DeleteQueryContext.Create();
-			iq.SetContext(context);
-			return iq.GetFluent<IDelete>();
+			var internalQuery = (IQueryInternal)query;
+            return Implementation.Delete.Delete.Create(internalQuery);
         }
 	}
 }

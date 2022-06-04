@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using pdq.core.common.Logging;
-using pdq.core.common;
+using pdq.common.Logging;
+using pdq.common;
 
-namespace pdq.core
+namespace pdq
 {
 	public static class ServiceCollectionExtensions
 	{
@@ -24,7 +24,6 @@ namespace pdq.core
         {
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			services.AddSingleton<ILoggerProxy>(new DefaultLogger(options.DefaultLogLevel));
-			services.AddSingleton<IFluentApiCache, FluentApiCache>();
 			services.AddScoped<ITransientFactory, TransientFactory>();
 			return services;
 		}

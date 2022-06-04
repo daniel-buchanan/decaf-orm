@@ -1,4 +1,4 @@
-﻿namespace pdq.core.common
+﻿namespace pdq.common
 {
 	public enum ValueFunction
 	{

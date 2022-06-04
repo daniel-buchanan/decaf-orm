@@ -1,5 +1,5 @@
 ﻿using System;
-namespace pdq.core.state
+namespace pdq.state
 {
 	public enum OutputSource
 	{

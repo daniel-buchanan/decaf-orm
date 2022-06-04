@@ -1,22 +1,23 @@
-﻿using System.Threading.Tasks;
-using pdq.core.common.Connections;
-using pdq.core.common.Logging;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using pdq.common.Connections;
+using pdq.common.Logging;
 
-namespace pdq.core.common
+namespace pdq.common
 {
 	public sealed class TransientFactory : ITransientFactory
 	{
+        private readonly List<ITransient> tracker;
         private readonly ILoggerProxy logger;
-        private readonly IFluentApiCache fluentApiCache;
         private readonly ITransactionFactory transactionFactory;
 
 		public TransientFactory(
             ILoggerProxy logger,
-            IFluentApiCache fluentApiCache,
             ITransactionFactory transactionFactory)
 		{
             this.logger = logger;
-            this.fluentApiCache = fluentApiCache;
             this.transactionFactory = transactionFactory;
 		}
 
@@ -29,8 +30,31 @@ namespace pdq.core.common
 
         public async Task<ITransient> CreateAsync(IConnectionDetails connectionDetails)
         {
+            this.logger.Debug("TransientFactory :: Getting Transaction");
             var transaction = await this.transactionFactory.GetAsync(connectionDetails);
-            return new Transient(transaction, this.logger, this.fluentApiCache);
+            var transient = Transient.Create(this, transaction, this.logger);
+            this.logger.Debug($"TransientFactory :: Transient ({transient.Id}) Tracked");
+            this.tracker.Add(transient);
+            return transient;
+        }
+
+        public void Dispose()
+        {
+            this.logger.Debug($"TransientFactory :: Disposing Resources, {this.tracker.Count} Transients");
+            tracker.Clear();
+        }
+
+        void ITransientFactory.NotifyTransientDisposed(Guid id)
+        {
+            var transient = this.tracker.FirstOrDefault(t => t.Id == id);
+            if (transient == null)
+            {
+                this.logger.Debug($"TransientFactory :: Notified Transient ({id}) disposed, but was not tracked");
+                return;
+            }
+
+            this.logger.Debug($"TransientFactory :: Notified Transient({id}) disposed, tracking removed");
+            this.tracker.Remove(transient);
         }
     }
 }

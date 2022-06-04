@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace pdq.core.state
+namespace pdq.state
 {
 	public abstract class Where : IWhere
 	{

@@ -1,5 +1,5 @@
 ﻿using System;
-namespace pdq.core
+namespace pdq.common
 {
 	public interface IBuilderFactory
 	{

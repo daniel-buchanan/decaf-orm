@@ -1,7 +1,7 @@
 ﻿using System;
-using pdq.core.common;
+using pdq.common;
 
-namespace pdq.core.state.Conditionals
+namespace pdq.state.Conditionals
 {
 	public class Column : Where
 	{
@@ -23,7 +23,7 @@ namespace pdq.core.state.Conditionals
 
 		public EqualityOperator EqualityOperator { get; private set; }
 
-		public IValueFunction? RightFunction { get; private set; }
+		public IValueFunction RightFunction { get; private set; }
 
 		public state.Column Right { get; private set; }
 

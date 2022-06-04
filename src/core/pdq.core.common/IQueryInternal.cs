@@ -1,13 +1,10 @@
 ﻿using System;
 
-[assembly:System.Runtime.CompilerServices.InternalsVisibleTo("pdq.core")]
-namespace pdq.core.common
+[assembly:System.Runtime.CompilerServices.InternalsVisibleTo("pdq")]
+namespace pdq.common
 {
 	public interface IQueryInternal : IQuery
 	{
-		internal void SetContext(IQueryContext context);
-
-		internal T GetFluent<T>();
+		internal string GetHash();
 	}
 }
-

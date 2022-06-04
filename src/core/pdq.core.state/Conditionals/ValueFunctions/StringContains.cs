@@ -1,7 +1,7 @@
 ﻿using System;
-using pdq.core.common;
+using pdq.common;
 
-namespace pdq.core.state.Conditionals.ValueFunctions
+namespace pdq.state.Conditionals.ValueFunctions
 {
 	public class StringContains : ValueFunction<string>
 	{

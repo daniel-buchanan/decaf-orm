@@ -8,13 +8,13 @@ namespace pdq.Implementation.Delete
         private readonly IQueryInternal query;
         private readonly IDeleteQueryContext context;
 
-        private Delete(IQueryInternal query)
+        private Delete(IQuery query)
         {
-            this.query = query;
+            this.query = (IQueryInternal)query;
             this.context = DeleteQueryContext.Create();
         }
 
-        public static Delete Create(IQueryInternal query) => new Delete(query);
+        public static Delete Create(IQuery query) => new Delete(query);
 
         public void Dispose() => this.context.Dispose();
 

@@ -8,14 +8,11 @@ namespace pdq.core.state
 			Id = Guid.NewGuid();
         }
 
-		private Table(string alias) : this()
-        {
-			Alias = alias;
-        }
-
-		private Table(string name, string alias) : this(alias)
+		private Table(string name, string? alias, string? schema) : this()
 		{
 			Name = name;
+			Alias = alias;
+			Schema = schema;
 		}
 
 		public Guid Id { get; private set; }
@@ -24,9 +21,9 @@ namespace pdq.core.state
 
 		public string? Alias { get; private set; }
 
-		public static Table Create(string alias) => new Table(alias);
+		public string? Schema { get; private set; }
 
-        public static Table Create(string name, string alias) => new Table(name, alias);
-    }
+		public static Table Create(string name, string? alias = null, string? schema = null) => new Table(name, alias, schema);
+	}
 }
 

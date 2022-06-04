@@ -13,9 +13,9 @@ namespace pdq.core.state
 			this.where = null;
         }
 
-		public Table Table => this.table;
+		public Table? Table => this.table;
 
-		public IWhere WhereClause => this.where;
+		public IWhere? WhereClause => this.where;
 
 		public IDeleteQueryContext From(Table table)
         {

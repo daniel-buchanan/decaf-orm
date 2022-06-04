@@ -9,6 +9,7 @@ namespace pdq
 
 		internal bool TrackTransients { get; private set; } = false;
 
+		internal Type LoggerProxyType { get; private set; } = typeof(DefaultLogger);
 
 		public void OverrideDefaultLogLevel(LogLevel level) => DefaultLogLevel = level;
 

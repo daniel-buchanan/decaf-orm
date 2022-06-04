@@ -4,7 +4,7 @@ namespace pdq.common.Logging
 {
 	public class DefaultLogger : LoggerProxy
 	{
-		public DefaultLogger(LogLevel defaultLogLevel) : base(defaultLogLevel) { }
+		public DefaultLogger(PdqOptions options) : base(options.DefaultLogLevel) { }
 
         protected override void WriteMessage(LogLevel level, string message)
         {

@@ -9,14 +9,17 @@ namespace pdq.common
 {
 	public sealed class TransientFactory : ITransientFactory
 	{
+        private readonly bool trackTransients;
         private readonly List<ITransient> tracker;
         private readonly ILoggerProxy logger;
         private readonly ITransactionFactory transactionFactory;
 
 		public TransientFactory(
+            PdqOptions options,
             ILoggerProxy logger,
             ITransactionFactory transactionFactory)
 		{
+            this.trackTransients = options.TrackTransients;
             this.logger = logger;
             this.transactionFactory = transactionFactory;
 		}
@@ -34,18 +37,24 @@ namespace pdq.common
             var transaction = await this.transactionFactory.GetAsync(connectionDetails);
             var transient = Transient.Create(this, transaction, this.logger);
             this.logger.Debug($"TransientFactory :: Transient ({transient.Id}) Tracked");
-            this.tracker.Add(transient);
+
+            if(this.trackTransients) this.tracker.Add(transient);
+
             return transient;
         }
 
         public void Dispose()
         {
+            if (!this.trackTransients) return;
+
             this.logger.Debug($"TransientFactory :: Disposing Resources, {this.tracker.Count} Transients");
             tracker.Clear();
         }
 
         void ITransientFactory.NotifyTransientDisposed(Guid id)
         {
+            if (!this.trackTransients) return;
+
             var transient = this.tracker.FirstOrDefault(t => t.Id == id);
             if (transient == null)
             {

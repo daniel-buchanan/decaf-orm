@@ -22,6 +22,7 @@ namespace pdq
 
 		public static IServiceCollection AddPdq(this IServiceCollection services, PdqOptions options)
         {
+			services.AddSingleton(options);
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			services.AddSingleton<ILoggerProxy>(new DefaultLogger(options.DefaultLogLevel));
 			services.AddScoped<ITransientFactory, TransientFactory>();

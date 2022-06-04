@@ -19,8 +19,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Implementation\Delete\" />
+    <None Remove="Setup\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Implementation\Delete\" />
+    <Folder Include="Setup\" />
   </ItemGroup>
 </Project>

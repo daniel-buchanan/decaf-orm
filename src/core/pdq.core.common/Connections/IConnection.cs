@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Data;
+
+
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.services")]
 namespace pdq.common.Connections
 {
 	public interface IConnection : IDisposable, IAsyncDisposable
@@ -10,11 +14,10 @@ namespace pdq.common.Connections
 		void Close();
 
 		internal string GetHash();
-	}
 
-	public interface IConnection<T> : IConnection
-    {
-		T GetUnderlyingConnection();
-    }
+		internal IDbConnection GetUnderlyingConnection();
+
+		internal TConnection GetUnderlyingConnectionAs<TConnection>();
+	}
 }
 

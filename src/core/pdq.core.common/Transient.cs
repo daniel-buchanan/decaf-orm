@@ -31,6 +31,8 @@ namespace pdq.common
 
         public Guid Id { get; private set; }
 
+        IConnection ITransient.Connection => this.connection;
+
         public static ITransient Create(
             ITransientFactory factory,
             ITransaction transaction,

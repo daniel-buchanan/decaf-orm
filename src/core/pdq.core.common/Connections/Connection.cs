@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Threading.Tasks;
 using pdq.common.Logging;
 
@@ -44,6 +45,16 @@ namespace pdq.common.Connections
         string IConnection.GetHash()
         {
             return this.connectionDetails.GetHash();
+        }
+
+        IDbConnection IConnection.GetUnderlyingConnection()
+        {
+            throw new NotImplementedException();
+        }
+
+        TConnection IConnection.GetUnderlyingConnectionAs<TConnection>()
+        {
+            throw new NotImplementedException();
         }
     }
 }

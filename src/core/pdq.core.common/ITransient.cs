@@ -1,4 +1,7 @@
 ﻿using System;
+using pdq.common.Connections;
+
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.services")]
 namespace pdq.common
 {
 	public interface ITransient : IDisposable
@@ -6,5 +9,7 @@ namespace pdq.common
 		Guid Id { get; }
 
 		IQuery Query();
+
+		internal IConnection Connection { get; }
 	}
 }

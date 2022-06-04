@@ -11,15 +11,18 @@ namespace pdq.core.common
         private readonly IConnection connection;
         private readonly ITransaction transaction;
         private readonly ILoggerProxy logger;
+        private readonly IFluentApiCache fluentApiCache;
         private readonly List<IQuery> queries;
 
 		public Transient(
             ITransaction transaction,
-            ILoggerProxy logger)
+            ILoggerProxy logger,
+            IFluentApiCache fluentApiCache)
 		{
             this.connection = transaction.Connection;
             this.transaction = transaction;
             this.logger = logger;
+            this.fluentApiCache = fluentApiCache;
             this.queries = new List<IQuery>();
 
             Id = Guid.NewGuid();
@@ -72,6 +75,8 @@ namespace pdq.core.common
             this.queries.Add(query);
             return query;
         }
+
+        T ITransient.GetFluent<T>() => this.fluentApiCache.Get<T>();
     }
 }
 

@@ -1,7 +1,9 @@
 ﻿using System;
+
+[assembly:System.Runtime.CompilerServices.InternalsVisibleTo("pdq.core")]
 namespace pdq.core.common
 {
-	internal interface IQueryInternal : IQuery
+	public interface IQueryInternal : IQuery
 	{
 		internal void SetContext(IQueryContext context);
 

@@ -36,10 +36,7 @@ namespace pdq.core.common
 			this.logger.Debug($"Query({Id}) :: Context set to {context.Id} - {context.Kind}");
         }
 
-        internal T GetFluent<T>()
-        {
-            throw new NotImplementedException();
-        }
+		internal T GetFluent<T>() where T : IFluentApi, new() => this.transient.GetFluent<T>();
     }
 }
 

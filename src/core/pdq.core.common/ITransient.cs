@@ -6,5 +6,7 @@ namespace pdq.core.common
 		Guid Id { get; }
 
 		IQuery Query();
+
+		internal T GetFluent<T>() where T : IFluentApi, new();
 	}
 }

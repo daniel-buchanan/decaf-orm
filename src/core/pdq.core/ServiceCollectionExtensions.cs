@@ -24,6 +24,8 @@ namespace pdq.core
         {
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 			services.AddSingleton<ILoggerProxy>(new DefaultLogger(options.DefaultLogLevel));
+			services.AddSingleton<IFluentApiCache, FluentApiCache>();
+			services.AddScoped<ITransientFactory, TransientFactory>();
 			return services;
 		}
 	}

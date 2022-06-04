@@ -7,8 +7,8 @@ namespace pdq.core
 	{
 		public static IDelete Delete(this IQuery query)
         {
-			var context = DeleteQueryContext.Create();
 			var iq = (IQueryInternal)query;
+			var context = DeleteQueryContext.Create();
 			iq.SetContext(context);
 			return iq.GetFluent<IDelete>();
         }

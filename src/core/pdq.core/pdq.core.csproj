@@ -17,4 +17,10 @@
   <ItemGroup>
     <Compile Remove="Implementation\Helpers\FieldExpressionHelper.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Implementation\Delete\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Implementation\Delete\" />
+  </ItemGroup>
 </Project>

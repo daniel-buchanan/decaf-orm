@@ -6,5 +6,7 @@ namespace pdq.common
 	public interface IQueryInternal : IQuery
 	{
 		internal string GetHash();
+
+		internal IAliasManager AliasManager { get; }
 	}
 }

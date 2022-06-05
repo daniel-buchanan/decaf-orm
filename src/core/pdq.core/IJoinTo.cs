@@ -5,7 +5,8 @@ namespace pdq
 {
 	public interface IJoinTo<T>
 	{
-		T Join(Table from, IWhere conditions, JoinType type);
-		T Join(Table from, Action<IBuilder> query, string alias, JoinType type);
+		T Join(IQueryTarget from, state.IWhere conditions, IQueryTarget to, JoinType type = JoinType.Default);
+
+		T Join(IQueryTarget from, state.IWhere conditions, Action<ISelectWithAlias> query, JoinType type = JoinType.Default);
 	}
 }

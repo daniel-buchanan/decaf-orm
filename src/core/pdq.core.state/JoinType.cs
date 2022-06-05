@@ -2,6 +2,7 @@
 {
 	public enum JoinType
 	{
+		Default,
 		Left,
 		Right,
 		Inner

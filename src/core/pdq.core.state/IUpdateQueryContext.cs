@@ -6,7 +6,7 @@ namespace pdq.state
 {
     public interface IUpdateQueryContext : IQueryContext
     {
-		Table Table { get; }
+		ITableTarget Table { get; }
 
 		IReadOnlyCollection<Tuple<Column, IUpdateValueSource>> Updates { get; }
 

@@ -5,26 +5,37 @@ namespace pdq.state
 	{
 		public string Name { get; private set; }
 
-		public Table Table { get; private set; }
+		public IQueryTarget Source { get; private set; }
 
 		public string NewName { get; private set; }
 
-		protected Column(string name, Table table)
+		protected Column(string name, IQueryTarget source)
 		{
 			Name = name;
-			Table = table;
+			Source = source;
 		}
 
-		protected Column(string name, Table table, string newName) : this(name, table)
+		protected Column(string name, IQueryTarget source, string newName) : this(name, source)
         {
 			NewName = newName;
         }
 
-        public static Column Create(string name, Table table) => new Column(name, table);
+        public static Column Create(string name, IQueryTarget source) => new Column(name, source);
 
-        public static Column Create(string name, Table table, string newName) => new Column(name, table, newName);
+        public static Column Create(string name, IQueryTarget source, string newName) => new Column(name, source, newName);
 
-        public static Column Create(string name, string table, string alias) => new Column(name, Table.Create(table, alias));
+        public static Column Create(string name, string table, string tableAlias) => new Column(name, QueryTargets.TableTarget.Create(table, tableAlias));
+
+		public bool IsEquivalentTo(Column column)
+        {
+			var minimum = column.Name == Name &&
+				column.Source.Alias == Source.Alias;
+
+			if (!minimum) return false;
+
+			var sameName = column.NewName == NewName;
+			return minimum || !sameName;
+        }
     }
 }
 

@@ -1,6 +1,6 @@
 ﻿namespace pdq.state.ValueSources.Insert
 {
-	public class QueryValuesSource : IInsertSource
+	public class QueryValuesSource : IInsertValuesSource
 	{
 		private QueryValuesSource(ISelectQueryContext context)
 		{

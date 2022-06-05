@@ -392,9 +392,9 @@ namespace pdq.Implementation.Helpers
 
                     // create column
                     return Column.Match(
-                        state.Column.Create(leftField, state.Table.Create(leftTable)),
+                        state.Column.Create(leftField, state.QueryTargets.TableTarget.Create(leftTable)),
                         op,
-                        state.Column.Create(rightField, state.Table.Create(rightTable)));
+                        state.Column.Create(rightField, state.QueryTargets.TableTarget.Create(rightTable)));
                 }
                 else if (expr is LambdaExpression)
                 {
@@ -428,11 +428,11 @@ namespace pdq.Implementation.Helpers
                     return Column.Match(
                         state.Column.Create(
                             _reflectionHelper.GetFieldName(left.Member),
-                            state.Table.Create(leftParam.Name)),
+                            state.QueryTargets.TableTarget.Create(leftParam.Name)),
                         this.ConvertExpressionTypeToEqualityOperator(operation.NodeType),
                         state.Column.Create(
                             _reflectionHelper.GetFieldName(right.Member),
-                            state.Table.Create(rightParam.Name)));
+                            state.QueryTargets.TableTarget.Create(rightParam.Name)));
                 }
 
                 return null;
@@ -528,7 +528,7 @@ namespace pdq.Implementation.Helpers
             }
 
             var toCreate = typeof(Column<>);
-            var col = state.Column.Create(field, state.Table.Create(table));
+            var col = state.Column.Create(field, state.QueryTargets.TableTarget.Create(table));
 
             //add the model type for the type def of the repository
             Type[] args = { valType };

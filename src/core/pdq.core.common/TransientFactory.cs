@@ -19,6 +19,7 @@ namespace pdq.common
             ILoggerProxy logger,
             ITransactionFactory transactionFactory)
 		{
+            this.tracker = new List<ITransient>();
             this.trackTransients = options.TrackTransients;
             this.logger = logger;
             this.transactionFactory = transactionFactory;

@@ -1,9 +1,12 @@
-﻿namespace pdq
+﻿using System;
+
+namespace pdq
 {
 	public interface ISelectFrom :
 		ISelectColumn<ISelectFrom>,
-		IJoinTo<ISelectFrom>
+		IJoinTo<ISelectFrom>,
+		IDisposable
 	{
-		ISelectFrom Where(IWhere where);
+		ISelectFrom Where(state.IWhere where);
 	}
 }

@@ -6,7 +6,7 @@ namespace pdq.state
 {
     public interface ISelectQueryContext : IQueryContext
     {
-		IReadOnlyCollection<Table> Tables { get; }
+		IReadOnlyCollection<IQueryTarget> Tables { get; }
 
 		IReadOnlyCollection<Column> Columns { get; }
 
@@ -14,9 +14,21 @@ namespace pdq.state
 
 		IWhere WhereClause { get; }
 
-		IOrderedEnumerable<OrderBy> OrderBy { get; }
+		IReadOnlyCollection<OrderBy> OrderByClauses { get; }
 
-		IOrderedEnumerable<GroupBy> GroupBy { get; }
+		IReadOnlyCollection<GroupBy> GroupByClauses { get; }
+
+		ISelectQueryContext From(IQueryTarget table);
+
+		ISelectQueryContext Select(Column column);
+
+		ISelectQueryContext Join(Join join);
+
+		ISelectQueryContext OrderBy(OrderBy orderBy);
+
+		ISelectQueryContext GroupBy(GroupBy groupBy);
+
+		ISelectQueryContext Where(IWhere where);
 	}
 }
 

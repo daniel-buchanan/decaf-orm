@@ -2,7 +2,7 @@
 {
 	public interface ISelectColumn<T>
 	{
-		T Column(string name, string tableAlias = null, string newName = null);
+		T Column(string name, string table = null, string tableAlias = null, string newName = null);
 	}
 }
 

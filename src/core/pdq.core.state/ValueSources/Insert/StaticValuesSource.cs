@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace pdq.state.ValueSources.Insert
 {
-	public class StaticValuesSource : IInsertSource
+	public class StaticValuesSource : IInsertValuesSource
 	{
 		private List<object[]> values;
 

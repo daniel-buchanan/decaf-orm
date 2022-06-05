@@ -85,7 +85,7 @@ namespace pdq.Implementation.Helpers
             var constValue = (bool)this.expressionHelper.GetValue(nonCallExpr);
             var op = constValue ? EqualityOperator.Like : EqualityOperator.NotLike;
 
-            var col = state.Column.Create(fieldName, state.Table.Create(alias));
+            var col = state.Column.Create(fieldName, state.QueryTargets.TableTarget.Create(alias));
 
             if (value == null && op == EqualityOperator.NotLike)
                 return Column.NotLike<string>(col, null, StringContains.Create());
@@ -110,7 +110,7 @@ namespace pdq.Implementation.Helpers
             var dpField = this.expressionHelper.GetName(objectExpression);
             var dp = (common.DatePart)this.expressionHelper.GetValue(datePartExpression);
 
-            var col = state.Column.Create(dpField, state.Table.Create(dpAlias));
+            var col = state.Column.Create(dpField, state.QueryTargets.TableTarget.Create(dpAlias));
 
             if (nonCallExpr.NodeType == ExpressionType.Constant)
             {
@@ -129,7 +129,7 @@ namespace pdq.Implementation.Helpers
 
                 var mAlias = this.expressionHelper.GetParameterName(nonCallExpr);
                 var mField = this.expressionHelper.GetName(nonCallExpr);
-                col = state.Column.Create(mField, state.Table.Create(mAlias));
+                col = state.Column.Create(mField, state.QueryTargets.TableTarget.Create(mAlias));
 
                 return Column.ValueMatch(col, op, 0, state.Conditionals.ValueFunctions.DatePart.Create(dp));
             }
@@ -166,7 +166,7 @@ namespace pdq.Implementation.Helpers
             var alias = this.expressionHelper.GetParameterName(body);
             var field = this.expressionHelper.GetName(body);
             var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(nodeType);
-            var col = state.Column.Create(field, state.Table.Create(alias));
+            var col = state.Column.Create(field, state.QueryTargets.TableTarget.Create(alias));
 
             var func = ConvertMethodNameToValueFunction(callExpr.Method.Name);
 
@@ -186,7 +186,7 @@ namespace pdq.Implementation.Helpers
             {
                 var aliasB = this.expressionHelper.GetParameterName(nonCallExpr);
                 var fieldB = this.expressionHelper.GetName(nonCallExpr);
-                var right = state.Column.Create(fieldB, state.Table.Create(aliasB));
+                var right = state.Column.Create(fieldB, state.QueryTargets.TableTarget.Create(aliasB));
                 return Column.Match(col, op, funcImplementation, right);
             }
 
@@ -199,7 +199,7 @@ namespace pdq.Implementation.Helpers
                 var methodB = ConvertMethodNameToValueFunction(rightCallExpr.Method.Name);
                 if (methodB == ValueFunction.None) return null;
 
-                var right = state.Column.Create(fieldB, state.Table.Create(aliasB));
+                var right = state.Column.Create(fieldB, state.QueryTargets.TableTarget.Create(aliasB));
                 funcImplementation = ConvertMethodNameToValueFunctionImpl(methodB);
 
                 return Column.Match(col, op, funcImplementation, right);
@@ -222,7 +222,7 @@ namespace pdq.Implementation.Helpers
 
             var alias = this.expressionHelper.GetParameterName(callExpr);
             var field = this.expressionHelper.GetName(callExpr);
-            var col = state.Column.Create(field, state.Table.Create(alias));
+            var col = state.Column.Create(field, state.QueryTargets.TableTarget.Create(alias));
 
             var startValue = (int)this.expressionHelper.GetValue(startExpression);
 
@@ -288,7 +288,7 @@ namespace pdq.Implementation.Helpers
             var inputGenericType = typeof(List<>);
             var inputType = inputGenericType.MakeGenericType(typeArgs);
             var input = Activator.CreateInstance(inputType, new object[] { values });
-            var col = state.Column.Create(fieldName, state.Table.Create(alias));
+            var col = state.Column.Create(fieldName, state.QueryTargets.TableTarget.Create(alias));
 
             var parameters = new object[] { col, input };
 
@@ -332,7 +332,7 @@ namespace pdq.Implementation.Helpers
             var alias = this.expressionHelper.GetParameterName(memberAccessExp);
             var fieldName = this.expressionHelper.GetName(memberAccessExp);
             var value = this.expressionHelper.GetValue(arg);
-            var col = state.Column.Create(fieldName, state.Table.Create(alias));
+            var col = state.Column.Create(fieldName, state.QueryTargets.TableTarget.Create(alias));
 
             if (value == null)
                 return Column.Like<string>(col, null, StringContains.Create());

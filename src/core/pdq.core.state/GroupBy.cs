@@ -2,14 +2,13 @@
 {
     public class GroupBy : Column
     {
-        private GroupBy(string name, Table table) : base(name, table)
+        private GroupBy(string name, IQueryTarget source)
+            : base(name, source)
         {
         }
 
-        public static new GroupBy Create(string name, Table table)
-        {
-            return new GroupBy(name, table);
-        }
+        public static new GroupBy Create(string name, IQueryTarget source) => new GroupBy(name, source);
+
     }
 }
 

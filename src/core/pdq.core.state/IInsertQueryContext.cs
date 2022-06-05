@@ -5,13 +5,21 @@ namespace pdq.state
 {
     public interface IInsertQueryContext : IQueryContext
     {
-		Table Table { get; }
+		ITableTarget Target { get; }
 
 		IReadOnlyCollection<Column> Columns { get; }
 
-		IInsertSource Source { get; }
+		IInsertValuesSource Source { get; }
 
 		IReadOnlyCollection<Output> Outputs { get; }
+
+		IInsertQueryContext Into(ITableTarget target);
+
+		IInsertQueryContext Column(Column column);
+
+		IInsertQueryContext From(IInsertValuesSource source);
+
+		IInsertQueryContext Output(Output output);
 	}
 }
 

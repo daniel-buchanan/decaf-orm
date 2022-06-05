@@ -1,7 +1,7 @@
 ﻿using pdq.common;
 using pdq.state;
 
-namespace pdq.Implementation.Delete
+namespace pdq.Implementation
 {
 	internal class Delete : IDelete, IDeleteFrom
 	{
@@ -20,7 +20,7 @@ namespace pdq.Implementation.Delete
 
         public IDeleteFrom From(string name, string alias = null, string schema = null)
         {
-            context.From(Table.Create(name, alias, schema));
+            context.From(state.QueryTargets.TableTarget.Create(name, alias, schema));
             return this;
         }
 

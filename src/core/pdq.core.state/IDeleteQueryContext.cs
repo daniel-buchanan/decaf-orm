@@ -5,11 +5,11 @@ namespace pdq.state
 {
     public interface IDeleteQueryContext : IQueryContext
     {
-		Table Table { get; }
+		ITableTarget Table { get; }
 
 		IWhere WhereClause { get; }
 
-		IDeleteQueryContext From(Table table);
+		IDeleteQueryContext From(ITableTarget target);
 
 		IDeleteQueryContext Where(IWhere where);
 	}

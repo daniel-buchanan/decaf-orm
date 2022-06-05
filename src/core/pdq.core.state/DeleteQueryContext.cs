@@ -4,28 +4,25 @@ namespace pdq.state
 {
 	public class DeleteQueryContext : QueryContext, IDeleteQueryContext
 	{
-		private Table table;
-		private IWhere where;
-
 		private DeleteQueryContext() : base(QueryType.Delete)
         {
-			this.table = null;
-			this.where = null;
+			Table = null;
+			WhereClause = null;
         }
 
-		public Table Table => this.table;
+		public ITableTarget Table { get; private set; }
 
-		public IWhere WhereClause => this.where;
+		public IWhere WhereClause { get; private set; }
 
-		public IDeleteQueryContext From(Table table)
+		public IDeleteQueryContext From(ITableTarget table)
         {
-			this.table = table;
+			Table = table;
 			return this;
         }
 
 		public IDeleteQueryContext Where(IWhere where)
         {
-			this.where = where;
+			WhereClause = where;
 			return this;
         }
 
@@ -33,9 +30,9 @@ namespace pdq.state
 
         public override void Dispose()
         {
-			this.table = null;
-			this.where = null;
-        }
+			Table = null;
+			WhereClause = null;
+		}
     }
 }
 

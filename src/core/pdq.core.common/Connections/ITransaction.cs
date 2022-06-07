@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data;
+
 namespace pdq.common.Connections
 {
 	public interface ITransaction : IDisposable
@@ -12,6 +14,8 @@ namespace pdq.common.Connections
 		void Commit();
 
 		void Rollback();
+
+		internal IDbTransaction GetUnderlyingTransaction();
 	}
 }
 

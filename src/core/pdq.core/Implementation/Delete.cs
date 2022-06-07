@@ -3,15 +3,14 @@ using pdq.state;
 
 namespace pdq.Implementation
 {
-	internal class Delete : IDelete, IDeleteFrom
+	internal class Delete : Execute, IDelete, IDeleteFrom
 	{
-        private readonly IQueryInternal query;
         private readonly IDeleteQueryContext context;
 
-        private Delete(IQuery query)
+        private Delete(IQuery query) : base((IQueryInternal)query)
         {
-            this.query = (IQueryInternal)query;
             this.context = DeleteQueryContext.Create();
+            this.query.SetContext(this.context);
         }
 
         public static Delete Create(IQuery query) => new Delete(query);
@@ -28,11 +27,6 @@ namespace pdq.Implementation
         {
             context.Where(where);
             return this;
-        }
-
-        public string GetSql()
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

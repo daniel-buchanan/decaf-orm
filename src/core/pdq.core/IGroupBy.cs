@@ -2,12 +2,12 @@
 
 namespace pdq
 {
-	public interface IGroupBy 
+	public interface IGroupBy : IExecute
 	{
 		IGroupByThen GroupBy(string column, string tableAlias);
 	}
 
-	public interface IGroupByThen
+	public interface IGroupByThen : IExecute
     {
 		IOrderByThen ThenBy(string column, string tableAlias);
 	}

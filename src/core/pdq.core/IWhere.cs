@@ -2,7 +2,8 @@
 namespace pdq
 {
 	public interface IWhere :
-		IOrderBy
+		IOrderBy,
+		IExecute
 	{
 		
 	}

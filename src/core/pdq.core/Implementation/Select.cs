@@ -4,17 +4,17 @@ using pdq.state;
 
 namespace pdq.Implementation
 {
-	internal class Select : ISelect, ISelectWithAlias, ISelectFrom, IWhere, IOrderByThen, IGroupBy, IGroupByThen
+	internal class Select
+        : Execute, ISelect, ISelectWithAlias, ISelectFrom, IWhere, IOrderByThen, IGroupBy, IGroupByThen
 	{
-        private readonly IQueryInternal query;
         private readonly ISelectQueryContext context;
 
         public string Alias { get; private set; }
 
-        private Select(IQuery query)
+        private Select(IQuery query) : base((IQueryInternal)query)
         {
-            this.query = (IQueryInternal)query;
             this.context = SelectQueryContext.Create();
+            this.query.SetContext(this.context);
         }
 
         public static Select Create(IQuery query) => new Select(query);

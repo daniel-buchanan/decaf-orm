@@ -5,11 +5,13 @@ namespace pdq
 {
 	public class PdqOptions
 	{
-		internal LogLevel DefaultLogLevel { get; private set; } = LogLevel.Error;
+		public LogLevel DefaultLogLevel { get; private set; } = LogLevel.Error;
 
-		internal bool TrackTransients { get; private set; } = false;
+		public bool TrackTransients { get; private set; } = false;
 
 		internal Type LoggerProxyType { get; private set; } = typeof(DefaultLogger);
+
+		internal Type SqlFactoryType { get; private set; }
 
 		public void OverrideDefaultLogLevel(LogLevel level) => DefaultLogLevel = level;
 

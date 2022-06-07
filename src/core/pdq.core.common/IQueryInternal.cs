@@ -8,5 +8,11 @@ namespace pdq.common
 		internal string GetHash();
 
 		internal IAliasManager AliasManager { get; }
+
+		internal ITransient Transient { get; }
+
+		internal IQueryContext Context { get; }
+
+		internal void SetContext(IQueryContext context);
 	}
 }

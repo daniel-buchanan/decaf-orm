@@ -29,7 +29,9 @@ namespace pdq.common
 
 		IAliasManager IQueryInternal.AliasManager => this.aliasManager;
 
-		string IQueryInternal.GetHash() => this.Id.ToString("N");
+        ITransient IQueryInternal.Transient => this.transient;
+
+        string IQueryInternal.GetHash() => this.Id.ToString("N");
 
 		public static IQuery Create(ILoggerProxy logger, ITransient transient) => new Query(logger, transient);
 	}

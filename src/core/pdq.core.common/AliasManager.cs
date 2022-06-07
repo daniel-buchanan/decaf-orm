@@ -15,11 +15,11 @@ namespace pdq.common
 	public class AliasManager : IAliasManager
 	{
 		private readonly List<Alias> knownAliases;
-        private readonly Dictionary<string, int> aliasCounts;
+        private readonly SortedDictionary<string, int> aliasCounts;
 
 		public AliasManager()
 		{
-            this.aliasCounts = new Dictionary<string, int>()
+            this.aliasCounts = new SortedDictionary<string, int>()
             {
                 { "a", 0 }, { "b", 0 }, { "c", 0 }, { "d", 0 }, { "e", 0 }, { "f", 0 }, { "g", 0 }, { "h", 0 }, { "i", 0 }, { "j", 0 }, { "k", 0 }, { "l", 0 }, { "m", 0 }, { "n", 0 }, { "o", 0 }, { "p", 0 }, { "q", 0 }, { "r", 0 }, { "s", 0 }, { "t", 0 }, { "u", 0 }, { "v", 0 }, { "w", 0 }, { "x", 0 }, { "y", 0 }, { "z", 0 }
             };
@@ -30,7 +30,7 @@ namespace pdq.common
         {
             if(string.IsNullOrWhiteSpace(alias))
             {
-                alias = GenerateAlias();
+                alias = GenerateAlias(name);
             }
 
             alias = alias.ToLower();
@@ -60,18 +60,13 @@ namespace pdq.common
             return existing?.AssociatedWith;
         }
 
-        private string GenerateAlias()
+        private string GenerateAlias(string name)
         {
-            string foundAlias = null;
-            var minAliasCount = this.aliasCounts.Min(t => t.Value);
-            foreach(var a in this.aliasCounts)
-            {
-                if (a.Value != minAliasCount) continue;
-                foundAlias = a.Key;
-            }
+            var prefix = name?.Substring(0, 1) ?? "a";
 
-            var alias = $"{foundAlias}{minAliasCount}";
-            this.aliasCounts[foundAlias] += 1;
+            var aliasCount = this.aliasCounts[prefix];
+            var alias = $"{prefix}{aliasCount}";
+            this.aliasCounts[prefix] += 1;
             return alias;
         }
 

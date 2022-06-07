@@ -38,7 +38,7 @@ namespace pdq.state.Conditionals
 
 		public EqualityOperator EqualityOperator { get; private set; }
 
-		public IValueFunction? ValueFunction { get; private set; }
+		public IValueFunction ValueFunction { get; private set; }
 
 		public T Value { get; private set; }
 	}

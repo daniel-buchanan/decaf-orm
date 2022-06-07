@@ -39,6 +39,7 @@ namespace pdq.Implementation
             IQueryTarget to,
             JoinType type = JoinType.Default)
         {
+
             this.context.Join(state.Join.Create(from, to, type, conditions));
             return this;
         }

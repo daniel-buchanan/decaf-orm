@@ -22,6 +22,11 @@ namespace pdq.services
             return conn.GetAll<TEntity>();
         }
 
+        public void Dispose()
+        {
+            
+        }
+
         public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> query)
         {
             var conn = this.transient.Connection.GetUnderlyingConnection();

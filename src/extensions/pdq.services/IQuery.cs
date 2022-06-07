@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace pdq.services
 {
-	public interface IQuery<TEntity> where TEntity : IEntity
+	public interface IQuery<TEntity> : IDisposable where TEntity : IEntity
 	{
 		IEnumerable<TEntity> All();
 

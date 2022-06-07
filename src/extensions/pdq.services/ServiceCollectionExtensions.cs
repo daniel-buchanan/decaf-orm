@@ -1,29 +1,19 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace pdq.services
 {
 	public static class ServiceCollectionExtensions
 	{
-		public static IServiceCollection AddScopedService<TEntity>(this IServiceCollection services)
+		public static IServiceCollectionHandler<TEntity> AddPdqService<TEntity>(this IServiceCollection services)
 			where TEntity : IEntity
         {
-			services.AddScoped<IService<TEntity>>();
-			return services;
+			return new ServiceCollectionHandler<TEntity>(services);
         }
 
-		public static IServiceCollection AddTransientService<TEntity>(this IServiceCollection services)
-			where TEntity : IEntity
+		public static IServiceCollectionHandler<TEntity> AddPdqService<TEntity, TKey>(this IServiceCollection services)
+			where TEntity : IEntity<TKey>
 		{
-			services.AddTransient<IService<TEntity>>();
-			return services;
-		}
-
-		public static IServiceCollection AddSingletonService<TEntity>(this IServiceCollection services)
-			where TEntity : IEntity
-		{
-			services.AddSingleton<IService<TEntity>>();
-			return services;
+			return new ServiceCollectionHandler<TEntity, TKey>(services);
 		}
 	}
 }

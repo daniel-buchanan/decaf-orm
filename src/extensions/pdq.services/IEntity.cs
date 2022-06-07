@@ -1,9 +1,7 @@
 ﻿using System;
 namespace pdq.services
 {
-	public interface IEntity
-	{
-	}
+	public interface IEntity { }
 
 	public interface IEntity<TKey> : IEntity
     {

@@ -33,6 +33,8 @@ namespace pdq.common
 
         IConnection ITransient.Connection => this.connection;
 
+        ITransaction ITransient.Transaction => this.transaction;
+
         public static ITransient Create(
             ITransientFactory factory,
             ITransaction transaction,

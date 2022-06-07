@@ -11,5 +11,7 @@ namespace pdq.common
 		IQuery Query();
 
 		internal IConnection Connection { get; }
+
+		internal ITransaction Transaction { get; }
 	}
 }

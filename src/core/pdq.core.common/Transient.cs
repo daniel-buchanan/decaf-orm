@@ -29,10 +29,13 @@ namespace pdq.common
             this.logger.Debug($"Transient({Id}) :: Created");
 		}
 
+        /// <inheritdoc />
         public Guid Id { get; private set; }
 
+        /// <inheritdoc />
         IConnection ITransient.Connection => this.connection;
 
+        /// <inheritdoc />
         ITransaction ITransient.Transaction => this.transaction;
 
         public static ITransient Create(
@@ -40,6 +43,7 @@ namespace pdq.common
             ITransaction transaction,
             ILoggerProxy logger) => new Transient(factory, transaction, logger);
 
+        /// <inheritdoc />
         public void Dispose()
         {
             if(this.queries.Any(q => q.Status != QueryStatus.Executed))
@@ -78,6 +82,7 @@ namespace pdq.common
             this.factory.NotifyTransientDisposed(this.Id);
         }
 
+        /// <inheritdoc />
         public IQuery Query()
         {
             var query = common.Query.Create(logger, this);

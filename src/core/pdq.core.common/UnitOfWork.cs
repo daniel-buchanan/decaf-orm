@@ -1,4 +1,5 @@
-﻿using pdq.common.Logging;
+﻿using System.Threading.Tasks;
+using pdq.common.Logging;
 
 namespace pdq.common
 {
@@ -18,10 +19,18 @@ namespace pdq.common
             this.connectionDetails = connectionDetails;
 		}
 
+        /// <inheritdoc />
         public ITransient Begin()
         {
             this.logger.Debug("Creating Transient");
             return this.transientFactory.Create(this.connectionDetails);
+        }
+
+        /// <inheritdoc />
+        public async Task<ITransient> BeginAsync()
+        {
+            this.logger.Debug("Creating Transient (async)");
+            return await this.transientFactory.CreateAsync(this.connectionDetails);
         }
     }
 }

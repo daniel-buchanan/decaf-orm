@@ -2,7 +2,7 @@
 
 namespace pdq.common
 {
-	public interface IQuery
+	public interface IQuery : IDisposable
 	{
 		Guid Id { get; }
 

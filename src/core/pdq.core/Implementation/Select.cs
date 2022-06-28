@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using pdq.common;
 using pdq.state;
 
@@ -28,7 +29,7 @@ namespace pdq.Implementation
             string newName = null)
         {
             var managedTable = this.query.AliasManager.GetAssociation(tableAlias) ?? table;
-            var managedAlias = this.query.AliasManager.Add(tableAlias, table);
+            var managedAlias = this.query.AliasManager.Add(table, tableAlias);
             this.context.Select(state.Column.Create(name, state.QueryTargets.TableTarget.Create(managedTable, managedAlias), newName));
             return this;
         }
@@ -39,7 +40,6 @@ namespace pdq.Implementation
             IQueryTarget to,
             JoinType type = JoinType.Default)
         {
-
             this.context.Join(state.Join.Create(from, to, type, conditions));
             return this;
         }
@@ -58,9 +58,11 @@ namespace pdq.Implementation
             return this;
         }
 
-        public ISelectFrom Where(state.IWhere where)
+        public IWhere Where(Action<IWhereBuilder> builder)
         {
-            this.context.Where(where);
+            var b = WhereBuilder.Create(this.context);
+            builder(b);
+            this.context.Where(b.GetClauses().First());
             return this;
         }
 
@@ -70,7 +72,7 @@ namespace pdq.Implementation
             string schema = null)
         {
             var managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
-            var managedAlias = this.query.AliasManager.Add(alias, table);
+            var managedAlias = this.query.AliasManager.Add(table, alias);
             this.context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias, schema));
             return this;
         }
@@ -80,7 +82,7 @@ namespace pdq.Implementation
             var select = Create(this.query);
             query(select);
 
-            this.query.AliasManager.Add(alias, null);
+            this.query.AliasManager.Add(null, alias);
             var builtQuery = state.QueryTargets.SelectQueryTarget.Create(select.context, alias);
             this.context.From(builtQuery);
 
@@ -96,7 +98,7 @@ namespace pdq.Implementation
         public IOrderByThen OrderBy(string column, string tableAlias, SortOrder orderBy)
         {
             var managedTable = this.query.AliasManager.GetAssociation(tableAlias);
-            var managedAlias = this.query.AliasManager.Add(tableAlias, managedTable);
+            var managedAlias = this.query.AliasManager.Add(managedTable, tableAlias);
             this.context.OrderBy(state.OrderBy.Create(column, state.QueryTargets.TableTarget.Create(managedTable, managedAlias), orderBy));
             return this;
         }
@@ -104,7 +106,7 @@ namespace pdq.Implementation
         public IOrderByThen ThenBy(string column, string tableAlias, SortOrder orderBy)
         {
             var managedTable = this.query.AliasManager.GetAssociation(tableAlias);
-            var managedAlias = this.query.AliasManager.Add(tableAlias, managedTable);
+            var managedAlias = this.query.AliasManager.Add(managedTable, tableAlias);
             this.context.OrderBy(state.OrderBy.Create(column, state.QueryTargets.TableTarget.Create(managedTable, managedAlias), orderBy));
             return this;
         }
@@ -112,7 +114,7 @@ namespace pdq.Implementation
         public IGroupByThen GroupBy(string column, string tableAlias)
         {
             var managedTable = this.query.AliasManager.GetAssociation(tableAlias);
-            var managedAlias = this.query.AliasManager.Add(tableAlias, managedTable);
+            var managedAlias = this.query.AliasManager.Add(managedTable, tableAlias);
             this.context.GroupBy(state.GroupBy.Create(column, state.QueryTargets.TableTarget.Create(managedTable, managedAlias)));
             return this;
         }
@@ -120,7 +122,7 @@ namespace pdq.Implementation
         public IOrderByThen ThenBy(string column, string tableAlias)
         {
             var managedTable = this.query.AliasManager.GetAssociation(tableAlias);
-            var managedAlias = this.query.AliasManager.Add(tableAlias, managedTable);
+            var managedAlias = this.query.AliasManager.Add(managedTable, tableAlias);
             this.context.GroupBy(state.GroupBy.Create(column, state.QueryTargets.TableTarget.Create(managedTable, managedAlias)));
             return this;
         }

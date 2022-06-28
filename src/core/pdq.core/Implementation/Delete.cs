@@ -1,4 +1,5 @@
-﻿using pdq.common;
+﻿using System;
+using System.Linq;
 using pdq.common;
 using pdq.state;
 
@@ -20,13 +21,17 @@ namespace pdq.Implementation
 
         public IDeleteFrom From(string name, string alias = null, string schema = null)
         {
-            context.From(state.QueryTargets.TableTarget.Create(name, alias, schema));
+            var managedTable = this.query.AliasManager.GetAssociation(alias) ?? name;
+            var managedAlias = this.query.AliasManager.Add(name, alias);
+            context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias, schema));
             return this;
         }
 
-        public IDeleteFrom Where(state.IWhere where)
+        public IDeleteFrom Where(Action<IWhereBuilder> builder)
         {
-            context.Where(where);
+            var b = WhereBuilder.Create(this.context);
+            builder(b);
+            context.Where(b.GetClauses().First());
             return this;
         }
     }

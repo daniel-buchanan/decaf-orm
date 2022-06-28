@@ -7,6 +7,6 @@ namespace pdq
 		IJoinTo<ISelectFrom>,
 		IDisposable
 	{
-		ISelectFrom Where(state.IWhere where);
+		IWhere Where(Action<IWhereBuilder> builder);
 	}
 }

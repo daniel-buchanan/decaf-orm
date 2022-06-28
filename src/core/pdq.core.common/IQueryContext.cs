@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace pdq.common
 {
@@ -7,6 +8,8 @@ namespace pdq.common
 		Guid Id { get; }
 
 		QueryType Kind { get; }
+
+		IEnumerable<IQueryTarget> QueryTargets { get; }
 	}
 }
 

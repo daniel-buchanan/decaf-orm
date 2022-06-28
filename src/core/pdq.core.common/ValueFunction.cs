@@ -7,7 +7,9 @@
 		ToUpper,
 		DatePart,
 		Substring,
-		Contains
+		Contains,
+		StartsWith,
+		EndsWith
 	}
 }
 

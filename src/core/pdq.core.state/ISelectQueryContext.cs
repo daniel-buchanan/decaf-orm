@@ -6,8 +6,6 @@ namespace pdq.state
 {
     public interface ISelectQueryContext : IQueryContext
     {
-		IReadOnlyCollection<IQueryTarget> Tables { get; }
-
 		IReadOnlyCollection<Column> Columns { get; }
 
 		IReadOnlyCollection<Join> Joins { get; }

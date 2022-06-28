@@ -7,7 +7,6 @@ namespace pdq.state
 {
 	public class SelectQueryContext : QueryContext, ISelectQueryContext
 	{
-        private readonly List<IQueryTarget> tables;
         private readonly List<Column> columns;
         private readonly List<Join> joins;
         private IWhere where;
@@ -17,7 +16,6 @@ namespace pdq.state
 
 		public SelectQueryContext() : base(QueryType.Select)
 		{
-            this.tables = new List<IQueryTarget>();
             this.columns = new List<Column>();
             this.joins = new List<Join>();
             this.orderByClauses = new List<OrderBy>();
@@ -25,8 +23,6 @@ namespace pdq.state
 		}
 
         public static ISelectQueryContext Create() => new SelectQueryContext();
-
-        public IReadOnlyCollection<IQueryTarget> Tables => this.tables.AsReadOnly();
 
         public IReadOnlyCollection<Column> Columns => this.columns.AsReadOnly();
 
@@ -40,7 +36,6 @@ namespace pdq.state
 
         public override void Dispose()
         {
-            this.tables.Dispose();
             this.columns.Dispose();
             this.joins.Dispose();
             this.orderByClauses.Dispose();
@@ -50,10 +45,10 @@ namespace pdq.state
 
         public ISelectQueryContext From(IQueryTarget table)
         {
-            var item = this.tables.FirstOrDefault(t => t.IsEquivalentTo(table));
+            var item = this.QueryTargets.FirstOrDefault(t => t.IsEquivalentTo(table));
             if (item != null) return this;
 
-            this.tables.Add(table);
+            this.queryTargets.Add(table);
             return this;
         }
 

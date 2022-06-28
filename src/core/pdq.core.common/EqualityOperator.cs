@@ -10,6 +10,8 @@
         GreaterThanOrEqualTo,
         Like,
         NotLike,
+        StartsWith,
+        EndsWith,
         In,
         Between
     }

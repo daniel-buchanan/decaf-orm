@@ -20,5 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Dapper" />
+    <None Remove="Where\" />
+    <None Remove="Exceptions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Where\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 </Project>

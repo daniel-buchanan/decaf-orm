@@ -1,4 +1,7 @@
-﻿namespace pdq.state.Conditionals
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace pdq.state.Conditionals
 {
 	public class And : Where
 	{
@@ -8,6 +11,11 @@
         {
 			return new And(items);
         }
-	}
+
+        public static And Where(IEnumerable<IWhere> items)
+        {
+            return new And(items.ToArray());
+        }
+    }
 }
 

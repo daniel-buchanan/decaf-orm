@@ -1,4 +1,6 @@
-﻿namespace pdq.state
+﻿using pdq.common;
+
+namespace pdq.state
 {
 	public class Join
 	{

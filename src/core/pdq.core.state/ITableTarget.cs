@@ -1,13 +1,8 @@
 ﻿using System;
+using pdq.common;
+
 namespace pdq.state
 {
-	public interface IQueryTarget
-    {
-		string Alias { get; }
-
-		bool IsEquivalentTo(IQueryTarget target);
-    }
-
 	public interface ITableTarget : IQueryTarget
     {
 		string Name { get; }

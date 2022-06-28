@@ -1,4 +1,6 @@
 ﻿using System;
+using pdq.common;
+
 namespace pdq.state.QueryTargets
 {
 	public class TableTarget : ITableTarget

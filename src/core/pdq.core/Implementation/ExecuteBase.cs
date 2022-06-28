@@ -16,6 +16,12 @@ namespace pdq.Implementation
 
         protected IDbConnection GetConnection() => this.query.Transient.Connection.GetUnderlyingConnection();
 
+        /// <summary>
+        /// Execute a function on a DBTransaction
+        /// </summary>
+        /// <typeparam name="T">The return type for the function.</typeparam>
+        /// <param name="func">The function to execute.</param>
+        /// <returns>The result of the function</returns>
         protected async Task<T> ExecuteAsync<T>(Func<string, object, IDbTransaction, Task<T>> func)
         {
             var sql = GetSql();
@@ -27,7 +33,6 @@ namespace pdq.Implementation
 
         protected string GetSql()
         {
-            
             throw new NotImplementedException();
         }
 

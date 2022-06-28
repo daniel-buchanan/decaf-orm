@@ -54,8 +54,6 @@ namespace pdq.Implementation
         public new string GetSql() => base.GetSql();
 
         public static IExecute Create(IQueryInternal query) => new Execute(query);
-
-        
     }
 }
 

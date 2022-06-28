@@ -16,7 +16,7 @@ namespace pdq.common
 		{
 			this.logger = logger;
 			this.transient = transient;
-			this.aliasManager = new AliasManager();
+			this.aliasManager = AliasManager.Create();
 
 			Id = Guid.NewGuid();
 			Status = QueryStatus.Empty;
@@ -39,6 +39,11 @@ namespace pdq.common
 		public static IQuery Create(ILoggerProxy logger, ITransient transient) => new Query(logger, transient);
 
 		void IQueryInternal.SetContext(IQueryContext context) => this.context = context;
+
+        public void Dispose()
+        {
+			this.aliasManager.Dispose();
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
 using pdq.common;
 using Xunit;
 
@@ -12,12 +13,12 @@ namespace pdq.core_tests
 
 		public AliasManagerTests()
 		{
-			this.aliasManager = new AliasManager();
+			this.aliasManager = AliasManager.Create();
 		}
 
         [Theory]
         [MemberData(nameof(AddTests))]
-		public void AddSucceeds(string alias, string name, bool aliasIsNull, string expected)
+		public void AddSucceeds(string alias, string name, string expected)
         {
 			// Arrange
 
@@ -25,48 +26,49 @@ namespace pdq.core_tests
 			var addedAlias = this.aliasManager.Add(alias, name);
 
 			// Assert
-			if (aliasIsNull) Assert.Equal(expected, addedAlias);
-			else Assert.Equal(alias, addedAlias);
+			addedAlias.Should().BeEquivalentTo(expected);
         }
 
 		[Theory]
 		[MemberData(nameof(AddTests))]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1026:Theory methods should use all of their parameters", Justification = "Same Test set, but not using all params")]
-        public void AddSucceedsAndContainsOnlyOne(string alias, string name, bool aliasIsNull, string expected)
+        public void AddSucceedsAndContainsOnlyOne(string alias, string name, string expected)
 		{
 			// Arrange
+			var expectedAlias = ManagedAlias.Create(expected, name);
 			this.aliasManager.Add(alias, name);
 
 			// Act
 			var aliases = this.aliasManager.All();
 
 			// Assert
-			Assert.Single(aliases);
+			aliases.Should().ContainSingle();
+			aliases.Should().ContainEquivalentOf(expectedAlias);
 		}
 
 		[Theory]
 		[MemberData(nameof(AddTests))]
-		public void GetByAssociationSucceeds(string alias, string name, bool aliasIsNull, string expected)
+		public void GetByAssociationSucceeds(string alias, string name, string expected)
 		{
 			// Arrange
+			var expectedAlias = ManagedAlias.Create(expected, name);
 			this.aliasManager.Add(alias, name);
 
 			// Act
 			var foundAlias = this.aliasManager.FindByAssociation(name);
 
 			// Assert
-			if (aliasIsNull) Assert.NotNull(foundAlias);
-			else Assert.Equal(expected, alias);
+			foundAlias.Should().ContainSingle();
+			foundAlias.First().Should().BeEquivalentTo(expectedAlias);
 		}
 
 		public static IEnumerable<object[]> AddTests
         {
 			get
             {
-				yield return new object[] { null, "test", true, "t0" };
-				yield return new object[] { null, "hello", true, "h0" };
-				yield return new object[] { null, "bob", true, "b0" };
-				yield return new object[] { "ts", "test", false, "ts" };
+				yield return new object[] { null, "test", "t0" };
+				yield return new object[] { null, "hello", "h0" };
+				yield return new object[] { null, "bob", "b0" };
+				yield return new object[] { "ts", "test", "ts" };
 			}
         }
 	}

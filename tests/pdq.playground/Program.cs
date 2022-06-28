@@ -8,7 +8,7 @@ var services = new ServiceCollection();
 services.AddPdq(o =>
 {
     o.EnableTransientTracking();
-    o.OverrideDefaultLogLevel(pdq.common.Logging.LogLevel.Debug);
+    o.OverrideDefaultLogLevel(LogLevel.Debug);
 });
 
 var provider = services.BuildServiceProvider();

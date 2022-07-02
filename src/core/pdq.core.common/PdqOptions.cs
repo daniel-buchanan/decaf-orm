@@ -1,6 +1,7 @@
 ﻿using System;
 using pdq.common.Logging;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.playground")]
 namespace pdq
 {
 	/// <summary>
@@ -28,6 +29,16 @@ namespace pdq
         /// The type of the sql factory to use.
         /// </summary>
 		internal Type SqlFactoryType { get; private set; }
+
+        /// <summary>
+        /// The type of connection factory to use.
+        /// </summary>
+        internal Type ConnectionFactoryType { get; set; }
+
+        /// <summary>
+        /// The type of transaction factory to use.
+        /// </summary>
+        internal Type TransactionFactoryType { get; set; }
 
         /// <summary>
         /// Override the default log level (<see cref="LogLevel.Error"/>), and set

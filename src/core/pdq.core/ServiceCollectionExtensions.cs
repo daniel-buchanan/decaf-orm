@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common.Logging;
 using pdq.common;
+using pdq.state.Utilities;
+using pdq.common.Connections;
 
 namespace pdq
 {
@@ -43,6 +45,10 @@ namespace pdq
         {
 			services.AddSingleton(options);
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
+			services.AddScoped(typeof(ILoggerProxy), options.LoggerProxyType);
+            services.AddScoped(typeof(IConnectionFactory), options.ConnectionFactoryType);
+            services.AddScoped(typeof(ITransactionFactory), options.TransactionFactoryType);
+            services.AddScoped<ITransientFactory, TransientFactory>();
 			return services;
 		}
 	}

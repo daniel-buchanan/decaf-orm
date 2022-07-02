@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using pdq.common.Utilities;
 
 namespace pdq.common.Connections
 {
@@ -71,12 +72,7 @@ namespace pdq.common.Connections
             return new ValueTask();
         }
 
-        public string GetConnectionString()
-        {
-            var t = GetConnectionStringAsync();
-            t.Wait();
-            return t.Result;
-        }
+        public string GetConnectionString() => GetConnectionStringAsync().WaitFor();
 
         public async Task<string> GetConnectionStringAsync()
         {
@@ -91,10 +87,7 @@ namespace pdq.common.Connections
 
         protected abstract Task<string> ConstructConnectionString();
 
-        string IConnectionDetails.GetHash()
-        {
-            throw new NotImplementedException();
-        }
+        string IConnectionDetails.GetHash() => GetConnectionString().ToBase64String();
     }
 }
 

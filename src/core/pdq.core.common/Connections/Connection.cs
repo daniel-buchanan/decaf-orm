@@ -5,8 +5,9 @@ using pdq.common.Logging;
 
 namespace pdq.common.Connections
 {
-	public class Connection : IConnection
+	public abstract class Connection : IConnection
 	{
+        protected IDbConnection dbConnection;
         protected readonly ILoggerProxy logger;
         protected IConnectionDetails connectionDetails;
 
@@ -23,38 +24,45 @@ namespace pdq.common.Connections
             this.connectionDetails = connectionDetails;
 		}
 
+        /// <inheritdoc/>
         public void Close()
         {
-            throw new NotImplementedException();
+            if (this.dbConnection == null) return;
+            if (this.dbConnection.State == ConnectionState.Open ||
+                this.dbConnection.State == ConnectionState.Connecting ||
+                this.dbConnection.State == ConnectionState.Fetching ||
+                this.dbConnection.State == ConnectionState.Executing)
+                this.dbConnection.Close();
         }
 
-        public ITransaction CreateTransaction()
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <inheritdoc/>
         public void Dispose() => this.connectionDetails.Dispose();
 
+        /// <inheritdoc/>
         public ValueTask DisposeAsync() => this.connectionDetails.DisposeAsync();
 
+        /// <inheritdoc/>
         public void Open()
         {
-            throw new NotImplementedException();
+            if (this.dbConnection == null)
+                this.dbConnection = GetUnderlyingConnection();
+
+            if (this.dbConnection.State == ConnectionState.Closed ||
+                this.dbConnection.State == ConnectionState.Broken)
+                this.dbConnection.Open();
         }
 
-        string IConnection.GetHash()
-        {
-            return this.connectionDetails.GetHash();
-        }
+        /// <inheritdoc/>
+        string IConnection.GetHash() => this.connectionDetails.GetHash();
 
-        IDbConnection IConnection.GetUnderlyingConnection()
-        {
-            throw new NotImplementedException();
-        }
+        /// <inheritdoc/>
+        public abstract IDbConnection GetUnderlyingConnection();
 
-        TConnection IConnection.GetUnderlyingConnectionAs<TConnection>()
+        /// <inheritdoc/>
+        public TConnection GetUnderlyingConnectionAs<TConnection>()
+            where TConnection : IDbConnection
         {
-            throw new NotImplementedException();
+            return (TConnection)GetUnderlyingConnection();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace pdq.common.Connections
 {
 	public abstract class ConnectionFactory : IConnectionFactory
 	{
-        private readonly ILoggerProxy logger;
+        protected readonly ILoggerProxy logger;
         private IDictionary<string, IConnection> connections;
 
         /// <summary>
@@ -20,17 +20,20 @@ namespace pdq.common.Connections
             this.logger = logger;
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             this.connections = null;
         }
 
+        /// <inheritdoc/>
         public ValueTask DisposeAsync()
         {
             Dispose();
             return new ValueTask();
         }
 
+        /// <inheritdoc/>
         public IConnection Get(IConnectionDetails connectionDetails)
         {
             var t = GetAsync(connectionDetails);
@@ -38,6 +41,7 @@ namespace pdq.common.Connections
             return t.Result;
         }
 
+        /// <inheritdoc/>
         public async Task<IConnection> GetAsync(IConnectionDetails connectionDetails)
         {
             if (connectionDetails == null)
@@ -76,6 +80,7 @@ namespace pdq.common.Connections
             }
         }
 
+        /// <inheritdoc/>
         protected abstract Task<IConnection> ConstructConnection(IConnectionDetails connectionDetails);
     }
 }

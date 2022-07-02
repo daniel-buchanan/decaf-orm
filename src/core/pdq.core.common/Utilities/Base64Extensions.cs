@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace pdq.core.common.Utilities
+namespace pdq.common.Utilities
 {
 	public static class Base64Extensions
 	{

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using pdq.common;
 using pdq.state;
 
@@ -14,7 +15,7 @@ namespace pdq.Implementation
 
         private Select(IQuery query) : base((IQueryInternal)query)
         {
-            this.context = SelectQueryContext.Create();
+            this.context = SelectQueryContext.Create(this.query.AliasManager);
             this.query.SetContext(this.context);
         }
 
@@ -89,6 +90,26 @@ namespace pdq.Implementation
             return this;
         }
 
+        public ISelectFromTyped<T> From<T>()
+        {
+            var table = this.context.Helpers().GetTableName<T>();
+            var alias = this.query.AliasManager.Add(null, table);
+            this.context.From(state.QueryTargets.TableTarget.Create(table, alias));
+            return Select<T>.Create(this.context, this.query);
+        }
+
+        public ISelectFromTyped<T> From<T>(Expression<Func<T, T>> expression)
+        {
+            var table = this.context.Helpers().GetTableName(expression);
+            var alias = this.context.Helpers().GetTableAlias(expression);
+
+            var managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
+            var managedAlias = this.query.AliasManager.Add(alias, table);
+
+            this.context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
+            return Select<T>.Create(this.context, this.query);
+        }
+
         public ISelectWithAlias KnownAs(string alias)
         {
             Alias = alias;
@@ -98,7 +119,7 @@ namespace pdq.Implementation
         public IOrderByThen OrderBy(string column, string tableAlias, SortOrder orderBy)
         {
             var managedTable = this.query.AliasManager.GetAssociation(tableAlias);
-            var managedAlias = this.query.AliasManager.Add(managedTable, tableAlias);
+            var managedAlias = this.query.AliasManager.Add(tableAlias, managedTable);
             this.context.OrderBy(state.OrderBy.Create(column, state.QueryTargets.TableTarget.Create(managedTable, managedAlias), orderBy));
             return this;
         }
@@ -106,7 +127,7 @@ namespace pdq.Implementation
         public IOrderByThen ThenBy(string column, string tableAlias, SortOrder orderBy)
         {
             var managedTable = this.query.AliasManager.GetAssociation(tableAlias);
-            var managedAlias = this.query.AliasManager.Add(managedTable, tableAlias);
+            var managedAlias = this.query.AliasManager.Add(tableAlias, managedTable);
             this.context.OrderBy(state.OrderBy.Create(column, state.QueryTargets.TableTarget.Create(managedTable, managedAlias), orderBy));
             return this;
         }
@@ -114,7 +135,7 @@ namespace pdq.Implementation
         public IGroupByThen GroupBy(string column, string tableAlias)
         {
             var managedTable = this.query.AliasManager.GetAssociation(tableAlias);
-            var managedAlias = this.query.AliasManager.Add(managedTable, tableAlias);
+            var managedAlias = this.query.AliasManager.Add(tableAlias, managedTable);
             this.context.GroupBy(state.GroupBy.Create(column, state.QueryTargets.TableTarget.Create(managedTable, managedAlias)));
             return this;
         }
@@ -122,7 +143,7 @@ namespace pdq.Implementation
         public IOrderByThen ThenBy(string column, string tableAlias)
         {
             var managedTable = this.query.AliasManager.GetAssociation(tableAlias);
-            var managedAlias = this.query.AliasManager.Add(managedTable, tableAlias);
+            var managedAlias = this.query.AliasManager.Add(tableAlias, managedTable);
             this.context.GroupBy(state.GroupBy.Create(column, state.QueryTargets.TableTarget.Create(managedTable, managedAlias)));
             return this;
         }

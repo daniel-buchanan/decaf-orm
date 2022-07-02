@@ -5,6 +5,8 @@ namespace pdq.Attributes
 	{
         public string Name { get; set; }
 
+        public bool CaseSensitive { get; set; }
+
         public TableNameAttribute() { }
 
         public TableNameAttribute(string name)

@@ -43,8 +43,6 @@ namespace pdq
         {
 			services.AddSingleton(options);
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
-			services.AddScoped(typeof(ILoggerProxy), provider => provider.GetService<PdqOptions>().LoggerProxyType);
-			services.AddScoped<ITransientFactory, TransientFactory>();
 			return services;
 		}
 	}

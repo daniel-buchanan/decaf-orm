@@ -69,7 +69,7 @@ namespace pdq.common
 
         private string GenerateAlias(string assocWith)
         {
-            var prefix = assocWith?.Substring(0, 1) ?? "a";
+            var prefix = assocWith?.Substring(0, 1)?.ToLower() ?? "a";
 
             var aliasCount = this.aliasCounts[prefix];
             var alias = $"{prefix}{aliasCount}";

@@ -4,7 +4,8 @@ namespace pdq.state
 {
 	public class DeleteQueryContext : QueryContext, IDeleteQueryContext
 	{
-		private DeleteQueryContext() : base(QueryType.Delete)
+		private DeleteQueryContext(IAliasManager aliasManager)
+			: base(aliasManager, QueryType.Delete)
         {
 			Table = null;
 			WhereClause = null;
@@ -26,7 +27,8 @@ namespace pdq.state
 			return this;
         }
 
-		public static IDeleteQueryContext Create() => new DeleteQueryContext();
+		public static IDeleteQueryContext Create(IAliasManager aliasManager)
+			=> new DeleteQueryContext(aliasManager);
 
         public override void Dispose()
         {

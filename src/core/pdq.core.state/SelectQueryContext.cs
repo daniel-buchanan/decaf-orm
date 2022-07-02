@@ -14,7 +14,8 @@ namespace pdq.state
         private readonly List<GroupBy> groupByClauses;
 
 
-		public SelectQueryContext() : base(QueryType.Select)
+		public SelectQueryContext(IAliasManager aliasManager)
+            : base(aliasManager, QueryType.Select)
 		{
             this.columns = new List<Column>();
             this.joins = new List<Join>();
@@ -22,7 +23,8 @@ namespace pdq.state
             this.groupByClauses = new List<GroupBy>();
 		}
 
-        public static ISelectQueryContext Create() => new SelectQueryContext();
+        public static ISelectQueryContext Create(IAliasManager aliasManager)
+            => new SelectQueryContext(aliasManager);
 
         public IReadOnlyCollection<Column> Columns => this.columns.AsReadOnly();
 

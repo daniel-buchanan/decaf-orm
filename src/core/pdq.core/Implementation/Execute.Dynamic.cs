@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using pdq.common;
-using pdq.Implementation.Helpers;
 using Dapper;
 using System.Linq;
+using pdq.common.Utilities;
 
 namespace pdq.Implementation
 {

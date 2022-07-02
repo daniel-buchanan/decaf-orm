@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using pdq.common;
-using pdq.Implementation.Helpers;
 using Dapper;
 using System.Linq;
+using pdq.common.Utilities;
 
 namespace pdq.Implementation
 {
@@ -11,7 +11,7 @@ namespace pdq.Implementation
 	{
 		protected Execute(IQueryInternal query) : base(query) { }
 
-        public IExecuteDynamic AsDynamic() => ExecuteDynamic.Create(this.query);
+        public IExecuteDynamic Dynamic() => ExecuteDynamic.Create(this.query);
 
         public IEnumerable<T> AsEnumerable<T>() => AsEnumerableAsync<T>().WaitFor();
 
@@ -52,8 +52,6 @@ namespace pdq.Implementation
             => await ExecuteAsync((s, p, t) => GetConnection().ExecuteAsync(s, p, t));
 
         public new string GetSql() => base.GetSql();
-
-        public static IExecute Create(IQueryInternal query) => new Execute(query);
     }
 }
 

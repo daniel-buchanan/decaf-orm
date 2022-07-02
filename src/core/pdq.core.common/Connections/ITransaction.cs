@@ -7,6 +7,8 @@ namespace pdq.common.Connections
 	{
 		internal bool CloseTransactionOnCommitOrRollback { get; }
 
+		Guid Id { get; }
+
 		IConnection Connection { get; }
 
 		void Begin();
@@ -15,7 +17,7 @@ namespace pdq.common.Connections
 
 		void Rollback();
 
-		internal IDbTransaction GetUnderlyingTransaction();
+		IDbTransaction GetUnderlyingTransaction();
 	}
 }
 

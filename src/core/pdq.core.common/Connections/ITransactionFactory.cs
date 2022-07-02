@@ -5,9 +5,19 @@ namespace pdq.common.Connections
 {
 	public interface ITransactionFactory
 	{
-		ITransaction Get(IConnectionDetails connection);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connectionDetails"></param>
+        /// <returns></returns>
+        ITransaction Get(IConnectionDetails connectionDetails);
 
-		Task<ITransaction> GetAsync(IConnectionDetails connection);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connectionDetails"></param>
+        /// <returns></returns>
+        Task<ITransaction> GetAsync(IConnectionDetails connectionDetails);
 	}
 }
 

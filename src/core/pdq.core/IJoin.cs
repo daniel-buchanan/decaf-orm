@@ -4,7 +4,7 @@ using pdq.state;
 
 namespace pdq
 {
-	public interface IJoinTo<T>
+	public interface IJoin<T>
 	{
 		T Join(IQueryTarget from, state.IWhere conditions, IQueryTarget to, JoinType type = JoinType.Default);
 

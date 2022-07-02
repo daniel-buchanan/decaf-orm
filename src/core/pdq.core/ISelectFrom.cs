@@ -4,7 +4,7 @@ namespace pdq
 {
 	public interface ISelectFrom :
 		ISelectColumn<ISelectFrom>,
-		IJoinTo<ISelectFrom>,
+		IJoin<ISelectFrom>,
 		IDisposable
 	{
 		IWhere Where(Action<IWhereBuilder> builder);

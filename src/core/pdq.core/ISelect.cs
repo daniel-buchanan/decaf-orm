@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace pdq
 {
@@ -20,7 +21,20 @@ namespace pdq
         /// <param name="alias"></param>
         /// <returns></returns>
 		ISelectFrom From(Action<ISelect> query, string alias);
-	}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+		ISelectFromTyped<T> From<T>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="aliasExpression">An expression which defines the alias for the table.</param>
+        /// <returns></returns>
+		ISelectFromTyped<T> From<T>(Expression<Func<T, T>> aliasExpression);
+    }
 
 	public interface ISelectWithAlias : ISelect
     {

@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace pdq.Implementation.Helpers
+namespace pdq.state.Utilities
 {
     class MemberAccess
     {
-        private readonly ReflectionHelper reflectionHelper;
+        private readonly IReflectionHelper reflectionHelper;
 
-        public MemberAccess(ReflectionHelper reflectionHelper)
+        public MemberAccess(IReflectionHelper reflectionHelper)
         {
             this.reflectionHelper = reflectionHelper;
         }

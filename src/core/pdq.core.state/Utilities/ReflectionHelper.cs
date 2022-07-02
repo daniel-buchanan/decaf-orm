@@ -9,9 +9,9 @@ using Microsoft.CSharp.RuntimeBinder;
 using pdq.Attributes;
 using pdq.common;
 
-namespace pdq.Implementation.Helpers
+namespace pdq.state.Utilities
 {
-    internal class ReflectionHelper
+    internal class ReflectionHelper : IReflectionHelper
     {
         public object GetPropertyValue(object o, string member)
         {
@@ -221,7 +221,12 @@ namespace pdq.Implementation.Helpers
             var attr = attributes.FirstOrDefault();
 
             // if we have an attribute, return specified name
-            if (attr != null) return ((TableNameAttribute)attr).Name;
+            if (attr != null)
+            {
+                var tableAttr = (TableNameAttribute)attr;
+                if (tableAttr.CaseSensitive) return $"\"{tableAttr.Name}\"";
+                return tableAttr.Name;
+            }
 
             // return class name
             return tp.Name;

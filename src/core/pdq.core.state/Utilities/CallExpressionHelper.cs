@@ -6,7 +6,7 @@ using pdq.common;
 using pdq.state.Conditionals;
 using pdq.state.Conditionals.ValueFunctions;
 
-namespace pdq.Implementation.Helpers
+namespace pdq.state.Utilities
 {
     class CallExpressionHelper
     {
@@ -88,12 +88,12 @@ namespace pdq.Implementation.Helpers
             var col = state.Column.Create(fieldName, state.QueryTargets.TableTarget.Create(alias));
 
             if (value == null && op == EqualityOperator.NotLike)
-                return Column.NotLike<string>(col, null, StringContains.Create());
+                return Conditionals.Column.NotLike<string>(col, null, StringContains.Create());
             if (value == null)
-                return Column.Like<string>(col, null, StringContains.Create());
+                return Conditionals.Column.Like<string>(col, null, StringContains.Create());
             if (op == EqualityOperator.Like)
-                return Column.Like(col, value, StringContains.Create());
-            else return Column.NotLike(col, value, StringContains.Create());
+                return Conditionals.Column.Like(col, value, StringContains.Create());
+            else return Conditionals.Column.NotLike(col, value, StringContains.Create());
         }
 
         private state.IWhere ParseDatePartCall(
@@ -115,7 +115,7 @@ namespace pdq.Implementation.Helpers
             if (nonCallExpr.NodeType == ExpressionType.Constant)
             {
                 var value = (int)this.expressionHelper.GetValue(nonCallExpr);
-                return Column.ValueMatch(col, op, value, state.Conditionals.ValueFunctions.DatePart.Create(dp));
+                return Conditionals.Column.ValueMatch(col, op, value, state.Conditionals.ValueFunctions.DatePart.Create(dp));
             }
 
             if (nonCallExpr.NodeType == ExpressionType.MemberAccess)
@@ -124,14 +124,14 @@ namespace pdq.Implementation.Helpers
                 if (member.Expression.NodeType == ExpressionType.Constant)
                 {
                     var value = (int)this.expressionHelper.GetValue(member);
-                    return Column.ValueMatch(col, op, value, state.Conditionals.ValueFunctions.DatePart.Create(dp));
+                    return Conditionals.Column.ValueMatch(col, op, value, state.Conditionals.ValueFunctions.DatePart.Create(dp));
                 }
 
                 var mAlias = this.expressionHelper.GetParameterName(nonCallExpr);
                 var mField = this.expressionHelper.GetName(nonCallExpr);
                 col = state.Column.Create(mField, state.QueryTargets.TableTarget.Create(mAlias));
 
-                return Column.ValueMatch(col, op, 0, state.Conditionals.ValueFunctions.DatePart.Create(dp));
+                return Conditionals.Column.ValueMatch(col, op, 0, state.Conditionals.ValueFunctions.DatePart.Create(dp));
             }
 
             return null;
@@ -177,7 +177,7 @@ namespace pdq.Implementation.Helpers
             if (nonCallExpr.NodeType == ExpressionType.Constant)
             {
                 var value = this.expressionHelper.GetValue(nonCallExpr);
-                var functionType = typeof(Column<>);
+                var functionType = typeof(Conditionals.Column<>);
                 var implementedType = functionType.MakeGenericType(value.GetType());
                 return (state.IWhere)Activator.CreateInstance(implementedType, new object[] { col, op, value, funcImplementation });
             }
@@ -187,7 +187,7 @@ namespace pdq.Implementation.Helpers
                 var aliasB = this.expressionHelper.GetParameterName(nonCallExpr);
                 var fieldB = this.expressionHelper.GetName(nonCallExpr);
                 var right = state.Column.Create(fieldB, state.QueryTargets.TableTarget.Create(aliasB));
-                return Column.Match(col, op, funcImplementation, right);
+                return Conditionals.Column.Match(col, op, funcImplementation, right);
             }
 
             if (nonCallExpr.NodeType == ExpressionType.Call)
@@ -202,7 +202,7 @@ namespace pdq.Implementation.Helpers
                 var right = state.Column.Create(fieldB, state.QueryTargets.TableTarget.Create(aliasB));
                 funcImplementation = ConvertMethodNameToValueFunctionImpl(methodB);
 
-                return Column.Match(col, op, funcImplementation, right);
+                return Conditionals.Column.Match(col, op, funcImplementation, right);
             }
 
             return null;
@@ -233,10 +233,10 @@ namespace pdq.Implementation.Helpers
                 if (lengthExpression != null)
                 {
                     var lengthValue = (int) this.expressionHelper.GetValue(lengthExpression);
-                    return Column.ValueMatch(col, op, value, Substring.Create(startValue, lengthValue));
+                    return Conditionals.Column.ValueMatch(col, op, value, Substring.Create(startValue, lengthValue));
                 }
 
-                return Column.ValueMatch(col, op, value, Substring.Create(startValue));
+                return Conditionals.Column.ValueMatch(col, op, value, Substring.Create(startValue));
             }
 
             return null;
@@ -335,9 +335,9 @@ namespace pdq.Implementation.Helpers
             var col = state.Column.Create(fieldName, state.QueryTargets.TableTarget.Create(alias));
 
             if (value == null)
-                return Column.Like<string>(col, null, StringContains.Create());
+                return Conditionals.Column.Like<string>(col, null, StringContains.Create());
 
-            return Column.Like<string>(col, (string)value, StringContains.Create());
+            return Conditionals.Column.Like<string>(col, (string)value, StringContains.Create());
         }
     }
 }

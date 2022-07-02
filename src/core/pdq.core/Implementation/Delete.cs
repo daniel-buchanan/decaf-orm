@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using pdq.common;
 using pdq.state;
 
@@ -11,7 +12,7 @@ namespace pdq.Implementation
 
         private Delete(IQuery query) : base((IQueryInternal)query)
         {
-            this.context = DeleteQueryContext.Create();
+            this.context = DeleteQueryContext.Create(this.query.AliasManager);
             this.query.SetContext(this.context);
         }
 
@@ -27,6 +28,28 @@ namespace pdq.Implementation
             var managedAlias = this.query.AliasManager.Add(name, alias);
             context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias, schema));
             return this;
+        }
+
+        /// <inheritdoc />
+        public IDeleteFrom<T> From<T>(Expression<Func<T, T>> expression)
+        {
+            var table = this.context.Helpers().GetTableName(expression);
+            var alias = this.context.Helpers().GetTableAlias(expression);
+
+            var managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
+            var managedAlias = this.query.AliasManager.Add(table, alias);
+
+            this.context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
+            return Delete<T>.Create(this.context, this.query);
+        }
+
+        /// <inheritdoc />
+        public IDeleteFrom<T> From<T>()
+        {
+            var table = this.context.Helpers().GetTableName<T>();
+            var alias = this.query.AliasManager.Add(table, null);
+            this.context.From(state.QueryTargets.TableTarget.Create(table, alias));
+            return Delete<T>.Create(this.context, this.query);
         }
 
         /// <inheritdoc />

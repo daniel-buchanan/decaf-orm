@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using pdq.common.Connections;
 using pdq.common.Logging;
+using pdq.common.Utilities;
 
 namespace pdq.common
 {
@@ -12,26 +13,26 @@ namespace pdq.common
         private readonly bool trackTransients;
         private readonly List<ITransient> tracker;
         private readonly ILoggerProxy logger;
+        private readonly IConnectionFactory connectionFactory;
         private readonly ITransactionFactory transactionFactory;
 
-		public TransientFactory(
+        public TransientFactory(
             PdqOptions options,
             ILoggerProxy logger,
+            IConnectionFactory connectionFactory,
             ITransactionFactory transactionFactory)
 		{
             this.tracker = new List<ITransient>();
             this.trackTransients = options.TrackTransients;
             this.logger = logger;
+            this.connectionFactory = connectionFactory;
             this.transactionFactory = transactionFactory;
 		}
 
-        public ITransient Create(IConnectionDetails connectionDetails)
-        {
-            var t = this.CreateAsync(connectionDetails);
-            t.Wait();
-            return t.Result;
-        }
+        /// <inheritdoc/>
+        public ITransient Create(IConnectionDetails connectionDetails) => CreateAsync(connectionDetails).WaitFor();
 
+        /// <inheritdoc/>
         public async Task<ITransient> CreateAsync(IConnectionDetails connectionDetails)
         {
             this.logger.Debug("TransientFactory :: Getting Transaction");
@@ -44,6 +45,7 @@ namespace pdq.common
             return transient;
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             if (!this.trackTransients) return;
@@ -52,6 +54,7 @@ namespace pdq.common
             tracker.Clear();
         }
 
+        /// <inheritdoc/>
         void ITransientFactory.NotifyTransientDisposed(Guid id)
         {
             if (!this.trackTransients) return;

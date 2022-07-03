@@ -7,6 +7,7 @@ namespace pdq.state
 	{
 		internal IExpressionHelper ExpressionHelper { get; }
 		internal IReflectionHelper ReflectionHelper { get; }
+		internal void AddQueryTarget(IQueryTarget target);
     }
 }
 

@@ -1,5 +1,8 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using pdq.common;
+using pdq.state.Utilities;
 
 namespace pdq.state
 {
@@ -19,25 +22,23 @@ namespace pdq.state
 			return self.Context.ReflectionHelper.GetTableName(tableType);
         }
 
-        public static string GetTableName<T>(
-            this IHelperExtensions self)
-        {
-            return self.Context.ReflectionHelper.GetTableName<T>();
-        }
+        public static string GetTableName(
+            this IHelperExtensions self,
+            Type type)
+            => self.Context.ReflectionHelper.GetTableName(type);
+
+        public static string GetTableName<T>(this IHelperExtensions self)
+            => self.Context.ReflectionHelper.GetTableName<T>();
 
         public static string GetTableAlias(
             this IHelperExtensions self,
             Expression expression)
-        {
-            return self.Context.ExpressionHelper.GetParameterName(expression);
-        }
+            => self.Context.ExpressionHelper.GetParameterName(expression);
 
         public static string GetColumnName(
             this IHelperExtensions self,
             Expression expression)
-        {
-            return self.Context.ExpressionHelper.GetName(expression);
-        }
+            => self.Context.ExpressionHelper.GetName(expression);
 
         public static IWhere ParseWhere(
             this IHelperExtensions self,

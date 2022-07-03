@@ -35,6 +35,9 @@ namespace pdq.state
 
         IReflectionHelper IQueryContextInternal.ReflectionHelper => this.reflectionHelper;
 
+		void IQueryContextInternal.AddQueryTarget(IQueryTarget target)
+			=> this.queryTargets.Add(target);
+
         public abstract void Dispose();
     }
 }

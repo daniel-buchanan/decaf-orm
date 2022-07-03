@@ -12,7 +12,6 @@ namespace pdq
 	}
 
     public interface ISelectFromTyped<T1, T2> :
-        ISelectFromTyped<T1>,
         ISelectColumnTyped<T1, T2>,
         IJoinTyped<T1, T2>,
         IDisposable
@@ -21,7 +20,6 @@ namespace pdq
     }
 
     public interface ISelectFromTyped<T1, T2, T3> :
-        ISelectFromTyped<T1, T2>,
         ISelectColumnTyped<T1, T2, T3>,
         IJoinTyped<T1, T2, T3>,
         IDisposable
@@ -30,7 +28,6 @@ namespace pdq
     }
 
     public interface ISelectFromTyped<T1, T2, T3, T4> :
-        ISelectFromTyped<T1, T2, T3>,
         ISelectColumnTyped<T1, T2, T3, T4>,
         IJoinTyped<T1, T2, T3, T4>,
         IDisposable
@@ -39,7 +36,6 @@ namespace pdq
     }
 
     public interface ISelectFromTyped<T1, T2, T3, T4, T5> :
-        ISelectFromTyped<T1, T2, T3, T4>,
         ISelectColumnTyped<T1, T2, T3, T4, T5>,
         IDisposable
     {

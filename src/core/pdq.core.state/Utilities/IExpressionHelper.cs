@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using pdq.common;
 
@@ -16,5 +17,6 @@ namespace pdq.state.Utilities
         object GetValue(Expression expression);
         IWhere ParseWhereExpression(Expression expr);
         IWhere ParseWhere(Expression expr, bool excludeAlias);
+        IEnumerable<DynamicPropertyInfo> GetDynamicPropertyInformation(Expression expr);
     }
 }

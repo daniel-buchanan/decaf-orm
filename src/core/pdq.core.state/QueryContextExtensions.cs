@@ -44,6 +44,11 @@ namespace pdq.state
             this IHelperExtensions self,
             Expression expression)
             => self.Context.ExpressionHelper.ParseWhereExpression(expression);
+
+        public static IEnumerable<DynamicPropertyInfo> GetPropertyInformation(
+            this IHelperExtensions self,
+            Expression obj)
+            => self.Context.ExpressionHelper.GetDynamicPropertyInformation(obj);
 	}
 }
 

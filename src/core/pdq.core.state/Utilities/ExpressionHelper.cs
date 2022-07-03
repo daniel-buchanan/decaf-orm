@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
 using pdq.state.Conditionals;
@@ -7,20 +9,27 @@ namespace pdq.state.Utilities
 {
     internal class ExpressionHelper : IExpressionHelper
     {
-        private readonly ConstantAccess _constantAccess;
-        private readonly MemberAccess _memberAccess;
-        private readonly ConvertAccess _convertAccess;
-        private readonly IReflectionHelper _reflectionHelper;
-        private readonly CallExpressionHelper _callExpressionHelper;
+        private readonly ConstantAccess constantAccess;
+        private readonly MemberAccess memberAccess;
+        private readonly ConvertAccess convertAccess;
+        private readonly IReflectionHelper reflectionHelper;
+        private readonly CallExpressionHelper callExpressionHelper;
+        private readonly IAliasManager aliasManager;
+        private readonly IQueryContextInternal context;
 
-        public ExpressionHelper(IReflectionHelper reflectionHelper)
+        public ExpressionHelper(
+            IReflectionHelper reflectionHelper,
+            IAliasManager aliasManager,
+            IQueryContextInternal context)
         {
             // setup helpers
-            _constantAccess = new ConstantAccess();
-            _convertAccess = new ConvertAccess();
-            _reflectionHelper = reflectionHelper;
-            _memberAccess = new MemberAccess(_reflectionHelper);
-            _callExpressionHelper = new CallExpressionHelper(this);
+            this.aliasManager = aliasManager;
+            this.context = context;
+            this.constantAccess = new ConstantAccess();
+            this.convertAccess = new ConvertAccess();
+            this.reflectionHelper = reflectionHelper;
+            this.memberAccess = new MemberAccess(this.reflectionHelper);
+            this.callExpressionHelper = new CallExpressionHelper(this);
         }
 
         /// <summary>
@@ -34,11 +43,11 @@ namespace pdq.state.Utilities
             switch (expression.NodeType)
             {
                 case ExpressionType.Convert:
-                    return _convertAccess.GetName(expression, this);
+                    return convertAccess.GetName(expression, this);
                 case ExpressionType.MemberAccess:
-                    return _memberAccess.GetName(expression);
+                    return memberAccess.GetName(expression);
                 case ExpressionType.Constant:
-                    return _memberAccess.GetName(expression);
+                    return memberAccess.GetName(expression);
                 case ExpressionType.Call:
                     {
                         var call = (MethodCallExpression)expression;
@@ -125,7 +134,7 @@ namespace pdq.state.Utilities
         {
             // use the reflection helper to get the table name
             // NOTE: this will use the [TableName] attribute if present
-            return _reflectionHelper.GetTableName(typeof(TObject));
+            return reflectionHelper.GetTableName(typeof(TObject));
         }
 
         public EqualityOperator ConvertExpressionTypeToEqualityOperator(ExpressionType type)
@@ -151,13 +160,49 @@ namespace pdq.state.Utilities
             return EqualityOperator.Equals;
         }
 
+        public IEnumerable<DynamicPropertyInfo> GetDynamicPropertyInformation(Expression expr)
+        {
+            var expression = (LambdaExpression)expr;
+            var body = (NewExpression)expression.Body;
+
+            var countArguments = body.Arguments.Count;
+            var properties = new DynamicPropertyInfo[countArguments];
+
+            var index = 0;
+            foreach (var a in body.Arguments)
+            {
+
+                var memberExpression = (MemberExpression)a;
+                var parameterExpression = (ParameterExpression)memberExpression.Expression;
+                var table = this.reflectionHelper.GetTableName(parameterExpression.Type);
+                var column = GetName(memberExpression);
+                var alias = GetParameterName(a);
+                
+                properties[index] = DynamicPropertyInfo.Create(name: column, type: parameterExpression.Type);
+
+                index += 1;
+            }
+
+            index = 0;
+            foreach (var m in body.Members)
+            {
+                if (m.Name != properties[index].Name)
+                {
+                    properties[index].SetNewName(m.Name);
+                }
+                index += 1;
+            }
+
+            return properties.ToList();
+        }
+
         public object GetValue(Expression expression)
         {
             if (expression.NodeType == ExpressionType.Convert)
             {
                 try
                 {
-                    expression = _convertAccess.GetExpression(expression);
+                    expression = convertAccess.GetExpression(expression);
                 }
                 catch
                 {
@@ -168,11 +213,11 @@ namespace pdq.state.Utilities
 
             if (expression.NodeType == ExpressionType.MemberAccess)
             {
-                return _memberAccess.GetValue(expression);
+                return memberAccess.GetValue(expression);
             }
             else if (expression.NodeType == ExpressionType.Constant)
             {
-                return _constantAccess.GetValue(expression);
+                return constantAccess.GetValue(expression);
             }
             else if (expression.NodeType == ExpressionType.Lambda)
             {
@@ -198,15 +243,15 @@ namespace pdq.state.Utilities
         {
             if (expression.NodeType == ExpressionType.Convert)
             {
-                return _convertAccess.GetType(expression, this);
+                return convertAccess.GetType(expression, this);
             }
             else if (expression.NodeType == ExpressionType.MemberAccess)
             {
-                return _memberAccess.GetType(expression);
+                return memberAccess.GetType(expression);
             }
             else if (expression.NodeType == ExpressionType.Constant)
             {
-                return _constantAccess.GetType(expression);
+                return constantAccess.GetType(expression);
             }
             else if (expression.NodeType == ExpressionType.Lambda)
             {
@@ -267,7 +312,7 @@ namespace pdq.state.Utilities
 
                 // check for call expression on field
                 if (lambda.Body.NodeType == ExpressionType.Call)
-                    return _callExpressionHelper.ParseCallExpressions(lambda.Body);
+                    return callExpressionHelper.ParseCallExpressions(lambda.Body);
 
                 binaryExpr = (BinaryExpression)lambda.Body;
             }
@@ -275,7 +320,7 @@ namespace pdq.state.Utilities
             else if (expr.NodeType == ExpressionType.Call)
             {
                 // parse call expressions
-                return _callExpressionHelper.ParseCallExpressions(expr);
+                return callExpressionHelper.ParseCallExpressions(expr);
             }
             else
             {
@@ -377,25 +422,16 @@ namespace pdq.state.Utilities
 
                     //start with left
                     leftField = this.GetName(left);
-                    leftTable = this.GetParameterName(left);
-
-                    //then right
                     rightField = this.GetName(right);
-                    rightTable = this.GetParameterName(right);
-
-                    //get table if not already present
-                    if (String.IsNullOrEmpty(leftTable)) leftTable = this.GetParameterName(operation.Left);
-                    if (string.IsNullOrEmpty(rightTable))
-                        rightTable = this.GetParameterName(operation.Right);
 
                     //get operation
                     op = this.ConvertExpressionTypeToEqualityOperator(operation.NodeType);
 
                     // create column
                     return Conditionals.Column.Match(
-                        Column.Create(leftField, QueryTargets.TableTarget.Create(leftTable)),
+                        Column.Create(leftField, GetQueryTarget(left)),
                         op,
-                        Column.Create(rightField, QueryTargets.TableTarget.Create(rightTable)));
+                        Column.Create(rightField, GetQueryTarget(right)));
                 }
                 else if (expr is LambdaExpression)
                 {
@@ -428,16 +464,31 @@ namespace pdq.state.Utilities
 
                     return Conditionals.Column.Match(
                         Column.Create(
-                            _reflectionHelper.GetFieldName(left.Member),
-                            QueryTargets.TableTarget.Create(leftParam.Name)),
+                            reflectionHelper.GetFieldName(left.Member),
+                            GetQueryTarget(leftParam)),
                         this.ConvertExpressionTypeToEqualityOperator(operation.NodeType),
                         Column.Create(
-                            _reflectionHelper.GetFieldName(right.Member),
-                            QueryTargets.TableTarget.Create(rightParam.Name)));
+                            reflectionHelper.GetFieldName(right.Member),
+                            GetQueryTarget(rightParam)));
                 }
 
                 return null;
             }
+        }
+
+        private IQueryTarget GetQueryTarget(Expression expression)
+        {
+            var alias = GetParameterName(expression);
+            var table = this.reflectionHelper.GetTableName(expression.Type);
+            var managedAlias = this.aliasManager.FindByAssociation(table)?.FirstOrDefault()?.Name ?? alias;
+            managedAlias = this.aliasManager.Add(managedAlias, table);
+            var existing = this.context.QueryTargets.FirstOrDefault(t => t.Alias == managedAlias);
+
+            if (existing != null) return existing;
+
+            existing = QueryTargets.TableTarget.Create(managedAlias, managedAlias);
+            this.context.AddQueryTarget(existing);
+            return existing;
         }
 
 
@@ -506,7 +557,7 @@ namespace pdq.state.Utilities
                 if (left.NodeType == ExpressionType.Call ||
                     right.NodeType == ExpressionType.Call)
                 {
-                    return _callExpressionHelper.ParseBinaryCallExpressions(operation);
+                    return callExpressionHelper.ParseBinaryCallExpressions(operation);
                 }
 
                 //start with left
@@ -558,7 +609,7 @@ namespace pdq.state.Utilities
                     }
                     catch
                     {
-                        var underlyingType = _reflectionHelper.GetUnderlyingType(valType);
+                        var underlyingType = reflectionHelper.GetUnderlyingType(valType);
                         convertedValue = Convert.ChangeType(val, underlyingType);
                     }
                 }

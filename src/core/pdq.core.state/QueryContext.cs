@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using pdq.common;
 using pdq.state.Utilities;
 
@@ -22,7 +21,10 @@ namespace pdq.state
 			this.aliasManager = aliasManager;
 			this.queryTargets = new List<IQueryTarget>();
 			this.reflectionHelper = new ReflectionHelper();
-			this.expressionHelper = new ExpressionHelper(this.reflectionHelper);
+			this.expressionHelper = new ExpressionHelper(
+				this.reflectionHelper,
+				this.aliasManager,
+				this);
 		}
 
         public Guid Id { get; private set; }

@@ -5,7 +5,7 @@ namespace pdq.common.Connections
 {
 	public interface ITransaction : IDisposable
 	{
-		internal bool CloseTransactionOnCommitOrRollback { get; }
+		internal bool CloseConnectionOnCommitOrRollback { get; }
 
 		Guid Id { get; }
 

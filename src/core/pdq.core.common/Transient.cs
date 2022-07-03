@@ -71,7 +71,7 @@ namespace pdq.common
             }
             finally
             {
-                if(this.transaction.CloseTransactionOnCommitOrRollback)
+                if(this.transaction.CloseConnectionOnCommitOrRollback)
                 {
                     this.logger.Debug($"Transient({Id}) :: Closing Connection after Commit or Rollback");
                     this.connection.Close();

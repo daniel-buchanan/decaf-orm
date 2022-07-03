@@ -11,14 +11,17 @@ namespace pdq.common.Connections
         private readonly Dictionary<string, ITransaction> transactions;
         private readonly IConnectionFactory connectionFactory;
         protected readonly ILoggerProxy logger;
+        protected readonly PdqOptions options;
 
         public TransactionFactory(
             IConnectionFactory connectionFactory,
-            ILoggerProxy logger)
+            ILoggerProxy logger,
+            PdqOptions options)
         {
             this.transactions = new Dictionary<string, ITransaction>();
             this.connectionFactory = connectionFactory;
             this.logger = logger;
+            this.options = options;
         }
 
         public ITransaction Get(IConnectionDetails connection)

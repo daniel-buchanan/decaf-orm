@@ -20,10 +20,15 @@ namespace pdq
         /// </summary>
 		public bool TrackTransients { get; private set; } = false;
 
-		/// <summary>
+        /// <summary>
+        /// Whether or not to close the connection on commit or rollback of the transaction.
+        /// </summary>
+        public bool CloseConnectionOnCommitOrRollback { get; private set; } = false;
+
+        /// <summary>
         /// The type of the logger proxy to use.
         /// </summary>
-		internal Type LoggerProxyType { get; private set; } = typeof(DefaultLogger);
+        internal Type LoggerProxyType { get; private set; } = typeof(DefaultLogger);
 
 		/// <summary>
         /// The type of the sql factory to use.

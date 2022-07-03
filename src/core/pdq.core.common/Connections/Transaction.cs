@@ -9,15 +9,18 @@ namespace pdq.common.Connections
         private readonly ILoggerProxy logger;
         protected readonly IConnection connection;
         protected IDbTransaction transaction;
+        protected PdqOptions options;
 
 		protected Transaction(
             Guid id,
             ILoggerProxy logger,
-            IConnection connection)
+            IConnection connection,
+            PdqOptions options)
 		{
             Id = id;
             this.logger = logger;
             this.connection = connection;
+            this.options = options;
 
             this.logger.Debug($"ITransaction({Id}) :: Transaction created");
 		}
@@ -29,7 +32,7 @@ namespace pdq.common.Connections
         public Guid Id { get; }
 
         /// <inheritdoc/>
-        bool ITransaction.CloseTransactionOnCommitOrRollback => throw new NotImplementedException();
+        bool ITransaction.CloseConnectionOnCommitOrRollback => this.options.CloseConnectionOnCommitOrRollback;
 
         /// <inheritdoc/>
         public void Begin()

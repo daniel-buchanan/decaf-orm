@@ -8,8 +8,12 @@ namespace pdq.playground.Mocks
 {
     public class MockTransaction : Transaction
     {
-        public MockTransaction(Guid id, ILoggerProxy logger, IConnection connection)
-            : base(id, logger, connection)
+        public MockTransaction(
+            Guid id,
+            ILoggerProxy logger,
+            IConnection connection,
+            PdqOptions options)
+            : base(id, logger, connection, options)
         {
         }
 

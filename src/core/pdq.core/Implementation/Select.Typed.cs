@@ -1,28 +1,23 @@
 ﻿using System;
-using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
-using pdq.Exceptions;
 using pdq.state;
 
 namespace pdq.Implementation
 {
-	internal class Select<T>
-        : Execute,
+    internal class Select<T>
+        : SelectTypedBase,
         ISelectFromTyped<T>,
         ISelectColumnTyped<T>,
         IGroupByTyped<T>,
         IGroupByThenTyped<T>,
         IOrderByThenTyped<T>
 	{
-        private readonly ISelectQueryContext context;
-
         private Select(
             ISelectQueryContext context,
             IQuery query)
-            : base((IQueryInternal)query)
+            : base(context, query)
         {
-            this.context = context;
         }
 
         public static Select<T> Create(
@@ -30,66 +25,49 @@ namespace pdq.Implementation
             IQuery query)
             => new Select<T>(context, query);
 
-        private IQueryTarget GetTarget(string alias)
-        {
-            return this.context.QueryTargets.FirstOrDefault(t => t.Alias == alias);
-        }
-
         public ISelectFromTyped<T> Column(Expression<Func<T, object>> expression)
         {
-            var table = this.context.Helpers().GetTableName<T>();
-            var managedAlias = this.query.AliasManager.FindByAssociation(table).FirstOrDefault()?.Name;
-
-            if (string.IsNullOrWhiteSpace(managedAlias))
-            {
-                var tableName = this.context.Helpers().GetTableName<T>();
-                var alias = this.context.Helpers().GetTableAlias(expression);
-                throw new TableNotFoundException(alias, tableName);
-            }
-
-            var column = this.context.Helpers().GetColumnName(expression);
-
-            this.context.Select(state.Column.Create(column, GetTarget(managedAlias)));
+            this.AddColumn<T>(expression);
             return this;
         }
 
         public ISelectFromTyped<T> Columns(Expression<Func<T, dynamic>> selectExpression)
         {
-            throw new NotImplementedException();
+            this.AddColumns(selectExpression);
+            return this;
         }
 
-        public void Dispose() => this.context.Dispose();
+        public void Dispose() { }
 
         public IGroupByThenTyped<T> GroupBy(Expression<Func<T, object>> builder)
         {
-            throw new NotImplementedException();
+            this.AddGroupBy(builder);
+            return this;
         }
 
         public ISelectFromTyped<T, TDestination> Join<TDestination>(Expression<Func<T, TDestination, bool>> joinExpression, JoinType type = JoinType.Default)
         {
-            
-            throw new NotImplementedException();
+            this.AddJoin<T, TDestination>(joinExpression, type);
+            return Select<T, TDestination>.Create(this.context, this.query);
         }
 
-        public IOrderByThenTyped<T> OrderBy(Expression<Func<T, object>> builder)
+        public IOrderByThenTyped<T> OrderBy(Expression<Func<T, object>> builder, SortOrder order = SortOrder.Ascending)
         {
-            throw new NotImplementedException();
+            this.AddOrderBy(builder, order);
+            return this;
         }
 
-        public IOrderByThenTyped<T> ThenBy(Expression<Func<T, object>> builder)
-        {
-            throw new NotImplementedException();
-        }
+        public IOrderByThenTyped<T> ThenBy(Expression<Func<T, object>> builder, SortOrder order = SortOrder.Ascending)
+            => OrderBy(builder, order);
 
         public IGroupByTyped<T> Where(Expression<Func<T, bool>> builder)
         {
-            throw new NotImplementedException();
+            this.AddWhere(builder);
+            return this;
         }
 
         IGroupByThenTyped<T> IGroupByThenTyped<T>.ThenBy(Expression<Func<T, object>> builder)
-        {
-            throw new NotImplementedException();
-        }
+            => GroupBy(builder);
     }
 }
 

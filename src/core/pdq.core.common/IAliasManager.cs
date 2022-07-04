@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.state")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.core-tests")]
 namespace pdq.common
 {
-    public interface IAliasManager : IDisposable
+    internal interface IAliasManager : IDisposable
     {
         /// <summary>
         /// Add an Alias, if none is provided one will be generated

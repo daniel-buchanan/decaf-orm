@@ -2,7 +2,7 @@
 
 namespace pdq.state
 {
-	public class DeleteQueryContext : QueryContext, IDeleteQueryContext
+	internal class DeleteQueryContext : QueryContext, IDeleteQueryContext
 	{
 		private DeleteQueryContext(IAliasManager aliasManager)
 			: base(aliasManager, QueryType.Delete)

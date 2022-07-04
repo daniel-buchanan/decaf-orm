@@ -5,7 +5,7 @@ using pdq.state.Utilities;
 
 namespace pdq.state
 {
-	public abstract class QueryContext : IQueryContext, IQueryContextInternal
+	internal abstract class QueryContext : IQueryContext, IQueryContextInternal
 	{
 		private readonly IAliasManager aliasManager;
 		private readonly IExpressionHelper expressionHelper;

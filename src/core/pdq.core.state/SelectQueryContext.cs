@@ -5,7 +5,7 @@ using pdq.common;
 
 namespace pdq.state
 {
-	public class SelectQueryContext : QueryContext, ISelectQueryContext
+	internal class SelectQueryContext : QueryContext, ISelectQueryContext
 	{
         private readonly List<Column> columns;
         private readonly List<Join> joins;
@@ -14,7 +14,7 @@ namespace pdq.state
         private readonly List<GroupBy> groupByClauses;
 
 
-		public SelectQueryContext(IAliasManager aliasManager)
+		private SelectQueryContext(IAliasManager aliasManager)
             : base(aliasManager, QueryType.Select)
 		{
             this.columns = new List<Column>();
@@ -23,7 +23,7 @@ namespace pdq.state
             this.groupByClauses = new List<GroupBy>();
 		}
 
-        public static ISelectQueryContext Create(IAliasManager aliasManager)
+        internal static ISelectQueryContext Create(IAliasManager aliasManager)
             => new SelectQueryContext(aliasManager);
 
         public IReadOnlyCollection<Column> Columns => this.columns.AsReadOnly();

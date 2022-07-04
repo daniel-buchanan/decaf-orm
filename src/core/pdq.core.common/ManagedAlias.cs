@@ -1,6 +1,6 @@
 ﻿namespace pdq.common
 {
-    public class ManagedAlias
+    internal class ManagedAlias
     {
         private ManagedAlias(string name, string assocWith)
         {

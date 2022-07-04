@@ -26,18 +26,6 @@ namespace pdq.Implementation
             IQuery query)
             => new Select<T1, T2, T3>(context, query);
 
-        public ISelectFromTyped<T1, T2, T3> Column(Expression<Func<T3, object>> selectExpression)
-        {
-            this.AddColumn<T3>(selectExpression);
-            return this;
-        }
-
-        public ISelectFromTyped<T1, T2, T3> Columns(Expression<Func<T1, T2, T3, dynamic>> selectExpression)
-        {
-            this.AddColumns(selectExpression);
-            return this;
-        }
-
         public void Dispose() { }
 
         public IGroupByThenTyped<T1, T2, T3> GroupBy(Expression<Func<T1, T2, T3, object>> builder)
@@ -74,6 +62,18 @@ namespace pdq.Implementation
         {
             this.AddWhere(builder);
             return this;
+        }
+
+        IExecuteDynamic ISelectColumnTyped<T1, T2, T3>.Select(Expression<Func<T1, T2, T3, dynamic>> expression)
+        {
+            this.AddColumns(expression);
+            return ExecuteDynamic.Create(this.query);
+        }
+
+        IExecute<TResult> ISelectColumnTyped<T1, T2, T3>.Select<TResult>(Expression<Func<T1, T2, T3, TResult>> expression)
+        {
+            this.AddColumns(expression);
+            return Execute<TResult>.Create(this.query);
         }
     }
 }

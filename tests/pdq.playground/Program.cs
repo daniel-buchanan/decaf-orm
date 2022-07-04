@@ -37,7 +37,7 @@ using (var t = uow.Begin())
         //    });
 
         q.Select()
-            .From<Person>()
+            .From<Person>(x => x)
             .Join<Address>((p, a) => p.AddressId == a.Id)
             .Join<Person, Note>((p, n) => p.Id == n.PersonId)
             .Where((p, a, n) => p.LastName.Contains("smith"))

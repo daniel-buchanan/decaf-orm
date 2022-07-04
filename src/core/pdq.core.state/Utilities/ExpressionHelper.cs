@@ -12,6 +12,7 @@ namespace pdq.state.Utilities
         private readonly ConstantAccess constantAccess;
         private readonly MemberAccess memberAccess;
         private readonly ConvertAccess convertAccess;
+        private readonly ParameterAccess parameterAccess;
         private readonly IReflectionHelper reflectionHelper;
         private readonly CallExpressionHelper callExpressionHelper;
         private readonly IAliasManager aliasManager;
@@ -27,6 +28,7 @@ namespace pdq.state.Utilities
             this.context = context;
             this.constantAccess = new ConstantAccess();
             this.convertAccess = new ConvertAccess();
+            this.parameterAccess = new ParameterAccess();
             this.reflectionHelper = reflectionHelper;
             this.memberAccess = new MemberAccess(this.reflectionHelper);
             this.callExpressionHelper = new CallExpressionHelper(this);
@@ -279,6 +281,10 @@ namespace pdq.state.Utilities
             else if (expression.NodeType == ExpressionType.Constant)
             {
                 return constantAccess.GetType(expression);
+            }
+            else if(expression.NodeType == ExpressionType.Parameter)
+            {
+                return parameterAccess.GetType(expression);
             }
             else if (expression.NodeType == ExpressionType.Lambda)
             {

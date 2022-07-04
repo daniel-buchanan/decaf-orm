@@ -19,23 +19,6 @@ namespace pdq.Implementation
             this.context = context;
         }
 
-        protected void AddColumn<T>(Expression expression)
-        {
-            var table = this.context.Helpers().GetTableName<T>();
-            var managedAlias = this.query.AliasManager.FindByAssociation(table).FirstOrDefault()?.Name;
-
-            if (string.IsNullOrWhiteSpace(managedAlias))
-            {
-                var tableName = this.context.Helpers().GetTableName<T>();
-                var alias = this.context.Helpers().GetTableAlias(expression);
-                throw new TableNotFoundException(alias, tableName);
-            }
-
-            var column = this.context.Helpers().GetColumnName(expression);
-
-            this.context.Select(state.Column.Create(column, GetTarget(managedAlias)));
-        }
-
         protected void AddColumns(Expression expression)
         {
             var properties = this.context.Helpers().GetPropertyInformation(expression);
@@ -44,11 +27,6 @@ namespace pdq.Implementation
                 var target = GetQueryTarget(p.Type);
                 this.context.Select(state.Column.Create(p.Name, target, p.NewName));
             }
-        }
-
-        private IQueryTarget GetTarget(string alias)
-        {
-            return this.context.QueryTargets.FirstOrDefault(t => t.Alias == alias);
         }
 
         private IQueryTarget GetQueryTarget<T>()

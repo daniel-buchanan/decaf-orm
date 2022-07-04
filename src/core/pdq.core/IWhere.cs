@@ -1,11 +1,5 @@
-﻿using System;
-namespace pdq
+﻿namespace pdq
 {
-	public interface IWhere :
-		IOrderBy,
-		IExecute
-	{
-		
-	}
+	public interface IWhere : IOrderBy, IExecute { }
 }
 

@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 namespace pdq
 {
 	public interface ISelectFromTyped<T> :
-		ISelectColumnTyped<T>,
 		IJoinTyped<T>,
 		IDisposable
 	{
@@ -12,7 +11,6 @@ namespace pdq
 	}
 
     public interface ISelectFromTyped<T1, T2> :
-        ISelectColumnTyped<T1, T2>,
         IJoinTyped<T1, T2>,
         IDisposable
     {
@@ -20,7 +18,6 @@ namespace pdq
     }
 
     public interface ISelectFromTyped<T1, T2, T3> :
-        ISelectColumnTyped<T1, T2, T3>,
         IJoinTyped<T1, T2, T3>,
         IDisposable
     {
@@ -28,7 +25,6 @@ namespace pdq
     }
 
     public interface ISelectFromTyped<T1, T2, T3, T4> :
-        ISelectColumnTyped<T1, T2, T3, T4>,
         IJoinTyped<T1, T2, T3, T4>,
         IDisposable
     {
@@ -36,7 +32,6 @@ namespace pdq
     }
 
     public interface ISelectFromTyped<T1, T2, T3, T4, T5> :
-        ISelectColumnTyped<T1, T2, T3, T4, T5>,
         IDisposable
     {
         IGroupByTyped<T1, T2, T3, T4, T5> Where(Expression<Func<T1, T2, T3, T4, T5, bool>> builder);

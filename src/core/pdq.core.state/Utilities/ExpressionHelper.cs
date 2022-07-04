@@ -162,35 +162,62 @@ namespace pdq.state.Utilities
 
         public IEnumerable<DynamicPropertyInfo> GetDynamicPropertyInformation(Expression expr)
         {
+            DynamicPropertyInfo[] properties;
             var expression = (LambdaExpression)expr;
-            var body = (NewExpression)expression.Body;
 
-            var countArguments = body.Arguments.Count;
-            var properties = new DynamicPropertyInfo[countArguments];
-
-            var index = 0;
-            foreach (var a in body.Arguments)
+            if(expression.Body is MemberInitExpression)
             {
+                var initExpr = (MemberInitExpression)expression.Body;
 
-                var memberExpression = (MemberExpression)a;
-                var parameterExpression = (ParameterExpression)memberExpression.Expression;
-                var table = this.reflectionHelper.GetTableName(parameterExpression.Type);
-                var column = GetName(memberExpression);
-                var alias = GetParameterName(a);
-                
-                properties[index] = DynamicPropertyInfo.Create(name: column, type: parameterExpression.Type);
+                var countBindings = initExpr.Bindings.Count();
+                properties = new DynamicPropertyInfo[countBindings];
 
-                index += 1;
-            }
-
-            index = 0;
-            foreach (var m in body.Members)
-            {
-                if (m.Name != properties[index].Name)
+                var index = 0;
+                foreach (var b in initExpr.Bindings)
                 {
-                    properties[index].SetNewName(m.Name);
+                    var memberBinding = (MemberAssignment)b;
+                    var memberExpression = (MemberExpression)memberBinding.Expression;
+                    var parameterExpression = (ParameterExpression)memberExpression.Expression;
+                    var column = GetName(memberExpression);
+                    var alias = GetParameterName(memberExpression);
+                    var newName = memberBinding.Member.Name;
+
+                    properties[index] = DynamicPropertyInfo.Create(column, newName, type: parameterExpression.Type);
+
+                    index += 1;
                 }
-                index += 1;
+            }
+            else
+            {
+                var body = (NewExpression)expression.Body;
+
+                var countArguments = body.Arguments.Count;
+                properties = new DynamicPropertyInfo[countArguments];
+
+                var index = 0;
+                foreach (var a in body.Arguments)
+                {
+
+                    var memberExpression = (MemberExpression)a;
+                    var parameterExpression = (ParameterExpression)memberExpression.Expression;
+                    var table = this.reflectionHelper.GetTableName(parameterExpression.Type);
+                    var column = GetName(memberExpression);
+                    var alias = GetParameterName(a);
+
+                    properties[index] = DynamicPropertyInfo.Create(name: column, type: parameterExpression.Type);
+
+                    index += 1;
+                }
+
+                index = 0;
+                foreach (var m in body.Members)
+                {
+                    if (m.Name != properties[index].Name)
+                    {
+                        properties[index].SetNewName(m.Name);
+                    }
+                    index += 1;
+                }
             }
 
             return properties.ToList();

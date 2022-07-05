@@ -27,20 +27,27 @@ namespace pdq.state
 				this);
 		}
 
+		/// <inheritdoc/>
         public Guid Id { get; private set; }
 
-        public QueryType Kind { get; private set; }
+		/// <inheritdoc/>
+		public QueryType Kind { get; private set; }
 
-        public IEnumerable<IQueryTarget> QueryTargets => this.queryTargets;
+		/// <inheritdoc/>
+		public IEnumerable<IQueryTarget> QueryTargets => this.queryTargets;
 
-        IExpressionHelper IQueryContextInternal.ExpressionHelper => this.expressionHelper;
+		/// <inheritdoc/>
+		IExpressionHelper IQueryContextInternal.ExpressionHelper => this.expressionHelper;
 
-        IReflectionHelper IQueryContextInternal.ReflectionHelper => this.reflectionHelper;
+		/// <inheritdoc/>
+		IReflectionHelper IQueryContextInternal.ReflectionHelper => this.reflectionHelper;
 
+		/// <inheritdoc/>
 		void IQueryContextInternal.AddQueryTarget(IQueryTarget target)
 			=> this.queryTargets.Add(target);
 
-        public abstract void Dispose();
+		/// <inheritdoc/>
+		public abstract void Dispose();
     }
 }
 

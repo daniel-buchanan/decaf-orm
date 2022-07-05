@@ -36,8 +36,8 @@ namespace pdq.common
             var existing = this.knownAliases.FirstOrDefault(a => a.Name == alias);
             if (existing != null)
             {
-                if (string.IsNullOrWhiteSpace(existing.AssociatedWith))
-                    existing.AssociatedWith = assocWith;
+                if (string.IsNullOrWhiteSpace(existing.Relation))
+                    existing.Relation = assocWith;
                 return alias;
             }
 
@@ -58,13 +58,13 @@ namespace pdq.common
 
         /// <inheritdoc />
         public IEnumerable<ManagedAlias> FindByAssociation(string assocWith)
-            => this.knownAliases.Where(a => a.AssociatedWith == assocWith).ToList();
+            => this.knownAliases.Where(a => a.Relation == assocWith).ToList();
 
         /// <inheritdoc />
         public string GetAssociation(string alias)
         {
             var existing = this.knownAliases.FirstOrDefault(a => a.Name == alias);
-            return existing?.AssociatedWith;
+            return existing?.Relation;
         }
 
         private string GenerateAlias(string assocWith)

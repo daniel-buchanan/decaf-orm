@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace pdq
 {
-	public interface IDelete : IBuilder
+	public interface IDelete : IGetSql
 	{
         /// <summary>
         /// Sets the initial table, view or other schema item to perform the

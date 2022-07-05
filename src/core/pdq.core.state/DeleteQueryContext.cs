@@ -11,26 +11,36 @@ namespace pdq.state
 			WhereClause = null;
         }
 
+		/// <inheritdoc/>
 		public ITableTarget Table { get; private set; }
 
+		/// <inheritdoc/>
 		public IWhere WhereClause { get; private set; }
 
+		/// <inheritdoc/>
 		public IDeleteQueryContext From(ITableTarget table)
         {
 			Table = table;
 			return this;
         }
 
+		/// <inheritdoc/>
 		public IDeleteQueryContext Where(IWhere where)
         {
 			WhereClause = where;
 			return this;
         }
 
+		/// <summary>
+        /// Create a <see cref="IDeleteQueryContext"/> Context.
+        /// </summary>
+        /// <param name="aliasManager">The <see cref="IAliasManager"/> to use.</param>
+        /// <returns>A new instance which implements <see cref="IDeleteQueryContext"/>.</returns>
 		public static IDeleteQueryContext Create(IAliasManager aliasManager)
 			=> new DeleteQueryContext(aliasManager);
 
-        public override void Dispose()
+		/// <inheritdoc/>
+		public override void Dispose()
         {
 			Table = null;
 			WhereClause = null;

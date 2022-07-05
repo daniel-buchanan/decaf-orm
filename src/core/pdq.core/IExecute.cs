@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace pdq
 {
-	public interface IExecute : IBuilder
+	public interface IExecute : IGetSql
 	{
 		IEnumerable<T> AsEnumerable<T>();
 

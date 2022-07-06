@@ -34,6 +34,15 @@ namespace pdq
         /// <param name="aliasExpression">An expression which defines the alias for the table.</param>
         /// <returns></returns>
 		ISelectFromTyped<T> From<T>(Expression<Func<T, T>> aliasExpression);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <param name="alias"></param>
+        /// <returns></returns>
+        ISelectFromTyped<T> From<T>(Action<ISelectWithAlias> query, string alias);
     }
 
 	public interface ISelectWithAlias : ISelect

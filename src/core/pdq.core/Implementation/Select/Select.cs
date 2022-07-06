@@ -149,6 +149,20 @@ namespace pdq.Implementation
             this.context.GroupBy(state.GroupBy.Create(column, state.QueryTargets.TableTarget.Create(managedTable, managedAlias)));
             return this;
         }
+
+        public ISelectFromTyped<T> From<T>(Action<ISelectWithAlias> query, string alias)
+        {
+            var select = Create(this.query);
+            query(select);
+
+            var target = state.QueryTargets.SelectQueryTarget.Create(select.context, select.Alias);
+
+            var table = this.context.Helpers().GetTableName<T>();
+            this.query.AliasManager.Add(table, alias);
+
+            this.context.From(target);
+            return Select<T>.Create(this.context, this.query);
+        }
     }
 }
 

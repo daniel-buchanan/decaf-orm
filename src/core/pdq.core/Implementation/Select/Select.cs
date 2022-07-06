@@ -21,6 +21,8 @@ namespace pdq.Implementation
 
         public static Select Create(IQuery query) => new Select(query);
 
+        internal ISelectQueryContext GetContext() => this.context;
+
         public void Dispose() => this.context.Dispose();
 
         public ISelectFrom Column(

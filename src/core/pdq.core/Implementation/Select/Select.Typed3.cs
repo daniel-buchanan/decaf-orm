@@ -46,6 +46,12 @@ namespace pdq.Implementation
             return Select<T1, T2, T3, TDestination>.Create(this.context, this.query);
         }
 
+        public ISelectFromTyped<T1, T2, T3, TDestination> Join<TDestination>(Action<ISelectWithAlias> query, Expression<Func<T3, TDestination, bool>> joinExpression, JoinType type = JoinType.Default)
+        {
+            this.AddJoin<T3, TDestination>(query, joinExpression, type);
+            return Select<T1, T2, T3, TDestination>.Create(this.context, this.query);
+        }
+
         public IOrderByThenTyped<T1, T2, T3> OrderBy(Expression<Func<T1, T2, T3, object>> builder, SortOrder order = SortOrder.Ascending)
         {
             this.AddOrderBy(builder, order);

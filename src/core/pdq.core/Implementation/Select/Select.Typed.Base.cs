@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using pdq.common;
 using pdq.Exceptions;
 using pdq.state;
+using pdq.state.QueryTargets;
 
 namespace pdq.Implementation
 {
@@ -62,6 +63,22 @@ namespace pdq.Implementation
             var conditions = this.context.Helpers().ParseWhere(expression);
             var left = GetQueryTarget<T1>();
             var right = GetQueryTarget<T2>();
+
+            this.context.Join(state.Join.Create(left, right, type, conditions));
+        }
+
+        protected void AddJoin<T1, T2>(Action<ISelectWithAlias> query, Expression expression, JoinType type)
+        {
+            var select = Select.Create(this.query);
+            query(select);
+
+            var table = this.context.Helpers().GetTableName<T2>();
+            var alias = this.query.AliasManager.Add(table, select.Alias);
+
+            var left = GetQueryTarget<T1>();
+            var right = SelectQueryTarget.Create(select.GetContext(), alias);
+
+            var conditions = this.context.Helpers().ParseWhere(expression);
 
             this.context.Join(state.Join.Create(left, right, type, conditions));
         }

@@ -33,9 +33,20 @@ namespace pdq.Implementation
             return this;
         }
 
-        public ISelectFromTyped<T, TDestination> Join<TDestination>(Expression<Func<T, TDestination, bool>> joinExpression, JoinType type = JoinType.Default)
+        public ISelectFromTyped<T, TDestination> Join<TDestination>(
+            Expression<Func<T, TDestination, bool>> joinExpression,
+            JoinType type = JoinType.Default)
         {
             this.AddJoin<T, TDestination>(joinExpression, type);
+            return Select<T, TDestination>.Create(this.context, this.query);
+        }
+
+        public ISelectFromTyped<T, TDestination> Join<TDestination>(
+            Action<ISelectWithAlias> query,
+            Expression<Func<T, TDestination, bool>> joinExpression,
+            JoinType type = JoinType.Default)
+        {
+            this.AddJoin<T, TDestination>(query, joinExpression, type);
             return Select<T, TDestination>.Create(this.context, this.query);
         }
 

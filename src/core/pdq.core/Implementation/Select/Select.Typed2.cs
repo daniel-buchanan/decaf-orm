@@ -29,7 +29,7 @@ namespace pdq.Implementation
 
         public IGroupByThenTyped<T1, T2> GroupBy(Expression<Func<T1, T2, object>> builder)
         {
-            this.GroupBy(builder);
+            this.AddGroupBy(builder);
             return this;
         }
 

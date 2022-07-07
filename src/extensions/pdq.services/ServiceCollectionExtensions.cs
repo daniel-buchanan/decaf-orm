@@ -4,17 +4,24 @@ namespace pdq.services
 {
 	public static class ServiceCollectionExtensions
 	{
-		public static IServiceCollectionHandler<TEntity> AddPdqService<TEntity>(this IServiceCollection services)
-			where TEntity : IEntity
-        {
-			return new ServiceCollectionHandler<TEntity>(services);
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollectionHandler<TEntity> AddPdqService<TEntity>(this IServiceCollection services)
+            where TEntity : class, IEntity => ServiceCollectionHandler<TEntity>.Create(services);
 
-		public static IServiceCollectionHandler<TEntity> AddPdqService<TEntity, TKey>(this IServiceCollection services)
-			where TEntity : IEntity<TKey>
-		{
-			return new ServiceCollectionHandler<TEntity, TKey>(services);
-		}
-	}
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollectionHandler<TEntity> AddPdqService<TEntity, TKey>(this IServiceCollection services)
+            where TEntity : class, IEntity<TKey> => ServiceCollectionHandler<TEntity, TKey>.Create(services);
+    }
 }
 

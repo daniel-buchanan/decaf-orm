@@ -24,6 +24,11 @@ namespace pdq.common
 			this.logger.Debug($"Query({Id}) :: Created as {Status}");
 		}
 
+        public Query(ITransient transient)
+        {
+            this.transient = transient;
+        }
+
         public Guid Id { get; private set; }
 
 		public QueryStatus Status { get; private set; }

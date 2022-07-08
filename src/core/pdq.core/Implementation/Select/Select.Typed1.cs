@@ -25,14 +25,17 @@ namespace pdq.Implementation
             IQuery query)
             => new Select<T>(context, query);
 
+        /// <inheritdoc/>
         public void Dispose() { }
 
+        /// <inheritdoc/>
         public IGroupByThenTyped<T> GroupBy(Expression<Func<T, object>> builder)
         {
             this.AddGroupBy(builder);
             return this;
         }
 
+        /// <inheritdoc/>
         public ISelectFromTyped<T, TDestination> Join<TDestination>(
             Expression<Func<T, TDestination, bool>> joinExpression,
             JoinType type = JoinType.Default)
@@ -41,6 +44,7 @@ namespace pdq.Implementation
             return Select<T, TDestination>.Create(this.context, this.query);
         }
 
+        /// <inheritdoc/>
         public ISelectFromTyped<T, TDestination> Join<TDestination>(
             Action<ISelectWithAlias> query,
             Expression<Func<T, TDestination, bool>> joinExpression,
@@ -50,33 +54,39 @@ namespace pdq.Implementation
             return Select<T, TDestination>.Create(this.context, this.query);
         }
 
+        /// <inheritdoc/>
         public IOrderByThenTyped<T> OrderBy(Expression<Func<T, object>> builder, SortOrder order = SortOrder.Ascending)
         {
             this.AddOrderBy(builder, order);
             return this;
         }
 
+        /// <inheritdoc/>
         public IOrderByThenTyped<T> ThenBy(Expression<Func<T, object>> builder, SortOrder order = SortOrder.Ascending)
             => OrderBy(builder, order);
 
+        /// <inheritdoc/>
         public IGroupByTyped<T> Where(Expression<Func<T, bool>> builder)
         {
             this.AddWhere(builder);
             return this;
         }
 
+        /// <inheritdoc/>
         IExecuteDynamic ISelectColumnTyped<T>.Select(Expression<Func<T, dynamic>> expression)
         {
             this.AddColumns(expression);
             return ExecuteDynamic.Create(this.query);
         }
 
+        /// <inheritdoc/>
         IExecute<TResult> ISelectColumnTyped<T>.Select<TResult>(Expression<Func<T, TResult>> expression)
         {
             this.AddColumns(expression);
             return Execute<TResult>.Create(this.query);
         }
 
+        /// <inheritdoc/>
         IGroupByThenTyped<T> IGroupByThenTyped<T>.ThenBy(Expression<Func<T, object>> builder)
             => GroupBy(builder);
     }

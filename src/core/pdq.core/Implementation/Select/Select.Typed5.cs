@@ -25,38 +25,46 @@ namespace pdq.Implementation
             IQuery query)
             => new Select<T1, T2, T3, T4, T5>(context, query);
 
+        /// <inheritdoc/>
         public void Dispose() { }
 
+        /// <inheritdoc/>
         public IGroupByThenTyped<T1, T2, T3, T4, T5> GroupBy(Expression<Func<T1, T2, T3, T4, T5, object>> builder)
         {
             this.AddGroupBy(builder);
             return this;
         }
 
+        /// <inheritdoc/>
         public IOrderByThenTyped<T1, T2, T3, T4, T5> OrderBy(Expression<Func<T1, T2, T3, T4, T5, object>> builder, SortOrder order = SortOrder.Ascending)
         {
             this.AddOrderBy(builder, order);
             return this;
         }
 
+        /// <inheritdoc/>
         public IGroupByThenTyped<T1, T2, T3, T4, T5> ThenBy(Expression<Func<T1, T2, T3, T4, T5, object>> builder)
             => GroupBy(builder);
 
+        /// <inheritdoc/>
         public IOrderByThenTyped<T1, T2, T3, T4, T5> ThenBy(Expression<Func<T1, T2, T3, T4, T5, object>> builder, SortOrder order = SortOrder.Ascending)
             => OrderBy(builder, order);
 
+        /// <inheritdoc/>
         public IGroupByTyped<T1, T2, T3, T4, T5> Where(Expression<Func<T1, T2, T3, T4, T5, bool>> builder)
         {
             this.AddWhere(builder);
             return this;
         }
 
+        /// <inheritdoc/>
         IExecuteDynamic ISelectColumnTyped<T1, T2, T3, T4, T5>.Select(Expression<Func<T1, T2, T3, T4, T5, dynamic>> expression)
         {
             this.AddColumns(expression);
             return ExecuteDynamic.Create(this.query);
         }
 
+        /// <inheritdoc/>
         IExecute<TResult> ISelectColumnTyped<T1, T2, T3, T4, T5>.Select<TResult>(Expression<Func<T1, T2, T3, T4, T5, TResult>> expression)
         {
             this.AddColumns(expression);

@@ -21,10 +21,13 @@ namespace pdq.Implementation
 
         public static Select Create(IQuery query) => new Select(query);
 
+        /// <inheritdoc/>
         internal ISelectQueryContext GetContext() => this.context;
 
+        /// <inheritdoc/>
         public void Dispose() => this.context.Dispose();
 
+        /// <inheritdoc/>
         public ISelectFrom Column(
             string name,
             string table = null,
@@ -37,6 +40,7 @@ namespace pdq.Implementation
             return this;
         }
 
+        /// <inheritdoc/>
         public ISelectFrom Join(
             IQueryTarget from,
             state.IWhere conditions,
@@ -47,6 +51,7 @@ namespace pdq.Implementation
             return this;
         }
 
+        /// <inheritdoc/>
         public ISelectFrom Join(
             IQueryTarget from,
             state.IWhere conditions,
@@ -61,6 +66,7 @@ namespace pdq.Implementation
             return this;
         }
 
+        /// <inheritdoc/>
         public IWhere Where(Action<IWhereBuilder> builder)
         {
             var b = WhereBuilder.Create(this.context);
@@ -69,6 +75,7 @@ namespace pdq.Implementation
             return this;
         }
 
+        /// <inheritdoc/>
         public ISelectFrom From(
             string table,
             string alias,
@@ -80,6 +87,7 @@ namespace pdq.Implementation
             return this;
         }
 
+        /// <inheritdoc/>
         public ISelectFrom From(Action<ISelect> query, string alias)
         {
             var select = Create(this.query);
@@ -92,6 +100,7 @@ namespace pdq.Implementation
             return this;
         }
 
+        /// <inheritdoc/>
         public ISelectFromTyped<T> From<T>()
         {
             var table = this.context.Helpers().GetTableName<T>();
@@ -100,6 +109,7 @@ namespace pdq.Implementation
             return Select<T>.Create(this.context, this.query);
         }
 
+        /// <inheritdoc/>
         public ISelectFromTyped<T> From<T>(Expression<Func<T, T>> expression)
         {
             var table = this.context.Helpers().GetTableName(expression);
@@ -112,12 +122,14 @@ namespace pdq.Implementation
             return Select<T>.Create(this.context, this.query);
         }
 
+        /// <inheritdoc/>
         public ISelectWithAlias KnownAs(string alias)
         {
             Alias = alias;
             return this;
         }
 
+        /// <inheritdoc/>
         public IOrderByThen OrderBy(string column, string tableAlias, SortOrder orderBy)
         {
             var managedTable = this.query.AliasManager.GetAssociation(tableAlias);
@@ -126,6 +138,7 @@ namespace pdq.Implementation
             return this;
         }
 
+        /// <inheritdoc/>
         public IOrderByThen ThenBy(string column, string tableAlias, SortOrder orderBy)
         {
             var managedTable = this.query.AliasManager.GetAssociation(tableAlias);
@@ -134,6 +147,7 @@ namespace pdq.Implementation
             return this;
         }
 
+        /// <inheritdoc/>
         public IGroupByThen GroupBy(string column, string tableAlias)
         {
             var managedTable = this.query.AliasManager.GetAssociation(tableAlias);
@@ -142,6 +156,7 @@ namespace pdq.Implementation
             return this;
         }
 
+        /// <inheritdoc/>
         public IOrderByThen ThenBy(string column, string tableAlias)
         {
             var managedTable = this.query.AliasManager.GetAssociation(tableAlias);
@@ -150,6 +165,7 @@ namespace pdq.Implementation
             return this;
         }
 
+        /// <inheritdoc/>
         public ISelectFromTyped<T> From<T>(Action<ISelectWithAlias> query, string alias)
         {
             var select = Create(this.query);

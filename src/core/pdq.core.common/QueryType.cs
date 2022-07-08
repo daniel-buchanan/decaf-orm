@@ -2,7 +2,6 @@
 
 namespace pdq.common
 {
-	[Flags]
 	public enum QueryType
 	{
 		None,

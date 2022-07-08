@@ -36,7 +36,7 @@ namespace pdq.state
 			if (!minimum) return false;
 
 			var sameName = column.NewName == NewName;
-			return minimum || !sameName;
+			return !sameName;
         }
     }
 }

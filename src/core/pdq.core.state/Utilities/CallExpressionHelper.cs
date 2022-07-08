@@ -317,6 +317,8 @@ namespace pdq.state.Utilities
                 ctor = constructors[i];
             }
 
+            if (ctor == null) return null;
+
             // return instance
             return (state.IWhere)ctor.Invoke(parameters);
         }

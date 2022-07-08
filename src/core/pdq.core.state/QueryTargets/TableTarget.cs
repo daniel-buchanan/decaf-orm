@@ -35,7 +35,7 @@ namespace pdq.state.QueryTargets
 			if (!minimum) return false;
 
 			var sameSchema = source.Schema == Schema;
-			return minimum || sameSchema;
+			return sameSchema;
 		}
 
         public bool IsEquivalentTo(IQueryTarget target)

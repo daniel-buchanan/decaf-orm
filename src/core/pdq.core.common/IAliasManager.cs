@@ -13,7 +13,7 @@ namespace pdq.common
         /// <param name="assocWith">Entity to create or associate this alias with.</param>
         /// <param name="alias">The alias to use (optional).</param>
         /// <returns>The alias that has been associated with the Entity.</returns>
-        string Add(string assocWith, string alias = null);
+        string Add(string alias, string assocWith);
 
         /// <summary>
         /// Get all known Aliases.

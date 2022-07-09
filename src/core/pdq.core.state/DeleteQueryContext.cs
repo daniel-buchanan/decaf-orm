@@ -18,9 +18,10 @@ namespace pdq.state
 		public IWhere WhereClause { get; private set; }
 
 		/// <inheritdoc/>
-		public IDeleteQueryContext From(ITableTarget table)
+		public IDeleteQueryContext From(ITableTarget target)
         {
-			Table = table;
+			Table = target;
+			((IQueryContextInternal)this).AddQueryTarget(target);
 			return this;
         }
 

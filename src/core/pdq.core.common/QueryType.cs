@@ -2,13 +2,14 @@
 
 namespace pdq.common
 {
+    [Flags]
 	public enum QueryType
 	{
-		None,
-		Select,
-		Update,
-		Insert,
-		Delete
+		None = 0,
+		Select = 1,
+		Update = 2,
+		Insert = 4,
+		Delete = 8
 	}
 }
 

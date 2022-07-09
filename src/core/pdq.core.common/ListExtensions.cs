@@ -5,7 +5,7 @@ namespace pdq.common
 {
 	public static class ListExtensions
 	{
-		public static void Dispose<T>(this List<T> list)
+		public static void DisposeAll<T>(this List<T> list)
         {
 			if(typeof(T).GetMethod("Dispose") != null)
             {

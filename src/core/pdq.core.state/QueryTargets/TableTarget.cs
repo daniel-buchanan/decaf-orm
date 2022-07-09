@@ -27,14 +27,14 @@ namespace pdq.state.QueryTargets
 
 		public static TableTarget Create(string name, string alias = null, string schema = null) => new TableTarget(name, alias, schema);
 
-		public bool IsEquivalentTo(ITableTarget source)
+		public bool IsEquivalentTo(ITableTarget target)
 		{
-			var minimum = source.Name == Name &&
-				source.Alias == Alias;
+			var minimum = target.Name == Name &&
+				target.Alias == Alias;
 
 			if (!minimum) return false;
 
-			var sameSchema = source.Schema == Schema;
+			var sameSchema = target.Schema == Schema;
 			return sameSchema;
 		}
 

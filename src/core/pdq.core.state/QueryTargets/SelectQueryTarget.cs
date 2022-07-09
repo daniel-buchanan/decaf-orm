@@ -17,9 +17,9 @@ namespace pdq.state.QueryTargets
 
 		public static IQueryTarget Create(ISelectQueryContext context, string alias) => new SelectQueryTarget(context, alias);
 
-        public bool IsEquivalentTo(IQueryTarget source)
+        public bool IsEquivalentTo(IQueryTarget target)
         {
-			return source.Alias == Alias;
+			return target.Alias == Alias;
         }
     }
 }

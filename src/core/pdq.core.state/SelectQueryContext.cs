@@ -43,10 +43,10 @@ namespace pdq.state
         /// <inheritdoc/>
         public override void Dispose()
         {
-            this.columns.Dispose();
-            this.joins.Dispose();
-            this.orderByClauses.Dispose();
-            this.groupByClauses.Dispose();
+            this.columns.DisposeAll();
+            this.joins.DisposeAll();
+            this.orderByClauses.DisposeAll();
+            this.groupByClauses.DisposeAll();
             this.where = null;
         }
 

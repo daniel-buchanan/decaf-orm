@@ -6,7 +6,11 @@ using pdq.state;
 
 namespace pdq.Implementation
 {
-	internal class Delete : Execute, IDelete, IDeleteFrom
+	internal class Delete :
+        Execute,
+        IDelete,
+        IDeleteFrom,
+        IDisposable
 	{
         private readonly IDeleteQueryContext context;
 

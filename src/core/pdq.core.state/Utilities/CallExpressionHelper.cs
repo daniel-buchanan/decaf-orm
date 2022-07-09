@@ -251,27 +251,26 @@ namespace pdq.state.Utilities
             Expression valueAccessExp;
 
             // check if this is a list or contains with variable
-            if (call.Arguments.Count == 1)
+            if (call.Arguments.Count != 1)
+            {
+                // if the underlying value is an array
+                memberAccessExp = call.Arguments[1] as MemberExpression;
+                valueAccessExp = call.Arguments[0];
+            }
+            else
             {
                 // check for passed in variable
-                var firstArgument = call.Arguments[0];
-                if (firstArgument.NodeType == ExpressionType.MemberAccess)
+                var firstArgument = call.Arguments[0] as MemberExpression;
+                if (firstArgument != null &&
+                    firstArgument.Expression.NodeType == ExpressionType.Constant)
                 {
                     // check if underlying value is a constant
-                    var t = firstArgument as MemberExpression;
-                    if (t.Expression.NodeType == ExpressionType.Constant)
-                        return ParseContainsConstantCall(call);
+                    return ParseContainsConstantCall(call);
                 }
 
                 // otherwise default to member access
                 memberAccessExp = firstArgument as MemberExpression;
                 valueAccessExp = call.Object;
-            }
-            else
-            {
-                // if the underlying value is an array
-                memberAccessExp = call.Arguments[1] as MemberExpression;
-                valueAccessExp = call.Arguments[0];
             }
 
             // get values

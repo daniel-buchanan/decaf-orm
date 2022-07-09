@@ -13,19 +13,16 @@ namespace pdq.common
         private readonly bool trackTransients;
         private readonly List<ITransient> tracker;
         private readonly ILoggerProxy logger;
-        private readonly IConnectionFactory connectionFactory;
         private readonly ITransactionFactory transactionFactory;
 
         public TransientFactory(
             PdqOptions options,
             ILoggerProxy logger,
-            IConnectionFactory connectionFactory,
             ITransactionFactory transactionFactory)
 		{
             this.tracker = new List<ITransient>();
             this.trackTransients = options.TrackTransients;
             this.logger = logger;
-            this.connectionFactory = connectionFactory;
             this.transactionFactory = transactionFactory;
 		}
 

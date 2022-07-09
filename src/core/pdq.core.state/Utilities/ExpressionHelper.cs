@@ -13,6 +13,7 @@ namespace pdq.state.Utilities
         private readonly MemberAccess memberAccess;
         private readonly ConvertAccess convertAccess;
         private readonly ParameterAccess parameterAccess;
+        private readonly LambdaAccess lambdaAccess;
         private readonly IReflectionHelper reflectionHelper;
         private readonly CallExpressionHelper callExpressionHelper;
         private readonly IAliasManager aliasManager;
@@ -29,6 +30,7 @@ namespace pdq.state.Utilities
             this.constantAccess = new ConstantAccess();
             this.convertAccess = new ConvertAccess();
             this.parameterAccess = new ParameterAccess();
+            this.lambdaAccess = new LambdaAccess();
             this.reflectionHelper = reflectionHelper;
             this.memberAccess = new MemberAccess(this.reflectionHelper);
             this.callExpressionHelper = new CallExpressionHelper(this);
@@ -358,51 +360,47 @@ namespace pdq.state.Utilities
             else
             {
                 // otherwise make it a binary expression
-                if (!(expr is MemberExpression)) binaryExpr = (BinaryExpression)expr;
+                if (expr is not MemberExpression) binaryExpr = (BinaryExpression)expr;
             }
 
-            // check for and
-            if (binaryExpr != null && binaryExpr.NodeType == ExpressionType.AndAlso)
+            if (binaryExpr == null) return ParseValue(expr, excludeAlias);
+
+            IWhere left, right;
+
+            if (binaryExpr.NodeType == ExpressionType.AndAlso)
             {
                 // get left and right
-                var left = ParseWhere(binaryExpr.Left, excludeAlias);
-                var right = ParseWhere(binaryExpr.Right, excludeAlias);
+                left = ParseWhere(binaryExpr.Left, excludeAlias);
+                right = ParseWhere(binaryExpr.Right, excludeAlias);
 
                 // return and
                 return And.Where(left, right);
             }
-            // check for or
-            else if (binaryExpr != null && binaryExpr.NodeType == ExpressionType.OrElse)
+            else if (binaryExpr.NodeType == ExpressionType.OrElse)
             {
                 // get left and right
-                var left = ParseWhere(binaryExpr.Left, excludeAlias);
-                var right = ParseWhere(binaryExpr.Right, excludeAlias);
+                left = ParseWhere(binaryExpr.Left, excludeAlias);
+                right = ParseWhere(binaryExpr.Right, excludeAlias);
 
                 // return or
                 return Or.Where(left, right);
             }
 
-            if (binaryExpr != null)
-            {
-                var operationTuple = UpdateNullableExpression(binaryExpr);
-                var left = operationTuple.Item1;
-                var right = operationTuple.Item2;
+            var operationTuple = UpdateNullableExpression(binaryExpr);
+            var leftExpression = operationTuple.Item1;
+            var rightExpression = operationTuple.Item2;
 
-                var leftType = left.NodeType;
-                var rightType = right.NodeType;
+            var leftType = leftExpression.NodeType;
+            var rightType = rightExpression.NodeType;
 
-                var leftParam = this.GetParameterName(left);
-                var rightParam = this.GetParameterName(right);
-                var bothMemberAccess = leftType == ExpressionType.MemberAccess &&
-                                       rightType == ExpressionType.MemberAccess;
-                var bothHaveParam = !string.IsNullOrWhiteSpace(leftParam) &&
-                                    !string.IsNullOrWhiteSpace(rightParam);
+            var leftParam = this.GetParameterName(leftExpression);
+            var rightParam = this.GetParameterName(rightExpression);
+            var bothMemberAccess = leftType == ExpressionType.MemberAccess &&
+                                    rightType == ExpressionType.MemberAccess;
+            var bothHaveParam = !string.IsNullOrWhiteSpace(leftParam) &&
+                                !string.IsNullOrWhiteSpace(rightParam);
 
-                if (bothMemberAccess && bothHaveParam)
-                {
-                    return ParseJoin(expr);
-                }
-            }
+            if (bothMemberAccess && bothHaveParam) return ParseJoin(expr);
 
             // failing that parse a value clause
             return ParseValue(expr, excludeAlias);
@@ -420,7 +418,7 @@ namespace pdq.state.Utilities
             }
             else
             {
-                if (!(expr is MemberExpression)) binaryExpr = (BinaryExpression)expr;
+                if (expr is not MemberExpression) binaryExpr = (BinaryExpression)expr;
             }
 
             if (binaryExpr != null && binaryExpr.NodeType == ExpressionType.AndAlso)
@@ -437,76 +435,70 @@ namespace pdq.state.Utilities
 
                 return Or.Where(left, right);
             }
-            else
+
+            EqualityOperator op;
+
+            if (expr is BinaryExpression)
             {
-                string leftField, leftTable, rightField, rightTable;
-                leftField = rightField = String.Empty;
-                leftTable = rightTable = String.Empty;
+                BinaryExpression operation = (BinaryExpression)expr;
 
-                EqualityOperator op;
+                var operationTuple = UpdateNullableExpression(operation);
+                var left = operationTuple.Item1;
+                var right = operationTuple.Item2;
 
-                if (expr is BinaryExpression)
-                {
-                    BinaryExpression operation = (BinaryExpression)expr;
+                //start with left
+                var leftField = this.GetName(left);
+                var rightField = this.GetName(right);
 
-                    var operationTuple = UpdateNullableExpression(operation);
-                    var left = operationTuple.Item1;
-                    var right = operationTuple.Item2;
+                //get operation
+                op = this.ConvertExpressionTypeToEqualityOperator(operation.NodeType);
 
-                    //start with left
-                    leftField = this.GetName(left);
-                    rightField = this.GetName(right);
-
-                    //get operation
-                    op = this.ConvertExpressionTypeToEqualityOperator(operation.NodeType);
-
-                    // create column
-                    return Conditionals.Column.Match(
-                        Column.Create(leftField, GetQueryTarget(left)),
-                        op,
-                        Column.Create(rightField, GetQueryTarget(right)));
-                }
-                else if (expr is LambdaExpression && lambdaExpr != null)
-                {
-                    BinaryExpression operation = binaryExpr;
-                    MemberExpression left;
-                    MemberExpression right;
-
-                    if (operation.Left is UnaryExpression)
-                    {
-                        var unaryLeft = (UnaryExpression)operation.Left;
-                        left = unaryLeft.Operand as MemberExpression;
-                    }
-                    else
-                    {
-                        left = (MemberExpression)operation.Left;
-                    }
-
-                    if (operation.Right is UnaryExpression)
-                    {
-                        var unaryRight = (UnaryExpression)operation.Right;
-                        right = unaryRight.Operand as MemberExpression;
-                    }
-                    else
-                    {
-                        right = (MemberExpression)operation.Right;
-                    }
-
-                    var leftParam = ((ParameterExpression)left.Expression);
-                    var rightParam = ((ParameterExpression)right.Expression);
-
-                    return Conditionals.Column.Match(
-                        Column.Create(
-                            reflectionHelper.GetFieldName(left.Member),
-                            GetQueryTarget(leftParam)),
-                        this.ConvertExpressionTypeToEqualityOperator(operation.NodeType),
-                        Column.Create(
-                            reflectionHelper.GetFieldName(right.Member),
-                            GetQueryTarget(rightParam)));
-                }
-
-                return null;
+                // create column
+                return Conditionals.Column.Match(
+                    Column.Create(leftField, GetQueryTarget(left)),
+                    op,
+                    Column.Create(rightField, GetQueryTarget(right)));
             }
+            else if (expr is LambdaExpression && lambdaExpr != null)
+            {
+                BinaryExpression operation = binaryExpr;
+                MemberExpression left;
+                MemberExpression right;
+
+                if (operation.Left is UnaryExpression)
+                {
+                    var unaryLeft = (UnaryExpression)operation.Left;
+                    left = unaryLeft.Operand as MemberExpression;
+                }
+                else
+                {
+                    left = (MemberExpression)operation.Left;
+                }
+
+                if (operation.Right is UnaryExpression)
+                {
+                    var unaryRight = (UnaryExpression)operation.Right;
+                    right = unaryRight.Operand as MemberExpression;
+                }
+                else
+                {
+                    right = (MemberExpression)operation.Right;
+                }
+
+                var leftParam = (ParameterExpression)left.Expression;
+                var rightParam = (ParameterExpression)right.Expression;
+
+                return Conditionals.Column.Match(
+                    Column.Create(
+                        reflectionHelper.GetFieldName(left.Member),
+                        GetQueryTarget(leftParam)),
+                    this.ConvertExpressionTypeToEqualityOperator(operation.NodeType),
+                    Column.Create(
+                        reflectionHelper.GetFieldName(right.Member),
+                        GetQueryTarget(rightParam)));
+            }
+
+            return null;
         }
 
         private IQueryTarget GetQueryTarget(Expression expression)

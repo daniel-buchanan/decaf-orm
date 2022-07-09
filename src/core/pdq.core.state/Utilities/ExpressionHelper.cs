@@ -466,9 +466,9 @@ namespace pdq.state.Utilities
                         op,
                         Column.Create(rightField, GetQueryTarget(right)));
                 }
-                else if (expr is LambdaExpression)
+                else if (expr is LambdaExpression && lambdaExpr != null)
                 {
-                    BinaryExpression operation = (BinaryExpression)lambdaExpr.Body;
+                    BinaryExpression operation = binaryExpr;
                     MemberExpression left;
                     MemberExpression right;
 
@@ -555,18 +555,6 @@ namespace pdq.state.Utilities
             Expression expr,
             bool excludeAlias)
         {
-            BinaryExpression binaryExpr = null;
-
-            if (expr.NodeType == ExpressionType.Lambda)
-            {
-                var lambda = (LambdaExpression)expr;
-                binaryExpr = (BinaryExpression)lambda.Body;
-            }
-            else
-            {
-                if (!(expr is MemberExpression)) binaryExpr = (BinaryExpression)expr;
-            }
-
             object val;
             Type valType;
             string field, table;
@@ -582,7 +570,16 @@ namespace pdq.state.Utilities
             }
             else
             {
-                BinaryExpression operation = binaryExpr;
+                BinaryExpression operation;
+                if (expr.NodeType == ExpressionType.Lambda)
+                {
+                    var lambda = (LambdaExpression)expr;
+                    operation = (BinaryExpression)lambda.Body;
+                }
+                else
+                {
+                    operation = (BinaryExpression)expr;
+                }
 
                 var left = operation.Left;
                 var right = operation.Right;

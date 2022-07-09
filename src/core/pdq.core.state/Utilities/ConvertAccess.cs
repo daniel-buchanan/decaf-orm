@@ -18,7 +18,7 @@ namespace pdq.state.Utilities
 
         public object GetValue(Expression expression)
         {
-            return GetValue(GetOperand(expression));
+            throw new NotImplementedException();
         }
 
         public Type GetType(Expression expression, ExpressionHelper helper)

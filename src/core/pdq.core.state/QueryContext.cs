@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using pdq.common;
 using pdq.state.Utilities;
+using pdq.state.Utilities.Parsers;
 
 namespace pdq.state
 {
@@ -9,6 +10,7 @@ namespace pdq.state
 	{
 		private readonly IExpressionHelper expressionHelper;
 		private readonly IReflectionHelper reflectionHelper;
+		private readonly ParserHolder parserHolder;
 		protected readonly List<IQueryTarget> queryTargets;
 
 		protected QueryContext(
@@ -23,6 +25,7 @@ namespace pdq.state
 				this.reflectionHelper,
 				aliasManager,
 				this);
+			this.parserHolder = new ParserHolder(expressionHelper, reflectionHelper, aliasManager, this, new CallExpressionHelper(expressionHelper));
 		}
 
 		/// <inheritdoc/>
@@ -40,8 +43,16 @@ namespace pdq.state
 		/// <inheritdoc/>
 		IReflectionHelper IQueryContextInternal.ReflectionHelper => this.reflectionHelper;
 
-		/// <inheritdoc/>
-		void IQueryContextInternal.AddQueryTarget(IQueryTarget target)
+		IQueryParsers IQueryContextInternal.Parsers => this.parserHolder;
+
+        Guid IQueryContext.Id => throw new NotImplementedException();
+
+        QueryTypes IQueryContext.Kind => throw new NotImplementedException();
+
+        IEnumerable<IQueryTarget> IQueryContext.QueryTargets => throw new NotImplementedException();
+
+        /// <inheritdoc/>
+        void IQueryContextInternal.AddQueryTarget(IQueryTarget target)
 			=> this.queryTargets.Add(target);
 
 		/// <inheritdoc/>
@@ -52,6 +63,11 @@ namespace pdq.state
         }
 
 		protected abstract void Dispose(bool disposing);
+
+        void IDisposable.Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

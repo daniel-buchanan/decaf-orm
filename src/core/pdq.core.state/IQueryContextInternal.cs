@@ -17,11 +17,26 @@ namespace pdq.state
         /// </summary>
 		internal IReflectionHelper ReflectionHelper { get; }
 
+        /// <summary>
+        /// The <see cref="IQueryParsers"/> that provide helper methods for dealing
+        /// with joins, where clauses and value parsing.
+        /// </summary>
+        internal IQueryParsers Parsers { get; }
+
 		/// <summary>
         /// Adds a <see cref="IQueryTarget"/> to this context.
         /// </summary>
         /// <param name="target">The <see cref="IQueryTarget"/> to add.</param>
 		internal void AddQueryTarget(IQueryTarget target);
+    }
+
+    internal interface IQueryParsers
+    {
+        internal IParser Join { get; }
+
+        internal IParser Where { get; }
+
+        internal IParser Value { get; }
     }
 }
 

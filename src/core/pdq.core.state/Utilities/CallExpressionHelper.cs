@@ -10,9 +10,9 @@ namespace pdq.state.Utilities
 {
     class CallExpressionHelper
     {
-        private readonly ExpressionHelper expressionHelper;
+        private readonly IExpressionHelper expressionHelper;
 
-        public CallExpressionHelper(ExpressionHelper expressionHelper)
+        public CallExpressionHelper(IExpressionHelper expressionHelper)
         {
             this.expressionHelper = expressionHelper;
         }

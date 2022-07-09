@@ -15,8 +15,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Utilities\" />
+    <None Remove="Utilities\Parsers\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utilities\" />
+    <Folder Include="Utilities\Parsers\" />
   </ItemGroup>
 </Project>

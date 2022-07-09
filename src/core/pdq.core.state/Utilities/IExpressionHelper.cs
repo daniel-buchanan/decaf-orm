@@ -14,9 +14,7 @@ namespace pdq.state.Utilities
         string GetParameterName(Expression expr);
         Type GetType(Expression expression);
         string GetTypeName<TObject>();
-        object GetValue(Expression expression);
-        IWhere ParseWhereExpression(Expression expr);
-        IWhere ParseWhere(Expression expr, bool excludeAlias);
         IEnumerable<DynamicPropertyInfo> GetDynamicPropertyInformation(Expression expr);
+        object GetValue(Expression expression);
     }
 }

@@ -13,7 +13,7 @@ namespace pdq.common
 		/// <summary>
         /// The kind of query that this <see cref="IQueryContext"/> represents.
         /// </summary>
-		QueryType Kind { get; }
+		QueryTypes Kind { get; }
 
 		/// <summary>
         /// The targets of the <see cref="IQueryContext"/>.

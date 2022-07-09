@@ -9,7 +9,7 @@ namespace pdq.Attributes
         /// </summary>
         public class Update : IgnoreColumnForAttribute
         {
-            public Update() : base(QueryType.Update) { }
+            public Update() : base(QueryTypes.Update) { }
         }
 
         /// <summary>
@@ -17,7 +17,7 @@ namespace pdq.Attributes
         /// </summary>
         public class Insert : IgnoreColumnForAttribute
         {
-            public Insert() : base(QueryType.Insert) { }
+            public Insert() : base(QueryTypes.Insert) { }
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace pdq.Attributes
         /// </summary>
         public class Delete : IgnoreColumnForAttribute
         {
-            public Delete() : base(QueryType.Delete) { }
+            public Delete() : base(QueryTypes.Delete) { }
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace pdq.Attributes
         /// </summary>
         public class Select : IgnoreColumnForAttribute
         {
-            public Select() : base(QueryType.Select) { }
+            public Select() : base(QueryTypes.Select) { }
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace pdq.Attributes
         /// </summary>
         public class InsertAndUpdate : IgnoreColumnForAttribute
         {
-            public InsertAndUpdate() : base(QueryType.Insert | QueryType.Update) { }
+            public InsertAndUpdate() : base(QueryTypes.Insert | QueryTypes.Update) { }
         }
     }
 }

@@ -5,11 +5,11 @@ namespace pdq.Attributes
 {
     public class IgnoreColumnForAttribute : Attribute
     {
-        public QueryType QueryType { get; set; }
+        public QueryTypes QueryType { get; set; }
 
-        public IgnoreColumnForAttribute() { QueryType = QueryType.None; }
+        public IgnoreColumnForAttribute() { QueryType = QueryTypes.None; }
 
-        public IgnoreColumnForAttribute(QueryType toIgnore)
+        public IgnoreColumnForAttribute(QueryTypes toIgnore)
         {
             this.QueryType = toIgnore;
         }

@@ -13,7 +13,7 @@ namespace pdq.common.Connections
         protected readonly ILoggerProxy logger;
         protected readonly PdqOptions options;
 
-        public TransactionFactory(
+        protected TransactionFactory(
             IConnectionFactory connectionFactory,
             ILoggerProxy logger,
             PdqOptions options)

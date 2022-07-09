@@ -3,7 +3,7 @@ using pdq.common.Logging;
 
 namespace pdq.common
 {
-	public class Query : IQuery, IQueryInternal
+	public class Query : IQueryInternal
 	{
 		private readonly ILoggerProxy logger;
 		private readonly ITransient transient;
@@ -24,11 +24,6 @@ namespace pdq.common
 			this.logger.Debug($"Query({Id}) :: Created as {Status}");
 		}
 
-        public Query(ITransient transient)
-        {
-            this.transient = transient;
-        }
-
         public Guid Id { get; private set; }
 
 		public QueryStatus Status { get; private set; }
@@ -45,9 +40,13 @@ namespace pdq.common
 
 		void IQueryInternal.SetContext(IQueryContext context) => this.context = context;
 
-        public void Dispose()
+		public void Dispose() => Dispose(true);
+
+		protected void Dispose(bool disposing)
         {
-			this.aliasManager.Dispose();
+			this.logger.Debug($"Query({Id} :: Disposing({disposing})");
+            this.aliasManager.Dispose();
+			GC.SuppressFinalize(this);
         }
     }
 }

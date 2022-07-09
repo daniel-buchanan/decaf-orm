@@ -14,7 +14,7 @@ namespace pdq.state
 
 
 		private SelectQueryContext(IAliasManager aliasManager)
-            : base(aliasManager, QueryType.Select)
+            : base(aliasManager, QueryTypes.Select)
 		{
             this.columns = new List<Column>();
             this.joins = new List<Join>();

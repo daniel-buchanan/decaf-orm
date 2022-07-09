@@ -72,7 +72,13 @@ namespace pdq.common.Connections
         }
 
         /// <inheritdoc/>
-        public void Dispose() => this.transaction = null;
+        public void Dispose() => Dispose(true);
+
+        protected void Dispose(bool disposing)
+        {
+            this.transaction = null;
+            GC.SuppressFinalize(this);
+        }
 
         /// <inheritdoc/>
         public void Rollback()

@@ -16,7 +16,7 @@ namespace pdq.common.Connections
         /// </summary>
         /// <param name="logger">The logger to use to log any details.</param>
         /// <param name="connectionDetails">The connection details to use.</param>
-		public Connection(
+		protected Connection(
             ILoggerProxy logger,
             IConnectionDetails connectionDetails)
 		{
@@ -36,7 +36,13 @@ namespace pdq.common.Connections
         }
 
         /// <inheritdoc/>
-        public void Dispose() => this.connectionDetails.Dispose();
+        public void Dispose() => Dispose(true);
+
+        protected virtual void Dispose(bool dispose)
+        {
+            this.connectionDetails.Dispose();
+            GC.SuppressFinalize(this);
+        }
 
         /// <inheritdoc/>
         public ValueTask DisposeAsync() => this.connectionDetails.DisposeAsync();

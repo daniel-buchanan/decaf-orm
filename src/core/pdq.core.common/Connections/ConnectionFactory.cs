@@ -14,16 +14,19 @@ namespace pdq.common.Connections
         /// Create an instance of a ConnectionFactory.
         /// </summary>
         /// <param name="logger">The logger to Use.</param>
-        public ConnectionFactory(ILoggerProxy logger)
+        protected ConnectionFactory(ILoggerProxy logger)
         {
             this.connections = new Dictionary<string, IConnection>();
             this.logger = logger;
         }
 
         /// <inheritdoc/>
-        public void Dispose()
+        public void Dispose() => Dispose(true);
+
+        protected void Dispose(bool disposing)
         {
             this.connections = null;
+            GC.SuppressFinalize(this);
         }
 
         /// <inheritdoc/>
@@ -41,12 +44,8 @@ namespace pdq.common.Connections
             return t.Result;
         }
 
-        /// <inheritdoc/>
-        public async Task<IConnection> GetAsync(IConnectionDetails connectionDetails)
+        private async Task<IConnection> GetInternalAsync(IConnectionDetails connectionDetails)
         {
-            if (connectionDetails == null)
-                throw new ArgumentNullException(nameof(connectionDetails), $"The {nameof(connectionDetails)} cannot be null, it MUST be provided when creating a connection.");
-
             if (this.connections == null)
                 this.connections = new Dictionary<string, IConnection>();
             string hash = null;
@@ -61,7 +60,7 @@ namespace pdq.common.Connections
                 throw;
             }
 
-            if(this.connections.ContainsKey(hash))
+            if (this.connections.ContainsKey(hash))
             {
                 return this.connections[hash];
             }
@@ -78,6 +77,15 @@ namespace pdq.common.Connections
                 this.logger.Error(e, $"An error occurred attempting to get the connection.");
                 throw;
             }
+        }
+
+        /// <inheritdoc/>
+        public async Task<IConnection> GetAsync(IConnectionDetails connectionDetails)
+        {
+            if (connectionDetails == null)
+                throw new ArgumentNullException(nameof(connectionDetails), $"The {nameof(connectionDetails)} cannot be null, it MUST be provided when creating a connection.");
+
+            return await GetInternalAsync(connectionDetails);
         }
 
         /// <inheritdoc/>

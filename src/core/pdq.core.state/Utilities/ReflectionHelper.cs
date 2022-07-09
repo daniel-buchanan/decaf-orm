@@ -152,7 +152,7 @@ namespace pdq.state.Utilities
             return instance;
         }
 
-        public List<string> GetMemberNames(dynamic toUse, QueryType cmdType = QueryType.None)
+        public List<string> GetMemberNames(dynamic toUse, QueryTypes cmdType = QueryTypes.None)
         {
             // create list
             var tList = new List<string>();
@@ -174,7 +174,7 @@ namespace pdq.state.Utilities
             return tList;
         }
 
-        public List<string> GetMemberNames(Type toUse, QueryType queryType = QueryType.None)
+        public List<string> GetMemberNames(Type toUse, QueryTypes queryType = QueryTypes.None)
         {
             var fieldNames = new List<string>();
 
@@ -187,7 +187,7 @@ namespace pdq.state.Utilities
                           where p.GetCustomAttributes(typeof(IgnoreColumnForAttribute), true)
                                  .Count(a => ((IgnoreColumnForAttribute)a)
                                  .QueryType.HasFlag(queryType) ||
-                                 ((IgnoreColumnForAttribute)a).QueryType == QueryType.None) == 0
+                                 ((IgnoreColumnForAttribute)a).QueryType == QueryTypes.None) == 0
                           select p).ToArray();
 
             // iternate through properties

@@ -3,7 +3,7 @@
 namespace pdq.common
 {
     [Flags]
-	public enum QueryType
+	public enum QueryTypes
 	{
 		None = 0,
 		Select = 1,

@@ -360,7 +360,7 @@ namespace pdq.state.Utilities
             else
             {
                 // otherwise make it a binary expression
-                if (expr is not MemberExpression) binaryExpr = (BinaryExpression)expr;
+                if (!(expr is MemberExpression)) binaryExpr = (BinaryExpression)expr;
             }
 
             if (binaryExpr == null) return ParseValue(expr, excludeAlias);
@@ -418,7 +418,7 @@ namespace pdq.state.Utilities
             }
             else
             {
-                if (expr is not MemberExpression) binaryExpr = (BinaryExpression)expr;
+                if (!(expr is MemberExpression)) binaryExpr = (BinaryExpression)expr;
             }
 
             if (binaryExpr != null && binaryExpr.NodeType == ExpressionType.AndAlso)

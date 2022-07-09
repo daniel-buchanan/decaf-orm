@@ -14,7 +14,7 @@ namespace pdq.state
 
 		protected QueryContext(
 			IAliasManager aliasManager,
-			QueryType kind)
+			QueryTypes kind)
 		{
 			Id = Guid.NewGuid();
 			Kind = kind;
@@ -31,7 +31,7 @@ namespace pdq.state
         public Guid Id { get; private set; }
 
 		/// <inheritdoc/>
-		public QueryType Kind { get; private set; }
+		public QueryTypes Kind { get; private set; }
 
 		/// <inheritdoc/>
 		public IEnumerable<IQueryTarget> QueryTargets => this.queryTargets;

@@ -58,12 +58,15 @@ namespace pdq.common.Connections
             }
         }
 
-        public void Dispose()
+        public void Dispose() => Dispose(true);
+
+        protected void Dispose(bool disposing)
         {
             this.connectionString = null;
             this.hostname = null;
             this.port = null;
             this.databaseName = null;
+            GC.SuppressFinalize(this);
         }
 
         public ValueTask DisposeAsync()

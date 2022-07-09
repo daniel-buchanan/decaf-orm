@@ -13,8 +13,8 @@ namespace pdq.state.Utilities
         string GetFieldName(MemberInfo field);
         T GetInstanceObject<T>(object obj, string name, Type toCreate, object[] instanceParams);
         object GetInstanceObject(Type toCreate, Type typeParam, object[] instanceParams);
-        List<string> GetMemberNames(dynamic toUse, QueryType cmdType = QueryType.None);
-        List<string> GetMemberNames(Type toUse, QueryType queryType = QueryType.None);
+        List<string> GetMemberNames(dynamic toUse, QueryTypes cmdType = QueryTypes.None);
+        List<string> GetMemberNames(Type toUse, QueryTypes queryType = QueryTypes.None);
         Type GetMemberType(object o, string member);
         object GetPropertyValue(object o, string member);
         string GetTableName<T>();

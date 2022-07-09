@@ -27,7 +27,7 @@ namespace pdq.common.Connections
             GC.SuppressFinalize(this);
         }
 
-        protected void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
             this.connections = null;

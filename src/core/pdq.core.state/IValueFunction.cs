@@ -11,10 +11,5 @@ namespace pdq.state
 
 		Type ValueType { get; }
 	}
-
-	public interface IValueFunction<T> : IValueFunction
-	{
-		
-	}
 }
 

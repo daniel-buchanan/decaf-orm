@@ -3,7 +3,7 @@ using pdq.common;
 
 namespace pdq.state.Conditionals.ValueFunctions
 {
-	public abstract class ValueFunction<T> : Where, IValueFunction<T>
+	public abstract class ValueFunction<T> : Where, IValueFunction
 	{
 		protected ValueFunction(ValueFunction type, params object[] arguments)
 		{

@@ -269,7 +269,7 @@ namespace pdq.state.Utilities
                 }
 
                 // otherwise default to member access
-                memberAccessExp = firstArgument as MemberExpression;
+                memberAccessExp = firstArgument;
                 valueAccessExp = call.Object;
             }
 

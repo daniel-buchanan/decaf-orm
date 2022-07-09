@@ -13,7 +13,7 @@ namespace pdq.state.Utilities
         private readonly MemberAccess memberAccess;
         private readonly ConvertAccess convertAccess;
         private readonly ParameterAccess parameterAccess;
-        private readonly LambdaAccess lambdaAccess;
+        private readonly DynamicExpressionHelper dynamicExpressionHelper;
         private readonly IReflectionHelper reflectionHelper;
         private readonly CallExpressionHelper callExpressionHelper;
         private readonly IAliasManager aliasManager;
@@ -30,7 +30,7 @@ namespace pdq.state.Utilities
             this.constantAccess = new ConstantAccess();
             this.convertAccess = new ConvertAccess();
             this.parameterAccess = new ParameterAccess();
-            this.lambdaAccess = new LambdaAccess();
+            this.dynamicExpressionHelper = new DynamicExpressionHelper(this, reflectionHelper);
             this.reflectionHelper = reflectionHelper;
             this.memberAccess = new MemberAccess(this.reflectionHelper);
             this.callExpressionHelper = new CallExpressionHelper(this);
@@ -90,26 +90,26 @@ namespace pdq.state.Utilities
         {
             // check the expression for null
             if (expr == null)
-                throw new ArgumentNullException("propertyRefExpr", "propertyRefExpr is null.");
+                throw new ArgumentNullException(nameof(expr), "The provided expression cannot be null.");
 
             // check for member expressions
             if (expr is MemberExpression)
             {
                 // get member expression
-                var memberExpression = (MemberExpression)expr;
+                var memberExpression = expr as MemberExpression;
 
                 // check if we have a parameter expression
-                if (memberExpression.Expression is ParameterExpression)
+                if (memberExpression?.Expression is ParameterExpression)
                 {
-                    // if so return name
-                    return ((ParameterExpression)memberExpression.Expression).Name;
+                    var parameterExpression = memberExpression.Expression as ParameterExpression;
+                    return parameterExpression?.Name;
                 }
             }
 
             if (expr is MethodCallExpression)
             {
-                var call = (MethodCallExpression)expr;
-                if (call.Object == null) return GetParameterName(call.Arguments[0]);
+                var call = expr as MethodCallExpression;
+                if (call?.Object == null) return GetParameterName(call.Arguments[0]);
 
                 return GetParameterName(call.Object);
             }
@@ -119,7 +119,7 @@ namespace pdq.state.Utilities
 
             // get lambda and parameter
             var lambdaExpr = (LambdaExpression)expr;
-            var param = (ParameterExpression)lambdaExpr.Parameters[0];
+            var param = lambdaExpr.Parameters[0];
 
             // if no parameter, return null
             if (param == null)
@@ -165,67 +165,7 @@ namespace pdq.state.Utilities
         }
 
         public IEnumerable<DynamicPropertyInfo> GetDynamicPropertyInformation(Expression expr)
-        {
-            DynamicPropertyInfo[] properties;
-            var expression = (LambdaExpression)expr;
-
-            if(expression.Body is MemberInitExpression)
-            {
-                var initExpr = (MemberInitExpression)expression.Body;
-
-                var countBindings = initExpr.Bindings.Count();
-                properties = new DynamicPropertyInfo[countBindings];
-
-                var index = 0;
-                foreach (var b in initExpr.Bindings)
-                {
-                    var memberBinding = (MemberAssignment)b;
-                    var memberExpression = (MemberExpression)memberBinding.Expression;
-                    var parameterExpression = (ParameterExpression)memberExpression.Expression;
-                    var column = GetName(memberExpression);
-                    var alias = GetParameterName(memberExpression);
-                    var newName = memberBinding.Member.Name;
-
-                    properties[index] = DynamicPropertyInfo.Create(column, newName, type: parameterExpression.Type);
-
-                    index += 1;
-                }
-            }
-            else
-            {
-                var body = (NewExpression)expression.Body;
-
-                var countArguments = body.Arguments.Count;
-                properties = new DynamicPropertyInfo[countArguments];
-
-                var index = 0;
-                foreach (var a in body.Arguments)
-                {
-
-                    var memberExpression = (MemberExpression)a;
-                    var parameterExpression = (ParameterExpression)memberExpression.Expression;
-                    var table = this.reflectionHelper.GetTableName(parameterExpression.Type);
-                    var column = GetName(memberExpression);
-                    var alias = GetParameterName(a);
-
-                    properties[index] = DynamicPropertyInfo.Create(name: column, type: parameterExpression.Type);
-
-                    index += 1;
-                }
-
-                index = 0;
-                foreach (var m in body.Members)
-                {
-                    if (m.Name != properties[index].Name)
-                    {
-                        properties[index].SetNewName(m.Name);
-                    }
-                    index += 1;
-                }
-            }
-
-            return properties.ToList();
-        }
+            => this.dynamicExpressionHelper.GetProperties(expr);
 
         public object GetValue(Expression expression)
         {

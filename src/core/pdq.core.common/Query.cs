@@ -40,13 +40,17 @@ namespace pdq.common
 
 		void IQueryInternal.SetContext(IQueryContext context) => this.context = context;
 
-		public void Dispose() => Dispose(true);
+		public void Dispose()
+		{
+			Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-		protected void Dispose(bool disposing)
+		protected virtual void Dispose(bool disposing)
         {
+			if (!disposing) return;
 			this.logger.Debug($"Query({Id} :: Disposing({disposing})");
             this.aliasManager.Dispose();
-			GC.SuppressFinalize(this);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using pdq.common;
 
@@ -40,9 +41,9 @@ namespace pdq.state
         /// <inheritdoc/>
         public IReadOnlyCollection<GroupBy> GroupByClauses => this.groupByClauses.AsReadOnly();
 
-        /// <inheritdoc/>
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
+            if (!disposing) return;
             this.columns.DisposeAll();
             this.joins.DisposeAll();
             this.orderByClauses.DisposeAll();

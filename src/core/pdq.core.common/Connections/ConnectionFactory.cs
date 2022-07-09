@@ -21,12 +21,16 @@ namespace pdq.common.Connections
         }
 
         /// <inheritdoc/>
-        public void Dispose() => Dispose(true);
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
         protected void Dispose(bool disposing)
         {
+            if (!disposing) return;
             this.connections = null;
-            GC.SuppressFinalize(this);
         }
 
         /// <inheritdoc/>
@@ -80,12 +84,12 @@ namespace pdq.common.Connections
         }
 
         /// <inheritdoc/>
-        public async Task<IConnection> GetAsync(IConnectionDetails connectionDetails)
+        public Task<IConnection> GetAsync(IConnectionDetails connectionDetails)
         {
             if (connectionDetails == null)
                 throw new ArgumentNullException(nameof(connectionDetails), $"The {nameof(connectionDetails)} cannot be null, it MUST be provided when creating a connection.");
 
-            return await GetInternalAsync(connectionDetails);
+            return GetInternalAsync(connectionDetails);
         }
 
         /// <inheritdoc/>

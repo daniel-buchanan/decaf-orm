@@ -1,4 +1,5 @@
-﻿using pdq.common;
+﻿using System;
+using pdq.common;
 
 namespace pdq.state
 {
@@ -40,12 +41,12 @@ namespace pdq.state
 		public static IDeleteQueryContext Create(IAliasManager aliasManager)
 			=> new DeleteQueryContext(aliasManager);
 
-		/// <inheritdoc/>
-		public override void Dispose()
+		protected override void Dispose(bool disposing)
         {
-			Table = null;
-			WhereClause = null;
-		}
+			if (!disposing) return;
+            Table = null;
+            WhereClause = null;
+        }
     }
 }
 

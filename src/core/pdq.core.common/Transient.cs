@@ -46,7 +46,14 @@ namespace pdq.common
         /// <inheritdoc />
         public void Dispose()
         {
-            if(this.queries.Any(q => q.Status != QueryStatus.Executed))
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing) return;
+            if (this.queries.Any(q => q.Status != QueryStatus.Executed))
             {
                 this.logger.Warning($"Transient({Id}) :: One or more queries have not been executed.");
             }
@@ -71,7 +78,7 @@ namespace pdq.common
             }
             finally
             {
-                if(this.transaction.CloseConnectionOnCommitOrRollback)
+                if (this.transaction.CloseConnectionOnCommitOrRollback)
                 {
                     this.logger.Debug($"Transient({Id}) :: Closing Connection after Commit or Rollback");
                     this.connection.Close();

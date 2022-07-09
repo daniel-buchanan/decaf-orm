@@ -5,9 +5,8 @@ using pdq.state.Utilities;
 
 namespace pdq.state
 {
-	internal abstract class QueryContext : IQueryContext, IQueryContextInternal
+	internal abstract class QueryContext : IQueryContextInternal
 	{
-		private readonly IAliasManager aliasManager;
 		private readonly IExpressionHelper expressionHelper;
 		private readonly IReflectionHelper reflectionHelper;
 		protected readonly List<IQueryTarget> queryTargets;
@@ -18,12 +17,11 @@ namespace pdq.state
 		{
 			Id = Guid.NewGuid();
 			Kind = kind;
-			this.aliasManager = aliasManager;
 			this.queryTargets = new List<IQueryTarget>();
 			this.reflectionHelper = new ReflectionHelper();
 			this.expressionHelper = new ExpressionHelper(
 				this.reflectionHelper,
-				this.aliasManager,
+				aliasManager,
 				this);
 		}
 
@@ -47,7 +45,13 @@ namespace pdq.state
 			=> this.queryTargets.Add(target);
 
 		/// <inheritdoc/>
-		public abstract void Dispose();
+		public void Dispose()
+        {
+			Dispose(true);
+			GC.SuppressFinalize(this);
+        }
+
+		protected abstract void Dispose(bool disposing);
     }
 }
 

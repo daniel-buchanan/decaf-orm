@@ -5,7 +5,7 @@ using System.Collections.Generic;
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.core-tests")]
 namespace pdq.common
 {
-    internal class AliasManager : IAliasManager, IDisposable
+    internal sealed class AliasManager : IAliasManager, IDisposable
 	{
 		private readonly List<ManagedAlias> knownAliases;
         private readonly SortedDictionary<string, int> aliasCounts;
@@ -54,6 +54,7 @@ namespace pdq.common
         {
             this.aliasCounts.Clear();
             this.knownAliases.Clear();
+            GC.SuppressFinalize(this);
         }
 
         /// <inheritdoc />

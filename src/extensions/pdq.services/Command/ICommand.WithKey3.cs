@@ -10,8 +10,7 @@ namespace pdq.services
     /// <typeparam name="TEntity">The type of <see cref="IEntity{TKey1, TKey2, TKey3}"/> to work with.</typeparam>
     /// <typeparam name="TKey">The data type of the primary key.</typeparam>
 	public interface ICommand<TEntity, TKey1, TKey2, TKey3> :
-        ICommand<TEntity>,
-        IDisposable
+        ICommand<TEntity>
 		where TEntity: IEntity<TKey1, TKey2, TKey3>
     {
         /// <summary>

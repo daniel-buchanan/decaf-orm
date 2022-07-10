@@ -47,7 +47,7 @@ jobs:
       - name: Install Coverlet
         shell: bash
         run: |
-          dotnet tool install --global coverlet.console --tool-path ./.coverlet
+          dotnet tool update coverlet.console --tool-path ./.coverlet
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any

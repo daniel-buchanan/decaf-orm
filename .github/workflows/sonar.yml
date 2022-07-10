@@ -45,8 +45,10 @@ jobs:
           key: ${{ runner.os }}-coverlet
           restore-keys: ${{ runner.os }}-coverlet
       - name: Install Coverlet
+        if: steps.cache-coverlet.outputs.cache-hit != 'true'
         shell: bash
         run: |
+          mkdir ./.coverlet
           dotnet tool update coverlet.console --tool-path ./.coverlet
       - name: Build and analyze
         env:

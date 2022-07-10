@@ -273,6 +273,8 @@ namespace pdq.state.Utilities
                 valueAccessExp = call.Object;
             }
 
+            if (memberAccessExp == null) return null;
+
             // get values
             var valueMember = valueAccessExp as MemberExpression;
             object values = this.expressionHelper.GetValue(valueMember);

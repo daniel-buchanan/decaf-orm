@@ -66,11 +66,6 @@ namespace pdq.state
         {
 			// nothing to do here
         }
-
-        void IDisposable.Dispose()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
 

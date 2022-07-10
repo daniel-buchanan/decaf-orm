@@ -1,4 +1,6 @@
 ﻿using System;
+using pdq.Attributes;
+
 namespace pdq.services
 {
     public class Entity : IEntity { }
@@ -7,31 +9,33 @@ namespace pdq.services
     {
         protected Entity(string keyName)
         {
-            Key = KeyMetadata<TKey>.Create(keyName);
+            KeyMetadata = KeyMetadata<TKey>.Create(keyName);
         }
 
-        public IKeyMetadata Key { get; }
+        [IgnoreColumnFor.All]
+        public IKeyMetadata KeyMetadata { get; }
     }
 
     public abstract class Entity<TKey1, TKey2> : IEntity<TKey1, TKey2>
     {
         protected Entity(string componentOne, string componentTwo)
         {
-            Key = new CompositeKey
+            KeyMetadata = new CompositeKey
             {
                 ComponentOne = KeyMetadata<TKey1>.Create(componentOne),
                 ComponentTwo = KeyMetadata<TKey2>.Create(componentTwo)
             };
         }
 
-        public ICompositeKey Key { get; }
+        [IgnoreColumnFor.All]
+        public ICompositeKey KeyMetadata { get; }
     }
 
     public abstract class Entity<TKey1, TKey2, TKey3> : IEntity<TKey1, TKey2, TKey3>
     {
         protected Entity(string componentOne, string componentTwo, string componentThree)
         {
-            Key = new CompositeKeyTriple
+            KeyMetadata = new CompositeKeyTriple
             {
                 ComponentOne = KeyMetadata<TKey1>.Create(componentOne),
                 ComponentTwo = KeyMetadata<TKey2>.Create(componentTwo),
@@ -39,7 +43,8 @@ namespace pdq.services
             };
         }
 
-        public ICompositeKeyTriple Key { get; }
+        [IgnoreColumnFor.All]
+        public ICompositeKeyTriple KeyMetadata { get; }
     }
 }
 

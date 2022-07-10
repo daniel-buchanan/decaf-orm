@@ -7,6 +7,17 @@ namespace pdq.Attributes
         /// <summary>
         /// Ignore the field this is applied to for UPDATE commands
         /// </summary>
+        public class All : IgnoreColumnForAttribute
+        {
+            public All() : base(QueryTypes.Select |
+                QueryTypes.Insert |
+                QueryTypes.Update |
+                QueryTypes.Delete) { }
+        }
+
+        /// <summary>
+        /// Ignore the field this is applied to for UPDATE commands
+        /// </summary>
         public class Update : IgnoreColumnForAttribute
         {
             public Update() : base(QueryTypes.Update) { }

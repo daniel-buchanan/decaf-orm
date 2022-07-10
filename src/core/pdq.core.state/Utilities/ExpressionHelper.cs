@@ -103,7 +103,8 @@ namespace pdq.state.Utilities
             if (expr is MethodCallExpression)
             {
                 var call = expr as MethodCallExpression;
-                if (call?.Object == null) return GetParameterName(call.Arguments[0]);
+                if (call == null) return null;
+                if (call.Object == null) return GetParameterName(call.Arguments[0]);
 
                 return GetParameterName(call.Object);
             }

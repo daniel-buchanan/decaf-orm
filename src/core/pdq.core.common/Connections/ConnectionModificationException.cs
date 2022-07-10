@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.Serialization;
+
 namespace pdq.common.Connections
 {
     [Serializable]
@@ -6,7 +8,10 @@ namespace pdq.common.Connections
 	{
 		public ConnectionModificationException() { }
 
-		public ConnectionModificationException(string message) : base(message) { }
+        protected ConnectionModificationException(SerializationInfo info, StreamingContext context)
+			: base(info, context) { }
+
+        public ConnectionModificationException(string message) : base(message) { }
 	}
 }
 

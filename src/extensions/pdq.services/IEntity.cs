@@ -15,7 +15,7 @@ namespace pdq.services
         /// <summary>
         /// Metadata about the Primary Key for this <see cref="IEntity{TKey}"/>
         /// </summary>
-        IKeyMetadata Key { get; }
+        IKeyMetadata KeyMetadata { get; }
     }
 
     /// <summary>
@@ -28,7 +28,7 @@ namespace pdq.services
         /// <summary>
         /// Metadata about the Primary Key for this <see cref="IEntity{TKey1, TKey2}"/>
         /// </summary>
-        ICompositeKey Key { get; }
+        ICompositeKey KeyMetadata { get; }
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ namespace pdq.services
         /// <summary>
         /// Metadata about the Primary Key for this <see cref="IEntity{TKey1, TKey2, TKey3}"/>
         /// </summary>
-        ICompositeKeyTriple Key { get; }
+        ICompositeKeyTriple KeyMetadata { get; }
     }
 }
 

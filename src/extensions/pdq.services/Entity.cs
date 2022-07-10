@@ -17,7 +17,7 @@ namespace pdq.services
     {
         protected Entity(string componentOne, string componentTwo)
         {
-            Key = new CompositeKey<TKey1, TKey2>
+            Key = new CompositeKey
             {
                 ComponentOne = KeyMetadata<TKey1>.Create(componentOne),
                 ComponentTwo = KeyMetadata<TKey2>.Create(componentTwo)
@@ -31,7 +31,7 @@ namespace pdq.services
     {
         protected Entity(string componentOne, string componentTwo, string componentThree)
         {
-            Key = new CompositeKey<TKey1, TKey2, TKey3>
+            Key = new CompositeKeyTriple
             {
                 ComponentOne = KeyMetadata<TKey1>.Create(componentOne),
                 ComponentTwo = KeyMetadata<TKey2>.Create(componentTwo),

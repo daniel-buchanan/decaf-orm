@@ -69,10 +69,10 @@ namespace pdq.state.Utilities
             if (expression.NodeType == ExpressionType.Lambda) expression = ((LambdaExpression)expression).Body;
             if (expression.NodeType == ExpressionType.Convert) expression = ((UnaryExpression)expression).Operand;
 
-            if (!(expression is MethodCallExpression)) return null;
+            var methodExpression = expression as MethodCallExpression;
+            if (methodExpression == null) return null;
 
-            var call = (MethodCallExpression)expression;
-            return call.Method.Name;
+            return methodExpression.Method.Name;
         }
 
         /// <summary>

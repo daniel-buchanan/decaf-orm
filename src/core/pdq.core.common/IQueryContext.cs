@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace pdq.common
 {
-    public interface IQueryContext : IDisposable
+    public interface IQueryContext
 	{
 		/// <summary>
         /// The Id of the <see cref="IQueryContext"/>.

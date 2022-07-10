@@ -25,12 +25,6 @@ namespace pdq.services
         }
 
         /// <inheritdoc/>
-        public void Dispose()
-        {
-            
-        }
-
-        /// <inheritdoc/>
         public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> query)
         {
             using (var q = this.GetTransient().Query())

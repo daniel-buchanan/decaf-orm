@@ -44,7 +44,7 @@ namespace pdq.common.Connections
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing) return;
+            // nothing to do here
         }
 
         /// <inheritdoc/>

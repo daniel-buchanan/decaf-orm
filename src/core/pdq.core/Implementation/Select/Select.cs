@@ -7,7 +7,7 @@ using pdq.state;
 namespace pdq.Implementation
 {
 	internal class Select
-        : Execute, ISelectWithAlias, ISelectFrom, IWhere, IOrderByThen, IGroupBy, IGroupByThen
+        : Execute, ISelectWithAlias, ISelectFrom, IOrderBy, IOrderByThen, IGroupBy, IGroupByThen
 	{
         private readonly ISelectQueryContext context;
 
@@ -23,9 +23,6 @@ namespace pdq.Implementation
 
         /// <inheritdoc/>
         internal ISelectQueryContext GetContext() => this.context;
-
-        /// <inheritdoc/>
-        public void Dispose() => this.context.Dispose();
 
         /// <inheritdoc/>
         public ISelectFrom Column(
@@ -67,7 +64,7 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc/>
-        public IWhere Where(Action<IWhereBuilder> builder)
+        public IOrderBy Where(Action<IWhereBuilder> builder)
         {
             var b = WhereBuilder.Create(this.context);
             builder(b);
@@ -110,10 +107,10 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc/>
-        public ISelectFromTyped<T> From<T>(Expression<Func<T, T>> expression)
+        public ISelectFromTyped<T> From<T>(Expression<Func<T, T>> aliasExpression)
         {
-            var table = this.context.Helpers().GetTableName(expression);
-            var alias = this.context.Helpers().GetTableAlias(expression);
+            var table = this.context.Helpers().GetTableName(aliasExpression);
+            var alias = this.context.Helpers().GetTableAlias(aliasExpression);
 
             var managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
             var managedAlias = this.query.AliasManager.Add(alias, table);
@@ -154,10 +151,6 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc/>
-        public IOrderByThen ThenBy(string column, string tableAlias, SortOrder orderBy)
-            => OrderBy(column, tableAlias, orderBy);
-
-        /// <inheritdoc/>
         public IGroupByThen GroupBy(string column, string tableAlias)
         {
             var managedTable = this.query.AliasManager.GetAssociation(tableAlias);
@@ -165,6 +158,10 @@ namespace pdq.Implementation
             this.context.GroupBy(state.GroupBy.Create(column, state.QueryTargets.TableTarget.Create(managedTable, managedAlias)));
             return this;
         }
+
+        /// <inheritdoc/>
+        public IOrderByThen ThenBy(string column, string tableAlias, SortOrder orderBy)
+            => OrderBy(column, tableAlias, orderBy);
 
         /// <inheritdoc/>
         public IGroupByThen ThenBy(string column, string tableAlias)

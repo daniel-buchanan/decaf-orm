@@ -39,7 +39,6 @@ namespace pdq
     }
 
     public interface IGroupByThenTyped<T> :
-        IExecute,
         IOrderByTyped<T>,
         ISelectColumnTyped<T>
     {
@@ -47,7 +46,6 @@ namespace pdq
 	}
 
     public interface IGroupByThenTyped<T1, T2> :
-        IExecute,
         IOrderByTyped<T1, T2>,
         ISelectColumnTyped<T1, T2>
     {
@@ -55,7 +53,6 @@ namespace pdq
     }
 
     public interface IGroupByThenTyped<T1, T2, T3> :
-        IExecute,
         IOrderByTyped<T1, T2, T3>,
         ISelectColumnTyped<T1, T2, T3>
     {
@@ -63,7 +60,6 @@ namespace pdq
     }
 
     public interface IGroupByThenTyped<T1, T2, T3, T4> :
-        IExecute,
         IOrderByTyped<T1, T2, T3, T4>,
         ISelectColumnTyped<T1, T2, T3, T4>
     {
@@ -71,7 +67,6 @@ namespace pdq
     }
 
     public interface IGroupByThenTyped<T1, T2, T3, T4, T5> :
-        IExecute,
         IOrderByTyped<T1, T2, T3, T4, T5>,
         ISelectColumnTyped<T1, T2, T3, T4, T5>
     {

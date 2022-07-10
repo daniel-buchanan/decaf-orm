@@ -25,18 +25,6 @@ namespace pdq.Implementation
             => new Select<T>(context, query);
 
         /// <inheritdoc/>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            // don't need to do anything here
-        }
-
-        /// <inheritdoc/>
         public IGroupByThenTyped<T> GroupBy(Expression<Func<T, object>> builder)
         {
             this.AddGroupBy(builder);

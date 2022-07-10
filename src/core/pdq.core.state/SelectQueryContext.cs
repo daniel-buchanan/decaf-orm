@@ -43,7 +43,7 @@ namespace pdq.state
 
         protected override void Dispose(bool disposing)
         {
-            if (!disposing) return;
+            base.Dispose(disposing);
             this.columns.DisposeAll();
             this.joins.DisposeAll();
             this.orderByClauses.DisposeAll();

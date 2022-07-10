@@ -8,7 +8,7 @@ namespace pdq.services
     /// A Service for making modifications to a given <see cref="TEntity"/>. 
     /// </summary>
     /// <typeparam name="TEntity">The type of <see cref="IEntity"/> to work with.</typeparam>
-	public interface ICommand<TEntity> : IDisposable where TEntity : IEntity
+	public interface ICommand<TEntity> where TEntity : IEntity
 	{
 		/// <summary>
         /// Add an item to the database.

@@ -10,7 +10,7 @@ namespace pdq.services
         /// <typeparam name="TEntity"></typeparam>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollectionHandler<TEntity> AddPdqService<TEntity>(this IServiceCollection services)
+        public static IServiceCollectionHandler AddPdqService<TEntity>(this IServiceCollection services)
             where TEntity : class, IEntity => ServiceCollectionHandler<TEntity>.Create(services);
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace pdq.services
         /// <typeparam name="TKey"></typeparam>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollectionHandler<TEntity> AddPdqService<TEntity, TKey>(this IServiceCollection services)
+        public static IServiceCollectionHandler AddPdqService<TEntity, TKey>(this IServiceCollection services)
             where TEntity : class, IEntity<TKey> => ServiceCollectionHandler<TEntity, TKey>.Create(services);
     }
 }

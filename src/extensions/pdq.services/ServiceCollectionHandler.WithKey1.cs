@@ -3,7 +3,7 @@
 namespace pdq.services
 {
     public class ServiceCollectionHandler<TEntity, TKey> :
-        IServiceCollectionHandler<TEntity, TKey>
+        IServiceCollectionHandler
         where TEntity : class, IEntity<TKey>
     {
         private readonly IServiceCollection services;
@@ -11,7 +11,7 @@ namespace pdq.services
         private ServiceCollectionHandler(IServiceCollection services)
             => this.services = services;
 
-        public static IServiceCollectionHandler<TEntity, TKey> Create(IServiceCollection services)
+        public static IServiceCollectionHandler Create(IServiceCollection services)
             => new ServiceCollectionHandler<TEntity, TKey>(services);
 
         private IServiceCollection Add(ServiceLifetime lifetime)

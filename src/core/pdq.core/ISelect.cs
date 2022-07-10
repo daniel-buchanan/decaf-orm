@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace pdq
 {
-	public interface ISelect : IDisposable
+	public interface ISelect
 	{
 		/// <summary>
         /// 

@@ -8,7 +8,7 @@ namespace pdq.services
     /// Service for querying a given Entity.
     /// </summary>
     /// <typeparam name="TEntity">The type of <see cref="IEntity"/> to query.</typeparam>
-	public interface IQuery<TEntity> : IDisposable
+	public interface IQuery<TEntity>
 		where TEntity : IEntity
 	{
 		/// <summary>

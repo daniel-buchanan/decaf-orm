@@ -185,9 +185,9 @@ namespace pdq.state.Utilities
             //igore any properties which have ignore set 
             properties = (from p in properties
                           where p.GetCustomAttributes(typeof(IgnoreColumnForAttribute), true)
-                                 .Count(a => ((IgnoreColumnForAttribute)a)
+                                 .Any(a => ((IgnoreColumnForAttribute)a)
                                  .QueryType.HasFlag(queryType) ||
-                                 ((IgnoreColumnForAttribute)a).QueryType == QueryTypes.None) == 0
+                                 ((IgnoreColumnForAttribute)a).QueryType == QueryTypes.None)
                           select p).ToArray();
 
             // iternate through properties

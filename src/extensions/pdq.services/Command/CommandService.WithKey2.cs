@@ -43,11 +43,6 @@ namespace pdq.services
             throw new NotImplementedException();
         }
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
         public void Update(dynamic toUpdate, TKey1 key1, TKey2 key2)
         {
             throw new NotImplementedException();

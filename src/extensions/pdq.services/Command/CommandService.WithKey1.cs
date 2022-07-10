@@ -42,11 +42,6 @@ namespace pdq.services
             throw new NotImplementedException();
         }
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
         public void Update(TEntity toUpdate)
         {
             throw new NotImplementedException();

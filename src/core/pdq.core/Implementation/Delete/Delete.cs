@@ -9,8 +9,7 @@ namespace pdq.Implementation
 	internal class Delete :
         Execute,
         IDelete,
-        IDeleteFrom,
-        IDisposable
+        IDeleteFrom
 	{
         private readonly IDeleteQueryContext context;
 
@@ -21,9 +20,6 @@ namespace pdq.Implementation
         }
 
         public static Delete Create(IQuery query) => new Delete(query);
-
-        /// <inheritdoc />
-        public void Dispose() => this.context.Dispose();
 
         /// <inheritdoc />
         public IDeleteFrom From(string name, string alias = null, string schema = null)

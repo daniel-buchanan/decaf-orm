@@ -54,13 +54,6 @@ namespace pdq.services
             => this.command.Delete(expression);
 
         /// <inheritdoc/>
-        public void Dispose()
-        {
-            this.query.Dispose();
-            this.command.Dispose();
-        }
-
-        /// <inheritdoc/>
         public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> query)
             => this.query.Get(query);
 

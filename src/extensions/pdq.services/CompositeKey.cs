@@ -2,17 +2,17 @@
 namespace pdq.services
 {
     public class CompositeKey<TKey1, TKey2> :
-        ICompositeKey<TKey1, TKey2>
+        ICompositeKey
     {
-        public IKeyMetadata<TKey1> ComponentOne { get; set; }
-        public IKeyMetadata<TKey2> ComponentTwo { get; set; }
+        public IKeyMetadata ComponentOne { get; set; }
+        public IKeyMetadata ComponentTwo { get; set; }
     }
 
     public class CompositeKey<TKey1, TKey2, TKey3>
         : CompositeKey<TKey1, TKey2>,
-        ICompositeKey<TKey1, TKey2, TKey3>
+        ICompositeKeyTriple
     {
-        public IKeyMetadata<TKey3> ComponentThree { get; set; }
+        public IKeyMetadata ComponentThree { get; set; }
     }
 }
 

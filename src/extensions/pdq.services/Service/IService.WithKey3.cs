@@ -10,8 +10,7 @@ namespace pdq.services
     /// <typeparam name="TKey3"></typeparam>
     public interface IService<TEntity, TKey1, TKey2, TKey3> :
 		IQuery<TEntity, TKey1, TKey2, TKey3>,
-		ICommand<TEntity, TKey1, TKey2, TKey3>,
-		IDisposable
+		ICommand<TEntity, TKey1, TKey2, TKey3>
 		where TEntity: IEntity<TKey1, TKey2, TKey3>
     {
 

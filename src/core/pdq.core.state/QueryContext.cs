@@ -64,7 +64,7 @@ namespace pdq.state
 
 		protected virtual void Dispose(bool disposing)
         {
-
+			// nothing to do here
         }
 
         void IDisposable.Dispose()

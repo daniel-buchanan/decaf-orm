@@ -10,7 +10,7 @@ namespace pdq.services
             Key = KeyMetadata<TKey>.Create(keyName);
         }
 
-        public IKeyMetadata<TKey> Key { get; }
+        public IKeyMetadata Key { get; }
     }
 
     public abstract class Entity<TKey1, TKey2> : IEntity<TKey1, TKey2>
@@ -24,7 +24,7 @@ namespace pdq.services
             };
         }
 
-        public ICompositeKey<TKey1, TKey2> Key { get; }
+        public ICompositeKey Key { get; }
     }
 
     public abstract class Entity<TKey1, TKey2, TKey3> : IEntity<TKey1, TKey2, TKey3>
@@ -39,7 +39,7 @@ namespace pdq.services
             };
         }
 
-        public ICompositeKey<TKey1, TKey2, TKey3> Key { get; }
+        public ICompositeKeyTriple Key { get; }
     }
 }
 

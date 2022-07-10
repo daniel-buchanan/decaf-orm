@@ -1,7 +1,7 @@
 ﻿using System;
 namespace pdq.services
 {
-    public class KeyMetadata<T> : IKeyMetadata<T>
+    public class KeyMetadata<T> : IKeyMetadata
     {
         private KeyMetadata(string name) => this.Name = name;
 
@@ -12,7 +12,7 @@ namespace pdq.services
         /// </summary>
         /// <param name="name">The name of the Key</param>
         /// <returns>A new instance of <see cref="KeyMetadata{T}"/> which implements <see cref="IKeyMetadata"/>.</returns>
-        public static IKeyMetadata<T> Create(string name) => new KeyMetadata<T>(name);
+        public static IKeyMetadata Create(string name) => new KeyMetadata<T>(name);
 
         /// <inheritdoc/>
         public Type Type => typeof(T);

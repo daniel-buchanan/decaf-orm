@@ -32,8 +32,8 @@ namespace pdq.state.Utilities
         {
             var initExpr = (MemberInitExpression)expression.Body;
 
-            var countBindings = initExpr.Bindings.Count();
-            var properties = new DynamicPropertyInfo[countBindings];
+            var numBindings = initExpr.Bindings.Count;
+            var properties = new DynamicPropertyInfo[numBindings];
 
             var index = 0;
             foreach (var b in initExpr.Bindings)
@@ -42,7 +42,6 @@ namespace pdq.state.Utilities
                 var memberExpression = (MemberExpression)memberBinding.Expression;
                 var parameterExpression = (ParameterExpression)memberExpression.Expression;
                 var column = this.expressionHelper.GetName(memberExpression);
-                var alias = this.expressionHelper.GetParameterName(memberExpression);
                 var newName = memberBinding.Member.Name;
 
                 properties[index] = DynamicPropertyInfo.Create(column, newName, type: parameterExpression.Type);
@@ -60,29 +59,21 @@ namespace pdq.state.Utilities
             var countArguments = body.Arguments.Count;
             var properties = new DynamicPropertyInfo[countArguments];
 
-            var index = 0;
-            foreach (var a in body.Arguments)
+            for(var i = 0; i < countArguments; i += 1)
             {
-
-                var memberExpression = (MemberExpression)a;
+                var memberExpression = (MemberExpression)body.Arguments[i];
                 var parameterExpression = (ParameterExpression)memberExpression.Expression;
-                var table = this.reflectionHelper.GetTableName(parameterExpression.Type);
                 var column = this.expressionHelper.GetName(memberExpression);
-                var alias = this.expressionHelper.GetParameterName(a);
 
-                properties[index] = DynamicPropertyInfo.Create(name: column, type: parameterExpression.Type);
-
-                index += 1;
+                properties[i] = DynamicPropertyInfo.Create(name: column, type: parameterExpression.Type);
             }
 
-            index = 0;
-            foreach (var m in body.Members)
+            for (var i = 0; i < body.Members.Count; i += 1)
             {
-                if (m.Name != properties[index].Name)
-                {
-                    properties[index].SetNewName(m.Name);
-                }
-                index += 1;
+                var m = body.Members[i];
+                if (m.Name == properties[i].Name) continue;
+
+                properties[i].SetNewName(m.Name);
             }
 
             return properties.ToList();

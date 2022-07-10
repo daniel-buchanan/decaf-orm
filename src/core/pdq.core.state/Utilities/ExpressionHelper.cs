@@ -191,14 +191,14 @@ namespace pdq.state.Utilities
             }
             else if (expression.NodeType == ExpressionType.Call)
             {
-                object result = null;
                 try
                 {
-                    result = Expression.Lambda(expression).Compile().DynamicInvoke();
+                    return Expression.Lambda(expression).Compile().DynamicInvoke();
                 }
-                catch { }
-
-                return result;
+                catch
+                {
+                    return null;
+                }
             }
 
             return null;

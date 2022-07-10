@@ -9,7 +9,7 @@ namespace pdq.state.Utilities
 		protected readonly IExpressionHelper expressionHelper;
         protected readonly IReflectionHelper reflectionHelper;
 
-		public BaseParser(
+		protected BaseParser(
             IExpressionHelper expressionHelper,
             IReflectionHelper reflectionHelper)
 		{

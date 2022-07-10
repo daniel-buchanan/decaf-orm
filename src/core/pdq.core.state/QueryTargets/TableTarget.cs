@@ -1,6 +1,7 @@
 ﻿using System;
 using pdq.common;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.core-tests")]
 namespace pdq.state.QueryTargets
 {
 	public class TableTarget : ITableTarget

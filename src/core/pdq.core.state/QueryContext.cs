@@ -6,7 +6,7 @@ using pdq.state.Utilities.Parsers;
 
 namespace pdq.state
 {
-	internal abstract class QueryContext : IDisposable, IQueryContextInternal
+	internal abstract class QueryContext : IQueryContextInternal
 	{
 		private readonly IExpressionHelper expressionHelper;
 		private readonly IReflectionHelper reflectionHelper;
@@ -44,12 +44,6 @@ namespace pdq.state
 		IReflectionHelper IQueryContextInternal.ReflectionHelper => this.reflectionHelper;
 
 		IQueryParsers IQueryContextInternal.Parsers => this.parserHolder;
-
-        Guid IQueryContext.Id => throw new NotImplementedException();
-
-        QueryTypes IQueryContext.Kind => throw new NotImplementedException();
-
-        IEnumerable<IQueryTarget> IQueryContext.QueryTargets => throw new NotImplementedException();
 
         /// <inheritdoc/>
         void IQueryContextInternal.AddQueryTarget(IQueryTarget target)

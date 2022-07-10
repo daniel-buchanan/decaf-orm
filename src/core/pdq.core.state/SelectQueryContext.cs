@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using pdq.common;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.core-tests")]
 namespace pdq.state
 {
 	internal class SelectQueryContext : QueryContext, ISelectQueryContext
@@ -48,6 +49,7 @@ namespace pdq.state
             this.joins.DisposeAll();
             this.orderByClauses.DisposeAll();
             this.groupByClauses.DisposeAll();
+            this.queryTargets.DisposeAll();
             this.where = null;
         }
 
@@ -64,6 +66,9 @@ namespace pdq.state
         /// <inheritdoc/>
         public ISelectQueryContext GroupBy(GroupBy groupBy)
         {
+            var item = this.groupByClauses.FirstOrDefault(c => c.IsEquivalentTo(groupBy));
+            if (item != null) return this;
+
             this.groupByClauses.Add(groupBy);
             return this;
         }
@@ -71,6 +76,11 @@ namespace pdq.state
         /// <inheritdoc/>
         public ISelectQueryContext Join(Join join)
         {
+            var existing = this.joins.FirstOrDefault(j => j.From.IsEquivalentTo(join.From) &&
+                j.To.IsEquivalentTo(join.To));
+
+            if (existing != null) return this;
+
             this.joins.Add(join);
             return this;
         }
@@ -78,6 +88,9 @@ namespace pdq.state
         /// <inheritdoc/>
         public ISelectQueryContext OrderBy(OrderBy orderBy)
         {
+            var item = this.orderByClauses.FirstOrDefault(c => c.IsEquivalentTo(orderBy));
+            if (item != null) return this;
+
             this.orderByClauses.Add(orderBy);
             return this;
         }

@@ -2,7 +2,7 @@
 
 namespace pdq.state
 {
-	public class OrderBy : Column
+	public class OrderBy : ColumnBase<OrderBy>
 	{
 		private OrderBy(Column column, SortOrder order)
 			: base(column.Name, column.Source)
@@ -21,6 +21,12 @@ namespace pdq.state
         {
 			return new OrderBy(column, order);
         }
-	}
+
+        public override bool IsEquivalentTo(OrderBy column)
+        {
+            return column.Name == Name &&
+                column.Source.Alias == Source.Alias;
+        }
+    }
 }
 

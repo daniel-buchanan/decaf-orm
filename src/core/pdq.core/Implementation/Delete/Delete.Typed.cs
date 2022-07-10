@@ -20,9 +20,9 @@ namespace pdq.Implementation
             => new Delete<T>(context, query);
 
         /// <inheritdoc />
-        public IDeleteFrom<T> Where(Expression<Func<T, bool>> expression)
+        public IDeleteFrom<T> Where(Expression<Func<T, bool>> whereExpression)
         {
-            var clause = this.context.Helpers().ParseWhere(expression);
+            var clause = this.context.Helpers().ParseWhere(whereExpression);
             this.context.Where(clause);
             return this;
         }

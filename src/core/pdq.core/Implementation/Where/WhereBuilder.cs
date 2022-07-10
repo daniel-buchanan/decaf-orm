@@ -33,7 +33,7 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc />
-        public IClauseHandlingBehaviour ClauseHandling() => ClauseHandlingBehaviour.Create(this);
+        public IClauseHandlingBehaviour ClauseHandling() => ClauseHandlingBehaviour.CreateClauseHandler(this);
 
         /// <inheritdoc />
         public IColumnWhereBuilder Column(string name, string targetAlias = null)
@@ -78,14 +78,14 @@ namespace pdq.Implementation
             Or
         }
 
-        private class ClauseHandlingBehaviour : IClauseHandlingBehaviour
+        private sealed class ClauseHandlingBehaviour : IClauseHandlingBehaviour
         {
             private readonly WhereBuilder builder;
 
             private ClauseHandlingBehaviour(WhereBuilder builder)
                 => this.builder = builder;
 
-            public static IClauseHandlingBehaviour Create(WhereBuilder builder)
+            public static IClauseHandlingBehaviour CreateClauseHandler(WhereBuilder builder)
                 => new ClauseHandlingBehaviour(builder);
 
             /// <inheritdoc />

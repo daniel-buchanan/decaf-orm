@@ -7,7 +7,7 @@ using pdq.state;
 namespace pdq.Implementation
 {
 	internal class Select
-        : Execute, ISelect, ISelectWithAlias, ISelectFrom, IWhere, IOrderByThen, IGroupBy, IGroupByThen
+        : Execute, ISelectWithAlias, ISelectFrom, IWhere, IOrderByThen, IGroupBy, IGroupByThen
 	{
         private readonly ISelectQueryContext context;
 
@@ -123,6 +123,21 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc/>
+        public ISelectFromTyped<T> From<T>(Action<ISelectWithAlias> query, string alias)
+        {
+            var select = Create(this.query);
+            query(select);
+
+            var target = state.QueryTargets.SelectQueryTarget.Create(select.context, select.Alias);
+
+            var table = this.context.Helpers().GetTableName<T>();
+            this.query.AliasManager.Add(table, alias);
+
+            this.context.From(target);
+            return Select<T>.Create(this.context, this.query);
+        }
+
+        /// <inheritdoc/>
         public ISelectWithAlias KnownAs(string alias)
         {
             Alias = alias;
@@ -140,12 +155,7 @@ namespace pdq.Implementation
 
         /// <inheritdoc/>
         public IOrderByThen ThenBy(string column, string tableAlias, SortOrder orderBy)
-        {
-            var managedTable = this.query.AliasManager.GetAssociation(tableAlias);
-            var managedAlias = this.query.AliasManager.Add(tableAlias, managedTable);
-            this.context.OrderBy(state.OrderBy.Create(column, state.QueryTargets.TableTarget.Create(managedTable, managedAlias), orderBy));
-            return this;
-        }
+            => OrderBy(column, tableAlias, orderBy);
 
         /// <inheritdoc/>
         public IGroupByThen GroupBy(string column, string tableAlias)
@@ -157,28 +167,8 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc/>
-        public IOrderByThen ThenBy(string column, string tableAlias)
-        {
-            var managedTable = this.query.AliasManager.GetAssociation(tableAlias);
-            var managedAlias = this.query.AliasManager.Add(tableAlias, managedTable);
-            this.context.GroupBy(state.GroupBy.Create(column, state.QueryTargets.TableTarget.Create(managedTable, managedAlias)));
-            return this;
-        }
-
-        /// <inheritdoc/>
-        public ISelectFromTyped<T> From<T>(Action<ISelectWithAlias> query, string alias)
-        {
-            var select = Create(this.query);
-            query(select);
-
-            var target = state.QueryTargets.SelectQueryTarget.Create(select.context, select.Alias);
-
-            var table = this.context.Helpers().GetTableName<T>();
-            this.query.AliasManager.Add(table, alias);
-
-            this.context.From(target);
-            return Select<T>.Create(this.context, this.query);
-        }
+        public IGroupByThen ThenBy(string column, string tableAlias)
+            => GroupBy(column, tableAlias);
     }
 }
 

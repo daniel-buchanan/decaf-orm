@@ -35,10 +35,10 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc />
-        public IDeleteFrom<T> From<T>(Expression<Func<T, T>> expression)
+        public IDeleteFrom<T> From<T>(Expression<Func<T, T>> aliasExpression)
         {
-            var table = this.context.Helpers().GetTableName(expression);
-            var alias = this.context.Helpers().GetTableAlias(expression);
+            var table = this.context.Helpers().GetTableName(aliasExpression);
+            var alias = this.context.Helpers().GetTableAlias(aliasExpression);
 
             var managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
             var managedAlias = this.query.AliasManager.Add(table, alias);

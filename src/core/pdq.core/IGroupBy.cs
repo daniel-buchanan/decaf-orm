@@ -9,7 +9,7 @@ namespace pdq
 
 	public interface IGroupByThen : IExecute
     {
-		IOrderByThen ThenBy(string column, string tableAlias);
+		IGroupByThen ThenBy(string column, string tableAlias);
 	}
 }
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -8,14 +7,10 @@ namespace pdq.state.Utilities
 	internal class DynamicExpressionHelper
 	{
         private readonly IExpressionHelper expressionHelper;
-        private readonly IReflectionHelper reflectionHelper;
 
-        public DynamicExpressionHelper(
-            IExpressionHelper expressionHelper,
-            IReflectionHelper reflectionHelper)
+        public DynamicExpressionHelper(IExpressionHelper expressionHelper)
         {
             this.expressionHelper = expressionHelper;
-            this.reflectionHelper = reflectionHelper;
         }
 
 		public IEnumerable<DynamicPropertyInfo> GetProperties(Expression expr)

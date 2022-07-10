@@ -18,13 +18,13 @@ namespace pdq.state.Utilities.Parsers
             this.callExpressionHelper = callExpressionHelper;
         }
 
-        public override state.IWhere Parse(Expression expr)
+        public override state.IWhere Parse(Expression expression)
         {
-            var earlyResult = ParseBinaryCallExpression(expr);
+            var earlyResult = ParseBinaryCallExpression(expression);
             if (earlyResult != null) return earlyResult;
 
-            var valueResult = ParseMemberExpression(expr);
-            if (valueResult == null) valueResult = ParseBinaryExpression(expr);
+            var valueResult = ParseMemberExpression(expression);
+            if (valueResult == null) valueResult = ParseBinaryExpression(expression);
 
             var toCreate = typeof(Column<>);
             var col = state.Column.Create(valueResult.Field, state.QueryTargets.TableTarget.Create(valueResult.Table));
@@ -75,7 +75,6 @@ namespace pdq.state.Utilities.Parsers
             }
 
             if (operation == null) return null;
-            if (!(operation is BinaryExpression)) return null;
 
             var left = operation.Left;
             var right = operation.Right;
@@ -135,7 +134,7 @@ namespace pdq.state.Utilities.Parsers
             return new ValueResult(field, table, val, valType, op);
         }
 
-        private class ValueResult
+        private sealed class ValueResult
         {
             public ValueResult() { }
 

@@ -23,19 +23,19 @@ namespace pdq.state.Utilities.Parsers
             this.valueParser = valueParser;
         }
 
-        public override state.IWhere Parse(Expression expr)
+        public override state.IWhere Parse(Expression expression)
         {
             // check to see if we have a normal where
-            if (expr.NodeType != ExpressionType.OrElse && expr.NodeType != ExpressionType.AndAlso)
+            if (expression.NodeType != ExpressionType.OrElse && expression.NodeType != ExpressionType.AndAlso)
             {
-                return Parse(expr, false);
+                return Parse(expression, false);
             }
 
             // check for and
-            if (expr.NodeType == ExpressionType.AndAlso)
+            if (expression.NodeType == ExpressionType.AndAlso)
             {
                 // get binary expression
-                var binaryExpr = (BinaryExpression)expr;
+                var binaryExpr = (BinaryExpression)expression;
 
                 // get left and right
                 var left = Parse(binaryExpr.Left);
@@ -45,10 +45,10 @@ namespace pdq.state.Utilities.Parsers
                 return And.Where(left, right);
             }
             // check for or
-            else if (expr.NodeType == ExpressionType.OrElse)
+            else if (expression.NodeType == ExpressionType.OrElse)
             {
                 // get binary expression
-                var binaryExpr = (BinaryExpression)expr;
+                var binaryExpr = (BinaryExpression)expression;
 
                 // get left and right
                 var left = Parse(binaryExpr.Left);

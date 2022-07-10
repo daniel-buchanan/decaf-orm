@@ -8,7 +8,6 @@ namespace pdq.Implementation
     internal class Select<T>
         : SelectTypedBase,
         ISelectFromTyped<T>,
-        ISelectColumnTyped<T>,
         IGroupByTyped<T>,
         IGroupByThenTyped<T>,
         IOrderByThenTyped<T>
@@ -26,7 +25,16 @@ namespace pdq.Implementation
             => new Select<T>(context, query);
 
         /// <inheritdoc/>
-        public void Dispose() { }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            // don't need to do anything here
+        }
 
         /// <inheritdoc/>
         public IGroupByThenTyped<T> GroupBy(Expression<Func<T, object>> builder)

@@ -25,7 +25,7 @@ namespace pdq.state.Utilities
             this.constantAccess = new ConstantAccess();
             this.convertAccess = new ConvertAccess();
             this.parameterAccess = new ParameterAccess();
-            this.dynamicExpressionHelper = new DynamicExpressionHelper(this, reflectionHelper);
+            this.dynamicExpressionHelper = new DynamicExpressionHelper(this);
             this.reflectionHelper = reflectionHelper;
             this.memberAccess = new MemberAccess(this.reflectionHelper);
         }

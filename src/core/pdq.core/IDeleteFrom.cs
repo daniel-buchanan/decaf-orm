@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace pdq
 {
-	public interface IDeleteFrom : IGetSql, IExecute
+	public interface IDeleteFrom : IExecute
 	{
 		/// <summary>
         /// Restrict the rows that are deleted by this query.
@@ -13,7 +13,7 @@ namespace pdq
 		IDeleteFrom Where(Action<IWhereBuilder> builder);
 	}
 
-	public interface IDeleteFrom<T> : IGetSql, IExecute
+	public interface IDeleteFrom<T> : IExecute
     {
 		/// <summary>
         /// 

@@ -88,11 +88,12 @@ namespace pdq.state.Utilities.Parsers
             return false;
         }
 
-        private bool ParseLambdaClause(LambdaExpression lambdaExpression, BinaryExpression binaryExpression, out IWhere result)
+        private bool ParseLambdaClause(Expression expression, BinaryExpression binaryExpression, out IWhere result)
         {
             result = null;
+            if (expression == null) return false;
+            var lambdaExpression = expression as LambdaExpression;
             if (lambdaExpression == null) return false;
-            if (!(lambdaExpression is LambdaExpression)) return false;
 
             var operation = binaryExpression;
             MemberExpression leftExpression;

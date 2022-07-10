@@ -6,7 +6,7 @@ namespace pdq.state.ValueSources.Insert
 {
 	public class StaticValuesSource : IInsertValuesSource
 	{
-		private List<object[]> values;
+		private readonly List<object[]> values;
 
 		private StaticValuesSource(int width, IEnumerable<object[]> values = null)
 		{

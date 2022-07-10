@@ -47,7 +47,7 @@ namespace pdq.core_tests
 			this.context.Select(column);
 
 			// Assert
-			this.context.Columns.Count().Should().Be(1);
+			this.context.Columns.Count.Should().Be(1);
         }
 
         [Theory]
@@ -61,7 +61,7 @@ namespace pdq.core_tests
             this.context.Select(column);
 
             // Assert
-            this.context.Columns.Count().Should().Be(1);
+            this.context.Columns.Count.Should().Be(1);
         }
 
         [Theory]
@@ -72,7 +72,7 @@ namespace pdq.core_tests
             this.context.From(target);
 
             // Assert
-            this.context.QueryTargets.Count().Should().Be(1);
+            this.context.QueryTargets.Count.Should().Be(1);
         }
 
         [Theory]
@@ -86,7 +86,7 @@ namespace pdq.core_tests
             this.context.From(target);
 
             // Assert
-            this.context.QueryTargets.Count().Should().Be(1);
+            this.context.QueryTargets.Count.Should().Be(1);
         }
 
         [Fact]
@@ -99,7 +99,7 @@ namespace pdq.core_tests
             this.context.GroupBy(group);
 
             // Assert
-            this.context.GroupByClauses.Count().Should().Be(1);
+            this.context.GroupByClauses.Count.Should().Be(1);
         }
 
         [Fact]
@@ -113,7 +113,7 @@ namespace pdq.core_tests
             this.context.GroupBy(group);
 
             // Assert
-            this.context.GroupByClauses.Count().Should().Be(1);
+            this.context.GroupByClauses.Count.Should().Be(1);
         }
 
         [Fact]
@@ -126,7 +126,7 @@ namespace pdq.core_tests
             this.context.OrderBy(order);
 
             // Assert
-            this.context.OrderByClauses.Count().Should().Be(1);
+            this.context.OrderByClauses.Count.Should().Be(1);
         }
 
         [Fact]
@@ -140,7 +140,7 @@ namespace pdq.core_tests
             this.context.OrderBy(order);
 
             // Assert
-            this.context.OrderByClauses.Count().Should().Be(1);
+            this.context.OrderByClauses.Count.Should().Be(1);
         }
 
         [Fact]
@@ -165,7 +165,7 @@ namespace pdq.core_tests
             this.context.Join(join);
 
             // Assert
-            this.context.Joins.Count().Should().Be(1);
+            this.context.Joins.Count.Should().Be(1);
         }
 
         [Fact]
@@ -181,7 +181,7 @@ namespace pdq.core_tests
             this.context.Join(join);
 
             // Assert
-            this.context.Joins.Count().Should().Be(1);
+            this.context.Joins.Count.Should().Be(1);
         }
 
         [Fact]
@@ -198,7 +198,7 @@ namespace pdq.core_tests
             this.context.Dispose();
 
             // Assert
-            this.context.Joins.Count().Should().Be(0);
+            this.context.Joins.Count.Should().Be(0);
         }
 
         [Fact]
@@ -213,7 +213,7 @@ namespace pdq.core_tests
             this.context.Dispose();
 
             // Assert
-            this.context.QueryTargets.Count().Should().Be(0);
+            this.context.QueryTargets.Count.Should().Be(0);
         }
 
         [Fact]
@@ -242,7 +242,7 @@ namespace pdq.core_tests
             this.context.Dispose();
 
             // Assert
-            this.context.OrderByClauses.Count().Should().Be(0);
+            this.context.OrderByClauses.Count.Should().Be(0);
         }
 
         [Fact]
@@ -256,7 +256,7 @@ namespace pdq.core_tests
             this.context.Dispose();
 
             // Assert
-            this.context.GroupByClauses.Count().Should().Be(0);
+            this.context.GroupByClauses.Count.Should().Be(0);
         }
 
         public static IEnumerable<object[]> ColumnTests

@@ -11,7 +11,7 @@ namespace pdq.state
 		private readonly IExpressionHelper expressionHelper;
 		private readonly IReflectionHelper reflectionHelper;
 		private readonly ParserHolder parserHolder;
-		protected readonly List<IQueryTarget> queryTargets;
+		private readonly List<IQueryTarget> queryTargets;
 
 		protected QueryContext(
 			IAliasManager aliasManager,
@@ -35,7 +35,7 @@ namespace pdq.state
 		public QueryTypes Kind { get; private set; }
 
 		/// <inheritdoc/>
-		public IEnumerable<IQueryTarget> QueryTargets => this.queryTargets;
+		public IReadOnlyCollection<IQueryTarget> QueryTargets => this.queryTargets;
 
 		/// <inheritdoc/>
 		IExpressionHelper IQueryContextInternal.ExpressionHelper => this.expressionHelper;
@@ -58,7 +58,7 @@ namespace pdq.state
 
 		protected virtual void Dispose(bool disposing)
         {
-			// nothing to do here
+			this.queryTargets.DisposeAll();
         }
     }
 }

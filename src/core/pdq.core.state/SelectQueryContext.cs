@@ -49,7 +49,6 @@ namespace pdq.state
             this.joins.DisposeAll();
             this.orderByClauses.DisposeAll();
             this.groupByClauses.DisposeAll();
-            this.queryTargets.DisposeAll();
             this.where = null;
         }
 
@@ -59,7 +58,8 @@ namespace pdq.state
             var item = this.QueryTargets.FirstOrDefault(t => t.IsEquivalentTo(table));
             if (item != null) return this;
 
-            this.queryTargets.Add(table);
+            var internalContext = this as IQueryContextInternal;
+            internalContext.AddQueryTarget(table);
             return this;
         }
 

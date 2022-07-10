@@ -18,7 +18,7 @@ namespace pdq.common
 		/// <summary>
         /// The targets of the <see cref="IQueryContext"/>.
         /// </summary>
-		IEnumerable<IQueryTarget> QueryTargets { get; }
+		IReadOnlyCollection<IQueryTarget> QueryTargets { get; }
 	}
 }
 

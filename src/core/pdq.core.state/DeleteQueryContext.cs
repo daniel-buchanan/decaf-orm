@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using pdq.common;
 
 namespace pdq.state
@@ -8,12 +9,11 @@ namespace pdq.state
 		private DeleteQueryContext(IAliasManager aliasManager)
 			: base(aliasManager, QueryTypes.Delete)
         {
-			Table = null;
 			WhereClause = null;
         }
 
 		/// <inheritdoc/>
-		public ITableTarget Table { get; private set; }
+		public ITableTarget Table => QueryTargets.FirstOrDefault() as ITableTarget;
 
 		/// <inheritdoc/>
 		public IWhere WhereClause { get; private set; }
@@ -21,8 +21,11 @@ namespace pdq.state
 		/// <inheritdoc/>
 		public IDeleteQueryContext From(ITableTarget target)
         {
-			Table = target;
-			((IQueryContextInternal)this).AddQueryTarget(target);
+            var item = this.QueryTargets.FirstOrDefault(t => t.IsEquivalentTo(target));
+            if (item != null) return this;
+
+            var internalContext = this as IQueryContextInternal;
+			internalContext.AddQueryTarget(target);
 			return this;
         }
 
@@ -44,7 +47,6 @@ namespace pdq.state
 		protected override void Dispose(bool disposing)
         {
 			base.Dispose(disposing);
-            Table = null;
             WhereClause = null;
         }
     }

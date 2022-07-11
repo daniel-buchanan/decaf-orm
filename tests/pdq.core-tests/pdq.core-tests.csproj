@@ -28,5 +28,9 @@
     <None Remove="Microsoft.NET.Test.Sdk" />
     <None Remove="coverlet.collector" />
     <None Remove="FluentAssertions" />
+    <None Remove="Helpers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Helpers\" />
   </ItemGroup>
 </Project>

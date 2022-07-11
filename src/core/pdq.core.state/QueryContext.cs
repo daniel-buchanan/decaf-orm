@@ -21,10 +21,7 @@ namespace pdq.state
 			Kind = kind;
 			this.queryTargets = new List<IQueryTarget>();
 			this.reflectionHelper = new ReflectionHelper();
-			this.expressionHelper = new ExpressionHelper(
-				this.reflectionHelper,
-				aliasManager,
-				this);
+			this.expressionHelper = new ExpressionHelper(this.reflectionHelper);
 			this.parserHolder = new ParserHolder(expressionHelper, reflectionHelper, aliasManager, this, new CallExpressionHelper(expressionHelper));
 		}
 

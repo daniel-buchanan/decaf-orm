@@ -17,9 +17,7 @@ namespace pdq.state.Utilities
         private readonly IReflectionHelper reflectionHelper;
 
         public ExpressionHelper(
-            IReflectionHelper reflectionHelper,
-            IAliasManager aliasManager,
-            IQueryContextInternal context)
+            IReflectionHelper reflectionHelper)
         {
             // setup helpers
             this.constantAccess = new ConstantAccess();

@@ -7,16 +7,14 @@ using pdq.state;
 namespace pdq.Implementation
 {
 	internal class Select
-        : Execute, ISelectWithAlias, ISelectFrom, IOrderBy, IOrderByThen, IGroupBy, IGroupByThen
+        : SelectBase, ISelectWithAlias, ISelectFrom, IOrderBy, IOrderByThen, IGroupBy, IGroupByThen
 	{
-        private readonly ISelectQueryContext context;
-
         public string Alias { get; private set; }
 
-        private Select(IQuery query) : base((IQueryInternal)query)
+        private Select(IQuery query) : base(
+            SelectQueryContext.Create(((IQueryInternal)query).AliasManager),
+            (IQueryInternal)query)
         {
-            this.context = SelectQueryContext.Create(this.query.AliasManager);
-            this.query.SetContext(this.context);
         }
 
         public static Select Create(IQuery query) => new Select(query);
@@ -166,6 +164,20 @@ namespace pdq.Implementation
         /// <inheritdoc/>
         public IGroupByThen ThenBy(string column, string tableAlias)
             => GroupBy(column, tableAlias);
+
+        /// <inheritdoc/>
+        IExecuteDynamic ISelectColumn.Select(Expression<Func<ISelectColumnBuilder, dynamic>> expression)
+        {
+            base.AddColumns(expression);
+            return ExecuteDynamic.Create(this.query);
+        }
+
+        /// <inheritdoc/>
+        IExecute<TResult> ISelectColumn.Select<TResult>(Expression<Func<ISelectColumnBuilder, TResult>> expression)
+        {
+            base.AddColumns(expression);
+            return Execute<TResult>.Create(this.query);
+        }
     }
 }
 

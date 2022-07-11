@@ -60,7 +60,7 @@ namespace pdq.Implementation
 
         protected void AddJoin<T1, T2>(Expression expression, JoinType type)
         {
-            var conditions = this.context.Helpers().ParseWhere(expression);
+            var conditions = this.context.Helpers().ParseJoin(expression);
             var left = GetQueryTarget<T1>();
             var right = GetQueryTarget<T2>();
 
@@ -73,12 +73,12 @@ namespace pdq.Implementation
             query(select);
 
             var table = this.context.Helpers().GetTableName<T2>();
-            var alias = this.query.AliasManager.Add(table, select.Alias);
+            var alias = this.query.AliasManager.Add(select.Alias, table);
 
             var left = GetQueryTarget<T1>();
             var right = SelectQueryTarget.Create(select.GetContext(), alias);
 
-            var conditions = this.context.Helpers().ParseWhere(expression);
+            var conditions = this.context.Helpers().ParseJoin(expression);
 
             this.context.Join(state.Join.Create(left, right, type, conditions));
         }

@@ -39,13 +39,11 @@ using (var t = uow.Begin())
         q.Select()
             .From<Person>(x => x)
             .Join<Address>((p, a) => p.AddressId == a.Id)
-            .Join<Person, Note>((p, n) => p.Id == n.PersonId)
-            .Where((p, a, n) => p.LastName.Contains("smith"))
-            .Select((p, a, n) => new Result
+            .Where((p, a) => p.LastName.Contains("smith"))
+            .Select((p, a) => new Result
             {
                 Name = p.FirstName,
-                City = a.City,
-                Note = n.Value
+                City = a.City
             });
 
     }

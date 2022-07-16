@@ -15,16 +15,6 @@ namespace pdq.Implementation
         {
         }
 
-        protected void AddColumns(Expression expression)
-        {
-            var properties = this.context.Helpers().GetPropertyInformation(expression);
-            foreach (var p in properties)
-            {
-                var target = GetQueryTarget(p.Type);
-                this.context.Select(state.Column.Create(p.Name, target, p.NewName));
-            }
-        }
-
         protected void AddJoin<T1, T2>(Expression expression, JoinType type)
         {
             var conditions = this.context.Helpers().ParseJoin(expression);
@@ -68,6 +58,12 @@ namespace pdq.Implementation
             var column = this.context.Helpers().GetColumnName(expression);
             var target = GetQueryTarget(expression);
             this.context.OrderBy(state.OrderBy.Create(column, target, order));
+        }
+
+        protected IQueryTarget GetQueryTarget<T>()
+        {
+            var table = this.context.Helpers().GetTableName<T>();
+            return GetQueryTarget(table);
         }
     }
 }

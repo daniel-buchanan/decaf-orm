@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Linq.Expressions;
-
 namespace pdq.Implementation
 {
     public class SelectColumnBuilder : ISelectColumnBuilder
     {
-        private SelectColumnBuilder() { }
+        /// <inheritdoc/>
+        public object Is(string name) => null;
 
-        public static ISelectColumnBuilder Create() => new SelectColumnBuilder();
+        /// <inheritdoc/>
+        public object Is(string name, string alias) => null;
 
-        public object Is(string column) => null;
+        /// <inheritdoc/>
+        public T Is<T>(string name) => default(T);
 
-        public object Is(string column, string tableAlias) => null;
-
-        public object Is<T>(Expression<Func<T, object>> expression) => null;
+        /// <inheritdoc/>
+        public T Is<T>(string name, string alias) => default(T);
     }
 }
-

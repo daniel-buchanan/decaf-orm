@@ -30,12 +30,6 @@ namespace pdq.Implementation
             }
         }
 
-        protected IQueryTarget GetQueryTarget<T>()
-        {
-            var table = this.context.Helpers().GetTableName<T>();
-            return GetQueryTarget(table);
-        }
-
         protected IQueryTarget GetQueryTarget(Type type)
         {
             var table = this.context.Helpers().GetTableName(type);

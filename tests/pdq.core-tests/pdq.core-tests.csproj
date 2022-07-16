@@ -30,8 +30,10 @@
     <None Remove="coverlet.collector" />
     <None Remove="FluentAssertions" />
     <None Remove="Helpers\" />
+    <None Remove="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />
+    <Folder Include="Models\" />
   </ItemGroup>
 </Project>

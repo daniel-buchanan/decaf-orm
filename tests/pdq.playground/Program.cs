@@ -24,17 +24,20 @@ using (var t = uow.Begin())
 {
     using (var q = t.Query())
     {
-        //q.Select()
-        //    .From("bob", "b")
-        //    .Column("name")
-        //    .Column("email")
-        //    .Where(b =>
-        //    {
-        //        b.ClauseHandling().DefaultToOr();
+        q.Select()
+            .From("bob", "b")
+            .Where(b =>
+            {
+                b.ClauseHandling().DefaultToOr();
 
-        //        b.Column("name").Is().EqualTo("hello");
-        //        b.Column("email").Is().Like("my name");
-        //    });
+                b.Column("name").Is().EqualTo("hello");
+                b.Column("email").Is().Like("my name");
+            })
+            .Select(b => new
+            {
+                Name = b.Is("name", "b"),
+                City = b.Is("city", "b")
+            });
 
         q.Select()
             .From<Person>(x => x)

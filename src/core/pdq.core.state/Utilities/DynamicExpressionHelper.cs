@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -56,11 +57,10 @@ namespace pdq.state.Utilities
 
             for(var i = 0; i < countArguments; i += 1)
             {
-                var memberExpression = (MemberExpression)body.Arguments[i];
-                var parameterExpression = (ParameterExpression)memberExpression.Expression;
-                var column = this.expressionHelper.GetName(memberExpression);
+                if (!TryGetColumnDetails(body.Arguments[i], out var column, out var alias, out var type))
+                    continue;
 
-                properties[i] = DynamicPropertyInfo.Create(name: column, type: parameterExpression.Type);
+                properties[i] = DynamicPropertyInfo.Create(name: column, alias: alias, type: type);
             }
 
             for (var i = 0; i < body.Members.Count; i += 1)
@@ -72,6 +72,46 @@ namespace pdq.state.Utilities
             }
 
             return properties.ToList();
+        }
+
+        private bool TryGetColumnDetails(Expression expression, out string column, out string alias, out Type type)
+        {
+            column = null;
+            alias = null;
+            type = null;
+
+            var methodCallExpression = expression as MethodCallExpression;
+            if(methodCallExpression != null)
+            {
+                if (methodCallExpression.Method.DeclaringType != typeof(ISelectColumnBuilder))
+                    return false;
+
+                if(methodCallExpression.Arguments.Count == 1)
+                {
+                    var arg = methodCallExpression.Arguments[0] as ConstantExpression;
+                    column = arg.Value as string;
+                }
+                else
+                {
+                    var arg = methodCallExpression.Arguments[0] as ConstantExpression;
+                    column = arg.Value as string;
+
+                    arg = methodCallExpression.Arguments[1] as ConstantExpression;
+                    alias = arg.Value as string;
+                }
+                
+                return true;
+            }
+
+            var memberExpression = expression as MemberExpression;
+            if (memberExpression == null) return false;
+
+            var parameterExpression = memberExpression.Expression as ParameterExpression;
+            column = this.expressionHelper.GetName(memberExpression);
+            alias = this.expressionHelper.GetParameterName(memberExpression);
+            type = parameterExpression.Type;
+
+            return true;
         }
 	}
 }

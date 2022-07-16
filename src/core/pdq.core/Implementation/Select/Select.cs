@@ -11,13 +11,11 @@ namespace pdq.Implementation
 	{
         public string Alias { get; private set; }
 
-        private Select(IQuery query) : base(
-            SelectQueryContext.Create(((IQueryInternal)query).AliasManager),
-            (IQueryInternal)query)
-        {
-        }
+        private Select(ISelectQueryContext context, IQuery query)
+            : base(context, (IQueryInternal)query) { }
 
-        public static Select Create(IQuery query) => new Select(query);
+        public static Select Create(ISelectQueryContext context, IQuery query)
+            => new Select(context, query);
 
         /// <inheritdoc/>
         internal ISelectQueryContext GetContext() => this.context;
@@ -53,7 +51,7 @@ namespace pdq.Implementation
             Action<ISelectWithAlias> query,
             JoinType type = JoinType.Default)
         {
-            var select = Create(this.query);
+            var select = Create(this.context, this.query);
             query(select);
             var to = state.QueryTargets.SelectQueryTarget.Create(select.context, select.Alias);
 
@@ -62,7 +60,7 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc/>
-        public IOrderBy Where(Action<IWhereBuilder> builder)
+        public IGroupBy Where(Action<IWhereBuilder> builder)
         {
             var b = WhereBuilder.Create(this.context);
             builder(b);
@@ -85,7 +83,7 @@ namespace pdq.Implementation
         /// <inheritdoc/>
         public ISelectFrom From(Action<ISelect> query, string alias)
         {
-            var select = Create(this.query);
+            var select = Create(this.context, this.query);
             query(select);
 
             this.query.AliasManager.Add(null, alias);
@@ -120,7 +118,7 @@ namespace pdq.Implementation
         /// <inheritdoc/>
         public ISelectFromTyped<T> From<T>(Action<ISelectWithAlias> query, string alias)
         {
-            var select = Create(this.query);
+            var select = Create(this.context, this.query);
             query(select);
 
             var target = state.QueryTargets.SelectQueryTarget.Create(select.context, select.Alias);

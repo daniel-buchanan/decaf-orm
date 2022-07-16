@@ -1,61 +1,28 @@
 ﻿using System;
-using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
-using pdq.Exceptions;
 using pdq.state;
 using pdq.state.QueryTargets;
 
 namespace pdq.Implementation
 {
-	internal class SelectTypedBase : Execute
+    internal class SelectTypedBase : SelectBase
 	{
-        protected readonly ISelectQueryContext context;
-
         protected SelectTypedBase(
             ISelectQueryContext context,
             IQuery query)
-            : base((IQueryInternal)query)
+            : base(context, (IQueryInternal)query)
         {
-            this.context = context;
         }
 
         protected void AddColumns(Expression expression)
         {
             var properties = this.context.Helpers().GetPropertyInformation(expression);
-            foreach(var p in properties)
+            foreach (var p in properties)
             {
                 var target = GetQueryTarget(p.Type);
                 this.context.Select(state.Column.Create(p.Name, target, p.NewName));
             }
-        }
-
-        private IQueryTarget GetQueryTarget<T>()
-        {
-            var table = this.context.Helpers().GetTableName<T>();
-            return GetQueryTarget(table);
-        }
-
-        private IQueryTarget GetQueryTarget(Type type)
-        {
-            var table = this.context.Helpers().GetTableName(type);
-            return GetQueryTarget(table);
-        }
-
-        private IQueryTarget GetQueryTarget(Expression expression)
-        {
-            var table = this.context.Helpers().GetTableName(expression);
-            return GetQueryTarget(table);
-        }
-
-        private IQueryTarget GetQueryTarget(string table)
-        {
-            var alias = this.query.AliasManager.FindByAssociation(table).FirstOrDefault();
-            if (alias == null) throw new TableNotFoundException(alias.Name, table);
-
-            var target = this.context.QueryTargets.FirstOrDefault(t => t.Alias == alias.Name);
-            if (target == null) throw new TableNotFoundException(alias.Name, table);
-            return target;
         }
 
         protected void AddJoin<T1, T2>(Expression expression, JoinType type)
@@ -69,7 +36,7 @@ namespace pdq.Implementation
 
         protected void AddJoin<T1, T2>(Action<ISelectWithAlias> query, Expression expression, JoinType type)
         {
-            var select = Select.Create(this.query);
+            var select = Select.Create(this.context, this.query);
             query(select);
 
             var table = this.context.Helpers().GetTableName<T2>();

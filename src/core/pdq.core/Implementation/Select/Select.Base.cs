@@ -7,8 +7,8 @@ using pdq.state;
 
 namespace pdq.Implementation
 {
-    internal abstract class SelectBase : Execute
-    {
+	internal abstract class SelectBase : Execute
+	{
         protected readonly ISelectQueryContext context;
 
         protected SelectBase(
@@ -17,6 +17,7 @@ namespace pdq.Implementation
             : base((IQueryInternal)query)
         {
             this.context = context;
+            this.query.SetContext(this.context);
         }
 
         protected void AddColumns(Expression expression)
@@ -29,9 +30,21 @@ namespace pdq.Implementation
             }
         }
 
+        protected IQueryTarget GetQueryTarget<T>()
+        {
+            var table = this.context.Helpers().GetTableName<T>();
+            return GetQueryTarget(table);
+        }
+
         protected IQueryTarget GetQueryTarget(Type type)
         {
             var table = this.context.Helpers().GetTableName(type);
+            return GetQueryTarget(table);
+        }
+
+        protected IQueryTarget GetQueryTarget(Expression expression)
+        {
+            var table = this.context.Helpers().GetTableName(expression);
             return GetQueryTarget(table);
         }
 

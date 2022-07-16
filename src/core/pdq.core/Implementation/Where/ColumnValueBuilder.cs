@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using pdq.state.Conditionals;
 
 namespace pdq.Implementation
@@ -68,6 +69,12 @@ namespace pdq.Implementation
         public void GreaterThanOrEqualTo(DateTime value) => AddClause(common.EqualityOperator.GreaterThanOrEqualTo, value);
 
         /// <inheritdoc />
+        public void In<T>(params T[] values) => AddClause(values);
+
+        /// <inheritdoc />
+        public void In<T>(IEnumerable<T> values) => AddClause(values);
+
+        /// <inheritdoc />
         public void IsBetween<T>(T start, T end)
         {
             var between = Between.Values(this.column, start, end);
@@ -120,6 +127,13 @@ namespace pdq.Implementation
         private void AddClause<T>(common.EqualityOperator op, T value)
         {
             var col = new Column<T>(this.column, op, value);
+            if (this.notEquals) this.builder.AddClause(Not.This(col));
+            else this.builder.AddClause(col);
+        }
+
+        private void AddClause<T>(IEnumerable<T> values)
+        {
+            var col = Values.In(this.column, values);
             if (this.notEquals) this.builder.AddClause(Not.This(col));
             else this.builder.AddClause(col);
         }

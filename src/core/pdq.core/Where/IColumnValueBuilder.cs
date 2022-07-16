@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace pdq
 {
     public interface IColumnValueBuilder
@@ -8,6 +10,9 @@ namespace pdq
         void Like<T>(T value);
         void StartsWith<T>(T value);
         void EndsWith<T>(T value);
+
+        void In<T>(params T[] values);
+        void In<T>(IEnumerable<T> values);
 
         void LessThan(int value);
         void LessThan(uint value);

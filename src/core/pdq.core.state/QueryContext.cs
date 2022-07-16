@@ -40,7 +40,8 @@ namespace pdq.state
 		/// <inheritdoc/>
 		IReflectionHelper IQueryContextInternal.ReflectionHelper => this.reflectionHelper;
 
-		IQueryParsers IQueryContextInternal.Parsers => this.parserHolder;
+        /// <inheritdoc/>
+        IQueryParsers IQueryContextInternal.Parsers => this.parserHolder;
 
         /// <inheritdoc/>
         void IQueryContextInternal.AddQueryTarget(IQueryTarget target)

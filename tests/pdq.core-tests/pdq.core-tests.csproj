@@ -19,6 +19,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="6.7.0" />
+    <PackageReference Include="Moq" Version="4.18.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\core\pdq.core.common\pdq.common.csproj" />
@@ -31,9 +32,12 @@
     <None Remove="FluentAssertions" />
     <None Remove="Helpers\" />
     <None Remove="Models\" />
+    <None Remove="Moq" />
+    <None Remove="Mocks\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />
     <Folder Include="Models\" />
+    <Folder Include="Mocks\" />
   </ItemGroup>
 </Project>

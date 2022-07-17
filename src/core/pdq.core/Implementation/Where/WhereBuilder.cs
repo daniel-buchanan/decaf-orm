@@ -4,27 +4,32 @@ using System.Linq;
 using pdq.common;
 using pdq.Exceptions;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.core-tests")]
 namespace pdq.Implementation
 {
     public class WhereBuilder : IWhereBuilder
 	{
         private readonly List<state.IWhere> clauses;
         private readonly IQueryContext queryContext;
-        private ClauseHandlingValues defaultClauseHandling;
+        private ClauseHandling defaultClauseHandling;
 
-		private WhereBuilder(IQueryContext queryContext)
+		private WhereBuilder(ClauseHandling clauseHandling, IQueryContext queryContext)
 		{
-            this.defaultClauseHandling = ClauseHandlingValues.Unspecified;
+            this.defaultClauseHandling = clauseHandling;
             this.queryContext = queryContext;
             this.clauses = new List<state.IWhere>();
 		}
 
-        internal static IWhereBuilder Create(IQueryContext queryContext) => new WhereBuilder(queryContext);
+        internal static IWhereBuilder Create(PdqOptions options, IQueryContext queryContext)
+            => new WhereBuilder(options.DefaultClauseHandling, queryContext);
+
+        private static IWhereBuilder Create(ClauseHandling clauseHandling, IQueryContext queryContext)
+            => new WhereBuilder(clauseHandling, queryContext);
 
         /// <inheritdoc />
         public IWhereBuilder And(Action<IWhereBuilder> builder)
         {
-            var b = Create(this.queryContext);
+            var b = Create(this.defaultClauseHandling, this.queryContext);
             b.ClauseHandling().DefaultToAnd();
             builder(b);
 
@@ -48,7 +53,7 @@ namespace pdq.Implementation
         /// <inheritdoc />
         public IWhereBuilder Or(Action<IWhereBuilder> builder)
         {
-            var b = Create(this.queryContext);
+            var b = Create(this.defaultClauseHandling, this.queryContext);
             b.ClauseHandling().DefaultToOr();
             builder(b);
 
@@ -62,20 +67,13 @@ namespace pdq.Implementation
         /// <inheritdoc />
         IEnumerable<state.IWhere> IWhereBuilder.GetClauses()
         {
-            if (this.defaultClauseHandling == ClauseHandlingValues.And)
+            if (this.defaultClauseHandling == common.ClauseHandling.And)
                 return new[] { state.Conditionals.And.Where(this.clauses) };
 
-            if (this.defaultClauseHandling == ClauseHandlingValues.Or)
+            if (this.defaultClauseHandling == common.ClauseHandling.Or)
                 return new[] { state.Conditionals.Or.Where(this.clauses) };
 
             throw new WhereBuildFailedException();
-        }
-
-        private enum ClauseHandlingValues
-        {
-            Unspecified,
-            And,
-            Or
         }
 
         private sealed class ClauseHandlingBehaviour : IClauseHandlingBehaviour
@@ -90,11 +88,11 @@ namespace pdq.Implementation
 
             /// <inheritdoc />
             public void DefaultToAnd()
-                => this.builder.defaultClauseHandling = ClauseHandlingValues.And;
+                => this.builder.defaultClauseHandling = common.ClauseHandling.And;
 
             /// <inheritdoc />
             public void DefaultToOr()
-                => this.builder.defaultClauseHandling = ClauseHandlingValues.Or;
+                => this.builder.defaultClauseHandling = common.ClauseHandling.Or;
         }
     }
 }

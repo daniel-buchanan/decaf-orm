@@ -1,0 +1,278 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
+using Moq;
+using pdq.common;
+using pdq.common.Logging;
+using pdq.core_tests.Mocks;
+using pdq.Implementation;
+using pdq.state;
+using pdq.state.Conditionals;
+using Xunit;
+
+namespace pdq.core_tests
+{
+    public class WhereBuilderTests
+    {
+        private readonly ISelectQueryContext context;
+        private readonly Select select;
+
+        public WhereBuilderTests()
+        {
+            var options = new PdqOptions();
+            var loggerProxy = new DefaultLogger(options);
+            var aliasManager = AliasManager.Create();
+            this.context = SelectQueryContext.Create(aliasManager);
+            var connectionFactory = new MockConnectionFactory(loggerProxy);
+            var transactionFactory = new MockTransactionFactory(connectionFactory, loggerProxy, options);
+            var transientFactory = new TransientFactory(options, loggerProxy, transactionFactory);
+            var connectionDetails = new MockConnectionDetails();
+            var transient = transientFactory.Create(connectionDetails);
+
+            var query = Query.Create(options, loggerProxy, transient);
+            this.select = Select.Create(this.context, query);
+        }
+
+        [Theory]
+        [MemberData(nameof(EqualToTests))]
+        public void EqualTo<T>(Func<T> getValue)
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").Is().EqualTo(value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var column = this.context.WhereClause.Children.First() as IColumn;
+            column.Should().NotBeNull();
+            column.Details.Name.Should().Be("name");
+            column.Details.Source.Alias.Should().Be("p");
+            column.Value.Should().Be(value);
+            //column.ValueType.Should().Be(type);
+            column.EqualityOperator.Should().Be(EqualityOperator.Equals);
+        }
+
+        [Theory]
+        [MemberData(nameof(EqualToTests))]
+        public void NotEqualTo<T>(Func<T> getValue)
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").IsNot().EqualTo(value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var inversion = this.context.WhereClause.Children.First() as Not;
+            inversion.Should().NotBeNull();
+            var column = inversion.Item as IColumn;
+            column.Should().NotBeNull();
+            column.Details.Name.Should().Be("name");
+            column.Details.Source.Alias.Should().Be("p");
+            column.Value.Should().Be(value);
+            column.ValueType.Should().Be(typeof(T));
+            column.EqualityOperator.Should().Be(EqualityOperator.Equals);
+        }
+
+        [Theory]
+        [MemberData(nameof(NonStringTests))]
+        public void LessThan<T>(Func<T> getValue)
+            where T: struct
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").Is().LessThan(value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var column = this.context.WhereClause.Children.First() as IColumn;
+            column.Should().NotBeNull();
+            column.Details.Name.Should().Be("name");
+            column.Details.Source.Alias.Should().Be("p");
+            column.Value.Should().Be(value);
+            //column.ValueType.Should().Be(type);
+            column.EqualityOperator.Should().Be(EqualityOperator.LessThan);
+        }
+
+        [Theory]
+        [MemberData(nameof(NonStringTests))]
+        public void LessThanOrEqualTo<T>(Func<T> getValue)
+            where T : struct
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").Is().LessThanOrEqualTo(value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var column = this.context.WhereClause.Children.First() as IColumn;
+            column.Should().NotBeNull();
+            column.Details.Name.Should().Be("name");
+            column.Details.Source.Alias.Should().Be("p");
+            column.Value.Should().Be(value);
+            //column.ValueType.Should().Be(type);
+            column.EqualityOperator.Should().Be(EqualityOperator.LessThanOrEqualTo);
+        }
+
+        [Theory]
+        [MemberData(nameof(NonStringTests))]
+        public void GreaterThan<T>(Func<T> getValue)
+            where T : struct
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").Is().GreaterThan(value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var column = this.context.WhereClause.Children.First() as IColumn;
+            column.Should().NotBeNull();
+            column.Details.Name.Should().Be("name");
+            column.Details.Source.Alias.Should().Be("p");
+            column.Value.Should().Be(value);
+            //column.ValueType.Should().Be(type);
+            column.EqualityOperator.Should().Be(EqualityOperator.GreaterThan);
+        }
+
+        [Theory]
+        [MemberData(nameof(NonStringTests))]
+        public void GreaterThanOrEqualTo<T>(Func<T> getValue)
+            where T : struct
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").Is().GreaterThanOrEqualTo(value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var column = this.context.WhereClause.Children.First() as IColumn;
+            column.Should().NotBeNull();
+            column.Details.Name.Should().Be("name");
+            column.Details.Source.Alias.Should().Be("p");
+            column.Value.Should().Be(value);
+            //column.ValueType.Should().Be(type);
+            column.EqualityOperator.Should().Be(EqualityOperator.GreaterThanOrEqualTo);
+        }
+
+        [Theory]
+        [MemberData(nameof(NonStringTests))]
+        public void Between<T>(Func<T> getValue)
+            where T : struct
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").Is().Between(value, value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var column = this.context.WhereClause.Children.First() as IBetween;
+            column.Should().NotBeNull();
+            column.Column.Name.Should().Be("name");
+            column.Column.Source.Alias.Should().Be("p");
+            column.Start.Should().Be(value);
+            column.End.Should().Be(value);
+            column.ValueType.Should().Be(typeof(T));
+        }
+
+        public static IEnumerable<object[]> EqualToTests
+        {
+            get
+            {
+                yield return new object[]
+                {
+                    (Func<string>)(() => GetValue<string>("smith"))
+                };
+
+                foreach (var r in NonStringTests)
+                    yield return r;
+            }
+        }
+
+        public static IEnumerable<object[]> NonStringTests
+        {
+            get
+            {
+
+                yield return new object[]
+                {
+                    (Func<int>)(() => GetValue<int>(42))
+                };
+
+                yield return new object[]
+                {
+                    (Func<double>)(() => GetValue<double>(42))
+                };
+
+                yield return new object[]
+                {
+                    (Func<float>)(() => GetValue<float>(42))
+                };
+
+                yield return new object[]
+                {
+                    (Func<decimal>)(() => GetValue<decimal>(42))
+                };
+
+                yield return new object[]
+                {
+                    (Func<short>)(() => GetValue<short>(42))
+                };
+
+                yield return new object[]
+                {
+                    (Func<uint>)(() => GetValue<uint>(42))
+                };
+
+                yield return new object[]
+                {
+                    (Func<DateTime>)(() => GetValue<DateTime>(DateTime.UtcNow))
+                };
+            }
+        }
+
+        static T GetValue<T>(T defaultValue) => defaultValue;
+    }
+}
+

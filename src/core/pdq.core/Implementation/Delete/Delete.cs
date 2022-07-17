@@ -58,7 +58,7 @@ namespace pdq.Implementation
         /// <inheritdoc />
         public IDeleteFrom Where(Action<IWhereBuilder> builder)
         {
-            var b = WhereBuilder.Create(this.context);
+            var b = WhereBuilder.Create(this.query.Options, this.context);
             builder(b);
             context.Where(b.GetClauses().First());
             return this;

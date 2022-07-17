@@ -122,7 +122,7 @@ namespace pdq.state.Utilities.Parsers
             var leftParam = (ParameterExpression)leftExpression.Expression;
             var rightParam = (ParameterExpression)rightExpression.Expression;
 
-            result = Conditionals.Column.Match(
+            result = Conditionals.Column.Equals(
                 Column.Create(
                     reflectionHelper.GetFieldName(leftExpression.Member),
                     GetQueryTarget(leftParam)),
@@ -151,7 +151,7 @@ namespace pdq.state.Utilities.Parsers
             var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(operation.NodeType);
 
             // create column
-            return Conditionals.Column.Match(
+            return Conditionals.Column.Equals(
                 Column.Create(leftField, GetQueryTarget(left)),
                 op,
                 Column.Create(rightField, GetQueryTarget(right)));

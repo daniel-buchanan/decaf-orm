@@ -4,21 +4,27 @@ using System.Linq.Expressions;
 using pdq.common;
 using pdq.state;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.core-tests")]
 namespace pdq.Implementation
 {
 	internal class Select
         : SelectBase, ISelectWithAlias, ISelectFrom, IOrderBy, IOrderByThen, IGroupBy, IGroupByThen
 	{
-        public string Alias { get; private set; }
-
-        private Select(ISelectQueryContext context, IQuery query)
+        private Select(
+            ISelectQueryContext context,
+            IQuery query)
             : base(context, (IQueryInternal)query) { }
 
-        public static Select Create(ISelectQueryContext context, IQuery query)
+        public static Select Create(
+            ISelectQueryContext context,
+            IQuery query)
             => new Select(context, query);
 
         /// <inheritdoc/>
         internal ISelectQueryContext GetContext() => this.context;
+
+        /// <inheritdoc/>
+        public string Alias { get; private set; }
 
         /// <inheritdoc/>
         public ISelectFrom Column(
@@ -62,7 +68,7 @@ namespace pdq.Implementation
         /// <inheritdoc/>
         public IGroupBy Where(Action<IWhereBuilder> builder)
         {
-            var b = WhereBuilder.Create(this.context);
+            var b = WhereBuilder.Create(this.options, this.context);
             builder(b);
             this.context.Where(b.GetClauses().First());
             return this;
@@ -75,7 +81,7 @@ namespace pdq.Implementation
             string schema = null)
         {
             var managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
-            var managedAlias = this.query.AliasManager.Add(table, alias);
+            var managedAlias = this.query.AliasManager.Add(alias, managedTable);
             this.context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias, schema));
             return this;
         }

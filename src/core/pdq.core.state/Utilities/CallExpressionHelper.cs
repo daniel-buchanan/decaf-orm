@@ -115,7 +115,7 @@ namespace pdq.state.Utilities
             if (nonCallExpr.NodeType == ExpressionType.Constant)
             {
                 var value = (int)this.expressionHelper.GetValue(nonCallExpr);
-                return Conditionals.Column.ValueMatch(col, op, value, state.Conditionals.ValueFunctions.DatePart.Create(dp));
+                return Conditionals.Column.Equals(col, op, value, state.Conditionals.ValueFunctions.DatePart.Create(dp));
             }
 
             if (nonCallExpr.NodeType == ExpressionType.MemberAccess)
@@ -124,14 +124,14 @@ namespace pdq.state.Utilities
                 if (member.Expression.NodeType == ExpressionType.Constant)
                 {
                     var value = (int)this.expressionHelper.GetValue(member);
-                    return Conditionals.Column.ValueMatch(col, op, value, state.Conditionals.ValueFunctions.DatePart.Create(dp));
+                    return Conditionals.Column.Equals(col, op, value, state.Conditionals.ValueFunctions.DatePart.Create(dp));
                 }
 
                 var mAlias = this.expressionHelper.GetParameterName(nonCallExpr);
                 var mField = this.expressionHelper.GetName(nonCallExpr);
                 col = state.Column.Create(mField, state.QueryTargets.TableTarget.Create(mAlias));
 
-                return Conditionals.Column.ValueMatch(col, op, 0, state.Conditionals.ValueFunctions.DatePart.Create(dp));
+                return Conditionals.Column.Equals(col, op, 0, state.Conditionals.ValueFunctions.DatePart.Create(dp));
             }
 
             return null;
@@ -187,7 +187,7 @@ namespace pdq.state.Utilities
                 var aliasB = this.expressionHelper.GetParameterName(nonCallExpr);
                 var fieldB = this.expressionHelper.GetName(nonCallExpr);
                 var right = state.Column.Create(fieldB, state.QueryTargets.TableTarget.Create(aliasB));
-                return Conditionals.Column.Match(col, op, funcImplementation, right);
+                return Conditionals.Column.Equals(col, op, funcImplementation, right);
             }
 
             if (nonCallExpr.NodeType == ExpressionType.Call)
@@ -202,7 +202,7 @@ namespace pdq.state.Utilities
                 var right = state.Column.Create(fieldB, state.QueryTargets.TableTarget.Create(aliasB));
                 funcImplementation = ConvertMethodNameToValueFunctionImpl(methodB);
 
-                return Conditionals.Column.Match(col, op, funcImplementation, right);
+                return Conditionals.Column.Equals(col, op, funcImplementation, right);
             }
 
             return null;
@@ -233,10 +233,10 @@ namespace pdq.state.Utilities
                 if (lengthExpression != null)
                 {
                     var lengthValue = (int) this.expressionHelper.GetValue(lengthExpression);
-                    return Conditionals.Column.ValueMatch(col, op, value, Substring.Create(startValue, lengthValue));
+                    return Conditionals.Column.Equals(col, op, value, Substring.Create(startValue, lengthValue));
                 }
 
-                return Conditionals.Column.ValueMatch(col, op, value, Substring.Create(startValue));
+                return Conditionals.Column.Equals(col, op, value, Substring.Create(startValue));
             }
 
             return null;

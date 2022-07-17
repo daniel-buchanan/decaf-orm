@@ -9,6 +9,7 @@ namespace pdq.Implementation
 {
 	internal abstract class SelectBase : Execute
 	{
+        protected readonly PdqOptions options;
         protected readonly ISelectQueryContext context;
 
         protected SelectBase(
@@ -16,6 +17,7 @@ namespace pdq.Implementation
             IQuery query)
             : base((IQueryInternal)query)
         {
+            this.options = (query as IQueryInternal).Options;
             this.context = context;
             this.query.SetContext(this.context);
         }

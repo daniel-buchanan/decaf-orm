@@ -3,6 +3,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using pdq;
 using pdq.common;
+using pdq.core_tests.Mocks;
 using pdq.playground;
 using pdq.playground.Mocks;
 

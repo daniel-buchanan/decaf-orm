@@ -7,6 +7,7 @@ namespace pdq.common
 		Month,
 		Day,
 		Hour,
+		Minute,
 		Second,
 		Millisecond
 	}

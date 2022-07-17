@@ -73,7 +73,7 @@ namespace pdq.state.Utilities.Parsers
 
                 // check for call expression on field
                 if (lambda.Body.NodeType == ExpressionType.Call)
-                    return this.callExpressionHelper.ParseCallExpressions(lambda.Body);
+                    return this.callExpressionHelper.ParseExpression(lambda.Body);
 
                 binaryExpr = (BinaryExpression)lambda.Body;
             }
@@ -81,7 +81,7 @@ namespace pdq.state.Utilities.Parsers
             else if (expression.NodeType == ExpressionType.Call)
             {
                 // parse call expressions
-                return this.callExpressionHelper.ParseCallExpressions(expression);
+                return this.callExpressionHelper.ParseExpression(expression);
             }
             else
             {

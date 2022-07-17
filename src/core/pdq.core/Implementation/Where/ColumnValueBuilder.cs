@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using pdq.state;
 using pdq.state.Conditionals;
+using pdq.state.Conditionals.ValueFunctions;
 
 namespace pdq.Implementation
 {
@@ -28,16 +30,16 @@ namespace pdq.Implementation
             => new ColumnValueBuilder(builder, column, notEquals);
 
         /// <inheritdoc />
-        public void EndsWith<T>(T value) => AddClause(common.EqualityOperator.EndsWith, value);
+        public void EndsWith<T>(T value) => AddClause(common.EqualityOperator.EndsWith, StringEndsWith.Create(), value);
 
         /// <inheritdoc />
-        public void EqualTo<T>(T value) => AddClause(common.EqualityOperator.Equals, value);
+        public void EqualTo<T>(T value) => AddClause(common.EqualityOperator.Equals, null, value);
 
         /// <inheritdoc />
-        public void GreaterThan<T>(T value) => AddClause(common.EqualityOperator.GreaterThan, value);
+        public void GreaterThan<T>(T value) => AddClause(common.EqualityOperator.GreaterThan, null, value);
 
         /// <inheritdoc />
-        public void GreaterThanOrEqualTo<T>(T value) => AddClause(common.EqualityOperator.GreaterThanOrEqualTo, value);
+        public void GreaterThanOrEqualTo<T>(T value) => AddClause(common.EqualityOperator.GreaterThanOrEqualTo, null, value);
 
         /// <inheritdoc />
         public void In<T>(params T[] values) => AddClause(values?.ToList());
@@ -54,18 +56,18 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc />
-        public void LessThan<T>(T value) => AddClause(common.EqualityOperator.LessThan, value);
+        public void LessThan<T>(T value) => AddClause(common.EqualityOperator.LessThan, null, value);
 
         /// <inheritdoc />
-        public void LessThanOrEqualTo<T>(T value) => AddClause(common.EqualityOperator.LessThanOrEqualTo, value);
+        public void LessThanOrEqualTo<T>(T value) => AddClause(common.EqualityOperator.LessThanOrEqualTo, null, value);
 
         /// <inheritdoc />
-        public void Like<T>(T value) => AddClause(common.EqualityOperator.Like, value);
+        public void Like<T>(T value) => AddClause(common.EqualityOperator.Like, StringContains.Create(), value);
 
         /// <inheritdoc />
-        public void StartsWith<T>(T value) => AddClause(common.EqualityOperator.StartsWith, value);
+        public void StartsWith<T>(T value) => AddClause(common.EqualityOperator.StartsWith, StringStartsWith.Create(), value);
 
-        private void AddClause<T>(common.EqualityOperator op, T value)
+        private void AddClause<T>(common.EqualityOperator op, IValueFunction function, T value)
         {
             var col = new Column<T>(this.column, op, value);
             if (this.notEquals) this.builder.AddClause(Not.This(col));

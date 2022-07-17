@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using pdq.common;
@@ -11,16 +12,31 @@ namespace pdq.state.Utilities
     class CallExpressionHelper
     {
         private readonly IExpressionHelper expressionHelper;
+        private readonly IReflectionHelper reflectionHelper;
+        private readonly IAliasManager aliasManager;
 
-        public CallExpressionHelper(IExpressionHelper expressionHelper)
+        public CallExpressionHelper(
+            IExpressionHelper expressionHelper,
+            IReflectionHelper reflectionHelper,
+            IAliasManager aliasManager)
         {
             this.expressionHelper = expressionHelper;
+            this.reflectionHelper = reflectionHelper;
+            this.aliasManager = aliasManager;
         }
 
-        public state.IWhere ParseCallExpressions(Expression expr)
+        public state.IWhere ParseExpression(Expression expr)
         {
-            // get method call expression
-            var call = (MethodCallExpression)expr;
+            MethodCallExpression call;
+            if(expr.NodeType == ExpressionType.Lambda)
+            {
+                var lambda = expr as LambdaExpression;
+                call = lambda.Body as MethodCallExpression;
+            }
+            else
+            {
+                call = expr as MethodCallExpression;
+            }
 
             var arg = call.Arguments[0];
             var nodeType = arg.NodeType;
@@ -35,7 +51,7 @@ namespace pdq.state.Utilities
             return null;
         }
 
-        public state.IWhere ParseBinaryCallExpressions(BinaryExpression expr)
+        public state.IWhere ParseBinaryExpression(BinaryExpression expr)
         {
             var left = expr.Left;
             var right = expr.Right;
@@ -61,12 +77,12 @@ namespace pdq.state.Utilities
             if (callExpr.Method.Name == "ToLower") return ParseCaseCall(nodeType, callExpr, nonCallExpr);
             if (callExpr.Method.Name == "ToUpper") return ParseCaseCall(nodeType, callExpr, nonCallExpr);
             if (callExpr.Method.Name == "Substring") return ParseSubStringCall(nodeType, callExpr, nonCallExpr);
-            if (callExpr.Method.Name == "Contains") return ParseStringContainsCall(callExpr, nonCallExpr);
+            if (callExpr.Method.Name == "Contains") return ParseContains(callExpr, nonCallExpr);
 
             return null;
         }
 
-        private state.IWhere ParseStringContainsCall(
+        private state.IWhere ParseContains(
             MethodCallExpression callExpr,
             Expression nonCallExpr)
         {
@@ -332,10 +348,18 @@ namespace pdq.state.Utilities
             var memberAccessExp = body as MemberExpression;
 
             // get alias and field name
-            var alias = this.expressionHelper.GetParameterName(memberAccessExp);
+            var type = this.expressionHelper.GetType(memberAccessExp.Expression);
+            var alias = this.aliasManager.FindByAssociation(this.reflectionHelper.GetTableName(type)).FirstOrDefault()?.Name;
+            alias = string.IsNullOrWhiteSpace(alias) ?
+                this.expressionHelper.GetParameterName(memberAccessExp) :
+                this.expressionHelper.GetParameterName(memberAccessExp);
+
+            var table = this.aliasManager.GetAssociation(alias);
+            table = String.IsNullOrWhiteSpace(table) ? this.reflectionHelper.GetTableName(type) : table;
+
             var fieldName = this.expressionHelper.GetName(memberAccessExp);
             var value = this.expressionHelper.GetValue(arg);
-            var col = state.Column.Create(fieldName, state.QueryTargets.TableTarget.Create(alias));
+            var col = state.Column.Create(fieldName, state.QueryTargets.TableTarget.Create(table, alias));
 
             if (value == null)
                 return Conditionals.Column.Like<string>(col, null, StringContains.Create());

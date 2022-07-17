@@ -82,7 +82,7 @@ namespace pdq.state.Utilities.Parsers
             if (left.NodeType == ExpressionType.Call ||
                 right.NodeType == ExpressionType.Call)
             {
-                return callExpressionHelper.ParseBinaryCallExpressions(operation);
+                return callExpressionHelper.ParseBinaryExpression(operation);
             }
 
             return null;

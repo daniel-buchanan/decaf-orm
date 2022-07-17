@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using pdq.state.Conditionals;
 
 namespace pdq.Implementation
@@ -39,7 +40,7 @@ namespace pdq.Implementation
         public void GreaterThanOrEqualTo<T>(T value) => AddClause(common.EqualityOperator.GreaterThanOrEqualTo, value);
 
         /// <inheritdoc />
-        public void In<T>(params T[] values) => AddClause(values);
+        public void In<T>(params T[] values) => AddClause(values?.ToList());
 
         /// <inheritdoc />
         public void In<T>(IEnumerable<T> values) => AddClause(values);

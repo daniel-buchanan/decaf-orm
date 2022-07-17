@@ -294,7 +294,7 @@ namespace pdq.state.Utilities
             var parameters = new object[] { col, input };
 
             // get generic type
-            var toCreate = typeof(Values<>);
+            var toCreate = typeof(InValues<>);
             var genericToCreate = toCreate.MakeGenericType(typeArgs);
 
             var constructors = genericToCreate.GetConstructors();

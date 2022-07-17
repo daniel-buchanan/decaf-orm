@@ -106,7 +106,7 @@ namespace pdq.core_tests
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Value.Should().Be(value);
-            //column.ValueType.Should().Be(type);
+            column.ValueType.Should().Be(typeof(T));
             column.EqualityOperator.Should().Be(EqualityOperator.Equals);
         }
 
@@ -131,7 +131,7 @@ namespace pdq.core_tests
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
             column.Value.Should().Be(value);
-            //column.ValueType.Should().Be(type);
+            column.ValueType.Should().Be(typeof(T));
             column.EqualityOperator.Should().Be(EqualityOperator.Equals);
         }
 
@@ -184,7 +184,7 @@ namespace pdq.core_tests
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
             column.Value.Should().Be(value);
-            //column.ValueType.Should().Be(type);
+            column.ValueType.Should().Be(typeof(T));
             column.EqualityOperator.Should().Be(EqualityOperator.LessThan);
         }
 
@@ -212,7 +212,7 @@ namespace pdq.core_tests
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
             column.Value.Should().Be(value);
-            //column.ValueType.Should().Be(type);
+            column.ValueType.Should().Be(typeof(T));
             column.EqualityOperator.Should().Be(EqualityOperator.LessThan);
         }
 
@@ -238,7 +238,7 @@ namespace pdq.core_tests
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
             column.Value.Should().Be(value);
-            //column.ValueType.Should().Be(type);
+            column.ValueType.Should().Be(typeof(T));
             column.EqualityOperator.Should().Be(EqualityOperator.LessThanOrEqualTo);
         }
 
@@ -266,7 +266,7 @@ namespace pdq.core_tests
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
             column.Value.Should().Be(value);
-            //column.ValueType.Should().Be(type);
+            column.ValueType.Should().Be(typeof(T));
             column.EqualityOperator.Should().Be(EqualityOperator.LessThanOrEqualTo);
         }
 
@@ -292,7 +292,7 @@ namespace pdq.core_tests
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
             column.Value.Should().Be(value);
-            //column.ValueType.Should().Be(type);
+            column.ValueType.Should().Be(typeof(T));
             column.EqualityOperator.Should().Be(EqualityOperator.GreaterThan);
         }
 
@@ -373,6 +373,57 @@ namespace pdq.core_tests
             column.Column.Source.Alias.Should().Be("p");
             column.Start.Should().Be(value);
             column.End.Should().Be(value);
+            column.ValueType.Should().Be(typeof(T));
+        }
+
+        [Theory]
+        [MemberData(nameof(NonStringTests))]
+        public void IsInParams<T>(Func<T> getValue)
+            where T : struct
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").Is().In(value, value, value, value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var column = this.context.WhereClause.Children.First() as IInValues;
+            column.Should().NotBeNull();
+            column.Column.Name.Should().Be("name");
+            column.Column.Source.Alias.Should().Be("p");
+            column.GetValues().Should().HaveCount(4);
+            column.ValueType.Should().Be(typeof(T));
+        }
+
+        [Theory]
+        [MemberData(nameof(NonStringTests))]
+        public void IsInEnumerable<T>(Func<T> getValue)
+            where T : struct
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+            var values = new List<T> { value, value, value, value };
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").Is().In<T>(values);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var column = this.context.WhereClause.Children.First() as IInValues;
+            column.Should().NotBeNull();
+            column.Column.Name.Should().Be("name");
+            column.Column.Source.Alias.Should().Be("p");
+            column.GetValues().Should().HaveCount(4);
             column.ValueType.Should().Be(typeof(T));
         }
 

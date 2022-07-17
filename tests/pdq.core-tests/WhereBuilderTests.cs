@@ -38,6 +38,80 @@ namespace pdq.core_tests
 
         [Theory]
         [MemberData(nameof(EqualToTests))]
+        public void AndSucceeds<T>(Func<T> getValue)
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.And(a =>
+                {
+                    a.Column("name", "p").Is().EqualTo(value);
+                    a.Column("name", "p").IsNot().EqualTo(value);
+                });
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var and = this.context.WhereClause.Children.First() as And;
+            and.Should().NotBeNull();
+            and.Children.Should().HaveCount(2);
+        }
+
+        [Theory]
+        [MemberData(nameof(EqualToTests))]
+        public void OrSucceeds<T>(Func<T> getValue)
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Or(a =>
+                {
+                    a.Column("name", "p").Is().EqualTo(value);
+                    a.Column("name", "p").IsNot().EqualTo(value);
+                });
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var or = this.context.WhereClause.Children.First() as Or;
+            or.Should().NotBeNull();
+            or.Children.Should().HaveCount(2);
+        }
+
+        [Theory]
+        [MemberData(nameof(EqualToTests))]
+        public void WithoutAliasEqualTo<T>(Func<T> getValue)
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name").Is().EqualTo(value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var column = this.context.WhereClause.Children.First() as IColumn;
+            column.Should().NotBeNull();
+            column.Details.Name.Should().Be("name");
+            column.Value.Should().Be(value);
+            //column.ValueType.Should().Be(type);
+            column.EqualityOperator.Should().Be(EqualityOperator.Equals);
+        }
+
+        [Theory]
+        [MemberData(nameof(EqualToTests))]
         public void EqualTo<T>(Func<T> getValue)
         {
             // Arrange

@@ -275,6 +275,34 @@ namespace pdq.core_tests
         }
 
         [Theory]
+        [MemberData(nameof(NonStringTests))]
+        public void NotBetween<T>(Func<T> getValue)
+            where T : struct
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").IsNot().Between(value, value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var inversion = this.context.WhereClause.Children.First() as Not;
+            inversion.Should().NotBeNull();
+            var column = inversion.Item as IBetween;
+            column.Should().NotBeNull();
+            column.Column.Name.Should().Be("name");
+            column.Column.Source.Alias.Should().Be("p");
+            column.Start.Should().Be(value);
+            column.End.Should().Be(value);
+            column.ValueType.Should().Be(typeof(T));
+        }
+
+        [Theory]
         [MemberData(nameof(EqualToTests))]
         public void StartsWith<T>(Func<T> getValue)
         {
@@ -341,6 +369,33 @@ namespace pdq.core_tests
             // Assert
             this.context.WhereClause.Children.Should().HaveCount(1);
             var column = this.context.WhereClause.Children.First() as IColumn;
+            column.Should().NotBeNull();
+            column.Details.Name.Should().Be("name");
+            column.Details.Source.Alias.Should().Be("p");
+            column.Value.Should().Be(value);
+            column.ValueType.Should().Be(typeof(T));
+            column.EqualityOperator.Should().Be(EqualityOperator.Like);
+        }
+
+        [Theory]
+        [MemberData(nameof(EqualToTests))]
+        public void NotLike<T>(Func<T> getValue)
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").IsNot().Like(value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var inversion = this.context.WhereClause.Children.First() as Not;
+            inversion.Should().NotBeNull();
+            var column = inversion.Item as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");

@@ -6,6 +6,7 @@ using Moq;
 using pdq.common;
 using pdq.common.Logging;
 using pdq.core_tests.Mocks;
+using pdq.Exceptions;
 using pdq.Implementation;
 using pdq.state;
 using pdq.state.Conditionals;
@@ -15,22 +16,23 @@ namespace pdq.core_tests
 {
     public class WhereBuilderTests
     {
+        private readonly PdqOptions options;
         private readonly ISelectQueryContext context;
         private readonly Select select;
 
         public WhereBuilderTests()
         {
-            var options = new PdqOptions();
-            var loggerProxy = new DefaultLogger(options);
+            this.options = new PdqOptions();
+            var loggerProxy = new DefaultLogger(this.options);
             var aliasManager = AliasManager.Create();
             this.context = SelectQueryContext.Create(aliasManager);
             var connectionFactory = new MockConnectionFactory(loggerProxy);
-            var transactionFactory = new MockTransactionFactory(connectionFactory, loggerProxy, options);
-            var transientFactory = new TransientFactory(options, loggerProxy, transactionFactory);
+            var transactionFactory = new MockTransactionFactory(connectionFactory, loggerProxy, this.options);
+            var transientFactory = new TransientFactory(this.options, loggerProxy, transactionFactory);
             var connectionDetails = new MockConnectionDetails();
             var transient = transientFactory.Create(connectionDetails);
 
-            var query = Query.Create(options, loggerProxy, transient);
+            var query = Query.Create(this.options, loggerProxy, transient);
             this.select = Select.Create(this.context, query);
         }
 
@@ -345,6 +347,59 @@ namespace pdq.core_tests
             column.Value.Should().Be(value);
             column.ValueType.Should().Be(typeof(T));
             column.EqualityOperator.Should().Be(EqualityOperator.Like);
+        }
+
+        [Fact]
+        public void ClauseHandlingChangeToAndSucceeds()
+        {
+            // Arrange
+            select.From("person", "p");
+
+            // Act
+            IWhereBuilder builder = null;
+            select.Where(b =>
+            {
+                b.ClauseHandling.DefaultToAnd();
+                builder = b;
+            });
+
+            // Assert
+            builder.DefaultClauseHandling.Should().Be(ClauseHandling.And);
+        }
+
+        [Fact]
+        public void ClauseHandlingChangeToOrSucceeds()
+        {
+            // Arrange
+            select.From("person", "p");
+
+            // Act
+            IWhereBuilder builder = null;
+            select.Where(b =>
+            {
+                b.ClauseHandling.DefaultToOr();
+                builder = b;
+            });
+
+            // Assert
+            builder.DefaultClauseHandling.Should().Be(ClauseHandling.Or);
+        }
+
+        [Fact]
+        public void NoClauseHandlingShouldThrowException()
+        {
+            // Arrange
+            this.options.OverrideDefaultClauseHandling(ClauseHandling.Unspecified);
+            select.From("person", "p");
+
+            // Act
+            Action method = () => select.Where(b =>
+            {
+                b.Column("name", "p").Is().EqualTo("smith");
+            });
+
+            // Assert
+            method.Should().Throw<WhereBuildFailedException>();
         }
 
         public static IEnumerable<object[]> EqualToTests

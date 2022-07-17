@@ -11,10 +11,12 @@ namespace pdq.Implementation
 	{
         private readonly List<state.IWhere> clauses;
         private readonly IQueryContext queryContext;
+        private readonly IClauseHandlingBehaviour clauseHandlingBehaviour;
         private ClauseHandling defaultClauseHandling;
 
 		private WhereBuilder(ClauseHandling clauseHandling, IQueryContext queryContext)
 		{
+            this.clauseHandlingBehaviour = ClauseHandlingBehaviour.CreateClauseHandler(this);
             this.defaultClauseHandling = clauseHandling;
             this.queryContext = queryContext;
             this.clauses = new List<state.IWhere>();
@@ -30,7 +32,7 @@ namespace pdq.Implementation
         public IWhereBuilder And(Action<IWhereBuilder> builder)
         {
             var b = Create(this.defaultClauseHandling, this.queryContext);
-            b.ClauseHandling().DefaultToAnd();
+            b.ClauseHandling.DefaultToAnd();
             builder(b);
 
             this.clauses.Add(b.GetClauses().First());
@@ -38,7 +40,9 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc />
-        public IClauseHandlingBehaviour ClauseHandling() => ClauseHandlingBehaviour.CreateClauseHandler(this);
+        public IClauseHandlingBehaviour ClauseHandling => this.clauseHandlingBehaviour;
+
+        ClauseHandling IWhereBuilder.DefaultClauseHandling => this.defaultClauseHandling;
 
         /// <inheritdoc />
         public IColumnWhereBuilder Column(string name, string targetAlias = null)
@@ -54,7 +58,7 @@ namespace pdq.Implementation
         public IWhereBuilder Or(Action<IWhereBuilder> builder)
         {
             var b = Create(this.defaultClauseHandling, this.queryContext);
-            b.ClauseHandling().DefaultToOr();
+            b.ClauseHandling.DefaultToOr();
             builder(b);
 
             this.clauses.Add(b.GetClauses().First());

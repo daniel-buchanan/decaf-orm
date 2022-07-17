@@ -29,7 +29,7 @@ using (var t = uow.Begin())
             .From("bob", "b")
             .Where(b =>
             {
-                b.ClauseHandling().DefaultToOr();
+                b.ClauseHandling.DefaultToOr();
 
                 b.Column("name").Is().EqualTo("hello");
                 b.Column("email").Is().Like("my name");

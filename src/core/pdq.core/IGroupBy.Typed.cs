@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 namespace pdq
 {
 	public interface IGroupByTyped<T> :
-        IExecute,
         ISelectColumnTyped<T>,
         IOrderByTyped<T>
     {
@@ -12,7 +11,6 @@ namespace pdq
 	}
 
     public interface IGroupByTyped<T1, T2> :
-        IExecute,
         ISelectColumnTyped<T1, T2>,
         IOrderByTyped<T1, T2>
     {
@@ -20,7 +18,6 @@ namespace pdq
     }
 
     public interface IGroupByTyped<T1, T2, T3> :
-        IExecute,
         ISelectColumnTyped<T1, T2, T3>,
         IOrderByTyped<T1, T2, T3>
     {
@@ -28,7 +25,6 @@ namespace pdq
     }
 
     public interface IGroupByTyped<T1, T2, T3, T4> :
-        IExecute,
         ISelectColumnTyped<T1, T2, T3, T4>,
         IOrderByTyped<T1, T2, T3, T4>
     {
@@ -36,7 +32,6 @@ namespace pdq
     }
 
     public interface IGroupByTyped<T1, T2, T3, T4, T5> :
-        IExecute,
         ISelectColumnTyped<T1, T2, T3, T4, T5>,
         IOrderByTyped<T1, T2, T3, T4, T5>
     {

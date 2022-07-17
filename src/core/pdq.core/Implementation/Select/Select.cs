@@ -8,7 +8,7 @@ using pdq.state;
 namespace pdq.Implementation
 {
 	internal class Select
-        : SelectBase, ISelectWithAlias, ISelectFrom, IOrderBy, IOrderByThen, IGroupBy, IGroupByThen
+        : SelectBase, ISelectWithAlias, ISelectFrom, IOrderByThen, IGroupBy, IGroupByThen
 	{
         private Select(
             ISelectQueryContext context,

@@ -49,10 +49,7 @@ namespace pdq.state.Utilities
 
 			if (equal) return true;
 
-			equal = equal ||
-				Type == propertyInfo.Type;
-
-			return equal;
+			return Type == propertyInfo.Type;
         }
 	}
 }

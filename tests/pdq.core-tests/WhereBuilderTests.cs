@@ -114,6 +114,34 @@ namespace pdq.core_tests
 
         [Theory]
         [MemberData(nameof(NonStringTests))]
+        public void NotLessThan<T>(Func<T> getValue)
+            where T : struct
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").IsNot().LessThan(value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var inversion = this.context.WhereClause.Children.First() as Not;
+            inversion.Should().NotBeNull();
+            var column = inversion.Item as IColumn;
+            column.Should().NotBeNull();
+            column.Details.Name.Should().Be("name");
+            column.Details.Source.Alias.Should().Be("p");
+            column.Value.Should().Be(value);
+            //column.ValueType.Should().Be(type);
+            column.EqualityOperator.Should().Be(EqualityOperator.LessThan);
+        }
+
+        [Theory]
+        [MemberData(nameof(NonStringTests))]
         public void LessThanOrEqualTo<T>(Func<T> getValue)
             where T : struct
         {
@@ -130,6 +158,34 @@ namespace pdq.core_tests
             // Assert
             this.context.WhereClause.Children.Should().HaveCount(1);
             var column = this.context.WhereClause.Children.First() as IColumn;
+            column.Should().NotBeNull();
+            column.Details.Name.Should().Be("name");
+            column.Details.Source.Alias.Should().Be("p");
+            column.Value.Should().Be(value);
+            //column.ValueType.Should().Be(type);
+            column.EqualityOperator.Should().Be(EqualityOperator.LessThanOrEqualTo);
+        }
+
+        [Theory]
+        [MemberData(nameof(NonStringTests))]
+        public void NotLessThanOrEqualTo<T>(Func<T> getValue)
+            where T : struct
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").IsNot().LessThanOrEqualTo(value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var inversion = this.context.WhereClause.Children.First() as Not;
+            inversion.Should().NotBeNull();
+            var column = inversion.Item as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -214,6 +270,81 @@ namespace pdq.core_tests
             column.Start.Should().Be(value);
             column.End.Should().Be(value);
             column.ValueType.Should().Be(typeof(T));
+        }
+
+        [Theory]
+        [MemberData(nameof(EqualToTests))]
+        public void StartsWith<T>(Func<T> getValue)
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").Is().StartsWith(value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var column = this.context.WhereClause.Children.First() as IColumn;
+            column.Should().NotBeNull();
+            column.Details.Name.Should().Be("name");
+            column.Details.Source.Alias.Should().Be("p");
+            column.Value.Should().Be(value);
+            column.ValueType.Should().Be(typeof(T));
+            column.EqualityOperator.Should().Be(EqualityOperator.StartsWith);
+        }
+
+        [Theory]
+        [MemberData(nameof(EqualToTests))]
+        public void EndsWith<T>(Func<T> getValue)
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").Is().EndsWith(value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var column = this.context.WhereClause.Children.First() as IColumn;
+            column.Should().NotBeNull();
+            column.Details.Name.Should().Be("name");
+            column.Details.Source.Alias.Should().Be("p");
+            column.Value.Should().Be(value);
+            column.ValueType.Should().Be(typeof(T));
+            column.EqualityOperator.Should().Be(EqualityOperator.EndsWith);
+        }
+
+        [Theory]
+        [MemberData(nameof(EqualToTests))]
+        public void Like<T>(Func<T> getValue)
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").Is().Like(value);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var column = this.context.WhereClause.Children.First() as IColumn;
+            column.Should().NotBeNull();
+            column.Details.Name.Should().Be("name");
+            column.Details.Source.Alias.Should().Be("p");
+            column.Value.Should().Be(value);
+            column.ValueType.Should().Be(typeof(T));
+            column.EqualityOperator.Should().Be(EqualityOperator.Like);
         }
 
         public static IEnumerable<object[]> EqualToTests

@@ -27,19 +27,6 @@ namespace pdq.Implementation
         public string Alias { get; private set; }
 
         /// <inheritdoc/>
-        public ISelectFrom Column(
-            string name,
-            string table = null,
-            string tableAlias = null,
-            string newName = null)
-        {
-            var managedTable = this.query.AliasManager.GetAssociation(tableAlias) ?? table;
-            var managedAlias = this.query.AliasManager.Add(table, tableAlias);
-            this.context.Select(state.Column.Create(name, state.QueryTargets.TableTarget.Create(managedTable, managedAlias), newName));
-            return this;
-        }
-
-        /// <inheritdoc/>
         public ISelectFrom Join(
             IQueryTarget from,
             state.IWhere conditions,

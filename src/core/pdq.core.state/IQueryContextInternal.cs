@@ -1,4 +1,5 @@
-﻿using pdq.common;
+﻿using System.Linq.Expressions;
+using pdq.common;
 using pdq.state.Utilities;
 
 namespace pdq.state
@@ -23,11 +24,37 @@ namespace pdq.state
         /// </summary>
         internal IQueryParsers Parsers { get; }
 
+        /// <summary>
+        /// The Alias Manager for the current query context.
+        /// </summary>
+        internal IAliasManager AliasManager { get; }
+
 		/// <summary>
         /// Adds a <see cref="IQueryTarget"/> to this context.
         /// </summary>
         /// <param name="target">The <see cref="IQueryTarget"/> to add.</param>
 		internal void AddQueryTarget(IQueryTarget target);
+
+        /// <summary>
+        /// Adds a <see cref="IQueryTarget"/> to this context based on the provided expression.
+        /// </summary>
+        /// <param name="target">The expression which defines the target.</param>
+        /// <returns>The <see cref="IQueryTarget"/> that has been added.</returns>
+		internal IQueryTarget AddQueryTarget(Expression target);
+
+        /// <summary>
+        /// Get a query target based off an expression.
+        /// </summary>
+        /// <param name="expression">The expression to use to find the query target.</param>
+        /// <returns>A query target if found, otherwise null.</returns>
+        internal IQueryTarget GetQueryTarget(Expression expression);
+
+        /// <summary>
+        /// Get a query target based off an alias.
+        /// </summary>
+        /// <param name="alias">The alias of the query target to find.</param>
+        /// <returns>A query target if found, otherwise null.</returns>
+        internal IQueryTarget GetQueryTarget(string alias);
     }
 
     internal interface IQueryParsers

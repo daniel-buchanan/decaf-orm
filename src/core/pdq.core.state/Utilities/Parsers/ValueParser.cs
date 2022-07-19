@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using pdq.common;
@@ -10,33 +9,32 @@ namespace pdq.state.Utilities.Parsers
 	internal class ValueParser : BaseParser
 	{
         private readonly CallExpressionHelper callExpressionHelper;
-        private readonly IAliasManager aliasManager;
 
         public ValueParser(
             IExpressionHelper expressionHelper,
             CallExpressionHelper callExpressionHelper,
-            IReflectionHelper reflectionHelper,
-            IAliasManager aliasManager)
+            IReflectionHelper reflectionHelper)
             : base(expressionHelper, reflectionHelper)
         {
             this.callExpressionHelper = callExpressionHelper;
-            this.aliasManager = aliasManager;
         }
 
-        public override state.IWhere Parse(Expression expression)
+        public override state.IWhere Parse(Expression expression, IQueryContextInternal context)
         {
-            var earlyResult = ParseBinaryCallExpression(expression);
+            var earlyResult = ParseBinaryCallExpression(expression, context);
             if (earlyResult != null) return earlyResult;
 
-            var valueResult = ParseMemberExpression(expression);
+            var valueResult = ParseMemberExpression(expression, context);
             if (valueResult == null) valueResult = ParseBinaryExpression(expression);
 
-            var alias = valueResult.Alias;
-            var managedAlias = this.aliasManager.FindByAssociation(valueResult.Table).FirstOrDefault()?.Name;
-            if (string.IsNullOrWhiteSpace(managedAlias))
-                managedAlias = this.aliasManager.Add(alias, valueResult.Table);
-            var tableTarget = QueryTargets.TableTarget.Create(valueResult.Table, managedAlias);
-            var col = state.Column.Create(valueResult.Field, tableTarget);
+            var queryTarget = context.GetQueryTarget(valueResult.Alias);
+            if (queryTarget == null)
+            {
+                queryTarget = QueryTargets.TableTarget.Create(valueResult.Table, valueResult.Alias);
+                context.AddQueryTarget(queryTarget);
+            }
+            
+            var col = state.Column.Create(valueResult.Field, queryTarget);
 
             //add the model type for the type def of the repository
             var convertedValue = GetConvertedValue(valueResult.Value, valueResult.ValueType);
@@ -78,7 +76,7 @@ namespace pdq.state.Utilities.Parsers
             return convertedValue;
         }
 
-        private IWhere ParseBinaryCallExpression(Expression expression)
+        private IWhere ParseBinaryCallExpression(Expression expression, IQueryContextInternal context)
         {
             BinaryExpression operation;
             if (expression.NodeType == ExpressionType.Lambda)
@@ -99,17 +97,17 @@ namespace pdq.state.Utilities.Parsers
             if (left.NodeType == ExpressionType.Call ||
                 right.NodeType == ExpressionType.Call)
             {
-                return callExpressionHelper.ParseBinaryExpression(operation);
+                return callExpressionHelper.ParseBinaryExpression(operation, context);
             }
 
             return null;
         }
 
-        private ValueResult ParseMemberExpression(Expression expression)
+        private ValueResult ParseMemberExpression(Expression expression, IQueryContextInternal context)
         {
             if (!(expression is MemberExpression)) return null;
 
-            var val = Parse(expression);
+            var val = Parse(expression, context);
             var valType = this.expressionHelper.GetType(expression);
             var field = this.expressionHelper.GetName(expression);
             var table = this.reflectionHelper.GetTableName(((MemberExpression)expression).Member.DeclaringType);

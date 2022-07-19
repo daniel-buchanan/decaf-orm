@@ -13,19 +13,16 @@ namespace pdq.state.Utilities
     {
         private readonly IExpressionHelper expressionHelper;
         private readonly IReflectionHelper reflectionHelper;
-        private readonly IAliasManager aliasManager;
 
         public CallExpressionHelper(
             IExpressionHelper expressionHelper,
-            IReflectionHelper reflectionHelper,
-            IAliasManager aliasManager)
+            IReflectionHelper reflectionHelper)
         {
             this.expressionHelper = expressionHelper;
             this.reflectionHelper = reflectionHelper;
-            this.aliasManager = aliasManager;
         }
 
-        public state.IWhere ParseExpression(Expression expr)
+        public state.IWhere ParseExpression(Expression expr, IQueryContextInternal context)
         {
             MethodCallExpression call;
             if(expr.NodeType == ExpressionType.Lambda)
@@ -43,15 +40,15 @@ namespace pdq.state.Utilities
 
             // check for contains
             if (call.Method.Name == "Contains" && nodeType == ExpressionType.MemberAccess)
-                return ParseContainsMemberAccessCall(call);
+                return ParseContainsMemberAccessCall(call, context);
             if (call.Method.Name == "Contains" && nodeType == ExpressionType.Constant)
-                return ParseContainsConstantCall(call);
+                return ParseContainsConstantCall(call, context);
             
             // otherwise return null
             return null;
         }
 
-        public state.IWhere ParseBinaryExpression(BinaryExpression expr)
+        public state.IWhere ParseBinaryExpression(BinaryExpression expr, IQueryContextInternal context)
         {
             var left = expr.Left;
             var right = expr.Right;
@@ -73,18 +70,19 @@ namespace pdq.state.Utilities
 
             if (callExpr == null) return null;
 
-            if (callExpr.Method.Name == "DatePart") return ParseDatePartCall(nodeType, callExpr, nonCallExpr);
-            if (callExpr.Method.Name == "ToLower") return ParseCaseCall(nodeType, callExpr, nonCallExpr);
-            if (callExpr.Method.Name == "ToUpper") return ParseCaseCall(nodeType, callExpr, nonCallExpr);
-            if (callExpr.Method.Name == "Substring") return ParseSubStringCall(nodeType, callExpr, nonCallExpr);
-            if (callExpr.Method.Name == "Contains") return ParseContains(callExpr, nonCallExpr);
+            if (callExpr.Method.Name == "DatePart") return ParseDatePartCall(nodeType, callExpr, nonCallExpr, context);
+            if (callExpr.Method.Name == "ToLower") return ParseCaseCall(nodeType, callExpr, nonCallExpr, context);
+            if (callExpr.Method.Name == "ToUpper") return ParseCaseCall(nodeType, callExpr, nonCallExpr, context);
+            if (callExpr.Method.Name == "Substring") return ParseSubStringCall(nodeType, callExpr, nonCallExpr, context);
+            if (callExpr.Method.Name == "Contains") return ParseContains(callExpr, nonCallExpr, context);
 
             return null;
         }
 
         private state.IWhere ParseContains(
             MethodCallExpression callExpr,
-            Expression nonCallExpr)
+            Expression nonCallExpr,
+            IQueryContextInternal context)
         {
             var arg = callExpr.Arguments[0];
             var body = callExpr.Object;
@@ -92,7 +90,6 @@ namespace pdq.state.Utilities
             var memberAccessExp = body as MemberExpression;
 
             // get alias and field name
-            var alias = this.expressionHelper.GetParameterName(memberAccessExp);
             var fieldName = this.expressionHelper.GetName(memberAccessExp);
             var value = this.expressionHelper.GetValue(arg) as string;
 
@@ -101,7 +98,8 @@ namespace pdq.state.Utilities
             var constValue = (bool)this.expressionHelper.GetValue(nonCallExpr);
             var op = constValue ? EqualityOperator.Like : EqualityOperator.NotLike;
 
-            var col = state.Column.Create(fieldName, state.QueryTargets.TableTarget.Create(alias));
+            var target = context.GetQueryTarget(memberAccessExp);
+            var col = state.Column.Create(fieldName, target);
 
             if (value == null && op == EqualityOperator.NotLike)
                 return Conditionals.Column.NotLike<string>(col, null, StringContains.Create());
@@ -115,7 +113,8 @@ namespace pdq.state.Utilities
         private state.IWhere ParseDatePartCall(
             ExpressionType nodeType,
             MethodCallExpression callExpr,
-            Expression nonCallExpr)
+            Expression nonCallExpr,
+            IQueryContextInternal context)
         {
             var arguments = callExpr.Arguments;
             var objectExpression = arguments[0];
@@ -126,7 +125,8 @@ namespace pdq.state.Utilities
             var dpField = this.expressionHelper.GetName(objectExpression);
             var dp = (common.DatePart)this.expressionHelper.GetValue(datePartExpression);
 
-            var col = state.Column.Create(dpField, state.QueryTargets.TableTarget.Create(dpAlias));
+            var leftTarget = context.GetQueryTarget(objectExpression);
+            var col = state.Column.Create(dpField, leftTarget);
 
             if (nonCallExpr.NodeType == ExpressionType.Constant)
             {
@@ -145,7 +145,8 @@ namespace pdq.state.Utilities
 
                 var mAlias = this.expressionHelper.GetParameterName(nonCallExpr);
                 var mField = this.expressionHelper.GetName(nonCallExpr);
-                col = state.Column.Create(mField, state.QueryTargets.TableTarget.Create(mAlias));
+                var target = context.GetQueryTarget(nonCallExpr);
+                col = state.Column.Create(mField, target);
 
                 return Conditionals.Column.Equals(col, op, 0, state.Conditionals.ValueFunctions.DatePart.Create(dp));
             }
@@ -176,13 +177,15 @@ namespace pdq.state.Utilities
         private state.IWhere ParseCaseCall(
             ExpressionType nodeType,
             MethodCallExpression callExpr,
-            Expression nonCallExpr)
+            Expression nonCallExpr,
+            IQueryContextInternal context)
         {
             var body = callExpr.Object;
             var alias = this.expressionHelper.GetParameterName(body);
             var field = this.expressionHelper.GetName(body);
             var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(nodeType);
-            var col = state.Column.Create(field, state.QueryTargets.TableTarget.Create(alias));
+            var leftTarget = context.GetQueryTarget(body);
+            var col = state.Column.Create(field, leftTarget);
 
             var func = ConvertMethodNameToValueFunction(callExpr.Method.Name);
 
@@ -202,7 +205,8 @@ namespace pdq.state.Utilities
             {
                 var aliasB = this.expressionHelper.GetParameterName(nonCallExpr);
                 var fieldB = this.expressionHelper.GetName(nonCallExpr);
-                var right = state.Column.Create(fieldB, state.QueryTargets.TableTarget.Create(aliasB));
+                var target = context.GetQueryTarget(nonCallExpr);
+                var right = state.Column.Create(fieldB, target);
                 return Conditionals.Column.Equals(col, op, funcImplementation, right);
             }
 
@@ -215,7 +219,8 @@ namespace pdq.state.Utilities
                 var methodB = ConvertMethodNameToValueFunction(rightCallExpr.Method.Name);
                 if (methodB == ValueFunction.None) return null;
 
-                var right = state.Column.Create(fieldB, state.QueryTargets.TableTarget.Create(aliasB));
+                var target = context.GetQueryTarget(rightBody);
+                var right = state.Column.Create(fieldB, target);
                 funcImplementation = ConvertMethodNameToValueFunctionImpl(methodB);
 
                 return Conditionals.Column.Equals(col, op, funcImplementation, right);
@@ -227,7 +232,8 @@ namespace pdq.state.Utilities
         private state.IWhere ParseSubStringCall(
             ExpressionType nodeType,
             MethodCallExpression callExpr,
-            Expression nonCallExpr)
+            Expression nonCallExpr,
+            IQueryContextInternal context)
         {
             var arguments = callExpr.Arguments;
             var startExpression = arguments[0];
@@ -235,10 +241,9 @@ namespace pdq.state.Utilities
             if (arguments.Count > 1) lengthExpression = arguments[1];
 
             var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(nodeType);
-
-            var alias = this.expressionHelper.GetParameterName(callExpr);
             var field = this.expressionHelper.GetName(callExpr);
-            var col = state.Column.Create(field, state.QueryTargets.TableTarget.Create(alias));
+            var target = context.GetQueryTarget(callExpr);
+            var col = state.Column.Create(field, target);
 
             var startValue = (int)this.expressionHelper.GetValue(startExpression);
 
@@ -258,7 +263,7 @@ namespace pdq.state.Utilities
             return null;
         }
 
-        private state.IWhere ParseContainsMemberAccessCall(MethodCallExpression call)
+        private state.IWhere ParseContainsMemberAccessCall(MethodCallExpression call, IQueryContextInternal context)
         {
             var arg = call.Arguments[0];
             if (arg.NodeType != ExpressionType.MemberAccess) return null;
@@ -281,7 +286,7 @@ namespace pdq.state.Utilities
                     firstArgument.Expression.NodeType == ExpressionType.Constant)
                 {
                     // check if underlying value is a constant
-                    return ParseContainsConstantCall(call);
+                    return ParseContainsConstantCall(call, context);
                 }
 
                 // otherwise default to member access
@@ -296,7 +301,6 @@ namespace pdq.state.Utilities
             object values = this.expressionHelper.GetValue(valueMember);
 
             // get alias and field name
-            var alias = this.expressionHelper.GetParameterName(memberAccessExp);
             var fieldName = this.expressionHelper.GetName(memberAccessExp);
 
             // setup arguments
@@ -305,7 +309,8 @@ namespace pdq.state.Utilities
             var inputGenericType = typeof(List<>);
             var inputType = inputGenericType.MakeGenericType(typeArgs);
             var input = Activator.CreateInstance(inputType, new object[] { values });
-            var col = state.Column.Create(fieldName, state.QueryTargets.TableTarget.Create(alias));
+            var target = context.GetQueryTarget(memberAccessExp.Expression);
+            var col = state.Column.Create(fieldName, target);
 
             var parameters = new object[] { col, input };
 
@@ -340,7 +345,7 @@ namespace pdq.state.Utilities
             return (state.IWhere)ctor.Invoke(parameters);
         }
 
-        private state.IWhere ParseContainsConstantCall(MethodCallExpression call)
+        private state.IWhere ParseContainsConstantCall(MethodCallExpression call, IQueryContextInternal context)
         {
             var arg = call.Arguments[0];
             var body = call.Object;
@@ -348,18 +353,10 @@ namespace pdq.state.Utilities
             var memberAccessExp = body as MemberExpression;
 
             // get alias and field name
-            var type = this.expressionHelper.GetType(memberAccessExp.Expression);
-            var alias = this.aliasManager.FindByAssociation(this.reflectionHelper.GetTableName(type)).FirstOrDefault()?.Name;
-            alias = string.IsNullOrWhiteSpace(alias) ?
-                this.expressionHelper.GetParameterName(memberAccessExp) :
-                alias;
-
-            var table = this.aliasManager.GetAssociation(alias);
-            table = String.IsNullOrWhiteSpace(table) ? this.reflectionHelper.GetTableName(type) : table;
-
+            var target = context.GetQueryTarget(memberAccessExp.Expression);
             var fieldName = this.expressionHelper.GetName(memberAccessExp);
             var value = this.expressionHelper.GetValue(arg);
-            var col = state.Column.Create(fieldName, state.QueryTargets.TableTarget.Create(table, alias));
+            var col = state.Column.Create(fieldName, target);
 
             if (value == null)
                 return Conditionals.Column.Like<string>(col, null, StringContains.Create());

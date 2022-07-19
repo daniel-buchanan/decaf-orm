@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using pdq.common;
 using pdq.state.Utilities;
 using pdq.state.Utilities.Parsers;
@@ -10,6 +12,8 @@ namespace pdq.state
 	{
 		private readonly IExpressionHelper expressionHelper;
 		private readonly IReflectionHelper reflectionHelper;
+        private readonly CallExpressionHelper callExpressionHelper;
+		private readonly IAliasManager aliasManager;
 		private readonly ParserHolder parserHolder;
 		private readonly List<IQueryTarget> queryTargets;
 
@@ -22,7 +26,9 @@ namespace pdq.state
 			this.queryTargets = new List<IQueryTarget>();
 			this.reflectionHelper = new ReflectionHelper();
 			this.expressionHelper = new ExpressionHelper(this.reflectionHelper);
-			this.parserHolder = new ParserHolder(expressionHelper, reflectionHelper, aliasManager, this, new CallExpressionHelper(expressionHelper, reflectionHelper, aliasManager));
+            this.callExpressionHelper = new CallExpressionHelper(expressionHelper, reflectionHelper);
+            this.aliasManager = aliasManager;
+			this.parserHolder = new ParserHolder(expressionHelper, reflectionHelper, this.callExpressionHelper);
 		}
 
 		/// <inheritdoc/>
@@ -44,19 +50,77 @@ namespace pdq.state
         IQueryParsers IQueryContextInternal.Parsers => this.parserHolder;
 
         /// <inheritdoc/>
+        IAliasManager IQueryContextInternal.AliasManager => this.aliasManager;
+
+        /// <inheritdoc/>
         void IQueryContextInternal.AddQueryTarget(IQueryTarget target)
 			=> this.queryTargets.Add(target);
 
 		/// <inheritdoc/>
-		public void Dispose()
+        IQueryTarget IQueryContextInternal.GetQueryTarget(Expression expression)
         {
-			Dispose(true);
-			GC.SuppressFinalize(this);
+            GetAliasAndTable(expression, out var alias, out var table);
+            var managedAlias = this.aliasManager.FindByAssociation(table)?.FirstOrDefault()?.Name ?? alias;
+            managedAlias = this.aliasManager.Add(managedAlias, table);
+
+            return this.queryTargets.FirstOrDefault(t => t.Alias == managedAlias);
         }
 
-		protected virtual void Dispose(bool disposing)
+        /// <inheritdoc/>
+        IQueryTarget IQueryContextInternal.GetQueryTarget(string alias)
         {
-			this.queryTargets.DisposeAll();
+			return this.queryTargets.FirstOrDefault(qt => qt.Alias == alias);
+        }
+
+        /// <inheritdoc/>
+        IQueryTarget IQueryContextInternal.AddQueryTarget(Expression expression)
+        {
+            var self = this as IQueryContextInternal;
+            var existing = self.GetQueryTarget(expression);
+            if (existing != null) return existing;
+
+            GetAliasAndTable(expression, out var alias, out var table);
+            var target = state.QueryTargets.TableTarget.Create(table, alias);
+            self.AddQueryTarget(target);
+            return target;
+        }
+
+        private void GetAliasAndTable(Expression expression, out string alias, out string table)
+        {
+            alias = table = null;
+            Expression exprAlias, exprTable;
+            exprAlias = exprTable = expression;
+
+            if (expression is LambdaExpression)
+            {
+                var lambda = expression as LambdaExpression;
+                if(lambda.Parameters.Count > 1) return;
+                exprAlias = lambda.Body;
+                exprTable = lambda.Body;
+            }
+
+            if (exprAlias is MethodCallExpression)
+            {
+                var call = exprAlias as MethodCallExpression;
+                var obj = call.Object as MemberExpression;
+                exprAlias = obj;
+                exprTable = obj.Expression;
+            }
+
+            alias = this.expressionHelper.GetParameterName(exprAlias);
+            table = this.reflectionHelper.GetTableName(exprTable.Type);
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            this.queryTargets.DisposeAll();
         }
     }
 }

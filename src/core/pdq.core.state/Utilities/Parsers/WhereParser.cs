@@ -23,12 +23,12 @@ namespace pdq.state.Utilities.Parsers
             this.valueParser = valueParser;
         }
 
-        public override state.IWhere Parse(Expression expression)
+        public override state.IWhere Parse(Expression expression, IQueryContextInternal context)
         {
             // check to see if we have a normal where
             if (expression.NodeType != ExpressionType.OrElse && expression.NodeType != ExpressionType.AndAlso)
             {
-                return Parse(expression, false);
+                return Parse(expression, context, false);
             }
 
             // check for and
@@ -38,8 +38,8 @@ namespace pdq.state.Utilities.Parsers
                 var binaryExpr = (BinaryExpression)expression;
 
                 // get left and right
-                var left = Parse(binaryExpr.Left);
-                var right = Parse(binaryExpr.Right);
+                var left = Parse(binaryExpr.Left, context);
+                var right = Parse(binaryExpr.Right, context);
 
                 // return and
                 return And.Where(left, right);
@@ -51,8 +51,8 @@ namespace pdq.state.Utilities.Parsers
                 var binaryExpr = (BinaryExpression)expression;
 
                 // get left and right
-                var left = Parse(binaryExpr.Left);
-                var right = Parse(binaryExpr.Right);
+                var left = Parse(binaryExpr.Left, context);
+                var right = Parse(binaryExpr.Right, context);
 
                 // return or
                 return Or.Where(left, right);
@@ -62,7 +62,7 @@ namespace pdq.state.Utilities.Parsers
             return null;
         }
 
-        private IWhere Parse(Expression expression, bool excludeAlias)
+        private IWhere Parse(Expression expression, IQueryContextInternal context, bool excludeAlias)
         {
             BinaryExpression binaryExpr = null;
 
@@ -73,7 +73,7 @@ namespace pdq.state.Utilities.Parsers
 
                 // check for call expression on field
                 if (lambda.Body.NodeType == ExpressionType.Call)
-                    return this.callExpressionHelper.ParseExpression(lambda.Body);
+                    return this.callExpressionHelper.ParseExpression(lambda.Body, context);
 
                 binaryExpr = (BinaryExpression)lambda.Body;
             }
@@ -81,7 +81,7 @@ namespace pdq.state.Utilities.Parsers
             else if (expression.NodeType == ExpressionType.Call)
             {
                 // parse call expressions
-                return this.callExpressionHelper.ParseExpression(expression);
+                return this.callExpressionHelper.ParseExpression(expression, context);
             }
             else
             {
@@ -89,15 +89,15 @@ namespace pdq.state.Utilities.Parsers
                 if (!(expression is MemberExpression)) binaryExpr = (BinaryExpression)expression;
             }
 
-            if (binaryExpr == null) return this.valueParser.Parse(expression);
+            if (binaryExpr == null) return this.valueParser.Parse(expression, context);
 
             IWhere left, right;
 
             if (binaryExpr.NodeType == ExpressionType.AndAlso)
             {
                 // get left and right
-                left = Parse(binaryExpr.Left, excludeAlias);
-                right = Parse(binaryExpr.Right, excludeAlias);
+                left = Parse(binaryExpr.Left, context, excludeAlias);
+                right = Parse(binaryExpr.Right, context, excludeAlias);
 
                 // return and
                 return And.Where(left, right);
@@ -105,8 +105,8 @@ namespace pdq.state.Utilities.Parsers
             else if (binaryExpr.NodeType == ExpressionType.OrElse)
             {
                 // get left and right
-                left = Parse(binaryExpr.Left, excludeAlias);
-                right = Parse(binaryExpr.Right, excludeAlias);
+                left = Parse(binaryExpr.Left, context, excludeAlias);
+                right = Parse(binaryExpr.Right, context, excludeAlias);
 
                 // return or
                 return Or.Where(left, right);
@@ -127,10 +127,10 @@ namespace pdq.state.Utilities.Parsers
                                 !string.IsNullOrWhiteSpace(rightParam);
 
             if (bothMemberAccess && bothHaveParam)
-                return this.joinParser.Parse(expression);
+                return this.joinParser.Parse(expression, context);
 
             // failing that parse a value clause
-            return this.valueParser.Parse(expression);
+            return this.valueParser.Parse(expression, context);
         }
 	}
 }

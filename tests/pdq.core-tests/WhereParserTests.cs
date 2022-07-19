@@ -12,23 +12,25 @@ using Xunit;
 
 namespace pdq.core_tests
 {
-    public class ValueParserTests
+    public class WhereParserTests
     {
         private readonly IAliasManager aliasManager;
-        private readonly ValueParser parser;
+        private readonly WhereParser parser;
 
-        public ValueParserTests()
+        public WhereParserTests()
         {
             var reflectionHelper = new ReflectionHelper();
             var expressionHelper = new ExpressionHelper(reflectionHelper);
             this.aliasManager = AliasManager.Create();
             var callExpressionHelper = new CallExpressionHelper(expressionHelper, reflectionHelper);
-            this.parser = new ValueParser(expressionHelper, callExpressionHelper, reflectionHelper);
+            var valueParser = new ValueParser(expressionHelper, callExpressionHelper, reflectionHelper);
+            var joinParser = new JoinParser(expressionHelper, reflectionHelper);
+            this.parser = new WhereParser(expressionHelper, reflectionHelper, callExpressionHelper, joinParser, valueParser);
         }
 
         [Theory]
         [MemberData(nameof(ValueTests))]
-        public void ParseExpressionSucceeds<T>(
+        public void ParseSimpleExpressionSucceeds<T>(
             Expression expression,
             string expectedPropertyName,
             EqualityOperator expectedOperator,

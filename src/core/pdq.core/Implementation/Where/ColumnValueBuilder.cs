@@ -69,7 +69,7 @@ namespace pdq.Implementation
 
         private void AddClause<T>(common.EqualityOperator op, IValueFunction function, T value)
         {
-            var col = new Column<T>(this.column, op, value);
+            var col = new Column<T>(this.column, op, function, value);
             if (this.notEquals) this.builder.AddClause(Not.This(col));
             else this.builder.AddClause(col);
         }

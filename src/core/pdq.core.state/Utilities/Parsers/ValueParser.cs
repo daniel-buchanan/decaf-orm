@@ -105,12 +105,13 @@ namespace pdq.state.Utilities.Parsers
 
         private ValueResult ParseMemberExpression(Expression expression, IQueryContextInternal context)
         {
-            if (!(expression is MemberExpression)) return null;
+            var memberExpression = expression as MemberExpression;
+            if (memberExpression == null) return null;
 
             var val = Parse(expression, context);
             var valType = this.expressionHelper.GetType(expression);
             var field = this.expressionHelper.GetName(expression);
-            var table = this.reflectionHelper.GetTableName(((MemberExpression)expression).Member.DeclaringType);
+            var table = this.reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
             var alias = this.expressionHelper.GetParameterName(expression);
             var op = EqualityOperator.Equals;
             return new ValueResult(field, table, alias, val, valType, op);
@@ -135,16 +136,18 @@ namespace pdq.state.Utilities.Parsers
 
             if(operation.Left is MemberExpression)
             {
+                var memberExpression = operation.Left as MemberExpression;
                 field = this.expressionHelper.GetName(operation.Left);
                 alias = this.expressionHelper.GetParameterName(operation.Left);
-                table = this.reflectionHelper.GetTableName(((MemberExpression)operation.Left).Member.DeclaringType);
+                table = this.reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
                 valueExpression = operation.Right;
             }
             else if(operation.Right is MemberExpression)
             {
+                var memberExpression = operation.Right as MemberExpression;
                 field = this.expressionHelper.GetName(operation.Right);
                 alias = this.expressionHelper.GetParameterName(operation.Right);
-                table = this.reflectionHelper.GetTableName(((MemberExpression)operation.Right).Member.DeclaringType);
+                table = this.reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
                 valueExpression = operation.Left;
             }
             else

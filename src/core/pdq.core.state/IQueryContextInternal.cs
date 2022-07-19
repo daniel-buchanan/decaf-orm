@@ -38,9 +38,9 @@ namespace pdq.state
         /// <summary>
         /// Adds a <see cref="IQueryTarget"/> to this context based on the provided expression.
         /// </summary>
-        /// <param name="target">The expression which defines the target.</param>
+        /// <param name="expression">The expression which defines the target.</param>
         /// <returns>The <see cref="IQueryTarget"/> that has been added.</returns>
-		internal IQueryTarget AddQueryTarget(Expression target);
+		internal IQueryTarget AddQueryTarget(Expression expression);
 
         /// <summary>
         /// Get a query target based off an expression.

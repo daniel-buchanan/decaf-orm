@@ -12,7 +12,6 @@ namespace pdq.state
 	{
 		private readonly IExpressionHelper expressionHelper;
 		private readonly IReflectionHelper reflectionHelper;
-        private readonly CallExpressionHelper callExpressionHelper;
 		private readonly IAliasManager aliasManager;
 		private readonly ParserHolder parserHolder;
 		private readonly List<IQueryTarget> queryTargets;
@@ -26,9 +25,9 @@ namespace pdq.state
 			this.queryTargets = new List<IQueryTarget>();
 			this.reflectionHelper = new ReflectionHelper();
 			this.expressionHelper = new ExpressionHelper(this.reflectionHelper);
-            this.callExpressionHelper = new CallExpressionHelper(expressionHelper, reflectionHelper);
             this.aliasManager = aliasManager;
-			this.parserHolder = new ParserHolder(expressionHelper, reflectionHelper, this.callExpressionHelper);
+            var callExpressionHelper = new CallExpressionHelper(expressionHelper);
+            this.parserHolder = new ParserHolder(expressionHelper, reflectionHelper, callExpressionHelper);
 		}
 
 		/// <inheritdoc/>

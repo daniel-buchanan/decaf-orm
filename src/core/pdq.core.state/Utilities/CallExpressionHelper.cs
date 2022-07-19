@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using pdq.common;
@@ -12,14 +11,11 @@ namespace pdq.state.Utilities
     class CallExpressionHelper
     {
         private readonly IExpressionHelper expressionHelper;
-        private readonly IReflectionHelper reflectionHelper;
 
         public CallExpressionHelper(
-            IExpressionHelper expressionHelper,
-            IReflectionHelper reflectionHelper)
+            IExpressionHelper expressionHelper)
         {
             this.expressionHelper = expressionHelper;
-            this.reflectionHelper = reflectionHelper;
         }
 
         public state.IWhere ParseExpression(Expression expr, IQueryContextInternal context)
@@ -121,7 +117,6 @@ namespace pdq.state.Utilities
             var datePartExpression = arguments[1];
             var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(nodeType);
 
-            var dpAlias = this.expressionHelper.GetParameterName(objectExpression);
             var dpField = this.expressionHelper.GetName(objectExpression);
             var dp = (common.DatePart)this.expressionHelper.GetValue(datePartExpression);
 
@@ -143,7 +138,6 @@ namespace pdq.state.Utilities
                     return Conditionals.Column.Equals(col, op, value, state.Conditionals.ValueFunctions.DatePart.Create(dp));
                 }
 
-                var mAlias = this.expressionHelper.GetParameterName(nonCallExpr);
                 var mField = this.expressionHelper.GetName(nonCallExpr);
                 var target = context.GetQueryTarget(nonCallExpr);
                 col = state.Column.Create(mField, target);
@@ -181,7 +175,6 @@ namespace pdq.state.Utilities
             IQueryContextInternal context)
         {
             var body = callExpr.Object;
-            var alias = this.expressionHelper.GetParameterName(body);
             var field = this.expressionHelper.GetName(body);
             var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(nodeType);
             var leftTarget = context.GetQueryTarget(body);
@@ -203,7 +196,6 @@ namespace pdq.state.Utilities
 
             if (nonCallExpr.NodeType == ExpressionType.MemberAccess)
             {
-                var aliasB = this.expressionHelper.GetParameterName(nonCallExpr);
                 var fieldB = this.expressionHelper.GetName(nonCallExpr);
                 var target = context.GetQueryTarget(nonCallExpr);
                 var right = state.Column.Create(fieldB, target);
@@ -214,7 +206,6 @@ namespace pdq.state.Utilities
             {
                 var rightCallExpr = (MethodCallExpression)nonCallExpr;
                 var rightBody = rightCallExpr.Object;
-                var aliasB = this.expressionHelper.GetParameterName(rightBody);
                 var fieldB = this.expressionHelper.GetName(rightBody);
                 var methodB = ConvertMethodNameToValueFunction(rightCallExpr.Method.Name);
                 if (methodB == ValueFunction.None) return null;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using FluentAssertions;
 using pdq.common;
@@ -40,6 +41,45 @@ namespace pdq.core_tests
             values.Details.Source.Alias.Should().Be("p");
             values.Value.Should().Be("hello");
             values.EqualityOperator.Should().Be(common.EqualityOperator.Like);
+        }
+
+        [Fact]
+        public void ParseStringConstantAccess()
+        {
+            // Arrange
+            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var str = "hello";
+            Expression<Func<Person, bool>> expr = (p) => p.FirstName.Contains(str);
+            context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
+
+            // Act
+            var result = this.helper.ParseExpression(expr, context);
+
+            // Assert
+            var values = result as IColumn;
+            values.Details.Name.Should().Be(nameof(Person.FirstName));
+            values.Details.Source.Alias.Should().Be("p");
+            values.Value.Should().Be("hello");
+            values.EqualityOperator.Should().Be(common.EqualityOperator.Like);
+        }
+
+        [Fact]
+        public void ParseArrayConstantAccess()
+        {
+            // Arrange
+            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var constantValues = new[] { "hello", "world" };
+            Expression<Func<Person, bool>> expr = (p) => constantValues.Contains(p.FirstName);
+            context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
+
+            // Act
+            var result = this.helper.ParseExpression(expr, context);
+
+            // Assert
+            var values = result as IInValues;
+            values.Column.Name.Should().Be(nameof(Person.FirstName));
+            values.Column.Source.Alias.Should().Be("p");
+            values.GetValues().Should().BeEquivalentTo(constantValues);
         }
     }
 }

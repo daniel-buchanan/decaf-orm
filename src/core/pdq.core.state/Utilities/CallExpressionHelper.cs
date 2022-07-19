@@ -300,35 +300,20 @@ namespace pdq.state.Utilities
             var inputGenericType = typeof(List<>);
             var inputType = inputGenericType.MakeGenericType(typeArgs);
             var input = Activator.CreateInstance(inputType, new object[] { values });
-            var target = context.GetQueryTarget(memberAccessExp.Expression);
+            var target = context.GetQueryTarget(memberAccessExp);
             var col = state.Column.Create(fieldName, target);
 
             var parameters = new object[] { col, input };
+            var enumerableGenericType = typeof(IEnumerable<>);
+            var enumerableType = enumerableGenericType.MakeGenericType(typeArgs);
 
             // get generic type
             var toCreate = typeof(InValues<>);
             var genericToCreate = toCreate.MakeGenericType(typeArgs);
+            var parameterTypes = new[] { col.GetType(), enumerableType };
+            var bindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
 
-            var constructors = genericToCreate.GetConstructors();
-            ConstructorInfo ctor = null;
-            for (var i = 0; i < constructors.Length; i++)
-            {
-                var ctorParameters = constructors[i].GetParameters();
-
-                if (ctorParameters.Length != parameters.Length)
-                    continue;
-
-                var useCtor = true;
-
-                for (var p = 0; p < ctorParameters.Length; p++)
-                {
-                    useCtor &= ctorParameters[p].ParameterType == parameters[p].GetType();
-                }
-
-                if (!useCtor) continue;
-
-                ctor = constructors[i];
-            }
+            var ctor = genericToCreate.GetConstructor(bindingFlags, null, parameterTypes, null);
 
             if (ctor == null) return null;
 
@@ -344,7 +329,7 @@ namespace pdq.state.Utilities
             var memberAccessExp = body as MemberExpression;
 
             // get alias and field name
-            var target = context.GetQueryTarget(memberAccessExp.Expression);
+            var target = context.GetQueryTarget(memberAccessExp);
             var fieldName = this.expressionHelper.GetName(memberAccessExp);
             var value = this.expressionHelper.GetValue(arg);
             var col = state.Column.Create(fieldName, target);

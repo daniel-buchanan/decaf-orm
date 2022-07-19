@@ -352,7 +352,7 @@ namespace pdq.state.Utilities
             var alias = this.aliasManager.FindByAssociation(this.reflectionHelper.GetTableName(type)).FirstOrDefault()?.Name;
             alias = string.IsNullOrWhiteSpace(alias) ?
                 this.expressionHelper.GetParameterName(memberAccessExp) :
-                this.expressionHelper.GetParameterName(memberAccessExp);
+                alias;
 
             var table = this.aliasManager.GetAssociation(alias);
             table = String.IsNullOrWhiteSpace(table) ? this.reflectionHelper.GetTableName(type) : table;

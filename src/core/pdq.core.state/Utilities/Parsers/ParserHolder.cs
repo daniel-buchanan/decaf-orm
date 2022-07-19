@@ -16,7 +16,7 @@ namespace pdq.state.Utilities.Parsers
 			IQueryContextInternal context,
 			CallExpressionHelper callExpressionHelper)
 		{
-			this.value = new ValueParser(expressionHelper, callExpressionHelper, reflectionHelper);
+			this.value = new ValueParser(expressionHelper, callExpressionHelper, reflectionHelper, aliasManager);
 			this.join = new JoinParser(expressionHelper, reflectionHelper, aliasManager, context);
 			this.where = new WhereParser(expressionHelper, reflectionHelper, callExpressionHelper, this.join, this.value);
 		}

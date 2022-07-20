@@ -75,7 +75,18 @@ namespace pdq.state.Utilities.Parsers
                 if (lambda.Body.NodeType == ExpressionType.Call)
                     return this.callExpressionHelper.ParseExpression(lambda.Body, context);
 
-                binaryExpr = (BinaryExpression)lambda.Body;
+                if (lambda.Body is UnaryExpression)
+                {
+                    var unary = lambda.Body as UnaryExpression;
+                    if (unary.NodeType == ExpressionType.Not)
+                    {
+                        binaryExpr = BinaryExpression.Equal(unary.Operand, Expression.Constant(false));
+                    }
+                }
+                else
+                {
+                    binaryExpr = (BinaryExpression)lambda.Body;
+                }
             }
             // check if we have a method call
             else if (expression.NodeType == ExpressionType.Call)
@@ -127,10 +138,10 @@ namespace pdq.state.Utilities.Parsers
                                 !string.IsNullOrWhiteSpace(rightParam);
 
             if (bothMemberAccess && bothHaveParam)
-                return this.joinParser.Parse(expression, context);
+                return this.joinParser.Parse(binaryExpr, context);
 
             // failing that parse a value clause
-            return this.valueParser.Parse(expression, context);
+            return this.valueParser.Parse(binaryExpr, context);
         }
 	}
 }

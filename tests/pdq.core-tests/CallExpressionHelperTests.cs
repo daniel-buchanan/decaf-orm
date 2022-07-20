@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using FluentAssertions;
@@ -69,6 +70,44 @@ namespace pdq.core_tests
             // Arrange
             var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
             var constantValues = new[] { "hello", "world" };
+            Expression<Func<Person, bool>> expr = (p) => constantValues.Contains(p.FirstName);
+            context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
+
+            // Act
+            var result = this.helper.ParseExpression(expr, context);
+
+            // Assert
+            var values = result as IInValues;
+            values.Column.Name.Should().Be(nameof(Person.FirstName));
+            values.Column.Source.Alias.Should().Be("p");
+            values.GetValues().Should().BeEquivalentTo(constantValues);
+        }
+
+        [Fact]
+        public void ParseEnumerableConstantAccess()
+        {
+            // Arrange
+            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var constantValues = (new List<string> { "hello", "world" }).AsEnumerable();
+            Expression<Func<Person, bool>> expr = (p) => constantValues.Contains(p.FirstName);
+            context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
+
+            // Act
+            var result = this.helper.ParseExpression(expr, context);
+
+            // Assert
+            var values = result as IInValues;
+            values.Column.Name.Should().Be(nameof(Person.FirstName));
+            values.Column.Source.Alias.Should().Be("p");
+            values.GetValues().Should().BeEquivalentTo(constantValues);
+        }
+
+        [Fact]
+        public void ParseListConstantAccess()
+        {
+            // Arrange
+            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var constantValues = new List<string> { "hello", "world" };
             Expression<Func<Person, bool>> expr = (p) => constantValues.Contains(p.FirstName);
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
 

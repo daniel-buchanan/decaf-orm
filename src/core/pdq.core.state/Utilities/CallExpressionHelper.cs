@@ -98,12 +98,12 @@ namespace pdq.state.Utilities
             var col = state.Column.Create(fieldName, target);
 
             if (value == null && op == EqualityOperator.NotLike)
-                return Conditionals.Column.NotLike<string>(col, null, StringContains.Create());
+                return Not.This(Conditionals.Column.Like<string>(col, null, StringContains.Create()));
             if (value == null)
                 return Conditionals.Column.Like<string>(col, null, StringContains.Create());
             if (op == EqualityOperator.Like)
                 return Conditionals.Column.Like(col, value, StringContains.Create());
-            else return Conditionals.Column.NotLike(col, value, StringContains.Create());
+            else return Not.This(Conditionals.Column.Like(col, value, StringContains.Create()));
         }
 
         private state.IWhere ParseDatePartCall(

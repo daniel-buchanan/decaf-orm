@@ -52,6 +52,70 @@ namespace pdq.core_tests
             col.Value.Should().Be(getValue());
         }
 
+        [Fact]
+        public void ParseContainsExpressionSucceeds()
+        {
+            // Arrange
+            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
+            Expression<Func<Person, bool>> expression = (p) => p.FirstName.Contains("smith");
+
+            // Act
+            var result = this.parser.Parse(expression, context);
+
+            // Assert
+            var col = result as IColumn;
+            col.Should().NotBeNull();
+            col.Details.Name.Should().Be(nameof(Person.FirstName));
+            col.Details.Source.Alias.Should().Be("p");
+            col.EqualityOperator.Should().Be(EqualityOperator.Like);
+            col.Value.Should().Be("smith");
+        }
+
+        [Fact]
+        public void ParseNotContainsExpressionSucceeds()
+        {
+            // Arrange
+            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
+            Expression<Func<Person, bool>> expression = (p) => !p.FirstName.Contains("smith");
+
+            // Act
+            var result = this.parser.Parse(expression, context);
+
+            // Assert
+            var inversion = result as Not;
+            inversion.Should().NotBeNull();
+            var col = inversion.Item as IColumn;
+            col.Should().NotBeNull();
+            col.Details.Name.Should().Be(nameof(Person.FirstName));
+            col.Details.Source.Alias.Should().Be("p");
+            col.EqualityOperator.Should().Be(EqualityOperator.Like);
+            col.Value.Should().Be("smith");
+        }
+
+        [Fact]
+        public void ParseContainsEqualsFalseExpressionSucceeds()
+        {
+            // Arrange
+            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
+            Expression<Func<Person, bool>> expression = (p) => p.FirstName.Contains("smith") == false;
+
+            // Act
+            var result = this.parser.Parse(expression, context);
+
+            // Assert
+            var inversion = result as Not;
+            inversion.Should().NotBeNull();
+            var col = inversion.Item as IColumn;
+            col.Should().NotBeNull();
+            col.Details.Name.Should().Be(nameof(Person.FirstName));
+            col.Details.Source.Alias.Should().Be("p");
+            col.EqualityOperator.Should().Be(EqualityOperator.Like);
+            col.Value.Should().Be("smith");
+        }
+
         public static IEnumerable<object[]> ValueTests
         {
             get

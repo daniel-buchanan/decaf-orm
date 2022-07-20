@@ -104,14 +104,17 @@ namespace pdq.state.Utilities.Parsers
             var leftParam = (ParameterExpression)leftExpression.Expression;
             var rightParam = (ParameterExpression)rightExpression.Expression;
 
+            var leftTarget = context.AddQueryTarget(leftParam);
+            var leftField = reflectionHelper.GetFieldName(leftExpression.Member);
+            var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(operation.NodeType);
+            var rightTarget = context.AddQueryTarget(rightParam);
+            var rightField = reflectionHelper.GetFieldName(rightExpression.Member);
+
             result = Conditionals.Column.Equals(
-                Column.Create(
-                    reflectionHelper.GetFieldName(leftExpression.Member),
-                    context.GetQueryTarget(leftParam)),
-                this.expressionHelper.ConvertExpressionTypeToEqualityOperator(operation.NodeType),
-                Column.Create(
-                    reflectionHelper.GetFieldName(rightExpression.Member),
-                    context.GetQueryTarget(rightParam)));
+                Column.Create(leftField, leftTarget),
+                op,
+                Column.Create(rightField, rightTarget)
+            );
             return true;
         }
 

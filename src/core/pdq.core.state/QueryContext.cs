@@ -106,6 +106,14 @@ namespace pdq.state
                 exprTable = obj.Expression;
             }
 
+            if(expression is ParameterExpression)
+            {
+                var paramExpr = expression as ParameterExpression;
+                alias = paramExpr.Name;
+                table = this.reflectionHelper.GetTableName(paramExpr.Type);
+                return;
+            }
+
             alias = this.expressionHelper.GetParameterName(exprAlias);
             table = this.reflectionHelper.GetTableName(exprTable.Type);
         }

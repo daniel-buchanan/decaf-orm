@@ -42,7 +42,7 @@ namespace pdq.Implementation
         public void GreaterThanOrEqualTo<T>(T value) => AddClause(common.EqualityOperator.GreaterThanOrEqualTo, null, value);
 
         /// <inheritdoc />
-        public void In<T>(params T[] values) => AddClause(values?.ToList());
+        public void In<T>(params T[] values) => AddClause(values);
 
         /// <inheritdoc />
         public void In<T>(IEnumerable<T> values) => AddClause(values);

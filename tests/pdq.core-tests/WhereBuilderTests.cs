@@ -399,6 +399,9 @@ namespace pdq.core_tests
             column.Column.Source.Alias.Should().Be("p");
             column.GetValues().Should().HaveCount(4);
             column.ValueType.Should().Be(typeof(T));
+            var typedColumn = column as InValues<T>;
+            typedColumn.Should().NotBeNull();
+            typedColumn.ValueSet.Should().HaveCount(4);
         }
 
         [Theory]
@@ -424,6 +427,35 @@ namespace pdq.core_tests
             column.Column.Name.Should().Be("name");
             column.Column.Source.Alias.Should().Be("p");
             column.GetValues().Should().HaveCount(4);
+            column.ValueType.Should().Be(typeof(T));
+            var typedColumn = column as InValues<T>;
+            typedColumn.Should().NotBeNull();
+            typedColumn.ValueSet.Should().HaveCount(4);
+        }
+
+        [Theory]
+        [MemberData(nameof(NonStringTests))]
+        public void IsInNullEnumerable<T>(Func<T> getValue)
+            where T : struct
+        {
+            // Arrange
+            select.From("person", "p");
+            var value = getValue();
+            List<T> values = null;
+
+            // Act
+            select.Where(b =>
+            {
+                b.Column("name", "p").Is().In<T>(values);
+            });
+
+            // Assert
+            this.context.WhereClause.Children.Should().HaveCount(1);
+            var column = this.context.WhereClause.Children.First() as IInValues;
+            column.Should().NotBeNull();
+            column.Column.Name.Should().Be("name");
+            column.Column.Source.Alias.Should().Be("p");
+            column.GetValues().Should().HaveCount(0);
             column.ValueType.Should().Be(typeof(T));
         }
 

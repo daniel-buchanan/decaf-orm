@@ -12,9 +12,6 @@ namespace pdq.state.Conditionals
         {
             return new InValues<T>(column, values);
         }
-
-        public static InValues<T> In<T>(state.Column column, params T[] values)
-            => In<T>(column, values?.ToList());
 	}
 
     public class InValues<T> : Values, IInValues

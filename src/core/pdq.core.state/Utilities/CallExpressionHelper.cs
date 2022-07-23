@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using pdq.common;
@@ -18,37 +19,103 @@ namespace pdq.state.Utilities
             this.expressionHelper = expressionHelper;
         }
 
-        public state.IWhere ParseExpression(Expression expr, IQueryContextInternal context)
+        public state.IWhere ParseExpression(Expression expression, IQueryContextInternal context)
         {
-            MethodCallExpression call;
-            if(expr.NodeType == ExpressionType.Lambda)
+            Expression expressionToParse;
+            if (expression is LambdaExpression)
             {
-                var lambda = expr as LambdaExpression;
-                call = lambda.Body as MethodCallExpression;
+                var lambda = expression as LambdaExpression;
+                var unary = lambda.Body as UnaryExpression;
+                if (unary?.NodeType == ExpressionType.Not)
+                {
+                    expressionToParse = Expression.Equal(unary.Operand, Expression.Constant(false));
+                }
+                else
+                {
+                    expressionToParse = lambda.Body;
+                }
             }
             else
             {
-                call = expr as MethodCallExpression;
+                expressionToParse = expression;
             }
 
-            var arg = call.Arguments[0];
-            var nodeType = arg.NodeType;
+            if(IsMethodCallOnProperty(expressionToParse))
+            {
+                var binaryExpression = expressionToParse as BinaryExpression;
+                if(binaryExpression == null)
+                {
+                    var constantExpression = Expression.Constant(true);
+                    binaryExpression = Expression.Equal(expressionToParse, constantExpression);
+                }
+                return ParseBinaryExpression(binaryExpression, context);
+            }
 
-            // check for contains
-            if (call.Method.Name == "Contains" && nodeType == ExpressionType.MemberAccess)
-                return ParseContainsMemberAccessCall(call, context);
-            if (call.Method.Name == "Contains" && nodeType == ExpressionType.Constant)
-                return ParseContainsConstantCall(call, context);
-            
-            // otherwise return null
-            return null;
+            if(IsMethodCallOnConstantOrMemberAccess(expressionToParse))
+            {
+                var binaryExpression = expressionToParse as BinaryExpression;
+                if (binaryExpression == null)
+                {
+                    return ParseMethodAccessCall(expressionToParse, context);
+                }
+
+                if (binaryExpression.NodeType == ExpressionType.NotEqual)
+                {
+                    var call = binaryExpression.Left as MethodCallExpression ??
+                               binaryExpression.Right as MethodCallExpression;
+                    var result = ParseMethodAccessCall(call, context);
+                    return Not.This(result);
+                }
+            }
+
+            return ParseBinaryExpression(expressionToParse, context);
         }
 
-        public state.IWhere ParseBinaryExpression(BinaryExpression expr, IQueryContextInternal context)
+        private bool IsMethodCallOnProperty(Expression expression)
         {
-            var left = expr.Left;
-            var right = expr.Right;
-            var nodeType = expr.NodeType;
+            var methodCallExpression = expression as MethodCallExpression;
+            if (methodCallExpression == null) return false;
+
+            if (methodCallExpression.Arguments.Count == 0) return false;
+
+            if (methodCallExpression.Arguments.Count > 1) return false;
+
+            if (methodCallExpression.Object is MemberExpression &&
+                methodCallExpression.Arguments.All(a => a.NodeType == ExpressionType.Constant) ||
+                methodCallExpression.Arguments.All(a => a.NodeType == ExpressionType.MemberAccess))
+                return true;
+
+            var lastArgument = methodCallExpression.Arguments.Last();
+            return lastArgument.NodeType == ExpressionType.MemberAccess ||
+                   lastArgument.NodeType == ExpressionType.Constant;
+        }
+
+        private bool IsMethodCallOnConstantOrMemberAccess(Expression expression)
+        {
+            var methodCallExpression = expression as MethodCallExpression;
+            if (methodCallExpression == null) return false;
+
+            if (methodCallExpression.Arguments.Count == 0) return false;
+
+            var firstArgument = methodCallExpression.Arguments.First();
+            return firstArgument.NodeType == ExpressionType.MemberAccess ||
+                   firstArgument.NodeType == ExpressionType.Constant;
+        }
+
+        private state.IWhere ParseBinaryExpression(Expression expr, IQueryContextInternal context)
+        {
+            var binaryExpr = expr as BinaryExpression;
+            if (binaryExpr == null)
+            {
+                var lambda = expr as LambdaExpression;
+                binaryExpr = lambda.Body as BinaryExpression;
+            }
+
+            if (binaryExpr == null) return null;
+
+            var left = binaryExpr.Left;
+            var right = binaryExpr.Right;
+            var nodeType = binaryExpr.NodeType;
 
             MethodCallExpression callExpr = null;
             Expression nonCallExpr = null;
@@ -66,13 +133,37 @@ namespace pdq.state.Utilities
 
             if (callExpr == null) return null;
 
-            if (callExpr.Method.Name == "DatePart") return ParseDatePartCall(nodeType, callExpr, nonCallExpr, context);
-            if (callExpr.Method.Name == "ToLower") return ParseCaseCall(nodeType, callExpr, nonCallExpr, context);
-            if (callExpr.Method.Name == "ToUpper") return ParseCaseCall(nodeType, callExpr, nonCallExpr, context);
-            if (callExpr.Method.Name == "Substring") return ParseSubStringCall(nodeType, callExpr, nonCallExpr, context);
-            if (callExpr.Method.Name == "Contains") return ParseContains(callExpr, nonCallExpr, context);
+            state.IWhere result;
 
-            return null;
+            switch(callExpr.Method.Name)
+            {
+                case SupportedMethods.DatePart:
+                    result = ParseDatePartCall(nodeType, callExpr, nonCallExpr, context);
+                    break;
+                case SupportedMethods.ToLower:
+                    result = ParseCaseCall(nodeType, callExpr, nonCallExpr, context);
+                    break;
+                case SupportedMethods.ToUpper:
+                    result = ParseCaseCall(nodeType, callExpr, nonCallExpr, context);
+                    break;
+                case SupportedMethods.Substring:
+                    result = ParseSubStringCall(nodeType, callExpr, nonCallExpr, context);
+                    break;
+                case SupportedMethods.Contains:
+                    result = ParseContains(callExpr, nonCallExpr, context);
+                    break;
+                default:
+                    result = null;
+                    break;
+            }
+
+            if (result == null) return null;
+
+            var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(binaryExpr.NodeType);
+            if (op == EqualityOperator.NotEquals)
+                return Not.This(result);
+
+            return result;
         }
 
         private state.IWhere ParseContains(
@@ -254,7 +345,26 @@ namespace pdq.state.Utilities
             return null;
         }
 
-        private state.IWhere ParseContainsMemberAccessCall(MethodCallExpression call, IQueryContextInternal context)
+        private state.IWhere ParseMethodAccessCall(Expression expression, IQueryContextInternal context)
+        {
+            var callExpression = expression as MethodCallExpression;
+            if (callExpression == null) return null;
+
+            state.IWhere result;
+            switch(callExpression.Method.Name)
+            {
+                case SupportedMethods.Contains:
+                    result = ParseVariableContainsAsValuesIn(callExpression, context);
+                    break;
+                default:
+                    result = null;
+                    break;
+            }
+
+            return result;
+        }
+
+        private state.IWhere ParseVariableContainsAsValuesIn(MethodCallExpression call, IQueryContextInternal context)
         {
             var arg = call.Arguments[0];
             if (arg.NodeType != ExpressionType.MemberAccess) return null;
@@ -272,16 +382,7 @@ namespace pdq.state.Utilities
             else
             {
                 // check for passed in variable
-                var firstArgument = call.Arguments[0] as MemberExpression;
-                if (firstArgument != null &&
-                    firstArgument.Expression.NodeType == ExpressionType.Constant)
-                {
-                    // check if underlying value is a constant
-                    return ParseContainsConstantCall(call, context);
-                }
-
-                // otherwise default to member access
-                memberAccessExp = firstArgument;
+                memberAccessExp = call.Arguments[0] as MemberExpression;
                 valueAccessExp = call.Object;
             }
 
@@ -321,23 +422,13 @@ namespace pdq.state.Utilities
             return (state.IWhere)ctor.Invoke(parameters);
         }
 
-        private state.IWhere ParseContainsConstantCall(MethodCallExpression call, IQueryContextInternal context)
+        public static class SupportedMethods
         {
-            var arg = call.Arguments[0];
-            var body = call.Object;
-
-            var memberAccessExp = body as MemberExpression;
-
-            // get alias and field name
-            var target = context.GetQueryTarget(memberAccessExp);
-            var fieldName = this.expressionHelper.GetName(memberAccessExp);
-            var value = this.expressionHelper.GetValue(arg);
-            var col = state.Column.Create(fieldName, target);
-
-            if (value == null)
-                return Conditionals.Column.Like<string>(col, null, StringContains.Create());
-
-            return Conditionals.Column.Like<string>(col, (string)value, StringContains.Create());
+            public const string DatePart = "DatePart";
+            public const string ToLower = "ToLower";
+            public const string ToUpper = "ToUpper";
+            public const string Contains = "Contains";
+            public const string Substring = "Substring";
         }
     }
 }

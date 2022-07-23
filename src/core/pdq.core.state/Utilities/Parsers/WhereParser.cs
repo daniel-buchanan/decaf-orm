@@ -64,41 +64,13 @@ namespace pdq.state.Utilities.Parsers
 
         private IWhere Parse(Expression expression, IQueryContextInternal context, bool excludeAlias)
         {
+            var earlyResult = this.callExpressionHelper.ParseExpression(expression, context);
+            if (earlyResult != null) return earlyResult;
+
             BinaryExpression binaryExpr = null;
 
-            // check if we have a lambda
-            if (expression.NodeType == ExpressionType.Lambda)
-            {
-                var lambda = (LambdaExpression)expression;
-
-                // check for call expression on field
-                if (lambda.Body.NodeType == ExpressionType.Call)
-                    return this.callExpressionHelper.ParseExpression(lambda.Body, context);
-
-                if (lambda.Body is UnaryExpression)
-                {
-                    var unary = lambda.Body as UnaryExpression;
-                    if (unary.NodeType == ExpressionType.Not)
-                    {
-                        binaryExpr = BinaryExpression.Equal(unary.Operand, Expression.Constant(false));
-                    }
-                }
-                else
-                {
-                    binaryExpr = (BinaryExpression)lambda.Body;
-                }
-            }
-            // check if we have a method call
-            else if (expression.NodeType == ExpressionType.Call)
-            {
-                // parse call expressions
-                return this.callExpressionHelper.ParseExpression(expression, context);
-            }
-            else
-            {
-                // otherwise make it a binary expression
-                if (!(expression is MemberExpression)) binaryExpr = (BinaryExpression)expression;
-            }
+            if (!(expression is MemberExpression))
+                binaryExpr = expression as BinaryExpression;
 
             if (binaryExpr == null) return this.valueParser.Parse(expression, context);
 

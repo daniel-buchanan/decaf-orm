@@ -21,7 +21,7 @@ namespace pdq.state.Utilities.Parsers
 
         public override state.IWhere Parse(Expression expression, IQueryContextInternal context)
         {
-            var earlyResult = ParseBinaryCallExpression(expression, context);
+            var earlyResult = callExpressionHelper.ParseExpression(expression, context);
             if (earlyResult != null) return earlyResult;
 
             var valueResult = ParseMemberExpression(expression, context);
@@ -74,33 +74,6 @@ namespace pdq.state.Utilities.Parsers
             }
 
             return convertedValue;
-        }
-
-        private IWhere ParseBinaryCallExpression(Expression expression, IQueryContextInternal context)
-        {
-            BinaryExpression operation;
-            if (expression.NodeType == ExpressionType.Lambda)
-            {
-                var lambda = expression as LambdaExpression;
-                operation = lambda.Body as BinaryExpression;
-            }
-            else
-            {
-                operation = expression as BinaryExpression;
-            }
-
-            if (operation == null) return null;
-
-            var left = operation.Left;
-            var right = operation.Right;
-
-            if (left.NodeType == ExpressionType.Call ||
-                right.NodeType == ExpressionType.Call)
-            {
-                return callExpressionHelper.ParseBinaryExpression(operation, context);
-            }
-
-            return null;
         }
 
         private ValueResult ParseMemberExpression(Expression expression, IQueryContextInternal context)

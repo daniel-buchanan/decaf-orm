@@ -59,13 +59,18 @@ namespace pdq.state.Utilities
                     return ParseMethodAccessCall(expressionToParse, context);
                 }
 
-                if (binaryExpression.NodeType == ExpressionType.NotEqual)
-                {
-                    var call = binaryExpression.Left as MethodCallExpression ??
-                               binaryExpression.Right as MethodCallExpression;
-                    var result = ParseMethodAccessCall(call, context);
+                var call = binaryExpression.Left as MethodCallExpression ??
+                           binaryExpression.Right as MethodCallExpression;
+                var constant = binaryExpression.Left as ConstantExpression ??
+                               binaryExpression.Right as ConstantExpression;
+                var result = ParseMethodAccessCall(call, context);
+                var constantValue = (bool)this.expressionHelper.GetValue(constant);
+
+                if (binaryExpression.NodeType == ExpressionType.NotEqual ||
+                    constantValue == false)
                     return Not.This(result);
-                }
+
+                return result;
             }
 
             return ParseBinaryExpression(expressionToParse, context);
@@ -74,16 +79,30 @@ namespace pdq.state.Utilities
         private bool IsMethodCallOnProperty(Expression expression)
         {
             var methodCallExpression = expression as MethodCallExpression;
+            var binaryExpression = expression as BinaryExpression;
+            if(binaryExpression != null)
+            {
+                var call = binaryExpression.Left as MethodCallExpression ??
+                           binaryExpression.Right as MethodCallExpression;
+                var constant = binaryExpression.Left as ConstantExpression ??
+                               binaryExpression.Right as ConstantExpression;
+
+                if (call is null || constant is null) return false;
+                methodCallExpression = call;
+            }
+
             if (methodCallExpression == null) return false;
-
             if (methodCallExpression.Arguments.Count == 0) return false;
-
             if (methodCallExpression.Arguments.Count > 1) return false;
 
             if (methodCallExpression.Object is MemberExpression &&
                 methodCallExpression.Arguments.All(a => a.NodeType == ExpressionType.Constant) ||
                 methodCallExpression.Arguments.All(a => a.NodeType == ExpressionType.MemberAccess))
-                return true;
+            {
+                var memberExpression = methodCallExpression.Object as MemberExpression;
+                var innerExpression = memberExpression.Expression as ConstantExpression;
+                return innerExpression is null;
+            }
 
             var lastArgument = methodCallExpression.Arguments.Last();
             return lastArgument.NodeType == ExpressionType.MemberAccess ||
@@ -93,7 +112,14 @@ namespace pdq.state.Utilities
         private bool IsMethodCallOnConstantOrMemberAccess(Expression expression)
         {
             var methodCallExpression = expression as MethodCallExpression;
-            if (methodCallExpression == null) return false;
+            if (methodCallExpression == null)
+            {
+                var binaryExpression = expression as BinaryExpression;
+                methodCallExpression = binaryExpression.Left as MethodCallExpression ??
+                                       binaryExpression.Right as MethodCallExpression;
+
+                if (methodCallExpression is null) return false;
+            }
 
             if (methodCallExpression.Arguments.Count == 0) return false;
 

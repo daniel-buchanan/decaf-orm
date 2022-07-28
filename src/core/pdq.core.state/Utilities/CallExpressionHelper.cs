@@ -67,7 +67,7 @@ namespace pdq.state.Utilities
                 var constantValue = (bool)this.expressionHelper.GetValue(constant);
 
                 if (binaryExpression.NodeType == ExpressionType.NotEqual ||
-                    constantValue == false)
+                    constantValue != true)
                     return Not.This(result);
 
                 return result;

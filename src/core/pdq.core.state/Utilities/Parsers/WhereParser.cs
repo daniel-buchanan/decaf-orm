@@ -25,17 +25,28 @@ namespace pdq.state.Utilities.Parsers
 
         public override state.IWhere Parse(Expression expression, IQueryContextInternal context)
         {
+            ExpressionType nodeType;
+            var lambda = expression as LambdaExpression;
+            if(lambda != null)
+            {
+                nodeType = lambda.Body.NodeType;
+            }
+            else
+            {
+                nodeType = expression.NodeType;
+            }
+
             // check to see if we have a normal where
-            if (expression.NodeType != ExpressionType.OrElse && expression.NodeType != ExpressionType.AndAlso)
+            if (nodeType != ExpressionType.OrElse && nodeType != ExpressionType.AndAlso)
             {
                 return Parse(expression, context, false);
             }
 
             // check for and
-            if (expression.NodeType == ExpressionType.AndAlso)
+            if (nodeType == ExpressionType.AndAlso)
             {
                 // get binary expression
-                var binaryExpr = (BinaryExpression)expression;
+                var binaryExpr = (BinaryExpression)lambda.Body;
 
                 // get left and right
                 var left = Parse(binaryExpr.Left, context);
@@ -45,10 +56,10 @@ namespace pdq.state.Utilities.Parsers
                 return And.Where(left, right);
             }
             // check for or
-            else if (expression.NodeType == ExpressionType.OrElse)
+            else if (nodeType == ExpressionType.OrElse)
             {
                 // get binary expression
-                var binaryExpr = (BinaryExpression)expression;
+                var binaryExpr = (BinaryExpression)lambda.Body;
 
                 // get left and right
                 var left = Parse(binaryExpr.Left, context);

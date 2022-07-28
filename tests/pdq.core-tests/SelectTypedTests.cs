@@ -46,6 +46,23 @@ namespace pdq.core_tests
             context.Joins.Should().HaveCount(1);
             context.WhereClause.Should().BeAssignableTo(typeof(state.Conditionals.IColumn));
         }
+
+        [Fact]
+        public void SimpleSelect2Succeeds()
+        {
+            // Act
+            this.query
+                .Select()
+                .From<Person>(p => p)
+                .Join<Address>((p, a) => p.AddressId == a.Id)
+                .Where((p, a) => p.LastName.Contains("smith") && a.PostCode == "3216");
+
+            // Assert
+            var context = this.query.Context as ISelectQueryContext;
+            context.QueryTargets.Should().HaveCount(2);
+            context.Joins.Should().HaveCount(1);
+            context.WhereClause.Should().BeAssignableTo(typeof(state.Conditionals.And));
+        }
     }
 }
 

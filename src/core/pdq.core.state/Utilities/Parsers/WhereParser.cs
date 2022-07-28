@@ -27,13 +27,16 @@ namespace pdq.state.Utilities.Parsers
         {
             ExpressionType nodeType;
             var lambda = expression as LambdaExpression;
+            Expression body;
             if(lambda != null)
             {
                 nodeType = lambda.Body.NodeType;
+                body = lambda.Body;
             }
             else
             {
                 nodeType = expression.NodeType;
+                body = expression;
             }
 
             // check to see if we have a normal where
@@ -46,7 +49,7 @@ namespace pdq.state.Utilities.Parsers
             if (nodeType == ExpressionType.AndAlso)
             {
                 // get binary expression
-                var binaryExpr = (BinaryExpression)lambda.Body;
+                var binaryExpr = body as BinaryExpression;
 
                 // get left and right
                 var left = Parse(binaryExpr.Left, context);
@@ -59,7 +62,7 @@ namespace pdq.state.Utilities.Parsers
             else if (nodeType == ExpressionType.OrElse)
             {
                 // get binary expression
-                var binaryExpr = (BinaryExpression)lambda.Body;
+                var binaryExpr = body as BinaryExpression;
 
                 // get left and right
                 var left = Parse(binaryExpr.Left, context);

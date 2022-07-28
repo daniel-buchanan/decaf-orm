@@ -85,6 +85,25 @@ namespace pdq.core_tests
         }
 
         [Fact]
+        public void ParseTrueEqualsArrayConstantAccess()
+        {
+            // Arrange
+            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var constantValues = new[] { "hello", "world" };
+            Expression<Func<Person, bool>> expr = (p) => true == constantValues.Contains(p.FirstName);
+            context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
+
+            // Act
+            var result = this.helper.ParseExpression(expr, context);
+
+            // Assert
+            var values = result as IInValues;
+            values.Column.Name.Should().Be(nameof(Person.FirstName));
+            values.Column.Source.Alias.Should().Be("p");
+            values.GetValues().Should().BeEquivalentTo(constantValues);
+        }
+
+        [Fact]
         public void ParseArrayConstantAccessEqualsFalse()
         {
             // Arrange
@@ -106,12 +125,33 @@ namespace pdq.core_tests
         }
 
         [Fact]
-        public void ParseArrayConstantAccessNotEqualsTrue()
+        public void ParseFalseEqualsArrayConstantAccess()
         {
             // Arrange
             var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
             var constantValues = new[] { "hello", "world" };
-            Expression<Func<Person, bool>> expr = (p) => constantValues.Contains(p.FirstName) != true;
+            Expression<Func<Person, bool>> expr = (p) => false == constantValues.Contains(p.FirstName);
+            context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
+
+            // Act
+            var result = this.helper.ParseExpression(expr, context);
+
+            // Assert
+            var inversion = result as Not;
+            inversion.Should().NotBeNull();
+            var values = inversion.Item as IInValues;
+            values.Column.Name.Should().Be(nameof(Person.FirstName));
+            values.Column.Source.Alias.Should().Be("p");
+            values.GetValues().Should().BeEquivalentTo(constantValues);
+        }
+
+        [Fact]
+        public void ParseNotEqualsTrueArrayConstantAccess()
+        {
+            // Arrange
+            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var constantValues = new[] { "hello", "world" };
+            Expression<Func<Person, bool>> expr = (p) => true != constantValues.Contains(p.FirstName);
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
 
             // Act
@@ -184,7 +224,7 @@ namespace pdq.core_tests
         }
 
         [Fact]
-        public void ParseSubString()
+        public void ParseSubStringEqualsConstant()
         {
             // Arrange
             var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
@@ -203,11 +243,51 @@ namespace pdq.core_tests
         }
 
         [Fact]
-        public void ParseSubStringNotEquals()
+        public void ParseConstantEqualsSubString()
+        {
+            // Arrange
+            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            Expression<Func<Person, bool>> expr = (p) => "hello" == p.FirstName.Substring(2);
+            context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
+
+            // Act
+            var result = this.helper.ParseExpression(expr, context);
+
+            // Assert
+            var col = result as IColumn;
+            col.Details.Name.Should().Be(nameof(Person.FirstName));
+            col.Details.Source.Alias.Should().Be("p");
+            col.ValueFunction.Should().BeEquivalentTo(Substring.Create(2));
+            col.Value.Should().Be("hello");
+        }
+
+        [Fact]
+        public void ParseSubStringNotEqualsConstant()
         {
             // Arrange
             var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
             Expression<Func<Person, bool>> expr = (p) => p.FirstName.Substring(2) != "hello";
+            context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
+
+            // Act
+            var result = this.helper.ParseExpression(expr, context);
+
+            // Assert
+            var inversion = result as Not;
+            inversion.Should().NotBeNull();
+            var col = inversion.Item as IColumn;
+            col.Details.Name.Should().Be(nameof(Person.FirstName));
+            col.Details.Source.Alias.Should().Be("p");
+            col.ValueFunction.Should().BeEquivalentTo(Substring.Create(2));
+            col.Value.Should().Be("hello");
+        }
+
+        [Fact]
+        public void ParseConstantNotEqualsSubString()
+        {
+            // Arrange
+            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            Expression<Func<Person, bool>> expr = (p) => "hello" != p.FirstName.Substring(2);
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
 
             // Act

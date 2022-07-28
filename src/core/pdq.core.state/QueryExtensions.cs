@@ -11,10 +11,12 @@ namespace pdq.state
 
 			if (internalQuery == null) return default(T);
 
-			if(typeof(T) is ISelectQueryContext)
+			var queryContextType = typeof(T);
+
+			if(queryContextType.IsAssignableFrom(typeof(ISelectQueryContext)))
 				return (T)SelectQueryContext.Create(internalQuery.AliasManager);
 
-			if (typeof(T) is IDeleteQueryContext)
+			if (queryContextType.IsAssignableFrom(typeof(IDeleteQueryContext)))
 				return (T)DeleteQueryContext.Create(internalQuery.AliasManager);
 
 			return default(T);

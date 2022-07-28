@@ -27,7 +27,9 @@ namespace pdq.Implementation
             var properties = this.context.Helpers().GetPropertyInformation(expression);
             foreach (var p in properties)
             {
-                var target = GetQueryTarget(p.Type);
+                var target = p.Type is object ?
+                    this.context.QueryTargets.FirstOrDefault(t => t.Alias == p.Alias) :
+                    GetQueryTarget(p.Type);
                 this.context.Select(state.Column.Create(p.Name, target, p.NewName));
             }
         }

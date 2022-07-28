@@ -1,7 +1,7 @@
 ﻿using System;
 using pdq.core_tests.Mocks;
 
-namespace pdq.playground.Mocks
+namespace pdq.core_tests.Mocks
 {
 	public static class PdqExtensions
 	{

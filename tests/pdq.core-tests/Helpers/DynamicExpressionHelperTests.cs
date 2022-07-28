@@ -74,9 +74,9 @@ namespace pdq.core_tests.Helpers
 
             // Assert
             properties.Should().HaveCount(3);
-            properties.Should().ContainEquivalentOf(DynamicPropertyInfo.Create("Age", type: typeof(SourceItem), newName: "Age"));
-            properties.Should().ContainEquivalentOf(DynamicPropertyInfo.Create("City", type: typeof(SourceItem), newName: "City"));
-            properties.Should().ContainEquivalentOf(DynamicPropertyInfo.Create("FullName", type: typeof(SourceItem), newName: "Name"));
+            properties.Should().ContainEquivalentOf(DynamicPropertyInfo.Create("Age", alias: "s", type: typeof(int), newName: "Age"));
+            properties.Should().ContainEquivalentOf(DynamicPropertyInfo.Create("City", alias: "s", type: typeof(string), newName: "City"));
+            properties.Should().ContainEquivalentOf(DynamicPropertyInfo.Create("FullName", alias: "s", type: typeof(string), newName: "Name"));
         }
 
         [Theory]
@@ -104,9 +104,9 @@ namespace pdq.core_tests.Helpers
                     }),
                     new DynamicPropertyInfo[]
                     {
-                        DynamicPropertyInfo.Create("name", "Name"),
-                        DynamicPropertyInfo.Create("city", "City"),
-                        DynamicPropertyInfo.Create("region_name", "Region", alias: "r")
+                        DynamicPropertyInfo.Create("name", "Name", type: typeof(object)),
+                        DynamicPropertyInfo.Create("city", "City", type: typeof(object)),
+                        DynamicPropertyInfo.Create("region_name", "Region", alias: "r", type: typeof(object))
                     }
                 };
 

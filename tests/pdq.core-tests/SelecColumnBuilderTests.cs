@@ -7,7 +7,7 @@ namespace pdq.core_tests
 {
 	public class SelecColumnBuilderTests
 	{
-		private readonly ISelectColumnBuilder builder;
+        private readonly ISelectColumnBuilder builder;
 
 		public SelecColumnBuilderTests()
 		{

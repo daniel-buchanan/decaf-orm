@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace pdq.state.Utilities
 {
@@ -34,13 +35,17 @@ namespace pdq.state.Utilities
             var index = 0;
             foreach (var b in initExpr.Bindings)
             {
-                var memberBinding = (MemberAssignment)b;
-                var memberExpression = (MemberExpression)memberBinding.Expression;
-                var parameterExpression = (ParameterExpression)memberExpression.Expression;
-                var column = this.expressionHelper.GetName(memberExpression);
+                var memberBinding = b as MemberAssignment;
+                if (!TryGetColumnDetails(memberBinding.Expression, out var column, out var alias, out var type))
+                    continue;
                 var newName = memberBinding.Member.Name;
+                if (memberBinding.Member.MemberType == MemberTypes.Field)
+                    type = (memberBinding.Member as FieldInfo).FieldType;
 
-                properties[index] = DynamicPropertyInfo.Create(column, newName, type: parameterExpression.Type);
+                if (memberBinding.Member.MemberType == MemberTypes.Property)
+                    type = (memberBinding.Member as PropertyInfo).PropertyType;
+
+                properties[index] = DynamicPropertyInfo.Create(column, newName, alias: alias, type: type);
 
                 index += 1;
             }
@@ -78,7 +83,7 @@ namespace pdq.state.Utilities
         {
             column = null;
             alias = null;
-            type = null;
+            type = typeof(object);
 
             var methodCallExpression = expression as MethodCallExpression;
             if(methodCallExpression != null)

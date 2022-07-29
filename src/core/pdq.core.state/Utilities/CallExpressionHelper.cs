@@ -67,7 +67,7 @@ namespace pdq.state.Utilities
                 var constantValue = (bool)this.expressionHelper.GetValue(constant);
 
                 if (binaryExpression.NodeType == ExpressionType.NotEqual ||
-                    constantValue != true)
+                    !constantValue)
                     return Not.This(result);
 
                 return result;
@@ -150,46 +150,24 @@ namespace pdq.state.Utilities
                    firstArgument.NodeType == ExpressionType.Constant;
         }
 
-        private state.IWhere ParseBinaryExpression(Expression expr, IQueryContextInternal context)
+        private state.IWhere ParseBinaryExpression(
+            Expression expression,
+            IQueryContextInternal context)
         {
-            var binaryExpr = expr as BinaryExpression;
-            if (binaryExpr == null)
-            {
-                var lambda = expr as LambdaExpression;
-                binaryExpr = lambda.Body as BinaryExpression;
-            }
-
-            if (binaryExpr == null) return null;
-
-            var left = binaryExpr.Left;
-            var right = binaryExpr.Right;
-
-            MethodCallExpression callExpr = null;
-            Expression nonCallExpr = null;
-
-            if (left.NodeType == ExpressionType.Call)
-            {
-                callExpr = left as MethodCallExpression;
-                nonCallExpr = right;
-            }
-            else if (right.NodeType == ExpressionType.Call)
-            {
-                callExpr = right as MethodCallExpression;
-                nonCallExpr = left;
-            }
+            GetCallAndNonCallExpressions(
+                expression,
+                out var callExpr,
+                out var nonCallExpr);
 
             if (callExpr == null) return null;
 
             var valueFunction = ParseFunction(callExpr);
             if (valueFunction == null) return null;
 
-            var memberExpression = callExpr.Object as MemberExpression;
-            if(memberExpression == null)
-            {
-                memberExpression = callExpr.Arguments[0] as MemberExpression;
-            }
+            var memberExpression = callExpr.Object as MemberExpression ??
+                                   callExpr.Arguments.First() as MemberExpression;
 
-            var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(binaryExpr.NodeType);
+            var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(expression);
             var fieldName = this.expressionHelper.GetName(memberExpression);
             var target = context.GetQueryTarget(memberExpression);
             var col = state.Column.Create(fieldName, target);
@@ -204,12 +182,9 @@ namespace pdq.state.Utilities
                 if(value is bool)
                 {
                     var boolValue = (bool)value;
-
-                    if(boolValue == false &&
-                       op == EqualityOperator.Equals)
+                    if(!boolValue && op == EqualityOperator.Equals)
                     {
-                        value = true;
-                        invertResult = true;
+                        value = invertResult = true;
                     }
                 }
 
@@ -250,6 +225,38 @@ namespace pdq.state.Utilities
             return result;
         }
 
+        private void GetCallAndNonCallExpressions(
+            Expression expression,
+            out MethodCallExpression callExpr,
+            out Expression nonCallExpr)
+        {
+            callExpr = null;
+            nonCallExpr = null;
+
+            var binaryExpr = expression as BinaryExpression;
+            if (binaryExpr == null)
+            {
+                var lambda = expression as LambdaExpression;
+                binaryExpr = lambda.Body as BinaryExpression;
+            }
+
+            if (binaryExpr == null) return;
+
+            var left = binaryExpr.Left;
+            var right = binaryExpr.Right;
+
+            if (left.NodeType == ExpressionType.Call)
+            {
+                callExpr = left as MethodCallExpression;
+                nonCallExpr = right;
+            }
+            else if (right.NodeType == ExpressionType.Call)
+            {
+                callExpr = right as MethodCallExpression;
+                nonCallExpr = left;
+            }
+        }
+
         private IValueFunction ParseContains(MethodCallExpression expression)
         {
             var arg = expression.Arguments[0];
@@ -287,14 +294,11 @@ namespace pdq.state.Utilities
             var callExpression = expression as MethodCallExpression;
             if (callExpression == null) return null;
 
-            state.IWhere result;
+            IWhere result = null;
             switch(callExpression.Method.Name)
             {
                 case SupportedMethods.Contains:
                     result = ParseVariableContainsAsValuesIn(callExpression, context);
-                    break;
-                default:
-                    result = null;
                     break;
             }
 

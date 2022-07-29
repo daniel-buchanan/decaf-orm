@@ -143,6 +143,13 @@ namespace pdq.state.Utilities
             return EqualityOperator.Equals;
         }
 
+        public EqualityOperator ConvertExpressionTypeToEqualityOperator(Expression expression)
+        {
+            var binaryExpr = expression as BinaryExpression;
+            if (binaryExpr == null) return EqualityOperator.Equals;
+            return ConvertExpressionTypeToEqualityOperator(binaryExpr.NodeType);
+        }
+
         /// <inheritdoc/>
         public object GetValue(Expression expression)
         {

@@ -26,8 +26,11 @@ namespace pdq.state.Utilities.Parsers
         public override state.IWhere Parse(Expression expression, IQueryContextInternal context)
         {
             ExpressionType nodeType;
-            var lambda = expression as LambdaExpression;
+            BinaryExpression binaryExpr;
+            IWhere left, right;
             Expression body;
+
+            var lambda = expression as LambdaExpression;
             if(lambda != null)
             {
                 nodeType = lambda.Body.NodeType;
@@ -45,35 +48,30 @@ namespace pdq.state.Utilities.Parsers
                 return Parse(expression, context, false);
             }
 
+            
+
             // check for and
             if (nodeType == ExpressionType.AndAlso)
             {
                 // get binary expression
-                var binaryExpr = body as BinaryExpression;
-
-                // get left and right
-                var left = Parse(binaryExpr.Left, context);
-                var right = Parse(binaryExpr.Right, context);
+                binaryExpr = body as BinaryExpression;
+                left = Parse(binaryExpr.Left, context);
+                right = Parse(binaryExpr.Right, context);
 
                 // return and
                 return And.Where(left, right);
             }
+
+            if (nodeType != ExpressionType.OrElse) return null;
+
             // check for or
-            else if (nodeType == ExpressionType.OrElse)
-            {
-                // get binary expression
-                var binaryExpr = body as BinaryExpression;
+            // get binary expression
+            binaryExpr = body as BinaryExpression;
+            left = Parse(binaryExpr.Left, context);
+            right = Parse(binaryExpr.Right, context);
 
-                // get left and right
-                var left = Parse(binaryExpr.Left, context);
-                var right = Parse(binaryExpr.Right, context);
-
-                // return or
-                return Or.Where(left, right);
-            }
-
-            // otherwise return nothing
-            return null;
+            // return or
+            return Or.Where(left, right);
         }
 
         private IWhere Parse(Expression expression, IQueryContextInternal context, bool excludeAlias)

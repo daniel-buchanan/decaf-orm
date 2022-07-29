@@ -98,7 +98,6 @@ namespace pdq.state.Utilities
             info = null;
             string column = null;
             string alias = null;
-            Type type = typeof(object);
             IValueFunction function = null;
 
             MemberExpression memberExpression = null;
@@ -149,7 +148,7 @@ namespace pdq.state.Utilities
             var parameterExpression = memberExpression.Expression as ParameterExpression;
             column = this.expressionHelper.GetName(memberExpression);
             alias = this.expressionHelper.GetParameterName(memberExpression);
-            type = parameterExpression.Type;
+            var type = parameterExpression.Type;
             info = DynamicPropertyInfo.Create(name: column, alias: alias, type: type, function: function);
 
             return true;

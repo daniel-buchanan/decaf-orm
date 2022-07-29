@@ -3,6 +3,7 @@ namespace pdq.common
 {
 	public enum DatePart
 	{
+		Epoch,
 		Year,
 		Month,
 		Day,

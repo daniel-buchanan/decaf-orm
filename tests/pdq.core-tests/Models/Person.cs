@@ -12,6 +12,8 @@ namespace pdq.core_tests.Models
         public string Email { get; set; }
 
         public int AddressId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
     }
 }
 

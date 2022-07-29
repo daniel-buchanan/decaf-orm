@@ -6,6 +6,7 @@ using pdq.common;
 using pdq.core_tests.Models;
 using pdq.state;
 using pdq.state.Conditionals;
+using pdq.state.Conditionals.ValueFunctions;
 using pdq.state.Utilities;
 using pdq.state.Utilities.Parsers;
 using Xunit;
@@ -68,8 +69,9 @@ namespace pdq.core_tests
             col.Should().NotBeNull();
             col.Details.Name.Should().Be(nameof(Person.FirstName));
             col.Details.Source.Alias.Should().Be("p");
-            col.EqualityOperator.Should().Be(EqualityOperator.Like);
-            col.Value.Should().Be("smith");
+            col.EqualityOperator.Should().Be(EqualityOperator.Equals);
+            col.ValueFunction.Should().BeEquivalentTo(StringContains.Create("smith"));
+            col.Value.Should().Be(true);
         }
 
         [Fact]
@@ -90,8 +92,9 @@ namespace pdq.core_tests
             col.Should().NotBeNull();
             col.Details.Name.Should().Be(nameof(Person.FirstName));
             col.Details.Source.Alias.Should().Be("p");
-            col.EqualityOperator.Should().Be(EqualityOperator.Like);
-            col.Value.Should().Be("smith");
+            col.EqualityOperator.Should().Be(EqualityOperator.Equals);
+            col.ValueFunction.Should().BeEquivalentTo(StringContains.Create("smith"));
+            col.Value.Should().Be(true);
         }
 
         [Fact]
@@ -112,8 +115,9 @@ namespace pdq.core_tests
             col.Should().NotBeNull();
             col.Details.Name.Should().Be(nameof(Person.FirstName));
             col.Details.Source.Alias.Should().Be("p");
-            col.EqualityOperator.Should().Be(EqualityOperator.Like);
-            col.Value.Should().Be("smith");
+            col.EqualityOperator.Should().Be(EqualityOperator.Equals);
+            col.ValueFunction.Should().BeEquivalentTo(StringContains.Create("smith"));
+            col.Value.Should().Be(true);
         }
 
         public static IEnumerable<object[]> ValueTests

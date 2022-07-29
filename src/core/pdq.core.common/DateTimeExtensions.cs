@@ -11,6 +11,7 @@ namespace pdq.common
         public static int Minute(this DateTime dateTime) => DatePart(dateTime, common.DatePart.Minute);
         public static int Second(this DateTime dateTime) => DatePart(dateTime, common.DatePart.Second);
         public static int Millisecond(this DateTime dateTime) => DatePart(dateTime, common.DatePart.Millisecond);
+        public static long Epoch(this DateTime dateTime) => DatePart(dateTime, common.DatePart.Epoch);
     }
 }
 

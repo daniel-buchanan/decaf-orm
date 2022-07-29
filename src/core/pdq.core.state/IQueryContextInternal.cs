@@ -12,6 +12,13 @@ namespace pdq.state
         /// </summary>
 		internal IExpressionHelper ExpressionHelper { get; }
 
+        /// <summary>
+        /// The <see cref="IDynamicExpressionHelper"/> which provides helper methods
+        /// for dealing with <see cref="Expression"/> that
+        /// involve dynamics
+        /// </summary>
+        internal IDynamicExpressionHelper DynamicExpressionHelper { get; }
+
 		/// <summary>
         /// The <see cref="IReflectionHelper"/> which provides helper methods for
         /// dealing with actions which require reflection.

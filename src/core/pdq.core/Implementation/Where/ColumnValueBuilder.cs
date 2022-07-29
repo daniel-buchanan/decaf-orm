@@ -62,7 +62,7 @@ namespace pdq.Implementation
         public void LessThanOrEqualTo<T>(T value) => AddClause(common.EqualityOperator.LessThanOrEqualTo, null, value);
 
         /// <inheritdoc />
-        public void Like<T>(T value) => AddClause(common.EqualityOperator.Like, StringContains.Create(), value);
+        public void Like<T>(T value) => AddClause(common.EqualityOperator.Like, StringContains.Create(value as string), value);
 
         /// <inheritdoc />
         public void StartsWith<T>(T value) => AddClause(common.EqualityOperator.StartsWith, StringStartsWith.Create(), value);

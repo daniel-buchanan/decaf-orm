@@ -41,8 +41,9 @@ namespace pdq.core_tests
             var values = result as IColumn;
             values.Details.Name.Should().Be(nameof(Person.FirstName));
             values.Details.Source.Alias.Should().Be("p");
-            values.Value.Should().Be("hello");
-            values.EqualityOperator.Should().Be(common.EqualityOperator.Like);
+            values.Value.Should().Be(true);
+            values.ValueFunction.Should().BeEquivalentTo(StringContains.Create("hello"));
+            values.EqualityOperator.Should().Be(common.EqualityOperator.Equals);
         }
 
         [Fact]
@@ -61,8 +62,9 @@ namespace pdq.core_tests
             var values = result as IColumn;
             values.Details.Name.Should().Be(nameof(Person.FirstName));
             values.Details.Source.Alias.Should().Be("p");
-            values.Value.Should().Be("hello");
-            values.EqualityOperator.Should().Be(common.EqualityOperator.Like);
+            values.Value.Should().Be(true);
+            values.ValueFunction.Should().BeEquivalentTo(StringContains.Create(str));
+            values.EqualityOperator.Should().Be(common.EqualityOperator.Equals);
         }
 
         [Fact]

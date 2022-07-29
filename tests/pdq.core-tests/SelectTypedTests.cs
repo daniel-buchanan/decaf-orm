@@ -63,6 +63,29 @@ namespace pdq.core_tests
             context.Joins.Should().HaveCount(1);
             context.WhereClause.Should().BeAssignableTo(typeof(state.Conditionals.And));
         }
+
+        [Fact]
+        public void SimpleSelectDateTimeSucceeds()
+        {
+            // Act
+            this.query
+                .Select()
+                .From<Person>(p => p)
+                .Join<Address>((p, a) => p.AddressId == a.Id)
+                .Where((p, a) => p.LastName.Contains("smith") && a.PostCode == "3216")
+                .Select((p, a) => new Result
+                {
+                    City = a.City,
+                    Name = p.FirstName,
+                    Timestamp = p.CreatedAt.DatePart(DatePart.Year)
+                });
+
+            // Assert
+            var context = this.query.Context as ISelectQueryContext;
+            context.QueryTargets.Should().HaveCount(2);
+            context.Joins.Should().HaveCount(1);
+            context.WhereClause.Should().BeAssignableTo(typeof(state.Conditionals.And));
+        }
     }
 }
 

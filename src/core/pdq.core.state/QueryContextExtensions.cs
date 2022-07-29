@@ -53,7 +53,7 @@ namespace pdq.state
         public static IEnumerable<DynamicPropertyInfo> GetPropertyInformation(
             this IHelperExtensions self,
             Expression obj)
-            => self.Context.ExpressionHelper.GetDynamicPropertyInformation(obj);
+            => self.Context.DynamicExpressionHelper.GetProperties(obj, self.Context);
 	}
 }
 

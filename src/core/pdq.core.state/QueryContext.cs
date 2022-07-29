@@ -12,6 +12,7 @@ namespace pdq.state
 	{
 		private readonly IExpressionHelper expressionHelper;
 		private readonly IReflectionHelper reflectionHelper;
+        private readonly IDynamicExpressionHelper dynamicExpressionHelper;
 		private readonly IAliasManager aliasManager;
 		private readonly ParserHolder parserHolder;
 		private readonly List<IQueryTarget> queryTargets;
@@ -25,8 +26,9 @@ namespace pdq.state
 			this.queryTargets = new List<IQueryTarget>();
 			this.reflectionHelper = new ReflectionHelper();
 			this.expressionHelper = new ExpressionHelper(this.reflectionHelper);
-            this.aliasManager = aliasManager;
             var callExpressionHelper = new CallExpressionHelper(expressionHelper);
+            this.dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, callExpressionHelper);
+            this.aliasManager = aliasManager;
             this.parserHolder = new ParserHolder(expressionHelper, reflectionHelper, callExpressionHelper);
 		}
 
@@ -50,6 +52,8 @@ namespace pdq.state
 
         /// <inheritdoc/>
         IAliasManager IQueryContextInternal.AliasManager => this.aliasManager;
+
+        IDynamicExpressionHelper IQueryContextInternal.DynamicExpressionHelper => this.dynamicExpressionHelper;
 
         /// <inheritdoc/>
         void IQueryContextInternal.AddQueryTarget(IQueryTarget target)

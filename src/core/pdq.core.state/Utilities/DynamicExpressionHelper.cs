@@ -6,26 +6,33 @@ using System.Reflection;
 
 namespace pdq.state.Utilities
 {
-	internal class DynamicExpressionHelper
-	{
+    internal class DynamicExpressionHelper : IDynamicExpressionHelper
+    {
         private readonly IExpressionHelper expressionHelper;
+        private readonly CallExpressionHelper callExpressionHelper;
 
-        public DynamicExpressionHelper(IExpressionHelper expressionHelper)
+        public DynamicExpressionHelper(
+            IExpressionHelper expressionHelper,
+            CallExpressionHelper callExpressionHelper)
         {
             this.expressionHelper = expressionHelper;
+            this.callExpressionHelper = callExpressionHelper;
         }
 
-		public IEnumerable<DynamicPropertyInfo> GetProperties(Expression expr)
+        /// <inheritdoc/>
+        public IEnumerable<DynamicPropertyInfo> GetProperties(Expression expr, IQueryContextInternal context)
         {
             var expression = (LambdaExpression)expr;
 
             if (expression.Body is MemberInitExpression)
-                return GetPropertiesForMemberInit(expression);
+                return GetPropertiesForMemberInit(expression, context);
 
-            return GetPropertiesForNew(expression);
+            return GetPropertiesForNew(expression, context);
         }
 
-        private List<DynamicPropertyInfo> GetPropertiesForMemberInit(LambdaExpression expression)
+        private List<DynamicPropertyInfo> GetPropertiesForMemberInit(
+            LambdaExpression expression,
+            IQueryContextInternal context)
         {
             var initExpr = (MemberInitExpression)expression.Body;
 
@@ -36,36 +43,40 @@ namespace pdq.state.Utilities
             foreach (var b in initExpr.Bindings)
             {
                 var memberBinding = b as MemberAssignment;
-                if (!TryGetColumnDetails(memberBinding.Expression, out var column, out var alias, out var type))
+                if (!TryGetColumnDetails(memberBinding.Expression, context, out var info))
                     continue;
+
                 var newName = memberBinding.Member.Name;
+                info.SetNewName(newName);
+
                 if (memberBinding.Member.MemberType == MemberTypes.Field)
-                    type = (memberBinding.Member as FieldInfo).FieldType;
+                    info.SetType((memberBinding.Member as FieldInfo).FieldType);
 
                 if (memberBinding.Member.MemberType == MemberTypes.Property)
-                    type = (memberBinding.Member as PropertyInfo).PropertyType;
+                    info.SetType((memberBinding.Member as PropertyInfo).PropertyType);
 
-                properties[index] = DynamicPropertyInfo.Create(column, newName, alias: alias, type: type);
-
+                properties[index] = info;
                 index += 1;
             }
 
             return properties.ToList();
         }
 
-        private List<DynamicPropertyInfo> GetPropertiesForNew(LambdaExpression expression)
+        private List<DynamicPropertyInfo> GetPropertiesForNew(
+            LambdaExpression expression,
+            IQueryContextInternal context)
         {
             var body = (NewExpression)expression.Body;
 
             var countArguments = body.Arguments.Count;
             var properties = new DynamicPropertyInfo[countArguments];
 
-            for(var i = 0; i < countArguments; i += 1)
+            for (var i = 0; i < countArguments; i += 1)
             {
-                if (!TryGetColumnDetails(body.Arguments[i], out var column, out var alias, out var type))
+                if (!TryGetColumnDetails(body.Arguments[i], context, out var info))
                     continue;
 
-                properties[i] = DynamicPropertyInfo.Create(name: column, alias: alias, type: type);
+                properties[i] = info;
             }
 
             for (var i = 0; i < body.Members.Count; i += 1)
@@ -79,45 +90,97 @@ namespace pdq.state.Utilities
             return properties.ToList();
         }
 
-        private bool TryGetColumnDetails(Expression expression, out string column, out string alias, out Type type)
+        private bool TryGetColumnDetails(
+            Expression expression,
+            IQueryContextInternal context,
+            out DynamicPropertyInfo info)
         {
-            column = null;
-            alias = null;
-            type = typeof(object);
+            info = null;
+            string column = null;
+            string alias = null;
+            Type type = typeof(object);
+            IValueFunction function = null;
 
+            MemberExpression memberExpression = null;
             var methodCallExpression = expression as MethodCallExpression;
-            if(methodCallExpression != null)
+            if (methodCallExpression != null)
             {
-                if (methodCallExpression.Method.DeclaringType != typeof(ISelectColumnBuilder))
-                    return false;
+                if (TryGetColumnDetailsDynamic(methodCallExpression, out info))
+                    return true;
 
-                if(methodCallExpression.Arguments.Count == 1)
-                {
-                    var arg = methodCallExpression.Arguments[0] as ConstantExpression;
-                    column = arg.Value as string;
-                }
-                else
-                {
-                    var arg = methodCallExpression.Arguments[0] as ConstantExpression;
-                    column = arg.Value as string;
-
-                    arg = methodCallExpression.Arguments[1] as ConstantExpression;
-                    alias = arg.Value as string;
-                }
-                
-                return true;
+                memberExpression = methodCallExpression.Arguments[0] as MemberExpression;
             }
 
-            var memberExpression = expression as MemberExpression;
+            if(expression is UnaryExpression)
+            {
+                var unaryExpression = expression as UnaryExpression;
+                methodCallExpression = unaryExpression.Operand as MethodCallExpression;
+            }
+
+            if(memberExpression == null)
+                memberExpression = expression as MemberExpression;
+
+            if (methodCallExpression != null)
+            {
+                Expression argument;
+                if (methodCallExpression.Arguments.Count == 1)
+                    argument = methodCallExpression.Arguments[0];
+                else if (methodCallExpression.Arguments.Count > 1)
+                    argument = methodCallExpression.Arguments[0];
+                else
+                    argument = methodCallExpression.Arguments.FirstOrDefault();
+
+                memberExpression = argument as MemberExpression;
+
+                var defaultValue = methodCallExpression.Method.ReturnType.IsValueType ?
+                    Activator.CreateInstance(methodCallExpression.Method.ReturnType) :
+                    null;
+                var tempExpression = Expression.Equal(methodCallExpression, Expression.Constant(defaultValue));
+                var parsed = this.callExpressionHelper.ParseExpression(tempExpression, context);
+                if (parsed is Conditionals.IColumn)
+                {
+                    var parsedColumn = parsed as Conditionals.IColumn;
+                    function = parsedColumn.ValueFunction;
+                }
+            }
+
             if (memberExpression == null) return false;
 
             var parameterExpression = memberExpression.Expression as ParameterExpression;
             column = this.expressionHelper.GetName(memberExpression);
             alias = this.expressionHelper.GetParameterName(memberExpression);
             type = parameterExpression.Type;
+            info = DynamicPropertyInfo.Create(name: column, alias: alias, type: type, function: function);
 
             return true;
         }
-	}
+
+        private bool TryGetColumnDetailsDynamic(MethodCallExpression expression, out DynamicPropertyInfo info)
+        {
+            info = null;
+            string column, alias = null;
+
+            if (expression.Method.DeclaringType != typeof(ISelectColumnBuilder))
+                return false;
+
+            if (expression.Arguments.Count == 1)
+            {
+                var arg = expression.Arguments[0] as ConstantExpression;
+                column = arg.Value as string;
+            }
+            else
+            {
+                var arg = expression.Arguments[0] as ConstantExpression;
+                column = arg.Value as string;
+
+                arg = expression.Arguments[1] as ConstantExpression;
+                alias = arg.Value as string;
+            }
+
+            info = DynamicPropertyInfo.Create(name: column, alias: alias, type: typeof(object));
+
+            return true;
+        }
+    }
 }
 

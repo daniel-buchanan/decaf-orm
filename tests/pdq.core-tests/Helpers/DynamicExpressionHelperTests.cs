@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using FluentAssertions;
+using pdq.common;
 using pdq.core_tests.Models;
+using pdq.state;
 using pdq.state.Utilities;
 using Xunit;
 
@@ -10,14 +12,17 @@ namespace pdq.core_tests.Helpers
 {
     public class DynamicExpressionHelperTests
     {
-        private readonly DynamicExpressionHelper dynamicExpressionHelper;
+        private readonly IDynamicExpressionHelper dynamicExpressionHelper;
+        private readonly IQueryContextInternal queryContext;
 
         public DynamicExpressionHelperTests()
         {
-            
+            var aliasManager = AliasManager.Create();
             var reflectionHelper = new ReflectionHelper();
             var expressionHelper = new ExpressionHelper(reflectionHelper);
-            this.dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper);
+            var callExpressionHelper = new CallExpressionHelper(expressionHelper);
+            this.dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, callExpressionHelper);
+            this.queryContext = SelectQueryContext.Create(aliasManager) as IQueryContextInternal;
         }
 
         [Fact]
@@ -31,7 +36,7 @@ namespace pdq.core_tests.Helpers
             });
 
             // Act
-            var properties = this.dynamicExpressionHelper.GetProperties(func);
+            var properties = this.dynamicExpressionHelper.GetProperties(func, this.queryContext);
 
             // Assert
             properties.Should().HaveCount(2);
@@ -50,7 +55,7 @@ namespace pdq.core_tests.Helpers
             });
 
             // Act
-            var properties = this.dynamicExpressionHelper.GetProperties(func);
+            var properties = this.dynamicExpressionHelper.GetProperties(func, this.queryContext);
 
             // Assert
             properties.Should().HaveCount(2);
@@ -70,7 +75,7 @@ namespace pdq.core_tests.Helpers
             });
 
             // Act
-            var properties = this.dynamicExpressionHelper.GetProperties(func);
+            var properties = this.dynamicExpressionHelper.GetProperties(func, this.queryContext);
 
             // Assert
             properties.Should().HaveCount(3);
@@ -84,7 +89,7 @@ namespace pdq.core_tests.Helpers
         public void ParseExpressionDynamicSucceeds(Expression expression, IEnumerable<DynamicPropertyInfo> expected)
         {
             // Act
-            var results = this.dynamicExpressionHelper.GetProperties(expression);
+            var results = this.dynamicExpressionHelper.GetProperties(expression, this.queryContext);
 
             // Assert
             results.Should().BeEquivalentTo(expected);
@@ -139,6 +144,24 @@ namespace pdq.core_tests.Helpers
                         DynamicPropertyInfo.Create(name: nameof(Person.FirstName), newName: null, alias: "p", type: typeof(Person)),
                         DynamicPropertyInfo.Create(name: nameof(Person.Email), newName: null, alias: "p", type: typeof(Person)),
                         DynamicPropertyInfo.Create(name: nameof(Person.AddressId), newName: "Region", alias: "p", type: typeof(Person))
+                    }
+                };
+
+                yield return new object[]
+                {
+                    GetDynamicExpr<Person>((p) => new
+                    {
+                        p.FirstName,
+                        p.Email,
+                        Region = p.AddressId,
+                        Timestamp = p.CreatedAt.DatePart(DatePart.Epoch)
+                    }),
+                    new DynamicPropertyInfo[]
+                    {
+                        DynamicPropertyInfo.Create(name: nameof(Person.FirstName), newName: null, alias: "p", type: typeof(Person)),
+                        DynamicPropertyInfo.Create(name: nameof(Person.Email), newName: null, alias: "p", type: typeof(Person)),
+                        DynamicPropertyInfo.Create(name: nameof(Person.AddressId), newName: "Region", alias: "p", type: typeof(Person)),
+                        DynamicPropertyInfo.Create(name: nameof(Person.CreatedAt), newName: "Timestamp", alias: "p", type: typeof(Person), function: state.Conditionals.ValueFunctions.DatePart.Create(DatePart.Epoch))
                     }
                 };
             }

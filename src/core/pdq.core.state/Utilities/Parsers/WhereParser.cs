@@ -48,8 +48,6 @@ namespace pdq.state.Utilities.Parsers
                 return Parse(expression, context, false);
             }
 
-            
-
             // check for and
             if (nodeType == ExpressionType.AndAlso)
             {
@@ -61,8 +59,6 @@ namespace pdq.state.Utilities.Parsers
                 // return and
                 return And.Where(left, right);
             }
-
-            if (nodeType != ExpressionType.OrElse) return null;
 
             // check for or
             // get binary expression

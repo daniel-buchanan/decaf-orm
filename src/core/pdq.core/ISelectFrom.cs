@@ -6,6 +6,11 @@ namespace pdq
 		ISelectColumn,
 		IJoin
 	{
+		/// <summary>
+        /// 
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
 		IGroupBy Where(Action<IWhereBuilder> builder);
 	}
 }

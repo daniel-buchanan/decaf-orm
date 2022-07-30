@@ -27,30 +27,20 @@ namespace pdq.Implementation
         public string Alias { get; private set; }
 
         /// <inheritdoc/>
-        public ISelectFrom Join(
-            IQueryTarget from,
-            state.IWhere conditions,
-            IQueryTarget to,
-            JoinType type = JoinType.Default)
-        {
-            this.context.Join(state.Join.Create(from, to, type, conditions));
-            return this;
-        }
+        public IJoinFrom Join()
+            => Implementation.Join.Create(this, context, options, query, JoinType.Default);
 
         /// <inheritdoc/>
-        public ISelectFrom Join(
-            IQueryTarget from,
-            state.IWhere conditions,
-            Action<ISelectWithAlias> query,
-            JoinType type = JoinType.Default)
-        {
-            var select = Create(this.context, this.query);
-            query(select);
-            var to = state.QueryTargets.SelectQueryTarget.Create(select.context, select.Alias);
+        public IJoinFrom InnerJoin()
+            => Implementation.Join.Create(this, context, options, query, JoinType.Inner);
 
-            this.context.Join(state.Join.Create(from, to, type, conditions));
-            return this;
-        }
+        /// <inheritdoc/>
+        public IJoinFrom LeftJoin()
+            => Implementation.Join.Create(this, context, options, query, JoinType.Left);
+
+        /// <inheritdoc/>
+        public IJoinFrom RightJoin()
+            => Implementation.Join.Create(this, context, options, query, JoinType.Right);
 
         /// <inheritdoc/>
         public IGroupBy Where(Action<IWhereBuilder> builder)

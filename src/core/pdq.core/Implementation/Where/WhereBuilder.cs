@@ -51,7 +51,7 @@ namespace pdq.Implementation
                 null :
                 this.queryContext.QueryTargets.FirstOrDefault(t => t.Alias == targetAlias);
             var c = state.Column.Create(name, target);
-            return ColumnWhereBuilder.Create(this, c);
+            return ColumnWhereBuilder.Create(queryContext, this, c);
         }
 
         /// <inheritdoc />

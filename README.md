@@ -1,5 +1,3 @@
-<div><svg viewBoxSize="575" data-root-id="8178910359230" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="100.8175048828125" y="246.46850006103514" viewBox="0 7.099999904632568 1032.5 501.3999938964844" xml:space="preserve" height="82.06299304434701" width="168.98699951171875" preserveAspectRatio="xMinYMin" zoom="1" editorType="buyer" data-layer-role="icon" style="position: absolute; height: 82.063px; width: 168.987px; top: 246.469px; left: 100.818px;"><linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="92.8419" y1="509.7076" x2="747.0276" y2="137.4985" name="Layer %{number}" zoom="1" data-layer-id="1338533459231"><stop offset="0" style="stop-color: rgb(219, 28, 36); --darkreader-inline-stopcolor:#e63840;" data-darkreader-inline-stopcolor=""></stop><stop offset="0.9955" style="stop-color: rgb(247, 147, 30); --darkreader-inline-stopcolor:#f89c30;" data-darkreader-inline-stopcolor=""></stop></linearGradient><path class="st0" d="M172.8,404.2l0.1,0.1l19.4-29l24.5-36.6h-78.8h-23.6h-0.1L0,508.5h344.4c37.5,0,72.6-18.7,93.3-50l23.4-35.1   H159.9L172.8,404.2z" name="Layer %{number}" zoom="1" data-layer-id="3119639759231" style="fill: url(&quot;#SVGID_1_&quot;);"></path><linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="58.1399" y1="448.7163" x2="712.3257" y2="76.5071" name="Layer %{number}" zoom="1" data-layer-id="9089827759231"><stop offset="0" style="stop-color: rgb(219, 28, 36); --darkreader-inline-stopcolor:#e63840;" data-darkreader-inline-stopcolor=""></stop><stop offset="0.9955" style="stop-color: rgb(247, 147, 30); --darkreader-inline-stopcolor:#f89c30;" data-darkreader-inline-stopcolor=""></stop></linearGradient><path class="st1" d="M1028.1,172.6C1008.4,78.3,924.6,7.1,824.5,7.1H57.9l139.2,208l0,0l-28.5,42.5h57l0,0h603   c23.5,0,42.6-19.1,42.6-42.6c0-14.3-7.1-26.9-17.9-34.6c-7-5-15.4-7.9-24.6-7.9h0H271.1l-53.8-80.3h607.3c1.6,0,3.3,0,4.9,0.1   c1.5,0.1,3,0.1,4.5,0.2c0.4,0,0.7,0.1,1,0.1c1.4,0.1,2.8,0.2,4.2,0.4c1.3,0.1,2.7,0.3,4,0.5c0.4,0.1,0.7,0.1,1.1,0.2   c1.5,0.2,2.9,0.5,4.3,0.8c1.5,0.3,3,0.6,4.4,1c0.1,0,0.3,0,0.4,0.1c1.2,0.3,2.3,0.6,3.4,0.9c0.6,0.2,1.2,0.3,1.7,0.5   c1.2,0.4,2.5,0.7,3.7,1.1c1.4,0.5,2.9,1,4.3,1.5c0.1,0,0.2,0.1,0.3,0.1c1.4,0.5,2.8,1.1,4.2,1.6c2.9,1.2,5.7,2.4,8.5,3.9   c1.3,0.7,2.6,1.3,3.9,2c0.3,0.2,0.6,0.3,0.9,0.5c0.8,0.4,1.6,0.9,2.4,1.4c0.1,0.1,0.3,0.2,0.5,0.3c0.7,0.4,1.4,0.9,2.1,1.3   c-3.2-2-6.4-3.9-9.8-5.6c3.4,1.7,6.7,3.7,10,5.7c0.7,0.4,1.3,0.8,2,1.3c3.1,2,6.1,4.2,9,6.5c0.2,0.2,0.4,0.3,0.6,0.4   c3.2,2.5,6.2,5.2,9.1,8.1c0,0,0.1,0.1,0.1,0.1c0,0,0,0,0.1,0.1c3,2.9,5.8,6,8.5,9.2c-2.6-3.1-5.3-6.1-8.2-8.9   c0.6,0.6,1.2,1.2,1.8,1.8c1.5,1.5,2.9,3.1,4.3,4.6c0.4,0.4,0.7,0.8,1,1.2c0.3,0.4,0.7,0.8,1,1.2c0.7,0.9,1.4,1.7,2.1,2.6   c0.3,0.3,0.5,0.7,0.8,1c3.7,4.9,7.1,10,10.1,15.4c0.6,1.2,1.3,2.3,1.9,3.5c0.1,0.2,0.2,0.4,0.3,0.6c1.4,2.7,2.7,5.6,3.9,8.5   c0.6,1.4,1.1,2.8,1.6,4.2c0,0.1,0.1,0.1,0.1,0.1c4.9,13.3,7.6,27.6,7.6,42.6c0,15-2.7,29.3-7.6,42.6h0c-0.2,0.5-0.4,1-0.6,1.5   c-0.2,0.6-0.4,1.2-0.7,1.8c-0.2,0.7-0.5,1.3-0.8,1.9c-0.6,1.4-1.2,2.8-1.9,4.2c-0.4,0.9-0.9,1.8-1.3,2.7c-0.2,0.4-0.4,0.8-0.6,1.2   c-0.6,1.2-1.2,2.3-1.8,3.5c0,0-0.1,0.1-0.1,0.1c-0.7,1.3-1.5,2.7-2.3,4c0,0.1-0.1,0.2-0.1,0.2c-0.7,1.2-1.5,2.5-2.3,3.7   c-0.7,1.1-1.5,2.2-2.3,3.3c-0.3,0.4-0.6,0.9-0.9,1.3c-0.6,0.8-1.2,1.6-1.7,2.3c-0.4,0.5-0.8,1.1-1.2,1.6c-0.7,0.9-1.4,1.8-2.1,2.6   c-1.9,2.4-4,4.7-6.1,6.9c-1,1.1-2.1,2.2-3.2,3.2c-1.1,1.1-2.2,2.1-3.4,3.1c-1.2,1-2.3,2-3.5,3c-1.2,1-2.4,1.9-3.6,2.9   c-1.2,0.9-2.4,1.8-3.6,2.7c-0.1,0-0.1,0.1-0.1,0.1c-1.3,0.9-2.5,1.8-3.8,2.6c-1.3,0.8-2.6,1.6-3.9,2.4c-2.7,1.6-5.4,3.1-8.1,4.5   s-5.6,2.7-8.5,3.9c-1.4,0.6-2.8,1.1-4.2,1.6c-0.1,0.1-0.2,0.1-0.4,0.1c-1.4,0.5-2.8,1-4.3,1.5c-1.2,0.4-2.4,0.8-3.7,1.1   c-0.6,0.2-1.2,0.3-1.7,0.5c-1.1,0.3-2.3,0.6-3.4,0.9c-0.1,0.1-0.3,0.1-0.4,0.1c-1.5,0.4-3,0.7-4.4,1c-1.4,0.3-2.9,0.5-4.3,0.8   c-0.4,0.1-0.8,0.1-1.1,0.2c-1.3,0.2-2.7,0.4-4,0.5c-1.4,0.2-2.8,0.3-4.2,0.4c-0.3,0-0.7,0.1-1,0.1c-1.5,0.1-3,0.2-4.5,0.2   c-1.6,0.1-3.2,0.1-4.9,0.1h-0.1l-246.8,0c-37.5,0-72.5,18.8-93.3,50L461,423.1l363.5,0c100.1,0,183.9-71.1,203.6-165.4   c2.9-13.8,4.4-28,4.4-42.6C1032.5,200.6,1031,186.3,1028.1,172.6z M891.9,112.5c0.5,0.3,1,0.6,1.5,0.9l1,0.7   c0.2,0.1,0.4,0.3,0.6,0.4c0.3,0.2,0.6,0.4,0.9,0.6c0.3,0.2,0.7,0.5,1,0.7c0.5,0.3,1,0.7,1.5,1.1c0.7,0.5,1.3,1,2,1.5   C897.6,116.3,894.8,114.3,891.9,112.5z M901.5,119.4C901.5,119.5,901.6,119.5,901.5,119.4c1.2,1,2.3,1.9,3.4,2.8   c0.3,0.3,0.6,0.5,0.9,0.8c0.8,0.7,1.6,1.4,2.3,2.1c0,0,0,0,0,0c0.4,0.4,0.7,0.7,1.1,1.1c0.2,0.2,0.5,0.4,0.7,0.6   C907.3,124.3,904.5,121.8,901.5,119.4z" name="Layer %{number}" zoom="1" data-layer-id="6691205459231" style="fill: url(&quot;#SVGID_2_&quot;);"></path></svg></div>
-
 # pdq
 PDQ is a "lite" ORM (Object Relational Mapper), designed to fill the void between tools like [Dapper](https://github.com/DapperLib/Dapper) and using a full blown ORM like EntityFramework.
 
@@ -9,13 +7,16 @@ Incidentally, Dapper forms the foundation of how pdq executes the queries that i
 PDQ stands for **P**retty **D**arn **Q**uick.  
 The aim has always been to provide a intuitive development experience that allows performant queries to be written, while not re-inventing the wheel for accessing the database and materialising objects.
 
+## Current Build Status
+[![Build](https://github.com/daniel-buchanan/pdq/actions/workflows/sonar.yml/badge.svg)](https://github.com/daniel-buchanan/pdq/actions/workflows/sonar.yml)
+[![CodeQL](https://github.com/daniel-buchanan/pdq/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/daniel-buchanan/pdq/actions/workflows/codeql-analysis.yml)
+
 ## Sections
 1. [History](#history)
 2. [Concepts](#concepts)
 3. [Examples](#examples)
-4. [Status](#status)
-
-[![Build](https://github.com/daniel-buchanan/pdq/actions/workflows/sonar.yml/badge.svg)](https://github.com/daniel-buchanan/pdq/actions/workflows/sonar.yml)[![CodeQL](https://github.com/daniel-buchanan/pdq/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/daniel-buchanan/pdq/actions/workflows/codeql-analysis.yml)
+4. [Reference](#reference)
+5. [Status](#status)
 
 # History
 PDQ originally came about because during the course of work we needed something that enabled us to write complex, performant queries, but at the time nothing existed (at least that myself or my team could find).  
@@ -25,6 +26,126 @@ Hence we started on the journey of writing our own.
 This proved to be a long but worthwhile one, but now the time has come for a ground-up-re-write, technology has moved on (for the better) and the original concepts behind the API, while useful, don't provide a particlarly good development experience.  
 
 For this re-birth if you will, the attempt is to make use of a fully fluent API and provide as much of an intuitive experience as possible.
+
+# Concepts
+There are several core concepts within PDQ.  
+1. Everything should use a Fluent API  
+   ```csharp
+   query.Select().From("users", "u").Where(b => b.Column("email", "u").IsNot().Null());
+   ```
+2. The API should be intuitive to use and follow common SQL language, or english language patterns.  
+   More specifically, statements should either:  
+   *a)* Make sense from a SQL statement as you would write it  
+   *b)* Read as understandable English
+   
+# Examples
+
+## Configuration
+In order to use PDQ, you simply have to reference it and ensure that it is registered with your Dependency Injection provider.  
+
+The following options are available to be configured:
+| Item | Description |
+| ---- | ----------- |
+| Default Log Level | This allows you to configure the default log level/verbosity of what PDQ itself prints to the logs. |
+| Default Clause Handling | This allows you to configure the default "Where" clause handling, i.e. the default way that clauses are bundled together when using an `IWhereBuilder`. |
+| Transient Tracking | This allows you to enable or disable tacking of "Transients", which are effectively the unit by which pdq executes queries. |
+
+Extensions methods are provided for the built in .Net Dependency Injection framework, which work as follows:  
+1. No Configuration, just use defaults  
+   ```csharp
+   services.AddPdq();
+   ```  
+2. Configuration passed in:
+   ```csharp
+   var options = new PdqOptions();
+   options.OverrideDefaultLogLevel(LogLevel.Debug);
+   services.AddPdq(options);
+   ```
+3. Configured using a provided Action:
+   ```csharp
+   services.AddPdq(o => {
+     o.OverrideDefaultLogLevel(LogLevel.Debug);
+   });
+   ```
+
+To configure a given database provider, works in a very similar way; insofar as that an extension method is provided on the `PdqOptions` which allows for the configuration.  
+For example, with PostgreSQL:  
+```csharp
+services.AddPdq(o => {
+  o.OverrideDefaultLogLevel(LogLevel.Debug);
+  o.UseNpgsql(connectionString);
+});
+```
+
+## Getting a Query
+PDQ's default configuration provides an `IUnitOfWOrk` service which is added to the service provider by default.  
+Once you have a `ITransient` created from the `IUnitOfWork`, you can begin to query it. Each query is managed by itself and executed seperately.  
+
+> It is worth noting that it is the `ITransient` instance that controls the commit/rollback of the transaction which is associated with any queries created from it.
+
+Once this is injected into your service, handler or other class it can be used in the following ways.
+
+**Disposable:**
+```csharp
+using(var t = this.uow.Begin())
+{
+  using(var q = t.Query())
+  {
+    ...
+  }
+}
+```
+
+**Non-Disposable:**
+```csharp
+var t = this.uow.Begin();
+var q = t.Query();
+```
+
+## Creating a Simple Query
+There are two main ways that PDW can be used:  
+1. Typed; and
+2. Un-typed
+
+Each has their merits and will be covered in bried below, however for more details please see the [Reference](#reference).  
+
+**Un-Typed:**  
+This is intended primarily for use where you want to write SQL, but you don't want it hard-coded into your application, and/or store-procedures
+or functions aren't your thing. This flexible API allows you to write the statement in a fluent manner while retaining readability.  
+```csharp
+var result = query
+  .Select()
+  .From("users", "u")
+  .Where(b => b.Column("id", "u").Is().EqualTo(42))
+  .Select(b => new {
+    Id = b.Is<int>("id", "u"),
+    Email = b.Is<string>("email", "u")
+  })
+  .FirstOrDefault();
+```
+
+**Typed:**  
+This is intended for use where you already have objects that represent your database tables, noting that they will either need to be a direct
+mapping to the tables themselves; or be modified using the various attributes that PDQ provides to modify property and class names when parsed.  
+```csharp
+var result = query
+  .Select()
+  .From<User>(u => u)
+  .Where(u => u.Id == 42)
+  .Select(u => new {
+    Id = u.Id,
+    Email = u.Email
+  })
+  .FirstOrDefault();
+```
+
+# Reference
+
+## Untyped
+
+## Typed
+
+## Execution
 
 # Status
 |   | Status |

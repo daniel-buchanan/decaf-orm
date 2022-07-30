@@ -104,30 +104,26 @@ namespace pdq.state.Utilities.Parsers
             }
 
             var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(operation.NodeType);
-            string field, alias, table;
-            Expression valueExpression;
+            Expression valueExpression = null;
+            MemberExpression memberExpression = null;
 
             if(operation.Left is MemberExpression)
             {
-                var memberExpression = operation.Left as MemberExpression;
-                field = this.expressionHelper.GetName(operation.Left);
-                alias = this.expressionHelper.GetParameterName(operation.Left);
-                table = this.reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
+                memberExpression = operation.Left as MemberExpression;
                 valueExpression = operation.Right;
             }
             else if(operation.Right is MemberExpression)
             {
-                var memberExpression = operation.Right as MemberExpression;
-                field = this.expressionHelper.GetName(operation.Right);
-                alias = this.expressionHelper.GetParameterName(operation.Right);
-                table = this.reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
+                memberExpression = operation.Right as MemberExpression;
                 valueExpression = operation.Left;
             }
-            else
-            {
-                return null;
-            }
 
+            if (valueExpression == null || memberExpression == null)
+                return null;
+
+            var field = this.expressionHelper.GetName(memberExpression);
+            var alias = this.expressionHelper.GetParameterName(memberExpression);
+            var table = this.reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
             var value = this.expressionHelper.GetValue(valueExpression);
             var valueType = this.expressionHelper.GetType(valueExpression);
 

@@ -50,6 +50,29 @@ namespace pdq.core_tests
             col.Value.Should().Be(getValue());
         }
 
+        [Theory]
+        [MemberData(nameof(ValueTests))]
+        public void ParseExpressionNoExistingTargetSucceeds<T>(
+            Expression expression,
+            string expectedPropertyName,
+            EqualityOperator expectedOperator,
+            Func<T> getValue)
+        {
+            // Arrange
+            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+
+            // Act
+            var result = this.parser.Parse(expression, context);
+
+            // Assert
+            var col = result as IColumn;
+            col.Should().NotBeNull();
+            col.Details.Name.Should().Be(expectedPropertyName);
+            col.Details.Source.Alias.Should().Be("p");
+            col.EqualityOperator.Should().Be(expectedOperator);
+            col.Value.Should().Be(getValue());
+        }
+
         public static IEnumerable<object[]> ValueTests
         {
             get
@@ -60,6 +83,14 @@ namespace pdq.core_tests
                 yield return new object[]
                 {
                     GetExpression<Person>((p) => p.FirstName == "john"),
+                    nameof(Person.FirstName),
+                    EqualityOperator.Equals,
+                    getString
+                };
+
+                yield return new object[]
+                {
+                    GetExpression<Person>((p) => "john" == p.FirstName),
                     nameof(Person.FirstName),
                     EqualityOperator.Equals,
                     getString

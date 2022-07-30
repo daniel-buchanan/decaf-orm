@@ -1,43 +1,33 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace pdq
 {
     public interface IColumnValueBuilder
     {
         void EqualTo<T>(T value);
+        IColumnMatchBuilder EqualTo();
 
         void Like<T>(T value);
         void StartsWith<T>(T value);
         void EndsWith<T>(T value);
 
-        void LessThan(int value);
-        void LessThan(uint value);
-        void LessThan(short value);
-        void LessThan(double value);
-        void LessThan(long value);
-        void LessThan(DateTime value);
+        void In<T>(params T[] values);
+        void In<T>(IEnumerable<T> values);
 
-        void LessThanOrEqualTo(int value);
-        void LessThanOrEqualTo(uint value);
-        void LessThanOrEqualTo(short value);
-        void LessThanOrEqualTo(double value);
-        void LessThanOrEqualTo(long value);
-        void LessThanOrEqualTo(DateTime value);
+        void LessThan<T>(T value);
+        IColumnMatchBuilder LessThan();
+        void LessThanOrEqualTo<T>(T value);
+        IColumnMatchBuilder LessThanOrEqualTo();
+        void GreaterThan<T>(T value);
+        IColumnMatchBuilder GreaterThan();
+        void GreaterThanOrEqualTo<T>(T value);
+        IColumnMatchBuilder GreaterThanOrEqualTo();
 
-        void GreaterThan(int value);
-        void GreaterThan(uint value);
-        void GreaterThan(short value);
-        void GreaterThan(double value);
-        void GreaterThan(long value);
-        void GreaterThan(DateTime value);
+        void Between<T>(T start, T end);
 
-        void GreaterThanOrEqualTo(int value);
-        void GreaterThanOrEqualTo(uint value);
-        void GreaterThanOrEqualTo(short value);
-        void GreaterThanOrEqualTo(double value);
-        void GreaterThanOrEqualTo(long value);
-        void GreaterThanOrEqualTo(DateTime value);
-
-        void IsBetween<T>(T start, T end);
+        void Null();
+        void NullOrWhitespace();
     }
 }
 

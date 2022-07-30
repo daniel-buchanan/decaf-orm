@@ -9,7 +9,8 @@
 		Substring,
 		Contains,
 		StartsWith,
-		EndsWith
+		EndsWith,
+		Trim
 	}
 }
 

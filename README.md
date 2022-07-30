@@ -7,7 +7,7 @@ Incidentally, Dapper forms the foundation of how pdq executes the queries that i
 PDQ stands for **P**retty **D**arn **Q**uick.  
 The aim has always been to provide a intuitive development experience that allows performant queries to be written, while not re-inventing the wheel for accessing the database and materialising objects.
 
-## Current Build Status
+### Current Build Status:  
 [![Build](https://github.com/daniel-buchanan/pdq/actions/workflows/sonar.yml/badge.svg)](https://github.com/daniel-buchanan/pdq/actions/workflows/sonar.yml)
 [![CodeQL](https://github.com/daniel-buchanan/pdq/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/daniel-buchanan/pdq/actions/workflows/codeql-analysis.yml)
 
@@ -19,6 +19,8 @@ The aim has always been to provide a intuitive development experience that allow
 5. [Status](#status)
 
 # History
+[Return to Top](#pdq)  
+
 PDQ originally came about because during the course of work we needed something that enabled us to write complex, performant queries, but at the time nothing existed (at least that myself or my team could find).  
 
 Hence we started on the journey of writing our own.  
@@ -28,6 +30,8 @@ This proved to be a long but worthwhile one, but now the time has come for a gro
 For this re-birth if you will, the attempt is to make use of a fully fluent API and provide as much of an intuitive experience as possible.
 
 # Concepts
+[Return to Top](#pdq)  
+
 There are several core concepts within PDQ.  
 1. Everything should use a Fluent API  
    ```csharp
@@ -39,6 +43,8 @@ There are several core concepts within PDQ.
    *b)* Read as understandable English
    
 # Examples
+[Return to Top](#pdq)  
+
 
 ## Configuration
 In order to use PDQ, you simply have to reference it and ensure that it is registered with your Dependency Injection provider.  
@@ -78,6 +84,8 @@ services.AddPdq(o => {
 ```
 
 ## Getting a Query
+[Return to Top](#pdq)  
+
 PDQ's default configuration provides an `IUnitOfWOrk` service which is added to the service provider by default.  
 Once you have a `ITransient` created from the `IUnitOfWork`, you can begin to query it. Each query is managed by itself and executed seperately.  
 
@@ -103,6 +111,8 @@ var q = t.Query();
 ```
 
 ## Creating a Simple Query
+[Return to Top](#pdq)  
+
 There are two main ways that PDW can be used:  
 1. Typed; and
 2. Un-typed
@@ -140,6 +150,7 @@ var result = query
 ```
 
 # Reference
+[Return to Top](#pdq)  
 
 ## Untyped
 
@@ -148,18 +159,20 @@ var result = query
 ## Execution
 
 # Status
-|   | Status |
-| - | ------ |
-| Build | [![Build](https://github.com/daniel-buchanan/pdq/actions/workflows/sonar.yml/badge.svg)](https://github.com/daniel-buchanan/pdq/actions/workflows/sonar.yml) |
-| CodeQL | [![CodeQL](https://github.com/daniel-buchanan/pdq/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/daniel-buchanan/pdq/actions/workflows/codeql-analysis.yml) |
-| | **SonarCloud Metrics** |
-| | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq) |
-| | [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq) |
-| | [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq) |
-| | [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=coverage)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq) |
-| | [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq) |
-| | [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq) |
-| | [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq) |
-| | [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq) |
-| | [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=bugs)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq) |
-| | [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq) |
+[Return to Top](#pdq)  
+
+**Build**  
+[![Build](https://github.com/daniel-buchanan/pdq/actions/workflows/sonar.yml/badge.svg)](https://github.com/daniel-buchanan/pdq/actions/workflows/sonar.yml)
+[![CodeQL](https://github.com/daniel-buchanan/pdq/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/daniel-buchanan/pdq/actions/workflows/codeql-analysis.yml)  
+
+**Sonar Cloud**  
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=coverage)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)  
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)  
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=bugs)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)

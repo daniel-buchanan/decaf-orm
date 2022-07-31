@@ -28,7 +28,7 @@ namespace pdq.Implementation
         public IDeleteFrom From(string name, string alias = null, string schema = null)
         {
             var managedTable = this.query.AliasManager.GetAssociation(alias) ?? name;
-            var managedAlias = this.query.AliasManager.Add(name, alias);
+            var managedAlias = this.query.AliasManager.Add(alias, name);
             context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias, schema));
             return this;
         }
@@ -40,7 +40,7 @@ namespace pdq.Implementation
             var alias = this.context.Helpers().GetTableAlias(aliasExpression);
 
             var managedTable = this.query.AliasManager.GetAssociation(alias) ?? alias;
-            var managedAlias = this.query.AliasManager.Add(table, alias);
+            var managedAlias = this.query.AliasManager.Add(alias, table);
 
             this.context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
             return Delete<T>.Create(this.context, this.query);
@@ -50,7 +50,7 @@ namespace pdq.Implementation
         public IDeleteFrom<T> From<T>()
         {
             var table = this.context.Helpers().GetTableName<T>();
-            var alias = this.query.AliasManager.Add(table, null);
+            var alias = this.query.AliasManager.Add(null, table);
             this.context.From(state.QueryTargets.TableTarget.Create(table, alias));
             return Delete<T>.Create(this.context, this.query);
         }

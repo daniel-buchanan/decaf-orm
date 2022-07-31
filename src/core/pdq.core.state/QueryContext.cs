@@ -118,6 +118,14 @@ namespace pdq.state
                 return;
             }
 
+            if(expression is MemberExpression)
+            {
+                var memberExpr = expression as MemberExpression;
+                alias = this.expressionHelper.GetParameterName(exprAlias);
+                table = this.reflectionHelper.GetTableName(memberExpr.Member.DeclaringType);
+                return;
+            }
+
             alias = this.expressionHelper.GetParameterName(exprAlias);
             table = this.reflectionHelper.GetTableName(exprTable.Type);
         }

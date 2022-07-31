@@ -131,6 +131,8 @@ namespace pdq.core_tests
             {
                 Func<string> getString = () => "john";
                 Func<int> getInt = () => 42;
+                Func<bool> getFalse = () => false;
+                Func<bool> getTrue = () => true;
 
                 yield return new object[]
                 {
@@ -206,10 +208,10 @@ namespace pdq.core_tests
 
                 yield return new object[]
                 {
-                    GetExpression<Person>((p) => p.LastName.Contains("John")),
+                    GetExpression<Person>(p => p.LastName.Contains("John")),
                     nameof(Person.LastName),
                     EqualityOperator.Equals,
-                    getString,
+                    getTrue,
                     typeof(StringContains)
                 };
             }

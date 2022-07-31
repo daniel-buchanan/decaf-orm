@@ -6,11 +6,11 @@ using pdq.common.Logging;
 
 namespace pdq.common
 {
-	public class Transient : ITransient
+	public class Transient : ITransientInternal
 	{
         private readonly IConnection connection;
-        private readonly ITransaction transaction;
-        private readonly ITransientFactory factory;
+        private readonly ITransactionInternal transaction;
+        private readonly ITransientFactoryInternal factory;
         private readonly ILoggerProxy logger;
         private readonly PdqOptions options;
         private readonly List<IQuery> queries;
@@ -21,9 +21,9 @@ namespace pdq.common
             ILoggerProxy logger,
             PdqOptions options)
 		{
-            this.factory = factory;
+            this.factory = factory as ITransientFactoryInternal;
             this.connection = transaction.Connection;
-            this.transaction = transaction;
+            this.transaction = transaction as ITransactionInternal;
             this.logger = logger;
             this.options = options;
             this.queries = new List<IQuery>();
@@ -36,10 +36,10 @@ namespace pdq.common
         public Guid Id { get; private set; }
 
         /// <inheritdoc />
-        IConnection ITransient.Connection => this.connection;
+        IConnection ITransientInternal.Connection => this.connection;
 
         /// <inheritdoc />
-        ITransaction ITransient.Transaction => this.transaction;
+        ITransaction ITransientInternal.Transaction => this.transaction;
 
         public static ITransient Create(
             ITransientFactory factory,

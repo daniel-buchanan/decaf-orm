@@ -11,7 +11,7 @@ namespace pdq.state.Utilities
         /// <param name="expression">The expression to parse.</param>
         /// <param name="context">The current query context</param>
         /// <returns>The parsed where clause.</returns>
-		public IWhere Parse(Expression expression, IQueryContextInternal context);
+		IWhere Parse(Expression expression, IQueryContextInternal context);
 	}
 }
 

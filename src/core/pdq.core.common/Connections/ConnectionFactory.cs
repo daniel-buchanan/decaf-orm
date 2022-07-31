@@ -34,13 +34,6 @@ namespace pdq.common.Connections
         }
 
         /// <inheritdoc/>
-        public ValueTask DisposeAsync()
-        {
-            Dispose();
-            return new ValueTask();
-        }
-
-        /// <inheritdoc/>
         public IConnection Get(IConnectionDetails connectionDetails)
         {
             var t = GetAsync(connectionDetails);
@@ -56,7 +49,8 @@ namespace pdq.common.Connections
 
             try
             {
-                hash = connectionDetails.GetHash();
+                var internalConnectionDetails = connectionDetails as IConnectionDetailsInternal;
+                hash = internalConnectionDetails.GetHash();
             }
             catch (Exception e)
             {

@@ -45,7 +45,7 @@ namespace pdq.Implementation
         /// <inheritdoc/>
         public IGroupBy Where(Action<IWhereBuilder> builder)
         {
-            var b = WhereBuilder.Create(this.options, this.context);
+            var b = WhereBuilder.Create(this.options, this.context) as IWhereBuilderInternal;
             builder(b);
             this.context.Where(b.GetClauses().First());
             return this;

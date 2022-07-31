@@ -8,7 +8,7 @@ using pdq.common.Utilities;
 
 namespace pdq.common
 {
-	public sealed class TransientFactory : ITransientFactory
+	public sealed class TransientFactory : ITransientFactoryInternal
 	{
         private readonly List<ITransient> tracker;
         private readonly PdqOptions options;
@@ -52,7 +52,7 @@ namespace pdq.common
         }
 
         /// <inheritdoc/>
-        void ITransientFactory.NotifyTransientDisposed(Guid id)
+        void ITransientFactoryInternal.NotifyTransientDisposed(Guid id)
         {
             if (!this.options.TrackTransients) return;
 

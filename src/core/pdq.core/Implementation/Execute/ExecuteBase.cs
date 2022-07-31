@@ -7,14 +7,24 @@ namespace pdq.Implementation
 {
     public abstract class ExecuteBase
 	{
-        protected IQueryInternal query;
+        internal IQueryInternal query;
 
-		protected ExecuteBase(IQueryInternal query)
+		protected ExecuteBase(IQuery query)
 		{
-            this.query = query;
+            this.query = query as IQueryInternal;
 		}
 
-        protected IDbConnection GetConnection() => this.query.Transient.Connection.GetUnderlyingConnection();
+        protected IDbConnection GetConnection()
+        {
+            var internalTransient = this.query.Transient as ITransientInternal;
+            return internalTransient.Connection.GetUnderlyingConnection();
+        }
+
+        protected IDbTransaction GetTransatction()
+        {
+            var internalTransient = this.query.Transient as ITransientInternal;
+            return internalTransient.Transaction.GetUnderlyingTransaction();
+        }
 
         /// <summary>
         /// Execute a function on a DBTransaction
@@ -26,7 +36,7 @@ namespace pdq.Implementation
         {
             var sql = GetSql();
             var parameters = GetSqlParameters();
-            var transaction = this.query.Transient.Transaction.GetUnderlyingTransaction();
+            var transaction = GetTransatction();
 
             return await func(sql, parameters, transaction);
         }

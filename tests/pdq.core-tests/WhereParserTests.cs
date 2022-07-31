@@ -35,7 +35,8 @@ namespace pdq.core_tests
             Expression expression,
             string expectedPropertyName,
             EqualityOperator expectedOperator,
-            Func<T> getValue)
+            Func<T> getValue,
+            Type functionType)
         {
             // Arrange
             var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
@@ -51,6 +52,10 @@ namespace pdq.core_tests
             col.Details.Source.Alias.Should().Be("p");
             col.EqualityOperator.Should().Be(expectedOperator);
             col.Value.Should().Be(getValue());
+            if(functionType != null)
+            {
+                col.ValueFunction.Should().BeAssignableTo(functionType);
+            }
         }
 
         [Fact]
@@ -132,7 +137,8 @@ namespace pdq.core_tests
                     GetExpression<Person>((p) => p.FirstName == "john"),
                     nameof(Person.FirstName),
                     EqualityOperator.Equals,
-                    getString
+                    getString,
+                    null
                 };
 
                 yield return new object[]
@@ -140,7 +146,8 @@ namespace pdq.core_tests
                     GetExpression<Person>((p) => p.FirstName != "john"),
                     nameof(Person.FirstName),
                     EqualityOperator.NotEquals,
-                    getString
+                    getString,
+                    null
                 };
 
                 yield return new object[]
@@ -148,7 +155,8 @@ namespace pdq.core_tests
                     GetExpression<Person>((p) => p.AddressId == 42),
                     nameof(Person.AddressId),
                     EqualityOperator.Equals,
-                    getInt
+                    getInt,
+                    null
                 };
 
                 yield return new object[]
@@ -156,7 +164,8 @@ namespace pdq.core_tests
                     GetExpression<Person>((p) => p.AddressId != 42),
                     nameof(Person.AddressId),
                     EqualityOperator.NotEquals,
-                    getInt
+                    getInt,
+                    null
                 };
 
                 yield return new object[]
@@ -164,7 +173,8 @@ namespace pdq.core_tests
                     GetExpression<Person>((p) => p.AddressId > 42),
                     nameof(Person.AddressId),
                     EqualityOperator.GreaterThan,
-                    getInt
+                    getInt,
+                    null
                 };
 
                 yield return new object[]
@@ -172,7 +182,8 @@ namespace pdq.core_tests
                     GetExpression<Person>((p) => p.AddressId >= 42),
                     nameof(Person.AddressId),
                     EqualityOperator.GreaterThanOrEqualTo,
-                    getInt
+                    getInt,
+                    null
                 };
 
                 yield return new object[]
@@ -180,7 +191,8 @@ namespace pdq.core_tests
                     GetExpression<Person>((p) => p.AddressId < 42),
                     nameof(Person.AddressId),
                     EqualityOperator.LessThan,
-                    getInt
+                    getInt,
+                    null
                 };
 
                 yield return new object[]
@@ -188,7 +200,17 @@ namespace pdq.core_tests
                     GetExpression<Person>((p) => p.AddressId <= 42),
                     nameof(Person.AddressId),
                     EqualityOperator.LessThanOrEqualTo,
-                    getInt
+                    getInt,
+                    null
+                };
+
+                yield return new object[]
+                {
+                    GetExpression<Person>((p) => p.LastName.Contains("John")),
+                    nameof(Person.LastName),
+                    EqualityOperator.Equals,
+                    getString,
+                    typeof(StringContains)
                 };
             }
         }

@@ -568,11 +568,11 @@ namespace pdq.core_tests
             select.From("person", "p");
 
             // Act
-            IWhereBuilder builder = null;
+            IWhereBuilderInternal builder = null;
             select.Where(b =>
             {
                 b.ClauseHandling.DefaultToAnd();
-                builder = b;
+                builder = b as IWhereBuilderInternal;
             });
 
             // Assert
@@ -586,11 +586,11 @@ namespace pdq.core_tests
             select.From("person", "p");
 
             // Act
-            IWhereBuilder builder = null;
+            IWhereBuilderInternal builder = null;
             select.Where(b =>
             {
                 b.ClauseHandling.DefaultToOr();
-                builder = b;
+                builder = b as IWhereBuilderInternal;
             });
 
             // Assert

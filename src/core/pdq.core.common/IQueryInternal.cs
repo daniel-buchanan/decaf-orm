@@ -3,18 +3,18 @@
 [assembly:System.Runtime.CompilerServices.InternalsVisibleTo("pdq")]
 namespace pdq.common
 {
-	public interface IQueryInternal : IQuery
+	internal interface IQueryInternal : IQuery
 	{
-		internal string GetHash();
+		string GetHash();
 
-		internal IAliasManager AliasManager { get; }
+		IAliasManager AliasManager { get; }
 
-		internal ITransient Transient { get; }
+		ITransient Transient { get; }
 
-		internal IQueryContext Context { get; }
+		IQueryContext Context { get; }
 
-		internal void SetContext(IQueryContext context);
+		void SetContext(IQueryContext context);
 
-		internal PdqOptions Options { get; }
+		PdqOptions Options { get; }
     }
 }

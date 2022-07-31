@@ -7,7 +7,7 @@ namespace pdq.Implementation
     public class ColumnMatchBuilder : IColumnMatchBuilder
     {
         private readonly IQueryContext queryContext;
-        private readonly IWhereBuilder builder;
+        private readonly IWhereBuilderInternal builder;
         private readonly state.Column left;
         private readonly bool notEquals;
         private readonly EqualityOperator @operator;
@@ -20,7 +20,7 @@ namespace pdq.Implementation
             EqualityOperator @operator)
         {
             this.queryContext = queryContext;
-            this.builder = builder;
+            this.builder = builder as IWhereBuilderInternal;
             this.left = left;
             this.notEquals = notEquals;
             this.@operator = @operator;

@@ -5,7 +5,7 @@ using pdq.common.Logging;
 
 namespace pdq.common.Connections
 {
-	public abstract class Connection : IConnection
+	public abstract class Connection : IConnectionInternal
 	{
         protected IDbConnection dbConnection;
         protected readonly ILoggerProxy logger;
@@ -48,9 +48,6 @@ namespace pdq.common.Connections
         }
 
         /// <inheritdoc/>
-        public ValueTask DisposeAsync() => this.connectionDetails.DisposeAsync();
-
-        /// <inheritdoc/>
         public void Open()
         {
             if (this.dbConnection == null)
@@ -62,7 +59,11 @@ namespace pdq.common.Connections
         }
 
         /// <inheritdoc/>
-        string IConnection.GetHash() => this.connectionDetails.GetHash();
+        string IConnectionInternal.GetHash()
+        {
+            var internalConnectionDetails = this.connectionDetails as IConnectionDetailsInternal;
+            return internalConnectionDetails.GetHash();
+        }
 
         /// <inheritdoc/>
         public abstract IDbConnection GetUnderlyingConnection();

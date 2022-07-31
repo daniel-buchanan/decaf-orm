@@ -39,7 +39,7 @@ namespace pdq.Implementation
             var table = this.context.Helpers().GetTableName(aliasExpression);
             var alias = this.context.Helpers().GetTableAlias(aliasExpression);
 
-            var managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
+            var managedTable = this.query.AliasManager.GetAssociation(alias) ?? alias;
             var managedAlias = this.query.AliasManager.Add(table, alias);
 
             this.context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
@@ -58,7 +58,7 @@ namespace pdq.Implementation
         /// <inheritdoc />
         public IDeleteFrom Where(Action<IWhereBuilder> builder)
         {
-            var b = WhereBuilder.Create(this.query.Options, this.context);
+            var b = WhereBuilder.Create(this.query.Options, this.context) as IWhereBuilderInternal;
             builder(b);
             context.Where(b.GetClauses().First());
             return this;

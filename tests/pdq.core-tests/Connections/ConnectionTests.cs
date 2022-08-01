@@ -77,6 +77,16 @@ namespace pdq.core_tests.Connections
             // Assert
             this.connection.State.Should().Be(common.Connections.ConnectionState.Unknown);
         }
+
+        [Fact]
+        public void DisposeSucceeds()
+        {
+            // Act
+            Action method = () => this.connection.Dispose();
+
+            // Assert
+            method.Should().NotThrow<ObjectDisposedException>();
+        }
     }
 }
 

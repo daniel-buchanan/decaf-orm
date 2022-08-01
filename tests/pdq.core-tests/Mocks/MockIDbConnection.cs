@@ -41,9 +41,16 @@ namespace pdq.core_tests.Mocks
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
-            throw new NotImplementedException();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            // nothing to do here
         }
 
         public void Open() => this.state = ConnectionState.Open;

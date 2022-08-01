@@ -51,7 +51,8 @@ namespace pdq.common.Connections
 
         protected virtual void Dispose(bool disposing)
         {
-            // nothing to do here
+            if (!disposing) return;
+            this.dbConnection.Dispose();
         }
 
         /// <inheritdoc/>

@@ -16,23 +16,30 @@ namespace pdq.common.Connections
         /// </summary>
         /// <param name="logger">The logger to use to log any details.</param>
         /// <param name="connectionDetails">The connection details to use.</param>
-		protected Connection(
+        protected Connection(
             ILoggerProxy logger,
             IConnectionDetails connectionDetails)
 		{
             this.logger = logger;
             this.connectionDetails = connectionDetails;
+            this.State = ConnectionState.Unknown;
 		}
+
+        /// <inheritdoc/>
+        public ConnectionState State { get; private set; }
 
         /// <inheritdoc/>
         public void Close()
         {
             if (this.dbConnection == null) return;
-            if (this.dbConnection.State == ConnectionState.Open ||
-                this.dbConnection.State == ConnectionState.Connecting ||
-                this.dbConnection.State == ConnectionState.Fetching ||
-                this.dbConnection.State == ConnectionState.Executing)
+            if (this.dbConnection.State == System.Data.ConnectionState.Open ||
+                this.dbConnection.State == System.Data.ConnectionState.Connecting ||
+                this.dbConnection.State == System.Data.ConnectionState.Fetching ||
+                this.dbConnection.State == System.Data.ConnectionState.Executing)
+            {
                 this.dbConnection.Close();
+                this.State = ConnectionState.Closed;
+            }
         }
 
         /// <inheritdoc/>
@@ -53,9 +60,12 @@ namespace pdq.common.Connections
             if (this.dbConnection == null)
                 this.dbConnection = GetUnderlyingConnection();
 
-            if (this.dbConnection.State == ConnectionState.Closed ||
-                this.dbConnection.State == ConnectionState.Broken)
+            if (this.dbConnection.State == System.Data.ConnectionState.Closed ||
+                this.dbConnection.State == System.Data.ConnectionState.Broken)
+            {
                 this.dbConnection.Open();
+                this.State = ConnectionState.Open;
+            }
         }
 
         /// <inheritdoc/>

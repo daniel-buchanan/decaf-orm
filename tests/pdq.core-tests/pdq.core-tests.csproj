@@ -36,10 +36,12 @@
     <None Remove="Moq" />
     <None Remove="Mocks\" />
     <None Remove="Microsoft.Extensions.DependencyInjection" />
+    <None Remove="Connections\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />
     <Folder Include="Models\" />
     <Folder Include="Mocks\" />
+    <Folder Include="Connections\" />
   </ItemGroup>
 </Project>

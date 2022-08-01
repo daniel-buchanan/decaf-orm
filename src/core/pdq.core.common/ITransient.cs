@@ -10,7 +10,7 @@ namespace pdq.common
 	public interface ITransient : IDisposable
 	{
 		/// <summary>
-        /// The Id of the "Transient", this is unqiuely generated for each transient
+        /// Gets the Id of the "Transient", this is unqiuely generated for each transient
         /// at the time that it is created and cannot be changed.
         /// </summary>
 		Guid Id { get; }
@@ -27,13 +27,18 @@ namespace pdq.common
     internal interface ITransientInternal : ITransient
     {
         /// <summary>
-        /// The connection associated with this Transient.
+        /// Gets the connection associated with this Transient.
         /// </summary>
         IConnection Connection { get; }
 
         /// <summary>
-        /// The transaction associated with this Transient.
+        /// Gets the transaction associated with this Transient.
         /// </summary>
         ITransaction Transaction { get; }
+
+        /// <summary>
+        /// Gets the SQL Factory for this query.
+        /// </summary>
+        ISqlFactory SqlFactory { get; }
     }
 }

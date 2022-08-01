@@ -11,7 +11,7 @@ namespace pdq.Implementation
         private readonly ISelectFrom selectFrom;
         private readonly IQueryContextInternal context;
         private readonly PdqOptions options;
-        private readonly IQuery query;
+        private readonly IQueryInternal query;
         private readonly JoinType joinType;
 
         private IQueryTarget left;
@@ -21,7 +21,7 @@ namespace pdq.Implementation
             ISelectFrom selectFrom,
             IQueryContext context,
             PdqOptions options,
-            IQuery query,
+            IQueryInternal query,
             JoinType joinType)
         {
             this.selectFrom = selectFrom;
@@ -35,7 +35,7 @@ namespace pdq.Implementation
             ISelectFrom selectFrom,
             IQueryContext context,
             PdqOptions options,
-            IQuery query,
+            IQueryInternal query,
             JoinType joinType) => new Join(selectFrom, context, options, query, joinType);
 
         /// <inheritdoc/>

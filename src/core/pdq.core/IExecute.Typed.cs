@@ -32,6 +32,8 @@ namespace pdq
 		void Execute();
 
 		Task ExecuteAsync();
+
+		IExecuteDynamic Dynamic();
 	}
 }
 

@@ -5,50 +5,57 @@ using pdq.common.Utilities;
 
 namespace pdq.Implementation
 {
-    internal class Execute<T> : Execute, IExecute<T>
+    internal class Execute<TResult, TContext> : Execute<TContext>, IExecute<TResult>
+        where TContext: IQueryContext
 	{
-		private Execute(IQueryInternal query) : base(query) { }
+		private Execute(
+            IQueryInternal query,
+            TContext context)
+            : base(query, context, query.SqlFactory) { }
 
-        public static IExecute<T> Create(IQueryInternal query) => new Execute<T>(query);
-
-        /// <inheritdoc/>
-        public IEnumerable<T> AsEnumerable() => AsEnumerableAsync<T>().WaitFor();
-
-        /// <inheritdoc/>
-        public Task<IEnumerable<T>> AsEnumerableAsync() => AsEnumerableAsync<T>();
-
-        /// <inheritdoc/>
-        public T First() => FirstAsync().WaitFor();
+        public static IExecute<TResult> Create(
+            IQueryInternal query,
+            TContext context)
+            => new Execute<TResult, TContext>(query, context);
 
         /// <inheritdoc/>
-        public Task<T> FirstAsync() => FirstAsync<T>();
+        public new IEnumerable<TResult> AsEnumerable() => AsEnumerableAsync<TResult>().WaitFor();
 
         /// <inheritdoc/>
-        public T FirstOrDefault() => FirstOrDefaultAsync().WaitFor();
+        public new Task<IEnumerable<TResult>> AsEnumerableAsync() => AsEnumerableAsync<TResult>();
 
         /// <inheritdoc/>
-        public Task<T> FirstOrDefaultAsync() => FirstOrDefaultAsync<T>();
+        public new TResult First() => FirstAsync().WaitFor();
 
         /// <inheritdoc/>
-        public T Single() => SingleAsync().WaitFor();
+        public new Task<TResult> FirstAsync() => FirstAsync<TResult>();
 
         /// <inheritdoc/>
-        public Task<T> SingleAsync() => SingleAsync<T>();
+        public new TResult FirstOrDefault() => FirstOrDefaultAsync().WaitFor();
 
         /// <inheritdoc/>
-        public T SingleOrDefault() => SingleOrDefaultAsync().WaitFor();
+        public new Task<TResult> FirstOrDefaultAsync() => FirstOrDefaultAsync<TResult>();
 
         /// <inheritdoc/>
-        public Task<T> SingleOrDefaultAsync() => SingleOrDefaultAsync<T>();
+        public new TResult Single() => SingleAsync().WaitFor();
 
         /// <inheritdoc/>
-        public IList<T> ToList() => ToListAsync().WaitFor();
+        public new Task<TResult> SingleAsync() => SingleAsync<TResult>();
 
         /// <inheritdoc/>
-        public Task<IList<T>> ToListAsync() => ToListAsync<T>();
+        public new TResult SingleOrDefault() => SingleOrDefaultAsync().WaitFor();
 
         /// <inheritdoc/>
-        void IExecute<T>.Execute() => ExecuteAsync().WaitFor();
+        public new Task<TResult> SingleOrDefaultAsync() => SingleOrDefaultAsync<TResult>();
+
+        /// <inheritdoc/>
+        public new IList<TResult> ToList() => ToListAsync().WaitFor();
+
+        /// <inheritdoc/>
+        public new Task<IList<TResult>> ToListAsync() => ToListAsync<TResult>();
+
+        /// <inheritdoc/>
+        void IExecute<TResult>.Execute() => ExecuteAsync().WaitFor();
     }
 }
 

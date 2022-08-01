@@ -11,6 +11,7 @@ namespace pdq.common
         private readonly IConnection connection;
         private readonly ITransactionInternal transaction;
         private readonly ITransientFactoryInternal factory;
+        private readonly ISqlFactory sqlFactory;
         private readonly ILoggerProxy logger;
         private readonly PdqOptions options;
         private readonly List<IQuery> queries;
@@ -18,12 +19,14 @@ namespace pdq.common
 		private Transient(
             ITransientFactory factory,
             ITransaction transaction,
+            ISqlFactory sqlFactory,
             ILoggerProxy logger,
             PdqOptions options)
 		{
             this.factory = factory as ITransientFactoryInternal;
             this.connection = transaction.Connection;
             this.transaction = transaction as ITransactionInternal;
+            this.sqlFactory = sqlFactory;
             this.logger = logger;
             this.options = options;
             this.queries = new List<IQuery>();
@@ -41,12 +44,16 @@ namespace pdq.common
         /// <inheritdoc />
         ITransaction ITransientInternal.Transaction => this.transaction;
 
+        /// <inheritdoc />
+        ISqlFactory ITransientInternal.SqlFactory => this.sqlFactory;
+
         public static ITransient Create(
             ITransientFactory factory,
             ITransaction transaction,
+            ISqlFactory sqlFactory,
             ILoggerProxy logger,
             PdqOptions options)
-            => new Transient(factory, transaction, logger, options);
+            => new Transient(factory, transaction, sqlFactory, logger, options);
 
         /// <inheritdoc />
         public void Dispose()

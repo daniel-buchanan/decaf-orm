@@ -14,16 +14,19 @@ namespace pdq.common
         private readonly PdqOptions options;
         private readonly ILoggerProxy logger;
         private readonly ITransactionFactory transactionFactory;
+        private readonly ISqlFactory sqlFactory;
 
         public TransientFactory(
             PdqOptions options,
             ILoggerProxy logger,
-            ITransactionFactory transactionFactory)
+            ITransactionFactory transactionFactory,
+            ISqlFactory sqlFactory)
 		{
             this.tracker = new List<ITransient>();
             this.options = options;
             this.logger = logger;
             this.transactionFactory = transactionFactory;
+            this.sqlFactory = sqlFactory;
 		}
 
         /// <inheritdoc/>
@@ -34,7 +37,7 @@ namespace pdq.common
         {
             this.logger.Debug("TransientFactory :: Getting Transaction");
             var transaction = await this.transactionFactory.GetAsync(connectionDetails);
-            var transient = Transient.Create(this, transaction, this.logger, this.options);
+            var transient = Transient.Create(this, transaction, this.sqlFactory, this.logger, this.options);
             this.logger.Debug($"TransientFactory :: Transient ({transient.Id}) Tracked");
 
             if(this.options.TrackTransients) this.tracker.Add(transient);

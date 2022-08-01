@@ -12,12 +12,12 @@ namespace pdq.Implementation
 	{
         private Select(
             ISelectQueryContext context,
-            IQuery query)
-            : base(context, (IQueryInternal)query) { }
+            IQueryInternal query)
+            : base(context, query, query.SqlFactory) { }
 
         public static Select Create(
             ISelectQueryContext context,
-            IQuery query)
+            IQueryInternal query)
             => new Select(context, query);
 
         /// <inheritdoc/>
@@ -150,14 +150,14 @@ namespace pdq.Implementation
         IExecuteDynamic ISelectColumn.Select(Expression<Func<ISelectColumnBuilder, dynamic>> expression)
         {
             base.AddColumns(expression);
-            return ExecuteDynamic.Create(this.query);
+            return this;
         }
 
         /// <inheritdoc/>
         IExecute<TResult> ISelectColumn.Select<TResult>(Expression<Func<ISelectColumnBuilder, TResult>> expression)
         {
             base.AddColumns(expression);
-            return Execute<TResult>.Create(this.query);
+            return Execute<TResult, ISelectQueryContext>.Create(this.query, this.context);
         }
     }
 }

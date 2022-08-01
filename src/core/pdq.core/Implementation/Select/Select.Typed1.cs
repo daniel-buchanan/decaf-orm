@@ -14,14 +14,14 @@ namespace pdq.Implementation
 	{
         private Select(
             ISelectQueryContext context,
-            IQuery query)
+            IQueryInternal query)
             : base(context, query)
         {
         }
 
         public static Select<T> Create(
             ISelectQueryContext context,
-            IQuery query)
+            IQueryInternal query)
             => new Select<T>(context, query);
 
         /// <inheritdoc/>
@@ -77,14 +77,14 @@ namespace pdq.Implementation
         IExecuteDynamic ISelectColumnTyped<T>.Select(Expression<Func<T, dynamic>> expression)
         {
             this.AddColumns(expression);
-            return ExecuteDynamic.Create(this.query);
+            return this;
         }
 
         /// <inheritdoc/>
         IExecute<TResult> ISelectColumnTyped<T>.Select<TResult>(Expression<Func<T, TResult>> expression)
         {
             this.AddColumns(expression);
-            return Execute<TResult>.Create(this.query);
+            return Execute<TResult, ISelectQueryContext>.Create(this.query, this.context);
         }
 
         /// <inheritdoc/>

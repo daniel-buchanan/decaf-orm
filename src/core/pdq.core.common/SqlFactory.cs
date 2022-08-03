@@ -7,10 +7,26 @@ namespace pdq.common
         {
         }
 
+        /// <inheritdoc/>
         public SqlTemplate ParseContext(IQueryContext context)
         {
-            throw new NotImplementedException();
+            switch(context.Kind)
+            {
+                case QueryTypes.Select: return ParseSelect(context);
+                case QueryTypes.Delete: return ParseDelete(context);
+                case QueryTypes.Update: return ParseUpdate(context);
+                case QueryTypes.Insert: return ParseInsert(context);
+                default: return null;
+            }
         }
+
+        protected abstract SqlTemplate ParseSelect(IQueryContext context);
+
+        protected abstract SqlTemplate ParseDelete(IQueryContext context);
+
+        protected abstract SqlTemplate ParseUpdate(IQueryContext context);
+
+        protected abstract SqlTemplate ParseInsert(IQueryContext context);
     }
 }
 

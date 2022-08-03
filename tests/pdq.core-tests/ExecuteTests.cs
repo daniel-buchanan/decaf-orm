@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
@@ -51,6 +53,16 @@ namespace pdq.core_tests
         }
 
         [Fact]
+        public async Task AsEnumerableAsyncDoesntThrow()
+        {
+            // Act
+            Func<Task<IEnumerable<dynamic>>> method = () => this.execute.AsEnumerableAsync();
+
+            // Assert
+            await method.Should().NotThrowAsync();
+        }
+
+        [Fact]
         public void AsEnumerableTypedDoesntThrow()
         {
             // Act
@@ -58,6 +70,16 @@ namespace pdq.core_tests
 
             // Assert
             method.Should().NotThrow();
+        }
+
+        [Fact]
+        public async Task AsEnumerableTypedAsyncDoesntThrow()
+        {
+            // Act
+            Func<Task<IEnumerable<Person>>> method = () => this.execute.AsEnumerableAsync<Person>();
+
+            // Assert
+            await method.Should().NotThrowAsync();
         }
 
         [Fact]
@@ -71,6 +93,16 @@ namespace pdq.core_tests
         }
 
         [Fact]
+        public async Task ToListAsyncDoesntThrow()
+        {
+            // Act
+            Func<Task<IList<dynamic>>> method = () => this.execute.ToListAsync();
+
+            // Assert
+            await method.Should().NotThrowAsync();
+        }
+
+        [Fact]
         public void ToListTypedDoesntThrow()
         {
             // Act
@@ -78,6 +110,36 @@ namespace pdq.core_tests
 
             // Assert
             method.Should().NotThrow();
+        }
+
+        [Fact]
+        public async Task ToListTypedAsyncDoesntThrow()
+        {
+            // Act
+            Func<Task<IList<Person>>> method = () => this.execute.ToListAsync<Person>();
+
+            // Assert
+            await method.Should().NotThrowAsync();
+        }
+
+        [Fact]
+        public void ExecuteDoesntThrow()
+        {
+            // Act
+            Action method = () => this.execute.Execute();
+
+            // Assert
+            method.Should().NotThrow();
+        }
+
+        [Fact]
+        public async Task ExecuteAsyncDoesntThrow()
+        {
+            // Act
+            Func<Task> method = () => this.execute.ExecuteAsync();
+
+            // Assert
+            await method.Should().NotThrowAsync();
         }
     }
 

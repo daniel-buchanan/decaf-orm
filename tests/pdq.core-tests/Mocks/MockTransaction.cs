@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data;
-using Moq;
+using System.Data.Common;
 using pdq.common.Connections;
 using pdq.common.Logging;
 
@@ -19,8 +19,8 @@ namespace pdq.core_tests.Mocks
 
         public override IDbTransaction GetUnderlyingTransaction()
         {
-            var transaction = new Mock<IDbTransaction>();
-            return transaction.Object;
+            var conn = this.Connection.GetUnderlyingConnection() as DbConnection;
+            return new MockDbTransaction(conn, IsolationLevel.Serializable);
         }
     }
 }

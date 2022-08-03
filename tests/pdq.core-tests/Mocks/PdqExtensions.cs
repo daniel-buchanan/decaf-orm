@@ -12,6 +12,7 @@ namespace pdq.core_tests.Mocks
 			builder.SetConnectionFactory<MockConnectionFactory>();
 			builder.SetTransactionFactory<MockTransactionFactory>();
 			builder.SetSqlFactory<MockSqlFactory>();
+			builder.SetLoggerProxy<MockLoggerProxy>();
         }
 	}
 }

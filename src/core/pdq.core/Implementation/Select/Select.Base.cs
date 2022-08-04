@@ -14,9 +14,8 @@ namespace pdq.Implementation
 
         protected SelectBase(
             ISelectQueryContext context,
-            IQuery query,
-            ISqlFactory sqlFactory)
-            : base((IQueryInternal)query, context, sqlFactory)
+            IQuery query)
+            : base((IQueryInternal)query, context)
         {
             this.options = (query as IQueryInternal).Options;
             this.context = context;

@@ -11,7 +11,7 @@ namespace pdq.Implementation
 		protected Execute(
             IQueryInternal query,
             TContext context)
-            : base(query, context, query.SqlFactory) { }
+            : base(query, context) { }
 
         public static IExecute<TResult> Create(
             IQueryInternal query,

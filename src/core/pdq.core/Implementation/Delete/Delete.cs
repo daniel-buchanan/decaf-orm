@@ -14,7 +14,7 @@ namespace pdq.Implementation
         private Delete(
             IDeleteQueryContext context,
             IQueryInternal query)
-            : base(query, context, query.SqlFactory)
+            : base(query, context)
         {
             this.context = context;
             this.query.SetContext(this.context);
@@ -44,7 +44,7 @@ namespace pdq.Implementation
             var managedAlias = this.query.AliasManager.Add(alias, table);
 
             this.context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
-            return Delete<T>.Create(this.context, this.query, this.sqlFactory);
+            return Delete<T>.Create(this.context, this.query);
         }
 
         /// <inheritdoc />
@@ -53,7 +53,7 @@ namespace pdq.Implementation
             var table = this.context.Helpers().GetTableName<T>();
             var alias = this.query.AliasManager.Add(null, table);
             this.context.From(state.QueryTargets.TableTarget.Create(table, alias));
-            return Delete<T>.Create(this.context, this.query, this.sqlFactory);
+            return Delete<T>.Create(this.context, this.query);
         }
 
         /// <inheritdoc />

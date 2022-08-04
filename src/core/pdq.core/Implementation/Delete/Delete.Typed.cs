@@ -9,18 +9,16 @@ namespace pdq.Implementation
 	{
         private Delete(
             IDeleteQueryContext context,
-            IQueryInternal query,
-            ISqlFactory sqlFactory)
-            : base(query, context, sqlFactory)
+            IQueryInternal query)
+            : base(query, context)
         {
             this.context = context;
         }
 
         public static IDeleteFrom<T> Create(
             IDeleteQueryContext context,
-            IQueryInternal query,
-            ISqlFactory sqlFactory)
-            => new Delete<T>(context, query, sqlFactory);
+            IQueryInternal query)
+            => new Delete<T>(context, query);
 
         /// <inheritdoc />
         public IDeleteFrom<T> Where(Expression<Func<T, bool>> whereExpression)

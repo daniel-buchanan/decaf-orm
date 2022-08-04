@@ -29,7 +29,7 @@ namespace pdq.core_tests
             var query = transient.Query() as IQueryInternal;
             var sqlFactory = provider.GetService<ISqlFactory>();
             this.context = query.CreateContext<ISelectQueryContext>();
-            this.execute = new InheritedExecutor<ISelectQueryContext>(query, this.context, sqlFactory);
+            this.execute = new InheritedExecutor<ISelectQueryContext>(query, this.context);
         }
 
         [Fact]
@@ -306,8 +306,8 @@ namespace pdq.core_tests
     class InheritedExecutor<T> : Execute<T>
         where T : IQueryContext
     {
-        public InheritedExecutor(IQueryInternal query, T context, ISqlFactory sqlFactory)
-            : base(query, context, sqlFactory)
+        public InheritedExecutor(IQueryInternal query, T context)
+            : base(query, context)
         {
         }
     }

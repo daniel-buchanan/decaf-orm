@@ -13,7 +13,7 @@ namespace pdq.Implementation
         private Select(
             ISelectQueryContext context,
             IQueryInternal query)
-            : base(context, query, query.SqlFactory) { }
+            : base(context, query) { }
 
         public static Select Create(
             ISelectQueryContext context,

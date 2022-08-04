@@ -12,9 +12,8 @@ namespace pdq.Implementation
 	{
 		protected Execute(
             IQueryInternal query,
-            TContext context,
-            ISqlFactory sqlFactory)
-            : base(query, context, sqlFactory) { }
+            TContext context)
+            : base(query, context, query.SqlFactory) { }
 
         /// <inheritdoc/>
         public IExecuteDynamic Dynamic() => this;

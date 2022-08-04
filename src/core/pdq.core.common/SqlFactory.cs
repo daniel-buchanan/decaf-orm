@@ -3,9 +3,7 @@ namespace pdq.common
 {
     public abstract class SqlFactory : ISqlFactory
     {
-        public SqlFactory()
-        {
-        }
+        protected SqlFactory() { }
 
         /// <inheritdoc/>
         public SqlTemplate ParseContext(IQueryContext context)

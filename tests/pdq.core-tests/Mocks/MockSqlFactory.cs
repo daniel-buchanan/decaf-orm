@@ -21,7 +21,7 @@ namespace pdq.core_tests.Mocks
         protected override SqlTemplate ParseUpdate(IQueryContext context)
             => GetTemplate();
 
-        private SqlTemplate GetTemplate() => SqlTemplate.Create(string.Empty, null);
+        private static SqlTemplate GetTemplate() => SqlTemplate.Create(string.Empty, null);
     }
 }
 

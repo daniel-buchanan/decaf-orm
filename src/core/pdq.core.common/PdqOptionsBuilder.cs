@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using pdq.common.Connections;
 using pdq.common.Logging;
@@ -10,7 +8,7 @@ namespace pdq.common
 {
     public class PdqOptionsBuilder : IPdqOptionsBuilderInternal
     {
-        private Dictionary<string, object> values;
+        private readonly Dictionary<string, object> values;
 
         public PdqOptionsBuilder()
         {

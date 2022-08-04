@@ -8,7 +8,7 @@ namespace pdq.Implementation
     internal class Execute<TResult, TContext> : Execute<TContext>, IExecute<TResult>
         where TContext: IQueryContext
 	{
-		private Execute(
+		protected Execute(
             IQueryInternal query,
             TContext context)
             : base(query, context, query.SqlFactory) { }

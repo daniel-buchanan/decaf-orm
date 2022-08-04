@@ -23,11 +23,11 @@ namespace pdq.core_tests.Mocks
 
         public override int FieldCount => 4;
 
-        public override bool HasRows => false;
+        public override bool HasRows => true;
 
         public override bool IsClosed => false;
 
-        public override int RecordsAffected => throw new NotImplementedException();
+        public override int RecordsAffected => numRows;
 
         public override bool GetBoolean(int ordinal)
         {
@@ -113,10 +113,7 @@ namespace pdq.core_tests.Mocks
             throw new NotImplementedException();
         }
 
-        public override string GetString(int ordinal)
-        {
-            throw new NotImplementedException();
-        }
+        public override string GetString(int ordinal) => $"field{ordinal}";
 
         public override object GetValue(int ordinal)
         {

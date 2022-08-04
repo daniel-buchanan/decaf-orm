@@ -141,6 +141,166 @@ namespace pdq.core_tests
             // Assert
             await method.Should().NotThrowAsync();
         }
+
+        [Fact]
+        public void FirstDoesThrow()
+        {
+            // Act
+            Action method = () => this.execute.First();
+
+            // Assert
+            method.Should().Throw<Exception>();
+        }
+
+        [Fact]
+        public async Task FirstAsyncDoesThrow()
+        {
+            // Act
+            Func<Task> method = () => this.execute.FirstAsync();
+
+            // Assert
+            await method.Should().ThrowAsync<Exception>();
+        }
+
+        [Fact]
+        public void FirstTypedDoesThrow()
+        {
+            // Act
+            Action method = () => this.execute.First<Person>();
+
+            // Assert
+            method.Should().Throw<Exception>();
+        }
+
+        [Fact]
+        public async Task FirstTypedAsyncDoesThrow()
+        {
+            // Act
+            Func<Task> method = () => this.execute.FirstAsync<Person>();
+
+            // Assert
+            await method.Should().ThrowAsync<Exception>();
+        }
+
+        [Fact]
+        public void FirstOrDefaultDoesntThrow()
+        {
+            // Act
+            Action method = () => this.execute.FirstOrDefault();
+
+            // Assert
+            method.Should().NotThrow();
+        }
+
+        [Fact]
+        public async Task FirstOrDefaultAsyncDoesntThrow()
+        {
+            // Act
+            Func<Task> method = () => this.execute.FirstOrDefaultAsync();
+
+            // Assert
+            await method.Should().NotThrowAsync();
+        }
+
+        [Fact]
+        public void FirstOrDefaultTypedDoesntThrow()
+        {
+            // Act
+            Action method = () => this.execute.FirstOrDefault<Person>();
+
+            // Assert
+            method.Should().NotThrow();
+        }
+
+        [Fact]
+        public async Task FirstOrDefaultTypedAsyncDoesntThrow()
+        {
+            // Act
+            Func<Task> method = () => this.execute.FirstOrDefaultAsync<Person>();
+
+            // Assert
+            await method.Should().NotThrowAsync();
+        }
+
+        [Fact]
+        public void SingleDoesThrow()
+        {
+            // Act
+            Action method = () => this.execute.Single();
+
+            // Assert
+            method.Should().Throw<Exception>();
+        }
+
+        [Fact]
+        public async Task SingleAsyncDoesThrow()
+        {
+            // Act
+            Func<Task> method = () => this.execute.SingleAsync();
+
+            // Assert
+            await method.Should().ThrowAsync<Exception>();
+        }
+
+        [Fact]
+        public void SingleTypedDoesThrow()
+        {
+            // Act
+            Action method = () => this.execute.Single<Person>();
+
+            // Assert
+            method.Should().Throw<Exception>();
+        }
+
+        [Fact]
+        public async Task SingleTypedAsyncDoesThrow()
+        {
+            // Act
+            Func<Task> method = () => this.execute.SingleAsync<Person>();
+
+            // Assert
+            await method.Should().ThrowAsync<Exception>();
+        }
+
+        [Fact]
+        public void SingleOrDefaultDoesntThrow()
+        {
+            // Act
+            Action method = () => this.execute.SingleOrDefault();
+
+            // Assert
+            method.Should().NotThrow();
+        }
+
+        [Fact]
+        public async Task SingleOrDefaultAsyncDoesntThrow()
+        {
+            // Act
+            Func<Task> method = () => this.execute.SingleOrDefaultAsync();
+
+            // Assert
+            await method.Should().NotThrowAsync();
+        }
+
+        [Fact]
+        public void SingleOrDefaultTypedDoesntThrow()
+        {
+            // Act
+            Action method = () => this.execute.SingleOrDefault<Person>();
+
+            // Assert
+            method.Should().NotThrow();
+        }
+
+        [Fact]
+        public async Task SingleOrDefaultTypedAsyncDoesntThrow()
+        {
+            // Act
+            Func<Task> method = () => this.execute.SingleOrDefaultAsync<Person>();
+
+            // Assert
+            await method.Should().NotThrowAsync();
+        }
     }
 
     class InheritedExecutor<T> : Execute<T>

@@ -8,8 +8,11 @@ namespace pdq.common
 		ITransient Create(IConnectionDetails connectionDetails);
 
 		Task<ITransient> CreateAsync(IConnectionDetails connectionDetails);
+	}
 
-		internal void NotifyTransientDisposed(Guid id);
+	internal interface ITransientFactoryInternal : ITransientFactory
+    {
+		void NotifyTransientDisposed(Guid id);
 	}
 }
 

@@ -7,7 +7,7 @@ using pdq.Exceptions;
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.core-tests")]
 namespace pdq.Implementation
 {
-    public class WhereBuilder : IWhereBuilder
+    public class WhereBuilder : IWhereBuilderInternal
 	{
         private readonly List<state.IWhere> clauses;
         private readonly IQueryContext queryContext;
@@ -31,7 +31,7 @@ namespace pdq.Implementation
         /// <inheritdoc />
         public IWhereBuilder And(Action<IWhereBuilder> builder)
         {
-            var b = Create(this.defaultClauseHandling, this.queryContext);
+            var b = Create(this.defaultClauseHandling, this.queryContext) as IWhereBuilderInternal;
             b.ClauseHandling.DefaultToAnd();
             builder(b);
 
@@ -42,7 +42,7 @@ namespace pdq.Implementation
         /// <inheritdoc />
         public IClauseHandlingBehaviour ClauseHandling => this.clauseHandlingBehaviour;
 
-        ClauseHandling IWhereBuilder.DefaultClauseHandling => this.defaultClauseHandling;
+        ClauseHandling IWhereBuilderInternal.DefaultClauseHandling => this.defaultClauseHandling;
 
         /// <inheritdoc />
         public IColumnWhereBuilder Column(string name, string targetAlias = null)
@@ -57,7 +57,7 @@ namespace pdq.Implementation
         /// <inheritdoc />
         public IWhereBuilder Or(Action<IWhereBuilder> builder)
         {
-            var b = Create(this.defaultClauseHandling, this.queryContext);
+            var b = Create(this.defaultClauseHandling, this.queryContext) as IWhereBuilderInternal;
             b.ClauseHandling.DefaultToOr();
             builder(b);
 
@@ -66,10 +66,10 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc />
-        void IWhereBuilder.AddClause(state.IWhere item) => this.clauses.Add(item);
+        void IWhereBuilderInternal.AddClause(state.IWhere item) => this.clauses.Add(item);
 
         /// <inheritdoc />
-        IEnumerable<state.IWhere> IWhereBuilder.GetClauses()
+        IEnumerable<state.IWhere> IWhereBuilderInternal.GetClauses()
         {
             if (this.defaultClauseHandling == common.ClauseHandling.And)
                 return new[] { state.Conditionals.And.Where(this.clauses) };

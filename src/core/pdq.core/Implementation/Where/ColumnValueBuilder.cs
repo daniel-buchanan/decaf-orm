@@ -9,7 +9,7 @@ namespace pdq.Implementation
 	public class ColumnValueBuilder : IColumnValueBuilder
 	{
         private readonly IQueryContext queryContext;
-        private readonly IWhereBuilder builder;
+        private readonly IWhereBuilderInternal builder;
         private readonly state.Column column;
         private readonly bool notEquals;
 
@@ -20,7 +20,7 @@ namespace pdq.Implementation
             bool notEquals)
 		{
             this.queryContext = queryContext;
-            this.builder = builder;
+            this.builder = builder as IWhereBuilderInternal;
             this.column = column;
             this.notEquals = notEquals;
 		}

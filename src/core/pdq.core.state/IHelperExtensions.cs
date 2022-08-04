@@ -1,11 +1,11 @@
 ﻿namespace pdq.state
 {
-	public interface IHelperExtensions
+	internal interface IHelperExtensions
 	{
-		internal IQueryContextInternal Context { get; }
+		IQueryContextInternal Context { get; }
 	}
 
-    public class HelperExtensions : IHelperExtensions
+    internal class HelperExtensions : IHelperExtensions
     {
         private readonly IQueryContextInternal context;
 

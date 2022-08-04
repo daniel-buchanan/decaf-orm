@@ -16,7 +16,7 @@ namespace pdq.core_tests
 {
     public class WhereBuilderTests
     {
-        private readonly PdqOptions options;
+        private PdqOptions options;
         private readonly ISelectQueryContext context;
         private readonly Select select;
 
@@ -28,11 +28,12 @@ namespace pdq.core_tests
             this.context = SelectQueryContext.Create(aliasManager);
             var connectionFactory = new MockConnectionFactory(loggerProxy);
             var transactionFactory = new MockTransactionFactory(connectionFactory, loggerProxy, this.options);
-            var transientFactory = new TransientFactory(this.options, loggerProxy, transactionFactory);
+            var sqlFactory = new MockSqlFactory();
+            var transientFactory = new TransientFactory(this.options, loggerProxy, transactionFactory, sqlFactory);
             var connectionDetails = new MockConnectionDetails();
             var transient = transientFactory.Create(connectionDetails);
 
-            var query = Query.Create(this.options, loggerProxy, transient);
+            var query = Query.Create(this.options, loggerProxy, transient) as IQueryInternal;
             this.select = Select.Create(this.context, query);
         }
 
@@ -568,11 +569,11 @@ namespace pdq.core_tests
             select.From("person", "p");
 
             // Act
-            IWhereBuilder builder = null;
+            IWhereBuilderInternal builder = null;
             select.Where(b =>
             {
                 b.ClauseHandling.DefaultToAnd();
-                builder = b;
+                builder = b as IWhereBuilderInternal;
             });
 
             // Assert
@@ -586,11 +587,11 @@ namespace pdq.core_tests
             select.From("person", "p");
 
             // Act
-            IWhereBuilder builder = null;
+            IWhereBuilderInternal builder = null;
             select.Where(b =>
             {
                 b.ClauseHandling.DefaultToOr();
-                builder = b;
+                builder = b as IWhereBuilderInternal;
             });
 
             // Assert
@@ -601,7 +602,7 @@ namespace pdq.core_tests
         public void NoClauseHandlingShouldThrowException()
         {
             // Arrange
-            this.options.OverrideDefaultClauseHandling(ClauseHandling.Unspecified);
+            this.options.SetProperty(o => o.DefaultClauseHandling, ClauseHandling.Unspecified);
             select.From("person", "p");
 
             // Act

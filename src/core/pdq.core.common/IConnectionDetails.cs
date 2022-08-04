@@ -3,7 +3,16 @@ using System.Threading.Tasks;
 
 namespace pdq.common
 {
-	public interface IConnectionDetails : IDisposable, IAsyncDisposable
+    internal interface IConnectionDetailsInternal : IConnectionDetails
+    {
+        /// <summary>
+        /// Gets the unique hash for this connection.
+        /// </summary>
+        /// <returns>The unique hash for the connection details.</returns>
+        string GetHash();
+    }
+
+	public interface IConnectionDetails : IDisposable
 	{
 		/// <summary>
         /// The hostname of the database server.
@@ -31,12 +40,6 @@ namespace pdq.common
         /// </summary>
         /// <returns>A task which returns the connection string.</returns>
 		Task<string> GetConnectionStringAsync();
-
-		/// <summary>
-        /// Gets the unique hash for this connection.
-        /// </summary>
-        /// <returns>The unique hash for the connection details.</returns>
-		internal string GetHash();
 	}
 }
 

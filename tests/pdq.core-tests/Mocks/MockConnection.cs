@@ -14,11 +14,7 @@ namespace pdq.core_tests.Mocks
         {
         }
 
-        public override IDbConnection GetUnderlyingConnection()
-        {
-            var connection = new Mock<IDbConnection>();
-            return connection.Object;
-        }
+        public override IDbConnection GetUnderlyingConnection() => new MockDbConnection();
     }
 }
 

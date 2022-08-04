@@ -9,6 +9,7 @@ using pdq.core_tests.Mocks;
 using pdq.core_tests.Models;
 using pdq.state;
 using pdq.state.Conditionals;
+using pdq.state.Conditionals.ValueFunctions;
 using pdq.state.QueryTargets;
 using Xunit;
 
@@ -42,14 +43,16 @@ namespace pdq.core_tests
             this.query
                 .Select()
                 .From<Person>(p => p)
-                .Join<Address>((p, a) => p.AddressId == a.Id)
-                .Where((p, a) => p.LastName.Contains("smith"));
+                .Where(p => p.LastName.Contains("smith"));
 
             // Assert
             var context = this.query.Context as ISelectQueryContext;
-            context.QueryTargets.Should().HaveCount(2);
-            context.Joins.Should().HaveCount(1);
-            context.WhereClause.Should().BeAssignableTo(typeof(state.Conditionals.IColumn));
+            context.QueryTargets.Should().HaveCount(1);
+            var where = context.WhereClause as IColumn;
+            where.Should().NotBeNull();
+            where.Details.Name.Should().Be(nameof(Person.LastName));
+            where.Details.Source.Alias.Should().Be("p");
+            where.ValueFunction.Should().BeAssignableTo(typeof(StringContains));
         }
 
         [Fact]
@@ -81,7 +84,7 @@ namespace pdq.core_tests
         }
 
         [Fact]
-        public void SimpleSelect2Succeeds()
+        public void SimpleSelectWithJoinSucceeds()
         {
             // Act
             this.query
@@ -123,43 +126,43 @@ namespace pdq.core_tests
                 yield return new object[] { ToExpression((p, a) => new Result {
                     City = a.City,
                     Name = p.FirstName,
-                    Timestamp = p.CreatedAt.DatePart(DatePart.Year)
+                    Timestamp = p.CreatedAt.DatePart(common.DatePart.Year)
                 })};
 
                 yield return new object[] { ToExpression((p, a) => new Result {
                     City = a.City,
                     Name = p.FirstName,
-                    Timestamp = p.CreatedAt.DatePart(DatePart.Day)
+                    Timestamp = p.CreatedAt.DatePart(common.DatePart.Day)
                 })};
 
                 yield return new object[] { ToExpression((p, a) => new Result {
                     City = a.City,
                     Name = p.FirstName,
-                    Timestamp = p.CreatedAt.DatePart(DatePart.Month)
+                    Timestamp = p.CreatedAt.DatePart(common.DatePart.Month)
                 })};
 
                 yield return new object[] { ToExpression((p, a) => new Result {
                     City = a.City,
                     Name = p.FirstName,
-                    Timestamp = p.CreatedAt.DatePart(DatePart.Minute)
+                    Timestamp = p.CreatedAt.DatePart(common.DatePart.Minute)
                 })};
 
                 yield return new object[] { ToExpression((p, a) => new Result {
                     City = a.City,
                     Name = p.FirstName,
-                    Timestamp = p.CreatedAt.DatePart(DatePart.Second)
+                    Timestamp = p.CreatedAt.DatePart(common.DatePart.Second)
                 })};
 
                 yield return new object[] { ToExpression((p, a) => new Result {
                     City = a.City,
                     Name = p.FirstName,
-                    Timestamp = p.CreatedAt.DatePart(DatePart.Millisecond)
+                    Timestamp = p.CreatedAt.DatePart(common.DatePart.Millisecond)
                 })};
 
                 yield return new object[] { ToExpression((p, a) => new Result {
                     City = a.City,
                     Name = p.FirstName,
-                    Timestamp = p.CreatedAt.DatePart(DatePart.Epoch)
+                    Timestamp = p.CreatedAt.DatePart(common.DatePart.Epoch)
                 })};
 
                 yield return new object[] { ToExpression((p, a) => new Result {

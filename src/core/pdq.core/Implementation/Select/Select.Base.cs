@@ -7,15 +7,15 @@ using pdq.state;
 
 namespace pdq.Implementation
 {
-	internal abstract class SelectBase : Execute
+	internal abstract class SelectBase : Execute<ISelectQueryContext>
 	{
         protected readonly PdqOptions options;
-        protected readonly ISelectQueryContext context;
+        protected new readonly ISelectQueryContext context;
 
         protected SelectBase(
             ISelectQueryContext context,
             IQuery query)
-            : base((IQueryInternal)query)
+            : base((IQueryInternal)query, context)
         {
             this.options = (query as IQueryInternal).Options;
             this.context = context;

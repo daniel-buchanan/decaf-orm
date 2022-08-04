@@ -13,12 +13,15 @@ namespace pdq
 		IWhereBuilder Or(Action<IWhereBuilder> builder);
 
 		IClauseHandlingBehaviour ClauseHandling { get; }
+	}
 
-		internal void AddClause(state.IWhere item);
+	internal interface IWhereBuilderInternal : IWhereBuilder
+    {
+		void AddClause(state.IWhere item);
 
-		internal IEnumerable<state.IWhere> GetClauses();
+		IEnumerable<state.IWhere> GetClauses();
 
-		internal ClauseHandling DefaultClauseHandling { get; }
+		ClauseHandling DefaultClauseHandling { get; }
 	}
 }
 

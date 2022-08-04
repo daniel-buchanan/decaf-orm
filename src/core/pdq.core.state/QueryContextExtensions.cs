@@ -6,7 +6,7 @@ using pdq.state.Utilities;
 
 namespace pdq.state
 {
-	public static class QueryContextExtensions
+	internal static class QueryContextExtensions
 	{
 		public static IHelperExtensions Helpers(this IQueryContext context)
         {

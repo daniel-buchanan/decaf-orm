@@ -4,7 +4,7 @@ using pdq.common.Logging;
 
 namespace pdq.common.Connections
 {
-	public abstract class Transaction : ITransaction
+	public abstract class Transaction : ITransactionInternal
 	{
         private readonly ILoggerProxy logger;
         protected readonly IConnection connection;
@@ -32,7 +32,7 @@ namespace pdq.common.Connections
         public Guid Id { get; }
 
         /// <inheritdoc/>
-        bool ITransaction.CloseConnectionOnCommitOrRollback => this.options.CloseConnectionOnCommitOrRollback;
+        bool ITransactionInternal.CloseConnectionOnCommitOrRollback => this.options.CloseConnectionOnCommitOrRollback;
 
         /// <inheritdoc/>
         public void Begin()

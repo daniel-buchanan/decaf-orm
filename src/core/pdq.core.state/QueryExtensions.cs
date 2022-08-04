@@ -5,6 +5,12 @@ namespace pdq.state
 {
 	internal static class QueryExtensions
 	{
+		/// <summary>
+        /// Create an <see cref="IQueryContext"/> from an <see cref="IQuery"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of <see cref="IQueryContext"/> to create.</typeparam>
+        /// <param name="query">Self.</param>
+        /// <returns>A newly created <see cref="IQueryContext"/>.</returns>
 		public static T CreateContext<T>(this IQuery query) where T: IQueryContext
         {
 			var internalQuery = query as IQueryInternal;

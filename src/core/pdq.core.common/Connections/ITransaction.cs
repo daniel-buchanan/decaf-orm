@@ -5,8 +5,6 @@ namespace pdq.common.Connections
 {
 	public interface ITransaction : IDisposable
 	{
-		internal bool CloseConnectionOnCommitOrRollback { get; }
-
 		Guid Id { get; }
 
 		IConnection Connection { get; }
@@ -18,6 +16,11 @@ namespace pdq.common.Connections
 		void Rollback();
 
 		IDbTransaction GetUnderlyingTransaction();
+	}
+
+	internal interface ITransactionInternal : ITransaction
+    {
+		bool CloseConnectionOnCommitOrRollback { get; }
 	}
 }
 

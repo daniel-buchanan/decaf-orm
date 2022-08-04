@@ -28,11 +28,11 @@ namespace pdq
         /// <param name="services">The <see cref="IServiceCollection"/> to add to.</param>
         /// <param name="options">An <see cref="Action{T}"/> that resolves the pdq options.</param>
         /// <returns></returns>
-        public static IServiceCollection AddPdq(this IServiceCollection services, Action<PdqOptions> options)
+        public static IServiceCollection AddPdq(this IServiceCollection services, Action<IPdqOptionsBuilder> options)
         {
-			var o = new PdqOptions();
-			options(o);
-			return AddPdq(services, o);
+			var b = new PdqOptionsBuilder() as IPdqOptionsBuilderInternal;
+			options(b);
+			return AddPdq(services, b.Build());
         }
 
         /// <summary>
@@ -51,6 +51,7 @@ namespace pdq
 			services.AddScoped(typeof(ILoggerProxy), options.LoggerProxyType);
             services.AddScoped(typeof(IConnectionFactory), options.ConnectionFactoryType);
             services.AddScoped(typeof(ITransactionFactory), options.TransactionFactoryType);
+            services.AddScoped(typeof(ISqlFactory), options.SqlFactoryType);
             services.AddScoped<ITransientFactory, TransientFactory>();
 			return services;
 		}

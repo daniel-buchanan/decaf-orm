@@ -5,18 +5,19 @@ using pdq.state;
 
 namespace pdq.Implementation
 {
-	internal class Delete<T> : Execute, IDeleteFrom<T>
+	internal class Delete<T> : Execute<IDeleteQueryContext>, IDeleteFrom<T>
 	{
-        private readonly IDeleteQueryContext context;
-
         private Delete(
             IDeleteQueryContext context,
-            IQueryInternal query) : base(query)
+            IQueryInternal query)
+            : base(query, context)
         {
             this.context = context;
         }
 
-        public static IDeleteFrom<T> Create(IDeleteQueryContext context, IQueryInternal query)
+        public static IDeleteFrom<T> Create(
+            IDeleteQueryContext context,
+            IQueryInternal query)
             => new Delete<T>(context, query);
 
         /// <inheritdoc />

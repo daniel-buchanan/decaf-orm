@@ -5,12 +5,12 @@ namespace pdq.services
 {
     public class ServiceBase
     {
-        private readonly ITransient transient;
+        private readonly ITransientInternal transient;
         private readonly IUnitOfWork unitOfWork;
 
         protected ServiceBase(ITransient transient)
         {
-            this.transient = transient;
+            this.transient = transient as ITransientInternal;
         }
 
         public ServiceBase(IUnitOfWork unitOfWork)
@@ -18,11 +18,11 @@ namespace pdq.services
             this.unitOfWork = unitOfWork;
         }
 
-        protected ITransient GetTransient()
+        internal ITransientInternal GetTransient()
         {
             if (this.transient != null) return this.transient;
 
-            return this.unitOfWork.Begin();
+            return this.unitOfWork.Begin() as ITransientInternal;
         }
     }
 }

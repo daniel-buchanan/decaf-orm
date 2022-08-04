@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace pdq
 {
-	public interface IExecuteDynamic
+	public interface IExecuteDynamic : IGetSql
 	{
 		IEnumerable<dynamic> AsEnumerable();
 
@@ -29,6 +29,8 @@ namespace pdq
 		dynamic SingleOrDefault();
 
 		Task<dynamic> SingleOrDefaultAsync();
+
+		IExecute<T> Typed<T>();
 	}
 }
 

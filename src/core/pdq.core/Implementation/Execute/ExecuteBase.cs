@@ -5,16 +5,34 @@ using pdq.common;
 
 namespace pdq.Implementation
 {
-    public abstract class ExecuteBase
+    public abstract class ExecuteBase<TContext> : IGetSql
+        where TContext: IQueryContext
 	{
-        protected IQueryInternal query;
+        internal IQueryInternal query;
+        internal TContext context;
+        protected ISqlFactory sqlFactory;
 
-		protected ExecuteBase(IQueryInternal query)
+		protected ExecuteBase(
+            IQuery query,
+            TContext context,
+            ISqlFactory sqlFactory)
 		{
-            this.query = query;
+            this.query = query as IQueryInternal;
+            this.context = context;
+            this.sqlFactory = sqlFactory;
 		}
 
-        protected IDbConnection GetConnection() => this.query.Transient.Connection.GetUnderlyingConnection();
+        protected IDbTransaction GetTransaction()
+        {
+            var internalTransient = this.query.Transient as ITransientInternal;
+            return internalTransient.Transaction.GetUnderlyingTransaction();
+        }
+
+        protected IDbConnection GetConnection()
+        {
+            var internalTransient = this.query.Transient as ITransientInternal;
+            return internalTransient.Connection.GetUnderlyingConnection();
+        }
 
         /// <summary>
         /// Execute a function on a DBTransaction
@@ -22,23 +40,21 @@ namespace pdq.Implementation
         /// <typeparam name="T">The return type for the function.</typeparam>
         /// <param name="func">The function to execute.</param>
         /// <returns>The result of the function</returns>
-        protected async Task<T> ExecuteAsync<T>(Func<string, object, IDbTransaction, Task<T>> func)
+        protected async Task<T> ExecuteAsync<T>(
+            Func<string, object, IDbConnection, IDbTransaction, Task<T>> func)
         {
-            var sql = GetSql();
-            var parameters = GetSqlParameters();
-            var transaction = this.query.Transient.Transaction.GetUnderlyingTransaction();
+            var template = this.sqlFactory.ParseContext(this.context);
+            var connection = GetConnection();
+            var transaction = GetTransaction();
 
-            return await func(sql, parameters, transaction);
+            return await func(template.Sql, template.Parameters, connection, transaction);
         }
 
-        protected string GetSql()
+        /// <inheritdoc/>
+        public string GetSql()
         {
-            throw new NotImplementedException();
-        }
-
-        private object GetSqlParameters()
-        {
-            throw new NotImplementedException();
+            var template = this.sqlFactory.ParseContext(this.context);
+            return template?.Sql;
         }
     }
 }

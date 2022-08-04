@@ -7,28 +7,29 @@ using pdq.state;
 namespace pdq.Implementation
 {
 	internal class Delete :
-        Execute,
+        Execute<IDeleteQueryContext>,
         IDelete,
         IDeleteFrom
 	{
-        private readonly IDeleteQueryContext context;
-
         private Delete(
             IDeleteQueryContext context,
-            IQuery query) : base((IQueryInternal)query)
+            IQueryInternal query)
+            : base(query, context)
         {
             this.context = context;
             this.query.SetContext(this.context);
         }
 
-        public static Delete Create(IDeleteQueryContext context, IQuery query)
+        public static Delete Create(
+            IDeleteQueryContext context,
+            IQueryInternal query)
             => new Delete(context, query);
 
         /// <inheritdoc />
         public IDeleteFrom From(string name, string alias = null, string schema = null)
         {
             var managedTable = this.query.AliasManager.GetAssociation(alias) ?? name;
-            var managedAlias = this.query.AliasManager.Add(name, alias);
+            var managedAlias = this.query.AliasManager.Add(alias, name);
             context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias, schema));
             return this;
         }
@@ -39,8 +40,8 @@ namespace pdq.Implementation
             var table = this.context.Helpers().GetTableName(aliasExpression);
             var alias = this.context.Helpers().GetTableAlias(aliasExpression);
 
-            var managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
-            var managedAlias = this.query.AliasManager.Add(table, alias);
+            var managedTable = this.query.AliasManager.GetAssociation(alias) ?? alias;
+            var managedAlias = this.query.AliasManager.Add(alias, table);
 
             this.context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
             return Delete<T>.Create(this.context, this.query);
@@ -50,7 +51,7 @@ namespace pdq.Implementation
         public IDeleteFrom<T> From<T>()
         {
             var table = this.context.Helpers().GetTableName<T>();
-            var alias = this.query.AliasManager.Add(table, null);
+            var alias = this.query.AliasManager.Add(null, table);
             this.context.From(state.QueryTargets.TableTarget.Create(table, alias));
             return Delete<T>.Create(this.context, this.query);
         }
@@ -58,7 +59,7 @@ namespace pdq.Implementation
         /// <inheritdoc />
         public IDeleteFrom Where(Action<IWhereBuilder> builder)
         {
-            var b = WhereBuilder.Create(this.query.Options, this.context);
+            var b = WhereBuilder.Create(this.query.Options, this.context) as IWhereBuilderInternal;
             builder(b);
             context.Where(b.GetClauses().First());
             return this;

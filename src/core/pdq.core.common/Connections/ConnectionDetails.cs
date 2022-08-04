@@ -4,7 +4,7 @@ using pdq.common.Utilities;
 
 namespace pdq.common.Connections
 {
-	public abstract class ConnectionDetails : IConnectionDetails
+	public abstract class ConnectionDetails : IConnectionDetailsInternal
 	{
         private string connectionString;
         private string hostname;
@@ -73,12 +73,6 @@ namespace pdq.common.Connections
             this.databaseName = null;
         }
 
-        public ValueTask DisposeAsync()
-        {
-            Dispose();
-            return new ValueTask();
-        }
-
         public string GetConnectionString() => GetConnectionStringAsync().WaitFor();
 
         public async Task<string> GetConnectionStringAsync()
@@ -94,7 +88,7 @@ namespace pdq.common.Connections
 
         protected abstract Task<string> ConstructConnectionString();
 
-        string IConnectionDetails.GetHash() => GetConnectionString().ToBase64String();
+        string IConnectionDetailsInternal.GetHash() => GetConnectionString().ToBase64String();
     }
 }
 

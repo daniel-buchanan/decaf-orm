@@ -109,8 +109,8 @@ namespace pdq.state.Utilities
             string column, alias = null;
 
             if (expression == null) return false;
-
             var methodCallExpression = expression as MethodCallExpression;
+            if (methodCallExpression == null) return false;
 
             if (methodCallExpression.Method.DeclaringType != typeof(ISelectColumnBuilder))
                 return false;

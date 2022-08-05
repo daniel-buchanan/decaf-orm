@@ -14,16 +14,18 @@ namespace pdq.state
 		public static T CreateContext<T>(this IQuery query) where T: IQueryContext
         {
 			var internalQuery = query as IQueryInternal;
+			var queryContextType = typeof(T);
 
 			if (internalQuery == null) return default(T);
-
-			var queryContextType = typeof(T);
 
 			if(queryContextType.IsAssignableFrom(typeof(ISelectQueryContext)))
 				return (T)SelectQueryContext.Create(internalQuery.AliasManager);
 
 			if (queryContextType.IsAssignableFrom(typeof(IDeleteQueryContext)))
 				return (T)DeleteQueryContext.Create(internalQuery.AliasManager);
+
+			if (queryContextType.IsAssignableFrom(typeof(IInsertQueryContext)))
+				return (T)InsertQueryContext.Create(internalQuery.AliasManager);
 
 			return default(T);
         }

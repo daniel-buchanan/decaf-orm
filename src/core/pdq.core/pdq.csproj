@@ -16,9 +16,6 @@
     <ProjectReference Include="..\pdq.core.state\pdq.state.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Implementation\Helpers\FieldExpressionHelper.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="Dapper" />
     <None Remove="Where\" />
     <None Remove="Exceptions\" />

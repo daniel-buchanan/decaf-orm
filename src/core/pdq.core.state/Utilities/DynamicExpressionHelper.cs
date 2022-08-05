@@ -107,7 +107,14 @@ namespace pdq.state.Utilities
                 if (TryGetColumnDetailsDynamic(methodCallExpression, out info))
                     return true;
 
-                memberExpression = methodCallExpression.Arguments[0] as MemberExpression;
+                if (methodCallExpression.Arguments.Count == 0)
+                {
+                    memberExpression = methodCallExpression.Object as MemberExpression;
+                }
+                else
+                {
+                    memberExpression = methodCallExpression.Arguments[0] as MemberExpression;
+                }
             }
 
             if(expression is UnaryExpression)
@@ -122,13 +129,12 @@ namespace pdq.state.Utilities
             if (methodCallExpression != null)
             {
                 Expression argument;
-                if (methodCallExpression.Arguments.Count == 1)
+                if (methodCallExpression.Arguments.Count >= 0 &&
+                   methodCallExpression.Object == null)
                     argument = methodCallExpression.Arguments[0];
-                else if (methodCallExpression.Arguments.Count > 1)
-                    argument = methodCallExpression.Arguments[0];
-                else
-                    argument = methodCallExpression.Arguments.FirstOrDefault();
-
+                else 
+                    argument = methodCallExpression.Object;
+                
                 memberExpression = argument as MemberExpression;
 
                 var defaultValue = methodCallExpression.Method.ReturnType.IsValueType ?

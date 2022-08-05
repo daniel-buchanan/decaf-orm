@@ -82,6 +82,52 @@ namespace pdq.core_tests
             // Assert
             method.Should().NotThrow();
         }
+
+        [Fact]
+        public void ParseConcreteWithExtensionsSucceeds()
+        {
+            // Arrange
+            var interim = this.query.Select()
+                .From<Person>(p => p)
+                .Where(p => p.FirstName.Contains("smith"));
+
+            // Act
+            Action method = () =>
+            {
+                interim.Select(b => new Person
+                {
+                    Id = b.Id,
+                    FirstName = b.FirstName.ToLower(),
+                    LastName = b.LastName.ToUpper()
+                });
+            };
+
+            // Assert
+            method.Should().NotThrow();
+        }
+
+        [Fact]
+        public void ParseConcreteWithSubstringSucceeds()
+        {
+            // Arrange
+            var interim = this.query.Select()
+                .From<Person>(p => p)
+                .Where(p => p.FirstName.Contains("smith"));
+
+            // Act
+            Action method = () =>
+            {
+                interim.Select(b => new Person
+                {
+                    Id = b.Id,
+                    FirstName = b.FirstName.Substring(1),
+                    LastName = b.LastName
+                });
+            };
+
+            // Assert
+            method.Should().NotThrow();
+        }
     }
 }
 

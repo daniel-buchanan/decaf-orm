@@ -10,34 +10,13 @@ namespace pdq
     /// </summary>
     public class PdqOptions
     {
-        public PdqOptions() : this(
-            defaultLogLevel: LogLevel.Error,
-            defaultClauseHandling: ClauseHandling.And,
-            trackTransients: false,
-            closeConnectionOnCommitOrRollback: false,
-            loggerProxyType: typeof(DefaultLogger))
+        public PdqOptions()
         {
-            
-        }
-
-        public PdqOptions(
-            LogLevel? defaultLogLevel,
-            ClauseHandling? defaultClauseHandling,
-            bool? trackTransients,
-            bool? closeConnectionOnCommitOrRollback,
-            Type loggerProxyType,
-            Type sqlFactoryType = null,
-            Type transactionFactoryType = null,
-            Type connectionFactoryType = null)
-        {
-            DefaultLogLevel = defaultLogLevel ?? LogLevel.Error;
-            DefaultClauseHandling = defaultClauseHandling ?? ClauseHandling.And;
-            TrackTransients = trackTransients ?? false;
-            CloseConnectionOnCommitOrRollback = closeConnectionOnCommitOrRollback ?? false;
-            LoggerProxyType = loggerProxyType ?? typeof(DefaultLogger);
-            SqlFactoryType = sqlFactoryType;
-            TransactionFactoryType = transactionFactoryType;
-            ConnectionFactoryType = connectionFactoryType;
+            DefaultLogLevel = LogLevel.Error;
+            DefaultClauseHandling = ClauseHandling.And;
+            TrackTransients = false;
+            CloseConnectionOnCommitOrRollback = false;
+            LoggerProxyType = typeof(DefaultLogger);
         }
 
         /// <summary>

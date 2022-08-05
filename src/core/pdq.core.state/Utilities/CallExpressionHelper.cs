@@ -189,7 +189,8 @@ namespace pdq.state.Utilities
                 }
 
                 var functionType = typeof(Column<>);
-                var implementedType = functionType.MakeGenericType(value.GetType());
+                var genericType = value?.GetType() ?? memberExpression.Type;
+                var implementedType = functionType.MakeGenericType(genericType);
                 var parameters = new object[] { col, op, valueFunction, value };
                 var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
                 result = (state.IWhere)Activator.CreateInstance(

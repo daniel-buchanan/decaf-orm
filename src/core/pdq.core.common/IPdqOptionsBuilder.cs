@@ -35,6 +35,14 @@ namespace pdq.common
         /// discovery of issues.
         /// </summary>
         void EnableTransientTracking();
+
+        /// <summary>
+        /// Close database connections after a commit or rollback. This will mean
+        /// that any time a query is made it will first have to create and open
+        /// a new connection to the database. If not enabled (default) then
+        /// connections will be re-used for multiple queries across a transaction.
+        /// </summary>
+        void CloseConnectionsOnCommitOrRollback();
     }
 
     internal interface IPdqOptionsBuilderInternal : IPdqOptionsBuilder

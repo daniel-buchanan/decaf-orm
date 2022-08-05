@@ -8,13 +8,11 @@ namespace pdq.common
 {
     public class PdqOptionsBuilder : IPdqOptionsBuilderInternal
     {
-        private readonly Dictionary<string, object> values;
+        private readonly Dictionary<string, object> values = new Dictionary<string, object>();
 
-        public PdqOptionsBuilder()
-        {
-            values = new Dictionary<string, object>();
-        }
+        public PdqOptionsBuilder() { }
 
+        /// <inheritdoc/>
         public PdqOptions Build()
         {
             var options = new PdqOptions();
@@ -32,31 +30,41 @@ namespace pdq.common
             return options;
         }
 
+        /// <inheritdoc/>
         public void EnableTransientTracking()
-            => ConfigureProperty(nameof(PdqOptions.TrackTransients), false);
+            => ConfigureProperty(nameof(PdqOptions.TrackTransients), true);
 
+        /// <inheritdoc/>
         public void OverrideDefaultClauseHandling(ClauseHandling handling)
             => ConfigureProperty(nameof(PdqOptions.DefaultClauseHandling), handling);
 
+        /// <inheritdoc/>
         public void OverrideDefaultLogLevel(LogLevel level)
             => ConfigureProperty(nameof(PdqOptions.DefaultLogLevel), level);
 
+        /// <inheritdoc/>
+        public void CloseConnectionsOnCommitOrRollback()
+            => ConfigureProperty(nameof(PdqOptions.CloseConnectionOnCommitOrRollback), true);
+
+        /// <inheritdoc/>
         public void SetConnectionFactory<T>() where T : IConnectionFactory
             => ConfigureProperty(nameof(PdqOptions.ConnectionFactoryType), typeof(T));
 
+        /// <inheritdoc/>
         public void SetLoggerProxy<T>() where T : ILoggerProxy
             => ConfigureProperty(nameof(PdqOptions.LoggerProxyType), typeof(T));
 
+        /// <inheritdoc/>
         public void SetSqlFactory<T>() where T : ISqlFactory
             => ConfigureProperty(nameof(PdqOptions.SqlFactoryType), typeof(T));
 
+        /// <inheritdoc/>
         public void SetTransactionFactory<T>() where T : ITransactionFactory
             => ConfigureProperty(nameof(PdqOptions.TransactionFactoryType), typeof(T));
 
+        /// <inheritdoc/>
         private void ConfigureProperty<T>(string property, T value)
-        {
-            this.values.Add(property, value);
-        }
+            => this.values.Add(property, value);
     }
 }
 

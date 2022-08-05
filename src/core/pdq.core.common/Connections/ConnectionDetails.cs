@@ -16,6 +16,7 @@ namespace pdq.common.Connections
             this.connectionString = null;
 		}
 
+        /// <inheritdoc/>
         public string Hostname
         {
             get => this.hostname ?? String.Empty;
@@ -30,6 +31,7 @@ namespace pdq.common.Connections
             }
         }
 
+        /// <inheritdoc/>
         public int Port
         {
             get => this.port ?? 0;
@@ -44,6 +46,7 @@ namespace pdq.common.Connections
             }
         }
 
+        /// <inheritdoc/>
         public string DatabaseName
         {
             get => this.databaseName ?? String.Empty;
@@ -58,6 +61,7 @@ namespace pdq.common.Connections
             }
         }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             Dispose(true);
@@ -73,8 +77,10 @@ namespace pdq.common.Connections
             this.databaseName = null;
         }
 
+        /// <inheritdoc/>
         public string GetConnectionString() => GetConnectionStringAsync().WaitFor();
 
+        /// <inheritdoc/>
         public async Task<string> GetConnectionStringAsync()
         {
             if(this.connectionString != null)
@@ -88,6 +94,7 @@ namespace pdq.common.Connections
 
         protected abstract Task<string> ConstructConnectionString();
 
+        /// <inheritdoc/>
         string IConnectionDetailsInternal.GetHash() => GetConnectionString().ToBase64String();
     }
 }

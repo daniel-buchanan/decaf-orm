@@ -151,18 +151,15 @@ namespace pdq.state.Utilities
                 methodCallExpression = unaryExpression.Operand as MethodCallExpression;
             }
 
-            if (methodCallExpression != null)
-            {
-                if (methodCallExpression.Arguments.Count == 0)
-                    memberExpression = methodCallExpression.Object as MemberExpression;
-                else
-                    memberExpression = methodCallExpression.Arguments[0] as MemberExpression;
-            }
+            if (methodCallExpression?.Arguments.Count == 0)
+                memberExpression = methodCallExpression.Object as MemberExpression;
+            else if(methodCallExpression != null)
+                memberExpression = methodCallExpression.Arguments[0] as MemberExpression;
 
             if (memberExpression == null)
                 memberExpression = expression as MemberExpression;
 
-            TryGetFunction(methodCallExpression, context, out var tempMemberExpression, out var function);
+            GetFunction(methodCallExpression, context, out var tempMemberExpression, out var function);
             memberExpression = tempMemberExpression ?? memberExpression;
 
             if (memberExpression == null) return false;
@@ -176,7 +173,7 @@ namespace pdq.state.Utilities
             return true;
         }
 
-        private bool TryGetFunction(
+        private void GetFunction(
             MethodCallExpression methodCallExpression,
             IQueryContextInternal context,
             out MemberExpression memberExpression,
@@ -187,7 +184,7 @@ namespace pdq.state.Utilities
             Expression argument;
 
             if (methodCallExpression == null)
-                return false;
+                return;
 
             if (methodCallExpression.Arguments.Count >= 1 &&
                methodCallExpression.Object == null)
@@ -206,10 +203,8 @@ namespace pdq.state.Utilities
             {
                 var parsedColumn = parsed as Conditionals.IColumn;
                 function = parsedColumn.ValueFunction;
-                return true;
+                return;
             }
-
-            return false;
         }
     }
 }

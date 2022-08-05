@@ -18,24 +18,28 @@ namespace pdq.Implementation
         public static Insert<T> Create(IInsertQueryContext context, IQueryInternal query)
             => new Insert<T>(query, context);
 
+        /// <inheritdoc/>
         public IInsertValues<T> Columns(Expression<Func<T, dynamic>> columns)
         {
             base.AddColumns(columns);
             return this;
         }
 
+        /// <inheritdoc/>
         public IInsertValues<T> From(Action<ISelect> query)
         {
             base.FromQuery(query);
             return this;
         }
 
+        /// <inheritdoc/>
         public IInsertValues<T> Value(T value)
         {
             base.AddValues<T>(new[] { value });
             return this;
         }
 
+        /// <inheritdoc/>
         public IInsertValues<T> Values(IEnumerable<T> values)
         {
             base.AddValues<T>(values);

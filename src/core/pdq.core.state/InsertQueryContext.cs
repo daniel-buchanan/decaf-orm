@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using pdq.common;
 
 namespace pdq.state
@@ -20,7 +21,8 @@ namespace pdq.state
             => new InsertQueryContext(aliasManager, QueryTypes.Insert);
 
         /// <inheritdoc/>
-        public ITableTarget Target { get; private set; }
+        public ITableTarget Target
+            => this.QueryTargets.FirstOrDefault() as ITableTarget;
 
         /// <inheritdoc/>
         public IReadOnlyCollection<Column> Columns => this.columns.AsReadOnly();
@@ -34,6 +36,9 @@ namespace pdq.state
         /// <inheritdoc/>
         public IInsertQueryContext Column(Column column)
         {
+            var item = this.columns.FirstOrDefault(c => c.IsEquivalentTo(column));
+            if (item != null) return this;
+
             this.columns.Add(column);
             return this;
         }
@@ -48,7 +53,11 @@ namespace pdq.state
         /// <inheritdoc/>
         public IInsertQueryContext Into(ITableTarget target)
         {
-            Target = target;
+            var item = this.QueryTargets.FirstOrDefault(t => t.IsEquivalentTo(target));
+            if (item != null) return this;
+
+            var internalContext = this as IQueryContextInternal;
+            internalContext.AddQueryTarget(target);
             return this;
         }
 

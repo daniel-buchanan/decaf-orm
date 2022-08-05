@@ -23,6 +23,8 @@
     <None Remove="Implementation\Select\" />
     <None Remove="Implementation\Delete\" />
     <None Remove="Implementation\Execute\" />
+    <None Remove="Implementation\Insert\" />
+    <None Remove="Implementation\Insert\Insert.Typed" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Where\" />
@@ -31,5 +33,6 @@
     <Folder Include="Implementation\Select\" />
     <Folder Include="Implementation\Delete\" />
     <Folder Include="Implementation\Execute\" />
+    <Folder Include="Implementation\Insert\" />
   </ItemGroup>
 </Project>

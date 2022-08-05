@@ -95,37 +95,37 @@ namespace pdq.state.Utilities
             IQueryContextInternal context,
             out DynamicPropertyInfo info)
         {
-            var methodCallExpression = expression as MethodCallExpression;
-            if (methodCallExpression != null)
-            {
-                if (TryGetColumnDetailsDynamic(methodCallExpression, out info))
-                    return true;
-            }
+            if (TryGetColumnDetailsDynamic(expression, out info))
+                return true;
 
             return TryGetColumnDetailsConcrete(expression, context, out info);
         }
 
         private bool TryGetColumnDetailsDynamic(
-            MethodCallExpression expression,
+            Expression expression,
             out DynamicPropertyInfo info)
         {
             info = null;
             string column, alias = null;
 
-            if (expression.Method.DeclaringType != typeof(ISelectColumnBuilder))
+            if (expression == null) return false;
+
+            var methodCallExpression = expression as MethodCallExpression;
+
+            if (methodCallExpression.Method.DeclaringType != typeof(ISelectColumnBuilder))
                 return false;
 
-            if (expression.Arguments.Count == 1)
+            if (methodCallExpression.Arguments.Count == 1)
             {
-                var arg = expression.Arguments[0] as ConstantExpression;
+                var arg = methodCallExpression.Arguments[0] as ConstantExpression;
                 column = arg.Value as string;
             }
             else
             {
-                var arg = expression.Arguments[0] as ConstantExpression;
+                var arg = methodCallExpression.Arguments[0] as ConstantExpression;
                 column = arg.Value as string;
 
-                arg = expression.Arguments[1] as ConstantExpression;
+                arg = methodCallExpression.Arguments[1] as ConstantExpression;
                 alias = arg.Value as string;
             }
 
@@ -199,12 +199,11 @@ namespace pdq.state.Utilities
                 null;
             var tempExpression = Expression.Equal(methodCallExpression, Expression.Constant(defaultValue));
             var parsed = this.callExpressionHelper.ParseExpression(tempExpression, context);
-            if (parsed is Conditionals.IColumn)
-            {
-                var parsedColumn = parsed as Conditionals.IColumn;
-                function = parsedColumn.ValueFunction;
-                return;
-            }
+
+            if (!(parsed is Conditionals.IColumn)) return;
+
+            var parsedColumn = parsed as Conditionals.IColumn;
+            function = parsedColumn.ValueFunction;
         }
     }
 }

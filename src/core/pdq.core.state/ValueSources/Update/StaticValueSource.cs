@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace pdq.state.ValueSources.update
+namespace pdq.state.ValueSources.Update
 {
 	public abstract class StaticValueSource : IUpdateValueSource
 	{

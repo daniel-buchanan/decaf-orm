@@ -129,7 +129,7 @@ namespace pdq.state.Utilities
             if (methodCallExpression != null)
             {
                 Expression argument;
-                if (methodCallExpression.Arguments.Count >= 0 &&
+                if (methodCallExpression.Arguments.Count >= 1 &&
                    methodCallExpression.Object == null)
                     argument = methodCallExpression.Arguments[0];
                 else 

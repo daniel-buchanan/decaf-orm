@@ -72,7 +72,15 @@ namespace pdq.state
         public IInsertQueryContext Value(object[] value)
         {
             var staticValueSource = Source as IInsertStaticValuesSource;
-            if (staticValueSource == null) return this;
+
+            if(Source != null && staticValueSource == null)
+                return this;
+
+            if (staticValueSource == null)
+            {
+                staticValueSource = state.ValueSources.Insert.StaticValuesSource.Create(value.Length);
+                Source = staticValueSource;
+            }
 
             staticValueSource.AddValue(value);
             return this;

@@ -5,6 +5,7 @@ using FluentAssertions;
 using pdq.common;
 using pdq.state;
 using pdq.state.QueryTargets;
+using pdq.state.ValueSources.Insert;
 using Xunit;
 
 namespace pdq.core_tests
@@ -86,9 +87,36 @@ namespace pdq.core_tests
             this.context.Into(target);
 
             // Assert
+            this.context.Target.Should().Be(target);
             this.context.QueryTargets.Count.Should().Be(1);
         }
 
+        [Fact]
+        public void AddValuesSucceeds()
+        {
+            // Arrange
+            var values = new object[] { "hello", "world", 42 };
+
+            // Act
+            this.context.Value(values);
+
+            // Assert
+            this.context.Source.Should().BeAssignableTo<IInsertStaticValuesSource>();
+        }
+
+        [Fact]
+        public void AddValuesAfterSettingSourceToQueryDoesNothing()
+        {
+            // Arrange
+            this.context.From(QueryValuesSource.Create(null));
+            var values = new object[] { "hello", "world", 42 };
+
+            // Act
+            this.context.Value(values);
+
+            // Assert
+            this.context.Source.Should().BeAssignableTo<QueryValuesSource>();
+        }
 
         public static IEnumerable<object[]> ColumnTests
         {

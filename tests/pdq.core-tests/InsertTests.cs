@@ -34,8 +34,6 @@ namespace pdq.core_tests
         [Fact]
         public void SimpleInsertSucceeds()
         {
-            // Arrange
-
             // Act
             this.query.Insert()
                 .Into("users")
@@ -217,6 +215,44 @@ namespace pdq.core_tests
             var source = context.Source as IInsertStaticValuesSource;
             source.Should().NotBeNull();
             source.Values.Should().HaveCount(2);
+        }
+
+        [Fact]
+        public void InsertTypedFromQuerySucceeds()
+        {
+            // Arrange
+            Action<ISelect> fromQuery = (b) =>
+            {
+                var fromDate = DateTime.Parse("2022-01-01");
+                b.From("users", "u")
+                    .Where(bb => bb.Column("created_at", "u").Is().GreaterThan(fromDate))
+                    .Select(bb => new
+                    {
+                        Email = bb.Is<string>("email", "u"),
+                        FirstName = bb.Is<string>("first_name", "u"),
+                        LastName = bb.Is<string>("last_name", "u")
+                    }); ;
+            };
+
+            // Act
+            this.query.Insert()
+                .Into<Person>()
+                .Columns(p => new
+                {
+                    p.Email,
+                    p.FirstName,
+                    p.LastName
+                })
+                .From(fromQuery);
+
+            // Assert
+            var context = this.query.Context as IInsertQueryContext;
+            context.Should().NotBeNull();
+            context.Target.Name.Should().Be(nameof(Person));
+            context.Columns.Count.Should().Be(3);
+            var source = context.Source as IInsertQueryValuesSource;
+            source.Should().NotBeNull();
+            source.Query.Should().NotBeNull();
         }
     }
 }

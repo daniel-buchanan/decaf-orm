@@ -20,8 +20,8 @@ namespace pdq.state.ValueSources.Insert
 
 		public void AddValue(object[] value)
         {
-			if (value == null) throw new ArgumentNullException(nameof(values), "The values MUST be provided when adding to a StaticValueSource.");
-			if (value.Length < Width || value.Length > Width) throw new ArgumentOutOfRangeException(nameof(values), $"The values provided MUST have {Width} values in the tuple.");
+			if (value == null) throw new ArgumentNullException(nameof(value), "The values MUST be provided when adding to a StaticValueSource.");
+			if (value.Length < Width || value.Length > Width) throw new ArgumentOutOfRangeException(nameof(value), $"The values provided MUST have {Width} values in the tuple.");
 
 			this.values.Add(value);
         }

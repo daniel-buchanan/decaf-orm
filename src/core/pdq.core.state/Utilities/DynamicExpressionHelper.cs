@@ -124,7 +124,7 @@ namespace pdq.state.Utilities
             if (methodCallExpression.Method.DeclaringType == typeof(ISelectColumnBuilder))
                 GetColumnAliasForSelectBuilder(methodCallExpression, out column, out alias);
             else if (methodCallExpression.Method.DeclaringType == typeof(IInsertColumnBuilder))
-                GetColumnAliasForInsertBuilder(methodCallExpression, out column, out alias);
+                GetColumnAliasForInsertBuilder(out column, out alias);
             else
                 return false;
 
@@ -171,7 +171,6 @@ namespace pdq.state.Utilities
         }
 
         private void GetColumnAliasForInsertBuilder(
-            MethodCallExpression expression,
             out string column,
             out string alias)
         {

@@ -102,6 +102,44 @@ namespace pdq.core_tests
         }
 
         [Fact]
+        public void InsertFromQuerySucceeds()
+        {
+            // Arrange
+            Action<ISelect> fromQuery = (b) =>
+            {
+                var fromDate = DateTime.Parse("2022-01-01");
+                b.From<Person>()
+                    .Where(p => p.CreatedAt > fromDate)
+                    .Select(p => new
+                    {
+                        email = p.Email,
+                        first_name = p.FirstName,
+                        last_name = p.LastName
+                    });
+            };
+
+            // Act
+            this.query.Insert()
+                .Into("users")
+                .Columns(b => new
+                {
+                    email = b.Is<string>(),
+                    first_name = b.Is<string>(),
+                    last_name = b.Is<string>()
+                })
+                .From(fromQuery);
+
+            // Assert
+            var context = this.query.Context as IInsertQueryContext;
+            context.Should().NotBeNull();
+            context.Target.Name.Should().Be("users");
+            context.Columns.Count.Should().Be(3);
+            var source = context.Source as IInsertQueryValuesSource;
+            source.Should().NotBeNull();
+            source.Query.Should().NotBeNull();
+        }
+
+        [Fact]
         public void SimpleTypedInsertSucceeds()
         {
             // Arrange

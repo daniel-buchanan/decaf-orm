@@ -9,4 +9,9 @@ namespace pdq.state
         void AddValue(object[] value);
         IReadOnlyCollection<object[]> Values { get; }
     }
+
+    public interface IInsertQueryValuesSource : IInsertValuesSource
+    {
+        ISelectQueryContext Query { get; }
+    }
 }

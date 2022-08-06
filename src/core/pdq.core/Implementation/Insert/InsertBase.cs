@@ -16,12 +16,13 @@ namespace pdq.Implementation
             this.query.SetContext(this.context);
         }
 
-        protected void FromQuery(Action<ISelect> query)
+        protected void FromQuery(Action<ISelect> queryBuilder)
         {
             var context = SelectQueryContext.Create(this.query.AliasManager);
-            var select = Select.Create(context, this.query);
+            var query = this.query.Transient.Query() as IQueryInternal;
+            var select = Select.Create(context, query);
 
-            query(select);
+            queryBuilder(select);
             var source = state.ValueSources.Insert.QueryValuesSource.Create(context);
             this.context.From(source);
         }

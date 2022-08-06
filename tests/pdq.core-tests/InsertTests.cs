@@ -4,6 +4,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
 using pdq.core_tests.Mocks;
+using pdq.core_tests.Models;
 using pdq.state;
 using Xunit;
 
@@ -98,6 +99,56 @@ namespace pdq.core_tests
             var source = context.Source as IInsertStaticValuesSource;
             source.Should().NotBeNull();
             source.Values.Should().HaveCount(2);
+        }
+
+        [Fact]
+        public void SimpleTypedInsertSucceeds()
+        {
+            // Arrange
+            var objects = new dynamic[]
+            {
+                new
+                {
+                    email = "bob@bob.com",
+                    first_name = "Bob",
+                    last_name = "Smith"
+                },
+                new
+                {
+                    email = "jane@bob.com",
+                    first_name = "Jane",
+                    last_name = "Doe"
+                }
+            };
+
+            // Act
+            this.query.Insert()
+                .Into<Person>()
+                .Columns(p => new
+                {
+                    p.AddressId,
+                    p.Email,
+                    p.FirstName,
+                    p.LastName,
+                    p.CreatedAt
+                })
+                .Value(new Person
+                {
+                    AddressId = 42,
+                    Email = "bob@bob.com",
+                    FirstName = "Bob",
+                    LastName = "Smith",
+                    CreatedAt = DateTime.UtcNow
+                });
+
+            // Assert
+            var context = this.query.Context as IInsertQueryContext;
+            context.Should().NotBeNull();
+            context.Target.Name.Should().Be(nameof(Person));
+            context.Columns.Count.Should().Be(5);
+            var source = context.Source as IInsertStaticValuesSource;
+            source.Should().NotBeNull();
+            source.Values.Should().HaveCount(1);
         }
     }
 }

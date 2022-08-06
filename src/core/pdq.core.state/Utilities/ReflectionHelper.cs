@@ -188,7 +188,7 @@ namespace pdq.state.Utilities
                                  .Any(a => ((IgnoreColumnForAttribute)a)
                                  .QueryType.HasFlag(queryType) ||
                                  ((IgnoreColumnForAttribute)a).QueryType == QueryTypes.None) ||
-                                 p.GetCustomAttributes().Count() == 0
+                                 !p.GetCustomAttributes().Any()
                           select p).ToArray();
 
             // iternate through properties

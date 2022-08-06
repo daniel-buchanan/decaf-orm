@@ -13,6 +13,7 @@ namespace pdq.Implementation
         protected InsertBase(IQueryInternal query, IInsertQueryContext context)
             : base(query, context)
         {
+            this.query.SetContext(this.context);
         }
 
         protected void FromQuery(Action<ISelect> query)
@@ -25,15 +26,11 @@ namespace pdq.Implementation
             this.context.From(source);
         }
 
-        protected void AddValues<T>(IEnumerable<T> values)
+        protected void AddValues(Expression expression)
         {
-            foreach (var v in values)
-            {
-                Expression<Func<T>> expr = () => v;
-                var properties = this.context.Helpers().GetPropertyInformation(expr);
-                var row = properties.Select(p => p.Value).ToArray();
-                this.context.Value(row);
-            }
+            var properties = this.context.Helpers().GetPropertyInformation(expression);
+            var row = properties.Select(p => p.Value).ToArray();
+            this.context.Value(row);
         }
 
 

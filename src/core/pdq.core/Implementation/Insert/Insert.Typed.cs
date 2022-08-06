@@ -33,16 +33,16 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc/>
-        public IInsertValues<T> Value(T value)
+        public IInsertValues<T> Value(Expression<Func<T>> value)
         {
-            base.AddValues<T>(new[] { value });
+            base.AddValues(value);
             return this;
         }
 
         /// <inheritdoc/>
-        public IInsertValues<T> Values(IEnumerable<T> values)
+        public IInsertValues<T> Values(Expression<Func<IEnumerable<T>>> values)
         {
-            base.AddValues<T>(values);
+            base.AddValues(values);
             return this;
         }
     }

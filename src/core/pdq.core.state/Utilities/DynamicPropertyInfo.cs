@@ -21,6 +21,9 @@ namespace pdq.state.Utilities
 			Function = function;
         }
 
+		public static DynamicPropertyInfo Empty()
+			=> new DynamicPropertyInfo(null, null, null, null, null, null);
+
 		public static DynamicPropertyInfo Create(
 			string name = null,
 			string newName = null,

@@ -57,7 +57,7 @@ using (var t = uow.Begin())
                 id = b.Is<int>(),
                 name = b.Is<string>()
             })
-            .Value(new
+            .Value(() => new
             {
                 id = 42,
                 name = "smith"

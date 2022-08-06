@@ -26,13 +26,19 @@ namespace pdq.Implementation
             this.context.From(source);
         }
 
-        protected void AddValues(Expression expression)
+        protected void AddValues<T>(T value)
         {
-            var properties = this.context.Helpers().GetPropertyInformation(expression);
-            var row = properties.Select(p => p.Value).ToArray();
+            var internalContext = this.context as IQueryContextInternal;
+            var properties = internalContext.ReflectionHelper.GetMemberNames(value);
+            var values = properties.Select(p => internalContext.ReflectionHelper.GetPropertyValue(value, p));
+            var row = values.ToArray();
             this.context.Value(row);
         }
 
+        protected void AddValues<T>(IEnumerable<T> values)
+        {
+            foreach (var v in values) AddValues(v);
+        }
 
         protected void AddColumns(Expression expression)
         {

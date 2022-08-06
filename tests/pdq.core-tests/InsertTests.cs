@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
@@ -43,7 +44,7 @@ namespace pdq.core_tests
                     first_name = b.Is<string>(),
                     last_name = b.Is<string>()
                 })
-                .Value(() => new
+                .Value(new
                 {
                     email = "bob@bob.com",
                     first_name = "Bob",
@@ -56,6 +57,47 @@ namespace pdq.core_tests
             context.Target.Name.Should().Be("users");
             context.Columns.Count.Should().Be(3);
             context.Source.Should().BeAssignableTo<IInsertStaticValuesSource>();
+        }
+
+        [Fact]
+        public void SimpleInsertMultipleValuesSucceeds()
+        {
+            // Arrange
+            var objects = new dynamic[]
+            {
+                new
+                {
+                    email = "bob@bob.com",
+                    first_name = "Bob",
+                    last_name = "Smith"
+                },
+                new
+                {
+                    email = "jane@bob.com",
+                    first_name = "Jane",
+                    last_name = "Doe"
+                }
+            };
+
+            // Act
+            this.query.Insert()
+                .Into("users")
+                .Columns(b => new
+                {
+                    email = b.Is<string>(),
+                    first_name = b.Is<string>(),
+                    last_name = b.Is<string>()
+                })
+                .Values(objects);
+
+            // Assert
+            var context = this.query.Context as IInsertQueryContext;
+            context.Should().NotBeNull();
+            context.Target.Name.Should().Be("users");
+            context.Columns.Count.Should().Be(3);
+            var source = context.Source as IInsertStaticValuesSource;
+            source.Should().NotBeNull();
+            source.Values.Should().HaveCount(2);
         }
     }
 }

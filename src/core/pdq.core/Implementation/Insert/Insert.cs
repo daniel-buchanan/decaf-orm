@@ -66,14 +66,14 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc/>
-        public IInsertValues Value(Expression<Func<dynamic>> value)
+        public IInsertValues Value(dynamic value)
         {
-            base.AddValues(value);
+            base.AddValues(new[] { value });
             return this;
         }
 
         /// <inheritdoc/>
-        public IInsertValues Values(Expression<Func<IEnumerable<dynamic>>> values)
+        public IInsertValues Values(IEnumerable<dynamic> values)
         {
             base.AddValues(values);
             return this;

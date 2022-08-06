@@ -142,23 +142,6 @@ namespace pdq.core_tests
         [Fact]
         public void SimpleTypedInsertSucceeds()
         {
-            // Arrange
-            var objects = new dynamic[]
-            {
-                new
-                {
-                    email = "bob@bob.com",
-                    first_name = "Bob",
-                    last_name = "Smith"
-                },
-                new
-                {
-                    email = "jane@bob.com",
-                    first_name = "Jane",
-                    last_name = "Doe"
-                }
-            };
-
             // Act
             this.query.Insert()
                 .Into<Person>()
@@ -187,6 +170,53 @@ namespace pdq.core_tests
             var source = context.Source as IInsertStaticValuesSource;
             source.Should().NotBeNull();
             source.Values.Should().HaveCount(1);
+        }
+
+        [Fact]
+        public void SimpleTypedInsertMultipleValuesSucceeds()
+        {
+            // Arrange
+            var objects = new Person[]
+            {
+                new Person
+                {
+                    Email = "bob@bob.com",
+                    FirstName = "Bob",
+                    LastName = "Smith",
+                    CreatedAt = DateTime.Now,
+                    AddressId = 42
+                },
+                new Person
+                {
+                    Email = "jane@bob.com",
+                    FirstName = "Jane",
+                    LastName = "Doe",
+                    CreatedAt = DateTime.Now,
+                    AddressId = 43
+                }
+            };
+
+            // Act
+            this.query.Insert()
+                .Into<Person>()
+                .Columns(p => new
+                {
+                    p.AddressId,
+                    p.Email,
+                    p.FirstName,
+                    p.LastName,
+                    p.CreatedAt
+                })
+                .Values(objects);
+
+            // Assert
+            var context = this.query.Context as IInsertQueryContext;
+            context.Should().NotBeNull();
+            context.Target.Name.Should().Be(nameof(Person));
+            context.Columns.Count.Should().Be(5);
+            var source = context.Source as IInsertStaticValuesSource;
+            source.Should().NotBeNull();
+            source.Values.Should().HaveCount(2);
         }
     }
 }

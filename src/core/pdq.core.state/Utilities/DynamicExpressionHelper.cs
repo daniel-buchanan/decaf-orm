@@ -66,15 +66,21 @@ namespace pdq.state.Utilities
             LambdaExpression expression,
             IQueryContextInternal context)
         {
-            var body = (NewExpression)expression.Body;
+            var body = expression.Body as NewExpression;
+            if (body == null) return new List<DynamicPropertyInfo>();
 
             var countArguments = body.Arguments.Count;
             var properties = new DynamicPropertyInfo[countArguments];
 
             for (var i = 0; i < countArguments; i += 1)
             {
-                if (!TryGetColumnDetails(body.Arguments[i], context, out var info))
-                    continue;
+                var a = body.Arguments[i];
+                if (!TryGetColumnDetails(a, context, out var info))
+                {
+                    info = DynamicPropertyInfo.Empty();
+                    var val = this.expressionHelper.GetValue(a);
+                    info.SetValue(val);
+                }
 
                 properties[i] = info;
             }
@@ -84,7 +90,10 @@ namespace pdq.state.Utilities
                 var m = body.Members[i];
                 if (m.Name == properties[i].Name) continue;
 
-                properties[i].SetNewName(m.Name);
+                if (string.IsNullOrWhiteSpace(properties[i].Name))
+                    properties[i].SetName(m.Name);
+                else
+                    properties[i].SetNewName(m.Name);
             }
 
             return properties.ToList();
@@ -112,7 +121,11 @@ namespace pdq.state.Utilities
             var methodCallExpression = expression as MethodCallExpression;
             if (methodCallExpression == null) return false;
 
-            if (methodCallExpression.Method.DeclaringType != typeof(ISelectColumnBuilder))
+            if (methodCallExpression.Method.DeclaringType == typeof(ISelectColumnBuilder))
+                GetColumnAliasForSelectBuilder(methodCallExpression, out column, out alias);
+            else if (methodCallExpression.Method.DeclaringType == typeof(IInsertColumnBuilder))
+                GetColumnAliasForInsertBuilder(out column, out alias);
+            else
                 return false;
 
             if (methodCallExpression.Arguments.Count == 1)
@@ -120,7 +133,7 @@ namespace pdq.state.Utilities
                 var arg = methodCallExpression.Arguments[0] as ConstantExpression;
                 column = arg.Value as string;
             }
-            else
+            else if (methodCallExpression.Arguments.Count > 1)
             {
                 var arg = methodCallExpression.Arguments[0] as ConstantExpression;
                 column = arg.Value as string;
@@ -134,6 +147,36 @@ namespace pdq.state.Utilities
             return true;
         }
 
+        private void GetColumnAliasForSelectBuilder(
+            MethodCallExpression expression,
+            out string column,
+            out string alias)
+        {
+            column = null;
+            alias = null;
+
+            if (expression.Arguments.Count == 1)
+            {
+                var arg = expression.Arguments[0] as ConstantExpression;
+                column = arg.Value as string;
+            }
+            else
+            {
+                var arg = expression.Arguments[0] as ConstantExpression;
+                column = arg.Value as string;
+
+                arg = expression.Arguments[1] as ConstantExpression;
+                alias = arg.Value as string;
+            }
+        }
+
+        private void GetColumnAliasForInsertBuilder(
+            out string column,
+            out string alias)
+        {
+            column = null;
+            alias = null;
+        }
 
         private bool TryGetColumnDetailsConcrete(
             Expression expression,

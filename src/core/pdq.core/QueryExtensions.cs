@@ -24,6 +24,14 @@ namespace pdq
         /// <example>q.Select().From("users", "u").Where(b => b.Column("name").Is().EndssWith("bob");</example>
         public static ISelect Select(this IQuery query)
             => Implementation.Select.Create(query.CreateContext<ISelectQueryContext>(), query as IQueryInternal);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static IInsert Insert(this IQuery query)
+            => Implementation.Insert.Create(query.CreateContext<IInsertQueryContext>(), query as IQueryInternal);
 	}
 }
 

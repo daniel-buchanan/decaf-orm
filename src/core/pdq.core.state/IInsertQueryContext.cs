@@ -19,6 +19,8 @@ namespace pdq.state
 
 		IInsertQueryContext From(IInsertValuesSource source);
 
+		IInsertQueryContext Value(object[] value);
+
 		IInsertQueryContext Output(Output output);
 	}
 }

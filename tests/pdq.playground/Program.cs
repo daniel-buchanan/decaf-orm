@@ -50,6 +50,19 @@ using (var t = uow.Begin())
                 City = a.City
             });
 
+        q.Insert()
+            .Into("bob")
+            .Columns(b => new
+            {
+                id = b.Is<int>(),
+                name = b.Is<string>()
+            })
+            .Value(new
+            {
+                id = 42,
+                name = "smith"
+            });
+
     }
     
 }

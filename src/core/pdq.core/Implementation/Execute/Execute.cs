@@ -7,7 +7,7 @@ using pdq.common.Utilities;
 
 namespace pdq.Implementation
 {
-    internal class Execute<TContext> : ExecuteBase<TContext>, IExecute
+    internal abstract class Execute<TContext> : ExecuteBase<TContext>, IExecute
         where TContext: IQueryContext
 	{
 		protected Execute(

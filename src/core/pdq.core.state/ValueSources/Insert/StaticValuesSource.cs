@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace pdq.state.ValueSources.Insert
 {
-	public class StaticValuesSource : IInsertValuesSource
+	public class StaticValuesSource : IInsertStaticValuesSource
 	{
 		private readonly List<object[]> values;
 
@@ -18,12 +18,12 @@ namespace pdq.state.ValueSources.Insert
 
 		public IReadOnlyCollection<object[]> Values => this.values.AsReadOnly();
 
-		public void AddValue(object[] values)
+		public void AddValue(object[] value)
         {
-			if (values == null) throw new ArgumentNullException(nameof(values), "The values MUST be provided when adding to a StaticValueSource.");
-			if (values.Length < Width || values.Length > Width) throw new ArgumentOutOfRangeException(nameof(values), $"The values provided MUST have {Width} values in the tuple.");
+			if (value == null) throw new ArgumentNullException(nameof(value), "The values MUST be provided when adding to a StaticValueSource.");
+			if (value.Length < Width || value.Length > Width) throw new ArgumentOutOfRangeException(nameof(value), $"The values provided MUST have {Width} values in the tuple.");
 
-			this.values.Add(values);
+			this.values.Add(value);
         }
 
 		public static StaticValuesSource Create(int width)

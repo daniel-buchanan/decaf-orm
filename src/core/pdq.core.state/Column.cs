@@ -24,7 +24,7 @@ namespace pdq.state
 		public override bool IsEquivalentTo(Column column)
         {
 			var minimum = column.Name == Name &&
-				column.Source.Alias == Source.Alias;
+				column.Source?.Alias == Source?.Alias;
 
 			if (!minimum) return false;
 

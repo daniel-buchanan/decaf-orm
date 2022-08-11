@@ -26,10 +26,13 @@ namespace pdq
             => Implementation.Select.Create(query.CreateContext<ISelectQueryContext>(), query as IQueryInternal);
 
         /// <summary>
-        /// 
+        /// Begin an insert query, this will allow you to insert records into a single table.<br/>
+        /// You may have multiple sources for your insert query, whether that be static values,
+        /// or from another query itself.
         /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
+        /// <param name="query">The query instance that will become an "insert" query.</param>
+        /// <returns>(FluentApi) The ability to specify the base table, view to insert into.</returns>
+        /// <example>q.Insert().Into("users", "u"),Value(new { first_name = "Bob", last_name = "Smith" });</example>
         public static IInsert Insert(this IQuery query)
             => Implementation.Insert.Create(query.CreateContext<IInsertQueryContext>(), query as IQueryInternal);
 

@@ -9,35 +9,39 @@ namespace pdq.state.Utilities
 			string name,
 			string newName,
 			object value,
-			Type expression,
+			Type valueType,
+			Type type,
 			string alias,
 			IValueFunction function)
 		{
             Name = name;
 			NewName = newName;
 			Value = value;
-			Type = expression;
+			Type = type;
 			Alias = alias;
 			Function = function;
         }
 
 		public static DynamicPropertyInfo Empty()
-			=> new DynamicPropertyInfo(null, null, null, null, null, null);
+			=> new DynamicPropertyInfo(null, null, null, null, null, null, null);
 
 		public static DynamicPropertyInfo Create(
 			string name = null,
 			string newName = null,
 			object value = null,
+			Type valueType = null,
 			Type type = null,
 			string alias = null,
 			IValueFunction function = null)
-			=> new DynamicPropertyInfo(name, newName, value, type, alias, function);
+			=> new DynamicPropertyInfo(name, newName, value, valueType, type, alias, function);
 
 		public string Name { get; private set; }
 
 		public string NewName { get; private set; }
 
 		public object Value { get; private set; }
+
+		public Type ValueType { get; private set; }
 
 		public Type Type { get; private set; }
 
@@ -50,6 +54,8 @@ namespace pdq.state.Utilities
         public void SetNewName(string value) => NewName = value;
 
 		public void SetValue(object value) => Value = value;
+
+		public void SetValueType(Type type) => ValueType = type;
 
 		public void SetType(Type type) => Type = type;
 

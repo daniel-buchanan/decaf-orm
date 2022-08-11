@@ -79,7 +79,9 @@ namespace pdq.state.Utilities
                 {
                     info = DynamicPropertyInfo.Empty();
                     var val = this.expressionHelper.GetValue(a);
+                    var valueType = this.expressionHelper.GetType(a);
                     info.SetValue(val);
+                    info.SetValueType(valueType);
                 }
 
                 properties[i] = info;

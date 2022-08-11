@@ -2,30 +2,40 @@
 
 namespace pdq.state.ValueSources.Update
 {
-	public abstract class StaticValueSource : IUpdateValueSource
+	public class StaticValueSource : IUpdateValueSource
 	{
-		public abstract Type ValueType { get; }
-
-		public static StaticValueSource<T> Create<T>(state.Column column, T value)
+        private StaticValueSource(
+			Column column,
+			Type type,
+			object value)
         {
-			return new StaticValueSource<T>(column, value);
-        }
-	}
-
-	public class StaticValueSource<T> : StaticValueSource
-	{
-		internal StaticValueSource(state.Column column, T value)
-		{
 			Column = column;
+			ValueType = type;
 			Value = value;
-			ValueType = typeof(T);
-		}
+        }
 
-		public state.Column Column { get; private set; }
+		public Type ValueType { get; private set; }
 
-		public T Value { get; private set; }
+		public Column Column { get; private set; }
 
-        public override Type ValueType { get; }
-	}
+		public object Value { get; private set; }
+
+		public T GetValue<T>()
+        {
+			if (Value == null) return default(T);
+
+			var convertedValue = Convert.ChangeType(Value, typeof(T));
+			return (T)convertedValue;
+        }
+
+		public static StaticValueSource Create(
+			Column column,
+			Type type,
+			object value)
+			=> new StaticValueSource(column, type, value);
+
+        public static StaticValueSource Create<T>(Column column, T value)
+			=> new StaticValueSource(column, typeof(T), value);
+    }
 }
 

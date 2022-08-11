@@ -460,6 +460,82 @@ There are two kinds of selects for the un-typed version, in the same vein as for
 ## Update
 
 ## Insert
+Allows for an *"insert"* to be performed on a given table, using one of the following methods:  
+1. Manually providing either individual values, or a set of values
+2. From a query, this can be specified inline, or passed as a parameter
+
+One simple example:
+```csharp
+query.Insert()
+  .Into("users")
+  .Columns(b => new {
+    email = b.Is<string>(),
+    first_name = b.Is<string>(),
+    last_name = b.Is<string>()
+  })
+  .Value(new {
+    email = "bob@bob.com",
+    first_name = "Bob",
+    last_name = "Smith"
+  });
+```
+
+As you would expect, the flow of the Fluent API follows the way that you would write the query naturally.  
+The primary difference is when you are inserting using a query, which looks like this:  
+```csharp
+query.Insert()
+  .Into("users", "u")
+  .Columns(b => new {
+    email = b.Is<string>(),
+    first_name = b.Is<string>(),
+    last_name = b.Is<string>()
+  })
+  .From(q => {
+    q.From<Person>()
+      .Where(p => p.CreatedAt > DateTime.Now)
+      .Select(p => new {
+        email = p.Email,
+        first_name = p.FirstName,
+        last_name = p.LastName
+      });
+  });
+```
+
+Of course, the query that you use to select the data for your insert follows all the same rules as a normal select query, see [Select](#select) for more information.
+
+### Methods
+The following methods are supported:
+
+| Method | Description |
+| ------ | ----------- |
+| `.Into(string table, string alias = null)` | Un-Typed "into", alias is entirely optional. |
+| `.Into<T>()` | Typed "into", with no alias specified. |
+| `.Into<T>(Expression<Func<T, object>>)` | Typed "into", with an expression specifying the alias. |
+| `.Columns(Expression<Func<IInsertColumnBuilder, dynamic>>)` | Un-Typed column selection, returning a dynamic set of columns. |
+| `.Columns<T>(Expression<Func<T, dynamic>>)` | Typed column selection, returnning a dynamic set of columns. |
+| `.Value(dynamic)` | Add a row which conforms to the set of columns previoiusly selected using a dynamic/anonymous object. |
+| `.Value<T>(T)` | Add a row providing an instance of the type to insert. |
+| `.Values(IEnumerable<dynamic>)` | Add a number of rows which conform to the set of columns previously selected using dynamic/anonymous objects. |
+| `.Values<T>(IEnumerable<T>)` | Add a number of rows which are of the type being inserted. |
+| `.From(Action<ISelect>)` | Add rows based on a provided query. See [Select](#select) for more information. |
+
+#### Into
+```csharp
+// Un-Typed "into", alias is entirely optional
+.Into(string table, string alias = null)
+// Typed "into", no alias selector
+.Into<T>()
+// Typed "into", with alias selector
+// Usage: .Into<Person>(p => p)
+.Into<T>(Expression<Func<T, object>> expression)
+```
+
+#### Selecting Columns
+```csharp
+// 
+.Columns(Expression<Func<IInsertColumnBuilder, dynamic>> expression)
+.Columns(Expression<Func<TSource, dynamic>> expression)
+```
 
 ## Execution
 

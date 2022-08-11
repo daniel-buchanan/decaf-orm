@@ -78,6 +78,34 @@ namespace pdq.core_tests
             // Assert
             this.context.Updates.Should().HaveCount(1);
         }
+
+        [Fact]
+        public void OutputSucceeds()
+        {
+            // Arrange
+            var column = Column.Create("email", "users", "a");
+            var output = Output.Create(column, OutputSources.Updated);
+
+            // Act
+            this.context.AddOutput(output);
+
+            // Assert
+            this.context.Outputs.Should().HaveCount(1);
+        }
+
+        [Fact]
+        public void WhereClauseSucceeds()
+        {
+            // Arrange
+            var column = Column.Create("id", TableTarget.Create("users", "u"));
+            var clause = state.Conditionals.Column.Equals(column, 42);
+
+            // Act
+            this.context.Where(clause);
+
+            // Assert
+            this.context.WhereClause.Should().NotBeNull();
+        }
     }
 }
 

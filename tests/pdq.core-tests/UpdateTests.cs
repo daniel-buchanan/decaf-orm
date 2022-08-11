@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
@@ -32,7 +33,7 @@ namespace pdq.core_tests
         }
 
         [Fact]
-        public void SimpleUpdateSucceeds()
+        public void SimpleTypedUpdateSucceeds()
         {
             // Act
             this.query
@@ -53,7 +54,7 @@ namespace pdq.core_tests
         }
 
         [Fact]
-        public void SimpleUpdateWithAliasSucceeds()
+        public void SimpleTypedUpdateWithAliasSucceeds()
         {
             // Act
             this.query
@@ -74,7 +75,7 @@ namespace pdq.core_tests
         }
 
         [Fact]
-        public void SimpleUpdateWithConcreteSetSucceeds()
+        public void SimpleTypedUpdateWithConcreteSetSucceeds()
         {
             // Act
             this.query
@@ -94,6 +95,32 @@ namespace pdq.core_tests
             where.Should().NotBeNull();
             where.Details.Name.Should().Be(nameof(Person.Id));
             where.Details.Source.Alias.Should().Be("p");
+            where.Value.Should().BeEquivalentTo(42);
+        }
+
+        [Fact]
+        public void SimpleUpdateSucceeds()
+        {
+            // Act
+            this.query
+                .Update()
+                .Table("users", "u")
+                .Set(new
+                {
+                    last_name = "Smith"
+                })
+                .Where(b => b.Column("Id", "u").Is().EqualTo(42));
+
+            // Assert
+            var context = this.query.Context as IUpdateQueryContext;
+            context.QueryTargets.Should().HaveCount(1);
+            context.Updates.Should().HaveCount(1);
+            var and = context.WhereClause as And;
+            and.Should().NotBeNull();
+            var where = and.Children.First() as IColumn;
+            where.Should().NotBeNull();
+            where.Details.Name.Should().Be("Id");
+            where.Details.Source.Alias.Should().Be("u");
             where.Value.Should().BeEquivalentTo(42);
         }
     }

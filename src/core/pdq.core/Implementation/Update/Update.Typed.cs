@@ -52,7 +52,7 @@ namespace pdq.Implementation
         /// <inheritdoc/>
         public IUpdateSet<T> Set(T values)
         {
-            base.SetValues(values);
+            base.SetValues(new[] { values });
             return this;
         }
 

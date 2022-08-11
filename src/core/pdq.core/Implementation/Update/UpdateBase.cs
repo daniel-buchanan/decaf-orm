@@ -32,7 +32,7 @@ namespace pdq.Implementation
             foreach(var v in values) SetValues(v);
         }
 
-        protected void SetValues<T>(T value)
+        private void SetValues<T>(T value)
         {
             var internalContext = this.context as IQueryContextInternal;
             var paramExpression = Expression.Parameter(typeof(T), "p");

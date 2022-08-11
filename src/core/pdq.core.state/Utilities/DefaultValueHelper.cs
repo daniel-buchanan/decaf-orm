@@ -17,6 +17,8 @@ namespace pdq.state.Utilities
         /// <returns>The default value for the provided type.</returns>
         public static object Get(Type type)
         {
+            if (type == null) return null;
+
             if (type.IsValueType)
                 return Activator.CreateInstance(type);
 

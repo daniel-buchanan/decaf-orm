@@ -77,29 +77,20 @@ namespace pdq.state.Utilities
 
             // get object type and properties
             var objType = obj.GetType();
-            var properties = objType.GetProperties();
-
-            //igore any properties which have ignore set 
-            properties = (from p in properties
-                          where p.GetCustomAttributes(typeof(IgnoreColumnForAttribute), true)
-                                 .Any(a => ((IgnoreColumnForAttribute)a)
-                                 .QueryType.HasFlag(context.Kind) ||
-                                 ((IgnoreColumnForAttribute)a).QueryType == QueryTypes.None) ||
-                                 !p.GetCustomAttributes().Any()
-                          select p).ToArray();
+            var properties = context.ReflectionHelper.GetMemberNames(obj, context.Kind);
 
             // iternate through properties
             foreach (var p in properties)
             {
                 // get field name
-                var name = context.ReflectionHelper.GetFieldName(p);
-                var value = context.ReflectionHelper.GetPropertyValue(obj, p.Name);
+                var name = p;
+                var value = context.ReflectionHelper.GetPropertyValue(obj, name);
 
                 // add to set
                 var info = DynamicPropertyInfo.Create(
                     name: name,
                     value: value,
-                    valueType: p.PropertyType,
+                    valueType: value?.GetType(),
                     type: objType);
                 results.Add(info);
             }

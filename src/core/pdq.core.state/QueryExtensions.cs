@@ -27,6 +27,9 @@ namespace pdq.state
 			if (queryContextType.IsAssignableFrom(typeof(IInsertQueryContext)))
 				return (T)InsertQueryContext.Create(internalQuery.AliasManager);
 
+			if (queryContextType.IsAssignableFrom(typeof(IUpdateQueryContext)))
+				return (T)UpdateQueryContext.Create(internalQuery.AliasManager);
+
 			return default(T);
         }
 	}

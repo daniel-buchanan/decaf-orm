@@ -8,13 +8,23 @@ namespace pdq.state
     {
 		ITableTarget Table { get; }
 
-		IReadOnlyCollection<Tuple<Column, IUpdateValueSource>> Updates { get; }
+		IReadOnlyCollection<IUpdateValueSource> Updates { get; }
 
-		IUpdateSource Source { get; }
+		IQueryTarget Source { get; }
 
 		IWhere WhereClause { get; }
 
 		IReadOnlyCollection<Output> Outputs { get; }
+
+		void Update(ITableTarget target);
+
+		void From(IQueryTarget source);
+
+		void Where(IWhere where);
+
+		void AddOutput(Output output);
+
+		void Set(IUpdateValueSource value);
     }
 }
 

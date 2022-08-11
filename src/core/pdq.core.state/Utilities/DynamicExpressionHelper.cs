@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using pdq.Attributes;
+using pdq.common;
 
 namespace pdq.state.Utilities
 {
@@ -26,6 +28,9 @@ namespace pdq.state.Utilities
 
             if (expression.Body is MemberInitExpression)
                 return GetPropertiesForMemberInit(expression, context);
+
+            if (expression.Body is ConstantExpression)
+                return GetPropertiesForConstant(expression, context);
 
             return GetPropertiesForNew(expression, context);
         }
@@ -60,6 +65,46 @@ namespace pdq.state.Utilities
             }
 
             return properties.ToList();
+        }
+
+        private List<DynamicPropertyInfo> GetPropertiesForConstant(
+            LambdaExpression expression,
+            IQueryContextInternal context)
+        {
+            var results = new List<DynamicPropertyInfo>();
+            var constExpression = expression.Body as ConstantExpression;
+            var obj = constExpression.Value;
+
+            // get object type and properties
+            var objType = obj.GetType();
+            var properties = objType.GetProperties();
+
+            //igore any properties which have ignore set 
+            properties = (from p in properties
+                          where p.GetCustomAttributes(typeof(IgnoreColumnForAttribute), true)
+                                 .Any(a => ((IgnoreColumnForAttribute)a)
+                                 .QueryType.HasFlag(context.Kind) ||
+                                 ((IgnoreColumnForAttribute)a).QueryType == QueryTypes.None) ||
+                                 !p.GetCustomAttributes().Any()
+                          select p).ToArray();
+
+            // iternate through properties
+            foreach (var p in properties)
+            {
+                // get field name
+                var name = context.ReflectionHelper.GetFieldName(p);
+                var value = context.ReflectionHelper.GetPropertyValue(obj, p.Name);
+
+                // add to set
+                var info = DynamicPropertyInfo.Create(
+                    name: name,
+                    value: value,
+                    valueType: p.PropertyType,
+                    type: objType);
+                results.Add(info);
+            }
+
+            return results;
         }
 
         private List<DynamicPropertyInfo> GetPropertiesForNew(
@@ -239,9 +284,7 @@ namespace pdq.state.Utilities
 
             memberExpression = argument as MemberExpression;
 
-            var defaultValue = methodCallExpression.Method.ReturnType.IsValueType ?
-                Activator.CreateInstance(methodCallExpression.Method.ReturnType) :
-                null;
+            var defaultValue = DefaultValueHelper.Get(methodCallExpression.Method.ReturnType);
             var tempExpression = Expression.Equal(methodCallExpression, Expression.Constant(defaultValue));
             var parsed = this.callExpressionHelper.ParseExpression(tempExpression, context);
 

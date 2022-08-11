@@ -17,6 +17,7 @@ namespace pdq.state.Utilities
             Name = name;
 			NewName = newName;
 			Value = value;
+			ValueType = valueType;
 			Type = type;
 			Alias = alias;
 			Function = function;

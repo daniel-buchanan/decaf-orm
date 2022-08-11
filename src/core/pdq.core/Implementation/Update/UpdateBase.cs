@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
 using pdq.state;
+using pdq.state.Utilities;
 
 namespace pdq.Implementation
 {
@@ -49,6 +50,11 @@ namespace pdq.Implementation
                 var column = Column.Create(p.Name, this.context.Table);
                 var v = p.Value;
                 var valueType = p.ValueType;
+                var defaultValue = DefaultValueHelper.Get(valueType);
+                if (v?.Equals(defaultValue) == true ||
+                    (v == null && defaultValue == null))
+                    continue;
+
                 var source = state.ValueSources.Update.StaticValueSource.Create(column, valueType, v);
                 this.context.Set(source);
             }

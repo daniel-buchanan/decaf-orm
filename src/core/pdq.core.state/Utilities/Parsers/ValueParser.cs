@@ -25,16 +25,9 @@ namespace pdq.state.Utilities.Parsers
             if (earlyResult != null) return earlyResult;
 
             var valueResult = ParseMemberExpression(expression, context);
-            if (valueResult == null) valueResult = ParseBinaryExpression(expression);
-
-            var queryTarget = context.GetQueryTarget(valueResult.Alias);
-            if (queryTarget == null)
-            {
-                queryTarget = QueryTargets.TableTarget.Create(valueResult.Table, valueResult.Alias);
-                context.AddQueryTarget(queryTarget);
-            }
+            if (valueResult == null) valueResult = ParseBinaryExpression(expression, context);
             
-            var col = state.Column.Create(valueResult.Field, queryTarget);
+            var col = state.Column.Create(valueResult.Field, valueResult.Table);
 
             //add the model type for the type def of the repository
             var convertedValue = GetConvertedValue(valueResult.Value, valueResult.ValueType);
@@ -84,13 +77,21 @@ namespace pdq.state.Utilities.Parsers
             var val = Parse(expression, context);
             var valType = this.expressionHelper.GetType(expression);
             var field = this.expressionHelper.GetName(expression);
-            var table = this.reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
-            var alias = this.expressionHelper.GetParameterName(expression);
             var op = EqualityOperator.Equals;
-            return new ValueResult(field, table, alias, val, valType, op);
+
+            var target = context.GetQueryTarget(memberExpression);
+            if (target == null)
+            {
+                var table = this.reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
+                var alias = this.expressionHelper.GetParameterName(expression);
+                target = QueryTargets.TableTarget.Create(table, alias);
+                context.AddQueryTarget(target);
+            }
+
+            return new ValueResult(field, target, val, valType, op);
         }
 
-        private ValueResult ParseBinaryExpression(Expression expression)
+        private ValueResult ParseBinaryExpression(Expression expression, IQueryContextInternal context)
         {
             BinaryExpression operation;
             if (expression.NodeType == ExpressionType.Lambda)
@@ -122,22 +123,28 @@ namespace pdq.state.Utilities.Parsers
                 return null;
 
             var field = this.expressionHelper.GetName(memberExpression);
-            var alias = this.expressionHelper.GetParameterName(memberExpression);
-            var table = this.reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
             var value = this.expressionHelper.GetValue(valueExpression);
             var valueType = this.expressionHelper.GetType(valueExpression);
 
-            return new ValueResult(field, table, alias, value, valueType, op);
+            var target = context.GetQueryTarget(memberExpression);
+            if(target == null)
+            {
+                var alias = this.expressionHelper.GetParameterName(memberExpression);
+                var table = this.reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
+                target = QueryTargets.TableTarget.Create(table, alias);
+                context.AddQueryTarget(target);
+            }
+
+            return new ValueResult(field, target, value, valueType, op);
         }
 
         private sealed class ValueResult
         {
             public ValueResult() { }
 
-            public ValueResult(string field, string table, string alias, object value, Type valueType, EqualityOperator op)
+            public ValueResult(string field, IQueryTarget table, object value, Type valueType, EqualityOperator op)
             {
                 Field = field;
-                Alias = alias;
                 Table = table;
                 Value = value;
                 ValueType = valueType;
@@ -147,8 +154,7 @@ namespace pdq.state.Utilities.Parsers
             public object Value { get; set; }
             public Type ValueType { get; set; }
             public string Field { get; set; }
-            public string Table { get; set; }
-            public string Alias { get; set; }
+            public IQueryTarget Table { get; set; }
             public EqualityOperator Operator { get; set; }
         }
     }

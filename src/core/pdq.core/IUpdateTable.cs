@@ -11,11 +11,11 @@ namespace pdq
         /// </summary>
         /// <param name="query">The query that defines the source for this update.</param>
         /// <returns>
-        /// (FluentApi) Returns an <see cref="IUpdateSet"/> which provides the
+        /// (FluentApi) Returns an <see cref="IUpdateSetFromQuery"/> which provides the
         /// ability to continue setting column values, perform filtering or
         /// execute the query.
         /// </returns>
-        IUpdateSet From(Action<ISelectWithAlias> query);
+        IUpdateSetFromQuery From(Action<ISelectWithAlias> query);
 
         /// <summary>
         /// Set the value of a column to the provided value.
@@ -58,7 +58,7 @@ namespace pdq
         /// ability to continue setting column values, perform filtering or
         /// execute the query.
         /// </returns>
-        IUpdateSet<T> From(Action<ISelectWithAlias> query);
+        IUpdateSetFromQuery<T> From(Action<ISelectWithAlias> query);
 
         /// <summary>
         /// Set the value of a column to the provided value.

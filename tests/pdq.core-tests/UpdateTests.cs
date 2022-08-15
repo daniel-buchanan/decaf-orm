@@ -123,6 +123,68 @@ namespace pdq.core_tests
             where.Details.Source.Alias.Should().Be("u");
             where.Value.Should().BeEquivalentTo(42);
         }
+
+        [Fact]
+        public void SimpleUpdateFromQUerySucceeds()
+        {
+            // Act
+            this.query
+                .Update()
+                .Table("users", "u")
+                .From(b =>
+                {
+                    b.From("person", "p")
+                        .Where(w => w.Column("id", "p").Is().EqualTo().Column("id", "u"))
+                        .Select(s => new
+                        {
+                            first_name = s.Is<string>("firstName", "u")
+                        });
+                })
+                .Set("first_name", "first_name")
+                .Where(b => b.Column("Id", "u").Is().EqualTo(42));
+
+            // Assert
+            var context = this.query.Context as IUpdateQueryContext;
+            context.QueryTargets.Should().HaveCount(1);
+            context.Updates.Should().HaveCount(1);
+            var and = context.WhereClause as And;
+            and.Should().NotBeNull();
+            var where = and.Children.First() as IColumn;
+            where.Should().NotBeNull();
+            where.Details.Name.Should().Be("Id");
+            where.Details.Source.Alias.Should().Be("u");
+            where.Value.Should().BeEquivalentTo(42);
+        }
+
+        [Fact]
+        public void SimpleTypedUpdateFromQUerySucceeds()
+        {
+            // Act
+            this.query
+                .Update()
+                .Table<User>(u => u)
+                .From(b =>
+                {
+                    b.From<Person>(p => p)
+                        .Where(p => p.LastName == null)
+                        .Select(p => new
+                        {
+                            p.FirstName
+                        });
+                })
+                .Set(u => u.FirstName, "FirstName")
+                .Where(u => u.Id == 42);
+
+            // Assert
+            var context = this.query.Context as IUpdateQueryContext;
+            context.QueryTargets.Should().HaveCount(1);
+            context.Updates.Should().HaveCount(1);
+            var where = context.WhereClause as IColumn;
+            where.Should().NotBeNull();
+            where.Details.Name.Should().Be("Id");
+            where.Details.Source.Alias.Should().Be("u");
+            where.Value.Should().BeEquivalentTo(42);
+        }
     }
 }
 

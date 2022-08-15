@@ -12,7 +12,8 @@ namespace pdq.Implementation
         UpdateBase,
         IUpdate,
         IUpdateTable,
-        IUpdateSet
+        IUpdateSet,
+        IUpdateSetFromQuery
     {
         private Update(
             IUpdateQueryContext context,
@@ -29,7 +30,7 @@ namespace pdq.Implementation
             => new Update(context, query);
 
         /// <inheritdoc/>
-        public IUpdateSet From(Action<ISelectWithAlias> query)
+        public IUpdateSetFromQuery From(Action<ISelectWithAlias> query)
         {
             base.FromQuery(query);
             return this;
@@ -55,6 +56,15 @@ namespace pdq.Implementation
         public IUpdateSet Set(dynamic values)
         {
             base.SetValues(new[] { values });
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IUpdateSetFromQuery Set(string columnToUpdate, string sourceColumn)
+        {
+            var destination = Column.Create(columnToUpdate, this.context.Table);
+            var source = Column.Create(sourceColumn, this.context.Source);
+            this.context.Set(QueryValueSource.Create(destination, source, this.context.Source));
             return this;
         }
 
@@ -94,6 +104,20 @@ namespace pdq.Implementation
             var whereBuilder = WhereBuilder.Create(base.query.Options, this.context) as IWhereBuilderInternal;
             builder(whereBuilder);
             this.context.Where(whereBuilder.GetClauses().First());
+            return this;
+        }
+
+        /// <inheritdoc/>
+        IUpdateSetFromQuery IUpdateSetFromQuery.Output(string column)
+        {
+            this.Output(column);
+            return this;
+        }
+
+        /// <inheritdoc/>
+        IUpdateSetFromQuery IUpdateSetFromQuery.Where(Action<IWhereBuilder> builder)
+        {
+            this.Where(builder);
             return this;
         }
     }

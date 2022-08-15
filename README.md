@@ -458,6 +458,71 @@ There are two kinds of selects for the un-typed version, in the same vein as for
 ## Delete
 
 ## Update
+Allows for an *"update"* to be performed on a given table, using one of the following methods:
+1. Manually providing the individual values
+2. From a query, which can be specified inline, or passed as a parameter
+
+One simple example:
+```csharp
+query.Update()
+  .Table("users", "u")
+  .Set("first_name", "Bob")
+  .Where(b => b.Column("id", "u").Is().EqualTo(42))
+  .Output("id");
+```
+
+As you would expect, the syntax reads the way that you would write the query normally, and you have the ability to specify as many *"set"* clauses as you need.  
+Updates have the same restrictions as per-normal, insofar that any column selected for "output", must exist in the table being updated.
+
+The main difference to the above example when using a query to get the values for the update is as follows:
+```csharp
+query.Update()
+  .Table("users", "u")
+  .From(q => {
+    q.KnownAs("q");
+    q.From("person", "p")
+      .Where(b => b.Column("last_name", "p").Is().Null())
+      .Select(b => new {
+        id = b.Is<int>("id", "p"),
+        first_name = b.Is<string>("first_name", "p")
+      });
+  })
+  .Set("first_name", "first_name")
+  .Where(b => b.Column("id", "u").Is().EqualTo().Column("id", "q"));
+```
+
+The things to note in the above query are:
+1. `q.KnownAs(alias)`, this is required for the *"set"* and the *"where"* to know where to get their values from
+2. The query inside the `.From(query)` follows normal [select](#select) syntax and limitations
+3. When you are using the `.Set(destination, source)` method you do not need to specify the aliases of the respective destination table, or source query as they are already known
+
+See below for a simple example using the typed syntax:  
+```csharp
+query.Update()
+  .Table<User>(u => u)
+  .Set(u => u.FirstName, "Bob")
+  .Where(u => u.Id == 42);
+```
+
+### Methods
+The following methods are supported:
+| Method | Description |
+| ------ | ----------- |
+| `.Table(name, alias)` | Sets the destination (to be updated) table for the query. |
+| `.Table<T>()` | Sets the destination (to be updated) table for the query using a strongly typed argument. |
+| `.Table<T>(expression)` | Sets the destination (to be updated) table for the query, using a strongly typed argument, and an expression of the form `u => u` to specify the alias. |
+| `.Set<T>(column, value)` | Sets the value for a given column. Note that the column name is a string value, whereas the value can be any value and will be inferred from usage. |
+| `.Set<T, TValue>(expression, value)` | Sets the value for a given column, using an expression of the form `u => u.Id` to specify the column, and then taking in the value whose type will be inferred from the type of the property selected. |
+| `.Set(values)` | Set the values of multiple columns using an anonymous object. e.g. `new { first_name = "bob" }` |
+| `.Set<T>(value)` | Set the values of multiple columns using a concrete object. **Note:** This should be used with caution, as  if certain fields have meaning in their default state (`null`, `0`, etc) then it may have unintended side-effects. |
+| `.From(query)` | Set a query as the source for the update statement. Either specifying the query inline as method, or method group. |
+| `.Set(destination, source)` | Set the value for a given column to the value from the column in the source query. |
+| `.Set<TDestination, TSource>(destination, source)` | Set the value for a given column to the value from the specified column in the source query using expressions of the form `u => u.Id` to specify each. |
+| `.Where(builder)` | Filter the rows to be updated using standard `IWhereBuilder` syntax. |
+| `.Where<T>(expression)` | Filter the rows to be updated using an expression based on the type representing the table to be updated. |
+| `.Where<T, TSource>(expression)` | Filter the rows to be updated using an expression based on both the table to be updated and the query use as the source. |
+| `.Output(column)` | Return a selected column as part of the query result. |
+| `.Output<T>(expression)` | Return a selected column (using an expression of the form `u => u.Id`) as part of the query result. |
 
 ## Insert
 Allows for an *"insert"* to be performed on a given table, using one of the following methods:  
@@ -491,6 +556,7 @@ query.Insert()
     last_name = b.Is<string>()
   })
   .From(q => {
+    q.KnownAs("q");
     q.From<Person>()
       .Where(p => p.CreatedAt > DateTime.Now)
       .Select(p => new {

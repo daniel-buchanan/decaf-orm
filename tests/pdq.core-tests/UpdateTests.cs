@@ -7,6 +7,7 @@ using pdq.core_tests.Mocks;
 using pdq.core_tests.Models;
 using pdq.state;
 using pdq.state.Conditionals;
+using pdq.state.ValueSources.Update;
 using Xunit;
 
 namespace pdq.core_tests
@@ -46,6 +47,9 @@ namespace pdq.core_tests
             var context = this.query.Context as IUpdateQueryContext;
             context.QueryTargets.Should().HaveCount(1);
             context.Updates.Should().HaveCount(1);
+            var upd = context.Updates.First() as StaticValueSource;
+            var updatedValue = upd.GetValue<string>();
+            updatedValue.Should().Be("bob@bob.com");
             var where = context.WhereClause as IColumn;
             where.Should().NotBeNull();
             where.Details.Name.Should().Be(nameof(Person.Id));
@@ -61,7 +65,8 @@ namespace pdq.core_tests
                 .Update()
                 .Table<Person>(p => p)
                 .Set(p => p.Email, "bob@bob.com")
-                .Where(p => p.Id == 42);
+                .Where(p => p.Id == 42)
+                .Output(p => p.Id);
 
             // Assert
             var context = this.query.Context as IUpdateQueryContext;

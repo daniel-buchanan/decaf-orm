@@ -1,21 +1,24 @@
-﻿namespace pdq.state.ValueSources.Update
+﻿using pdq.common;
+
+namespace pdq.state.ValueSources.Update
 {
 	public class QueryValueSource : IUpdateValueSource
 	{
-		private QueryValueSource(state.Column column, IUpdateSource source)
+		private QueryValueSource(Column destinationColumn, Column sourceColumn, IQueryTarget source)
 		{
-			Column = column;
+			DestinationColumn = destinationColumn;
+			SourceColumn = sourceColumn;
 			Source = source;
 		}
 
-		public IUpdateSource Source { get; private set; }
+		public IQueryTarget Source { get; private set; }
 
-		public state.Column Column { get; private set; }
+		public Column SourceColumn { get; private set; }
 
-		public static QueryValueSource Create(state.Column column, IUpdateSource source)
-        {
-			return new QueryValueSource(column, source);
-        }
-	}
+        public Column DestinationColumn { get; private set; }
+
+        public static QueryValueSource Create(Column destinationColumn, Column sourceColumn, IQueryTarget source)
+			=> new QueryValueSource(destinationColumn, sourceColumn, source);
+    }
 }
 

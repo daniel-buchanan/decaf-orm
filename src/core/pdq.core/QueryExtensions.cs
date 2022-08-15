@@ -26,12 +26,26 @@ namespace pdq
             => Implementation.Select.Create(query.CreateContext<ISelectQueryContext>(), query as IQueryInternal);
 
         /// <summary>
-        /// 
+        /// Begin an insert query, this will allow you to insert records into a single table.<br/>
+        /// You may have multiple sources for your insert query, whether that be static values,
+        /// or from another query itself.
         /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
+        /// <param name="query">The query instance that will become an "insert" query.</param>
+        /// <returns>(FluentApi) The ability to specify the base table, view to insert into.</returns>
+        /// <example>q.Insert().Into("users", "u"),Value(new { first_name = "Bob", last_name = "Smith" });</example>
         public static IInsert Insert(this IQuery query)
             => Implementation.Insert.Create(query.CreateContext<IInsertQueryContext>(), query as IQueryInternal);
-	}
+
+        /// <summary>
+        /// Begin an update query, this will allow you to update records into a single table.<br/>
+        /// You may have multiple sources for your update query, whether that be static values,
+        /// or from another query itself.
+        /// </summary>
+        /// <param name="query">The query instance that will become an "update" query.</param>
+        /// <returns>(FluentApi) The ability to specify the base table, view to update values in.</returns>
+        /// <example>q.Update().Table("users", "u"),Set(new { first_name = "Bob", last_name = "Smith" }).Where(b => b.Column("id").Is().EqualTo(42);</example>
+        public static IUpdate Update(this IQuery query)
+            => Implementation.Update.Create(query.CreateContext<IUpdateQueryContext>(), query as IQueryInternal);
+    }
 }
 

@@ -52,13 +52,14 @@ namespace pdq
         /// Set the source of the udpate to be from a query.
         /// For more information, see <see cref="ISelectWithAlias"/>.
         /// </summary>
+        /// <typeparam name="TSource">The type that represents the result of the query.</typeparam>
         /// <param name="query">The query that defines the source for this update.</param>
         /// <returns>
-        /// (FluentApi) Returns an <see cref="IUpdateSet{T}"/> which provides the
+        /// (FluentApi) Returns an <see cref="IUpdateSetFromQuery{TDestination, TSource}"/> which provides the
         /// ability to continue setting column values, perform filtering or
         /// execute the query.
         /// </returns>
-        IUpdateSetFromQuery<T> From(Action<ISelectWithAlias> query);
+        IUpdateSetFromQuery<T, TSource> From<TSource>(Action<ISelectWithAlias> query);
 
         /// <summary>
         /// Set the value of a column to the provided value.

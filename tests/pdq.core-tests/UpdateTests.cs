@@ -125,6 +125,29 @@ namespace pdq.core_tests
         }
 
         [Fact]
+        public void SimpleUpdateWithTypedSetSucceeds()
+        {
+            // Act
+            this.query
+                .Update()
+                .Table("users", "u")
+                .Set("created_at", DateTime.Now)
+                .Where(b => b.Column("Id", "u").Is().EqualTo(42));
+
+            // Assert
+            var context = this.query.Context as IUpdateQueryContext;
+            context.QueryTargets.Should().HaveCount(1);
+            context.Updates.Should().HaveCount(1);
+            var and = context.WhereClause as And;
+            and.Should().NotBeNull();
+            var where = and.Children.First() as IColumn;
+            where.Should().NotBeNull();
+            where.Details.Name.Should().Be("Id");
+            where.Details.Source.Alias.Should().Be("u");
+            where.Value.Should().BeEquivalentTo(42);
+        }
+
+        [Fact]
         public void SimpleUpdateFromQUerySucceeds()
         {
             // Act
@@ -141,7 +164,8 @@ namespace pdq.core_tests
                         });
                 })
                 .Set("first_name", "first_name")
-                .Where(b => b.Column("Id", "u").Is().EqualTo(42));
+                .Where(b => b.Column("Id", "u").Is().EqualTo(42))
+                .Output("id");
 
             // Assert
             var context = this.query.Context as IUpdateQueryContext;
@@ -163,17 +187,19 @@ namespace pdq.core_tests
             this.query
                 .Update()
                 .Table<User>(u => u)
-                .From(b =>
+                .From<Person>(b =>
                 {
                     b.From<Person>(p => p)
                         .Where(p => p.LastName == null)
-                        .Select(p => new
+                        .Select(p => new Person
                         {
-                            p.FirstName
+                            Id = p.Id,
+                            FirstName = p.FirstName
                         });
                 })
-                .Set(u => u.FirstName, "FirstName")
-                .Where(u => u.Id == 42);
+                .Set(u => u.FirstName, p => p.FirstName)
+                .Where((u, p) => u.Id == 42)
+                .Output(u => u.Id);
 
             // Assert
             var context = this.query.Context as IUpdateQueryContext;

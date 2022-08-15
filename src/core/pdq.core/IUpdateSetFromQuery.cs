@@ -43,7 +43,7 @@ namespace pdq
         IUpdateSetFromQuery Output(string column);
     }
 
-    public interface IUpdateSetFromQuery<T> : IExecute
+    public interface IUpdateSetFromQuery<TDestination, TSource> : IExecute
     {
         /// <summary>
         /// Set the value of a column to the provided value.
@@ -55,7 +55,9 @@ namespace pdq
         /// ability to continue setting column values, perform filtering or
         /// execute the query.
         /// </returns>
-        IUpdateSetFromQuery<T> Set(Expression<Func<T, object>> columnToUpdate, string sourceColumn);
+        IUpdateSetFromQuery<TDestination, TSource> Set(
+            Expression<Func<TDestination, object>> columnToUpdate,
+            Expression<Func<TSource, object>> sourceColumn);
 
         /// <summary>
         /// Sets the filtering criteria for the update.
@@ -68,7 +70,7 @@ namespace pdq
         /// ability to continue setting column values, perform filtering or
         /// execute the query.
         /// </returns>
-        IUpdateSetFromQuery<T> Where(Expression<Func<T, bool>> expression);
+        IUpdateSetFromQuery<TDestination, TSource> Where(Expression<Func<TDestination, TSource, bool>> expression);
 
         /// <summary>
         /// Add a column to be returned as output from the query.
@@ -81,7 +83,7 @@ namespace pdq
         /// ability to continue setting column values, perform filtering or
         /// execute the query.
         /// </returns>
-        IUpdateSetFromQuery<T> Output(Expression<Func<T, object>> column);
+        IUpdateSetFromQuery<TDestination, TSource> Output(Expression<Func<TDestination, object>> column);
     }
 }
 

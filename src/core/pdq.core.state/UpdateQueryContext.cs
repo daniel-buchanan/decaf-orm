@@ -39,12 +39,10 @@ namespace pdq.state
         public void Where(IWhere where) => WhereClause = where;
 
         /// <inheritdoc/>
-        public void Output(Output output)
-            => this.outputs.Add(output);
+        public void Output(Output output) => this.outputs.Add(output);
 
         /// <inheritdoc/>
-        public void Set(IUpdateValueSource value)
-            => this.sets.Add(value);
+        public void Set(IUpdateValueSource value) => this.sets.Add(value);
 
         /// <inheritdoc/>
         public ITableTarget Table => QueryTargets.FirstOrDefault() as ITableTarget;

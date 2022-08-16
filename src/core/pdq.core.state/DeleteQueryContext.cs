@@ -28,28 +28,25 @@ namespace pdq.state
         public IReadOnlyCollection<Output> Outputs => this.outputs.AsReadOnly();
 
         /// <inheritdoc/>
-        public IDeleteQueryContext From(ITableTarget target)
+        public void From(ITableTarget target)
         {
             var item = this.QueryTargets.FirstOrDefault(t => t.IsEquivalentTo(target));
-            if (item != null) return this;
+            if (item != null) return;
 
             var internalContext = this as IQueryContextInternal;
 			internalContext.AddQueryTarget(target);
-			return this;
         }
 
 		/// <inheritdoc/>
-		public IDeleteQueryContext Where(IWhere where)
+		public void Where(IWhere where)
         {
 			WhereClause = where;
-			return this;
         }
 
         /// <inheritdoc/>
-        public IDeleteQueryContext Output(Output output)
+        public void Output(Output output)
         {
             this.outputs.Add(output);
-            return this;
         }
 
         /// <summary>

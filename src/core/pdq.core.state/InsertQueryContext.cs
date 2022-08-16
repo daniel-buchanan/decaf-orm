@@ -34,47 +34,36 @@ namespace pdq.state
         public IReadOnlyCollection<Output> Outputs => this.outputs.AsReadOnly();
 
         /// <inheritdoc/>
-        public IInsertQueryContext Column(Column column)
+        public void Column(Column column)
         {
             var item = this.columns.FirstOrDefault(c => c.IsEquivalentTo(column));
-            if (item != null) return this;
+            if (item != null) return;
 
             this.columns.Add(column);
-            return this;
         }
 
         /// <inheritdoc/>
-        public IInsertQueryContext From(IInsertValuesSource source)
-        {
-            Source = source;
-            return this;
-        }
+        public void From(IInsertValuesSource source) => Source = source;
 
         /// <inheritdoc/>
-        public IInsertQueryContext Into(ITableTarget target)
+        public void Into(ITableTarget target)
         {
             var item = this.QueryTargets.FirstOrDefault(t => t.IsEquivalentTo(target));
-            if (item != null) return this;
+            if (item != null) return;
 
             var internalContext = this as IQueryContextInternal;
             internalContext.AddQueryTarget(target);
-            return this;
         }
 
         /// <inheritdoc/>
-        public IInsertQueryContext Output(Output output)
-        {
-            this.outputs.Add(output);
-            return this;
-        }
+        public void Output(Output output) => this.outputs.Add(output);
 
         /// <inheritdoc/>
-        public IInsertQueryContext Value(object[] value)
+        public void Value(object[] value)
         {
             var staticValueSource = Source as IInsertStaticValuesSource;
 
-            if(Source != null && staticValueSource == null)
-                return this;
+            if(Source != null && staticValueSource == null) return;
 
             if (staticValueSource == null)
             {
@@ -83,7 +72,6 @@ namespace pdq.state
             }
 
             staticValueSource.AddValue(value);
-            return this;
         }
     }
 }

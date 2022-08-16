@@ -43,7 +43,8 @@ namespace pdq.core_tests
             this.query
                 .Delete()
                 .From<Person>(p => p)
-                .Where(p => p.LastName.Contains("smith"));
+                .Where(p => p.LastName.Contains("smith"))
+                .Output(p => p.Id);
 
             // Assert
             var context = this.query.Context as IDeleteQueryContext;
@@ -81,7 +82,8 @@ namespace pdq.core_tests
             this.query
                 .Delete()
                 .From("person", "p")
-                .Where(b => b.Column("last_name", "p").Is().Like("smith"));
+                .Where(b => b.Column("last_name", "p").Is().Like("smith"))
+                .Output("id");
 
             // Assert
             var context = this.query.Context as IDeleteQueryContext;

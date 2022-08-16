@@ -48,7 +48,8 @@ namespace pdq.core_tests
                     email = "bob@bob.com",
                     first_name = "Bob",
                     last_name = "Smith"
-                });
+                })
+                .Output("id");
 
             // Assert
             var context = this.query.Context as IInsertQueryContext;
@@ -158,7 +159,8 @@ namespace pdq.core_tests
                     FirstName = "Bob",
                     LastName = "Smith",
                     CreatedAt = DateTime.UtcNow
-                });
+                })
+                .Output(p => p.Id);
 
             // Assert
             var context = this.query.Context as IInsertQueryContext;

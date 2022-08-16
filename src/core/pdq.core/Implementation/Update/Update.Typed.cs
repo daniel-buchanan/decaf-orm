@@ -33,7 +33,7 @@ namespace pdq.Implementation
         public IUpdateSet<T> Output(Expression<Func<T, object>> column)
         {
             var columnToOutput = GetDestinationColumn(column);
-            this.context.AddOutput(state.Output.Create(columnToOutput, OutputSources.Updated));
+            this.context.Output(state.Output.Create(columnToOutput, OutputSources.Updated));
             return this;
         }
 

@@ -1,15 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using pdq.common;
 
 namespace pdq.state
 {
-	internal class DeleteQueryContext : QueryContext, IDeleteQueryContext
+	internal class DeleteQueryContext :
+		QueryContext,
+		IDeleteQueryContext
 	{
+        private readonly List<Output> outputs;
+
 		private DeleteQueryContext(IAliasManager aliasManager)
 			: base(aliasManager, QueryTypes.Delete)
         {
 			WhereClause = null;
+            this.outputs = new List<Output>();
         }
 
 		/// <inheritdoc/>
@@ -18,30 +24,37 @@ namespace pdq.state
 		/// <inheritdoc/>
 		public IWhere WhereClause { get; private set; }
 
-		/// <inheritdoc/>
-		public IDeleteQueryContext From(ITableTarget target)
+        /// <inheritdoc/>
+        public IReadOnlyCollection<Output> Outputs => this.outputs.AsReadOnly();
+
+        /// <inheritdoc/>
+        public void From(ITableTarget target)
         {
             var item = this.QueryTargets.FirstOrDefault(t => t.IsEquivalentTo(target));
-            if (item != null) return this;
+            if (item != null) return;
 
             var internalContext = this as IQueryContextInternal;
 			internalContext.AddQueryTarget(target);
-			return this;
         }
 
 		/// <inheritdoc/>
-		public IDeleteQueryContext Where(IWhere where)
+		public void Where(IWhere where)
         {
 			WhereClause = where;
-			return this;
         }
 
-		/// <summary>
+        /// <inheritdoc/>
+        public void Output(Output output)
+        {
+            this.outputs.Add(output);
+        }
+
+        /// <summary>
         /// Create a <see cref="IDeleteQueryContext"/> Context.
         /// </summary>
         /// <param name="aliasManager">The <see cref="IAliasManager"/> to use.</param>
         /// <returns>A new instance which implements <see cref="IDeleteQueryContext"/>.</returns>
-		public static IDeleteQueryContext Create(IAliasManager aliasManager)
+        public static IDeleteQueryContext Create(IAliasManager aliasManager)
 			=> new DeleteQueryContext(aliasManager);
 
 		protected override void Dispose(bool disposing)

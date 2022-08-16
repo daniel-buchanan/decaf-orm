@@ -87,7 +87,7 @@ namespace pdq.core_tests
             var output = Output.Create(column, OutputSources.Updated);
 
             // Act
-            this.context.AddOutput(output);
+            this.context.Output(output);
 
             // Assert
             this.context.Outputs.Should().HaveCount(1);

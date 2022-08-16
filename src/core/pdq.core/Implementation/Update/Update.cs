@@ -39,7 +39,7 @@ namespace pdq.Implementation
         /// <inheritdoc/>
         public IUpdateSet Output(string column)
         {
-            this.context.AddOutput(state.Output.Create(column, OutputSources.Updated));
+            this.context.Output(state.Output.Create(column, OutputSources.Updated));
             return this;
         }
 

@@ -53,64 +53,55 @@ namespace pdq.state
         }
 
         /// <inheritdoc/>
-        public ISelectQueryContext From(IQueryTarget table)
+        public void From(IQueryTarget table)
         {
             var item = this.QueryTargets.FirstOrDefault(t => t.IsEquivalentTo(table));
-            if (item != null) return this;
+            if (item != null) return;
 
             var internalContext = this as IQueryContextInternal;
             internalContext.AddQueryTarget(table);
-            return this;
         }
 
         /// <inheritdoc/>
-        public ISelectQueryContext GroupBy(GroupBy groupBy)
+        public void GroupBy(GroupBy groupBy)
         {
             var item = this.groupByClauses.FirstOrDefault(c => c.IsEquivalentTo(groupBy));
-            if (item != null) return this;
+            if (item != null) return;
 
             this.groupByClauses.Add(groupBy);
-            return this;
         }
 
         /// <inheritdoc/>
-        public ISelectQueryContext Join(Join join)
+        public void Join(Join join)
         {
             var existing = this.joins.FirstOrDefault(j => j.From.IsEquivalentTo(join.From) &&
                 j.To.IsEquivalentTo(join.To));
 
-            if (existing != null) return this;
+            if (existing != null) return;
 
             this.joins.Add(join);
-            return this;
         }
 
         /// <inheritdoc/>
-        public ISelectQueryContext OrderBy(OrderBy orderBy)
+        public void OrderBy(OrderBy orderBy)
         {
             var item = this.orderByClauses.FirstOrDefault(c => c.IsEquivalentTo(orderBy));
-            if (item != null) return this;
+            if (item != null) return;
 
             this.orderByClauses.Add(orderBy);
-            return this;
         }
 
         /// <inheritdoc/>
-        public ISelectQueryContext Select(Column column)
+        public void Select(Column column)
         {
             var item = this.columns.FirstOrDefault(c => c.IsEquivalentTo(column));
-            if (item != null) return this;
+            if (item != null) return;
 
             this.columns.Add(column);
-            return this;
         }
 
         /// <inheritdoc/>
-        public ISelectQueryContext Where(IWhere where)
-        {
-            this.where = where;
-            return this;
-        }
+        public void Where(IWhere where) => this.where = where;
     }
 }
 

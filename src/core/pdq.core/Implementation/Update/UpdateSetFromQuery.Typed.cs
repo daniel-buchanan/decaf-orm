@@ -21,7 +21,7 @@ namespace pdq.Implementation
         public IUpdateSetFromQuery<TDestination, TSource> Output(Expression<Func<TDestination, object>> column)
         {
             var columnToOutput = GetColumnFromExpression(column, this.context.Table);
-            this.context.AddOutput(state.Output.Create(columnToOutput, OutputSources.Updated));
+            this.context.Output(state.Output.Create(columnToOutput, OutputSources.Updated));
             return this;
         }
 

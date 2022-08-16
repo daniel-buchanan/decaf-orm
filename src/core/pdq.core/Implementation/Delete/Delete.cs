@@ -57,6 +57,14 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc />
+        public IDeleteFrom Output(string column)
+        {
+            var col = state.Column.Create(column, this.context.Table);
+            this.context.Output(state.Output.Create(col, OutputSources.Deleted));
+            return this;
+        }
+
+        /// <inheritdoc />
         public IDeleteFrom Where(Action<IWhereBuilder> builder)
         {
             var b = WhereBuilder.Create(this.query.Options, this.context) as IWhereBuilderInternal;

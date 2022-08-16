@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
 using pdq.state;
@@ -63,6 +62,14 @@ namespace pdq.Implementation
 
             this.context.Into(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
             return Insert<T>.Create(this.context, this.query);
+        }
+
+        /// <inheritdoc/>
+        public IInsertValues Output(string column)
+        {
+            var col = state.Column.Create(column, this.context.Target);
+            this.context.Output(state.Output.Create(col, OutputSources.Inserted));
+            return this;
         }
 
         /// <inheritdoc/>

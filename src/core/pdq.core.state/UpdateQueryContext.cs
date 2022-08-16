@@ -39,7 +39,7 @@ namespace pdq.state
         public void Where(IWhere where) => WhereClause = where;
 
         /// <inheritdoc/>
-        public void AddOutput(Output output)
+        public void Output(Output output)
             => this.outputs.Add(output);
 
         /// <inheritdoc/>

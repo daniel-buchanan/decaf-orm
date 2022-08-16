@@ -22,7 +22,7 @@ namespace pdq.state
 
 		void Where(IWhere where);
 
-		void AddOutput(Output output);
+		void Output(Output output);
 
 		void Set(IUpdateValueSource value);
     }

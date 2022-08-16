@@ -5,7 +5,8 @@ using pdq.common;
 
 namespace pdq.Implementation
 {
-    public abstract class ExecuteBase<TContext> : IGetSql
+    public abstract class ExecuteBase<TContext> :
+        IGetSql
         where TContext: IQueryContext
 	{
         internal IQueryInternal query;

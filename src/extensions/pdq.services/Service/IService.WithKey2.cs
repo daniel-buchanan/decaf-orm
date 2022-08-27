@@ -10,7 +10,7 @@ namespace pdq.services
     public interface IService<TEntity, TKey1, TKey2> :
 		IQuery<TEntity, TKey1, TKey2>,
 		ICommand<TEntity, TKey1, TKey2>
-		where TEntity: IEntity<TKey1, TKey2>
+		where TEntity: IEntity<TKey1, TKey2>, new()
     {
 
     }

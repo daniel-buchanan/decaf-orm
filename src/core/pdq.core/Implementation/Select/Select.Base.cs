@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using pdq.common;
 using pdq.Exceptions;
 using pdq.state;
+using pdq.state.Utilities;
 
 namespace pdq.Implementation
 {
@@ -54,6 +57,42 @@ namespace pdq.Implementation
             var target = this.context.QueryTargets.FirstOrDefault(t => t.Alias == alias.Name);
             if (target == null) throw new TableNotFoundException(alias.Name, table);
             return target;
+        }
+
+        protected void AddAllColumns<T>(Expression<Func<T, object>> expression)
+        {
+            var param = this.context.Helpers().GetTableAlias(expression);
+            AddAllColumns<T>(param);
+        }
+
+        protected void AddAllColumns<T>(string alias)
+        {
+            var entityType = typeof(T);
+            var internalContext = this.context as IQueryContextInternal;
+            
+            var members = new List<PropertyInfo>();
+            var arguments = new List<Expression>();
+            var parameterExpression = Expression.Parameter(typeof(ISelectColumnBuilder), "b");
+            var properties = internalContext.ReflectionHelper.GetMemberDetails(entityType, QueryTypes.Select);
+            var emptyCtor = new DynamicConstructorInfo(properties, typeof(T));
+            var isMethod = typeof(ISelectColumnBuilder).GetMethods().FirstOrDefault(m => m.IsGenericMethod && m.GetParameters().Count() == 2);
+
+            foreach (var p in properties)
+            {
+                var columnName = p.Name;
+                
+                var typedIsMethod = isMethod.MakeGenericMethod(p.ValueType);
+                var nameExpression = Expression.Constant(p.NewName);
+                var aliasExpression = Expression.Constant(alias);
+                var methodCallExpression = Expression.Call(parameterExpression, typedIsMethod, nameExpression, aliasExpression);
+                var member = new DynamicPropertyInfo(p.Name, p.ValueType, typeof(T));
+                members.Add(member);
+                arguments.Add(methodCallExpression);
+            }
+
+            var bodyExpression = Expression.New(emptyCtor, arguments, members);
+            var lambdaExpression = (Expression<Func<ISelectColumnBuilder, T>>)Expression.Lambda(bodyExpression, parameterExpression);
+            AddColumns(lambdaExpression);
         }
     }
 }

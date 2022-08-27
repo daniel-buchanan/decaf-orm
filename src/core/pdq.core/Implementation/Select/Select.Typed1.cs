@@ -63,6 +63,13 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc/>
+        public IExecute<TResult> SelectAll<TResult>(Expression<Func<TResult, object>> expression)
+        {
+            base.AddAllColumns<TResult>(expression);
+            return Execute<TResult, ISelectQueryContext>.Create(this.query, this.context);
+        }
+
+        /// <inheritdoc/>
         public IOrderByThenTyped<T> ThenBy(Expression<Func<T, object>> builder, SortOrder order = SortOrder.Ascending)
             => OrderBy(builder, order);
 

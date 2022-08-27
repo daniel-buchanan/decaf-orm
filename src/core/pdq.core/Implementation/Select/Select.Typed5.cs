@@ -39,6 +39,13 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc/>
+        public IExecute<TResult> SelectAll<TResult>(Expression<Func<TResult, object>> expression)
+        {
+            base.AddAllColumns<TResult>(expression);
+            return Execute<TResult, ISelectQueryContext>.Create(this.query, this.context);
+        }
+
+        /// <inheritdoc/>
         public IGroupByThenTyped<T1, T2, T3, T4, T5> ThenBy(Expression<Func<T1, T2, T3, T4, T5, object>> builder)
             => GroupBy(builder);
 

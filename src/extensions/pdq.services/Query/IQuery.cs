@@ -23,6 +23,11 @@ namespace pdq.services
         /// <param name="query">The <see cref="Expression{Func{TEntity, bool}}"/> defining the query to run.</param>
         /// <returns>An <see cref="IEnumerable{TEntity}"/> set of the results.</returns>
         IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> query);
-	}
+
+        /// <summary>
+        /// Event fired before the query is executed.
+        /// </summary>
+        event EventHandler<PreExecutionEventArgs> PreExecution;
+    }
 }
 

@@ -11,7 +11,7 @@ namespace pdq.services
     /// <typeparam name="TKey">The data type of the primary key.</typeparam>
 	public interface ICommand<TEntity, TKey> :
         ICommand<TEntity>
-		where TEntity: IEntity<TKey>
+		where TEntity: IEntity<TKey>, new()
     {
 
         /// <summary>

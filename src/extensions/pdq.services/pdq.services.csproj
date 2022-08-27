@@ -16,10 +16,10 @@
     <None Remove="Command\" />
     <None Remove="Query\" />
     <None Remove="Service\" />
+    <None Remove="Command\CommandServiceBase.WithKey" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-    <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Command\" />

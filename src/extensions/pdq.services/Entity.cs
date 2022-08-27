@@ -3,7 +3,7 @@ using pdq.Attributes;
 
 namespace pdq.services
 {
-    public class Entity : IEntity { }
+    public abstract class Entity : IEntity { }
 
     public abstract class Entity<TKey> : IEntity<TKey>
     {

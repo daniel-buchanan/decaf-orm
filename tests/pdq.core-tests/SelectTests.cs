@@ -119,6 +119,30 @@ namespace pdq.core_tests
             context.WhereClause.Should().BeAssignableTo(typeof(state.Conditionals.And));
         }
 
+        [Fact]
+        public void SelectAllSucceeds()
+        {
+            // Arrange
+
+            // Act
+            this.query
+                .Select()
+                .From("person", "p")
+                .Where(b => b.Column("id", "p").Is().EqualTo(42))
+                .SelectAll<Person>("p");
+
+            // Assert
+            var context = this.query.Context as ISelectQueryContext;
+            context.QueryTargets.Should().HaveCount(1);
+            context.Columns.Should().Satisfy(
+                c => c.Name.Equals(nameof(Person.Id)),
+                c => c.Name.Equals(nameof(Person.FirstName)),
+                c => c.Name.Equals(nameof(Person.LastName)),
+                c => c.Name.Equals(nameof(Person.Email)),
+                c => c.Name.Equals(nameof(Person.CreatedAt)),
+                c => c.Name.Equals(nameof(Person.AddressId)));
+        }
+
         public static IEnumerable<object[]> DateTimeExtensionTests
         {
             get

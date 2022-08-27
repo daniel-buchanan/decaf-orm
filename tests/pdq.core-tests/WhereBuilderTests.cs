@@ -11,6 +11,7 @@ using pdq.Implementation;
 using pdq.state;
 using pdq.state.Conditionals;
 using Xunit;
+using pdq.services;
 
 namespace pdq.core_tests
 {

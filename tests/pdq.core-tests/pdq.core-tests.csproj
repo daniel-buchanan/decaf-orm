@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\src\core\pdq.core.common\pdq.common.csproj" />
     <ProjectReference Include="..\..\src\core\pdq.core.state\pdq.state.csproj" />
     <ProjectReference Include="..\..\src\core\pdq.core\pdq.csproj" />
+    <ProjectReference Include="..\..\src\extensions\pdq.services\pdq.services.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Microsoft.NET.Test.Sdk" />
@@ -37,11 +38,15 @@
     <None Remove="Mocks\" />
     <None Remove="Microsoft.Extensions.DependencyInjection" />
     <None Remove="Connections\" />
+    <None Remove="Services\" />
+    <None Remove="Services\Query\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />
     <Folder Include="Models\" />
     <Folder Include="Mocks\" />
     <Folder Include="Connections\" />
+    <Folder Include="Services\" />
+    <Folder Include="Services\Query\" />
   </ItemGroup>
 </Project>

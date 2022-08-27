@@ -16,9 +16,11 @@
   <ItemGroup>
     <None Remove="Utilities\" />
     <None Remove="Utilities\Parsers\" />
+    <None Remove="Utilities\Dynamic\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utilities\" />
     <Folder Include="Utilities\Parsers\" />
+    <Folder Include="Utilities\Dynamic\" />
   </ItemGroup>
 </Project>

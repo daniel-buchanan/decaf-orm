@@ -86,6 +86,28 @@ namespace pdq.core_tests
             context.Joins.Should().HaveCount(1);
             context.WhereClause.Should().BeAssignableTo(typeof(state.Conditionals.And));
         }
+
+        [Fact]
+        public void SelectAllSucceeds()
+        {
+            // Act
+            this.query
+                .Select()
+                .From<Person>()
+                .Where(p => p.Id == 42)
+                .SelectAll<Person>(p => p);
+
+            // Assert
+            var context = this.query.Context as ISelectQueryContext;
+            context.QueryTargets.Should().HaveCount(1);
+            context.Columns.Should().Satisfy(
+                c => c.Name.Equals(nameof(Person.Id)),
+                c => c.Name.Equals(nameof(Person.FirstName)),
+                c => c.Name.Equals(nameof(Person.LastName)),
+                c => c.Name.Equals(nameof(Person.Email)),
+                c => c.Name.Equals(nameof(Person.CreatedAt)),
+                c => c.Name.Equals(nameof(Person.AddressId)));
+        }
     }
 }
 

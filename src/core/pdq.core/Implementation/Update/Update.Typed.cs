@@ -54,6 +54,13 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc/>
+        public IUpdateSet<T> Set(dynamic values)
+        {
+            this.SetValues(new[] { values });
+            return this;
+        }
+
+        /// <inheritdoc/>
         public IUpdateSet<T> Where(Expression<Func<T, bool>> expression)
         {
             var where = this.context.Helpers().ParseWhere(expression);

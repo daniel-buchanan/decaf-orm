@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using pdq.common;
-using Dapper.Contrib.Extensions;
 using System.Linq;
 
 namespace pdq.services
 {
-    public class Query<TEntity, TKey> :
+    internal class Query<TEntity, TKey> :
         Query<TEntity>,
         IQuery<TEntity, TKey>
-        where TEntity : class, IEntity<TKey>
+        where TEntity : class, IEntity<TKey>, new()
     {
         public Query(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
@@ -34,14 +33,43 @@ namespace pdq.services
         /// <inheritdoc/>
         public IEnumerable<TEntity> Get(IEnumerable<TKey> keys)
         {
+            var numKeys = keys?.Count() ?? 0;
+            if (numKeys == 0) return Enumerable.Empty<TEntity>();
+
+            var t = this.GetTransient();
+            const int take = 100;
+            var skip = 0;
             var results = new List<TEntity>();
-            var conn = this.GetTransient().Connection.GetUnderlyingConnection();
-            foreach(var k in keys)
+
+            var table = base.reflectionHelper.GetTableName<TEntity>();
+            var tmp = new TEntity();
+            var keyProp = typeof(TEntity).GetProperty(tmp.KeyMetadata.Name);
+            var keyName = base.reflectionHelper.GetFieldName(keyProp);
+
+            do
             {
-                var r = conn.Get<TEntity>(k);
-                if (r == default(TEntity)) continue;
-                results.Add(r);
-            }
+                var keyBatch = keys.Skip(skip).Take(take);
+
+                using (var q = t.Query())
+                {
+                    var sel = q.Select()
+                        .From(table, "t")
+                        .Where(b =>
+                        {
+                            b.Column(keyName, "t").Is().In(keyBatch);
+                        })
+                        .SelectAll<TEntity>("t");
+                    NotifyPreExecution(this, q);
+
+                    var batchResults = sel.AsEnumerable();
+                    results.AddRange(batchResults);
+                }
+
+                skip += take;
+            } while (skip < numKeys);
+
+            if (this.disposeOnExit) t.Dispose();
+
             return results;
         }
     }

@@ -6,10 +6,10 @@ using System.Linq;
 
 namespace pdq.services
 {
-    public class Query<TEntity, TKey1, TKey2, TKey3> :
+    internal class Query<TEntity, TKey1, TKey2, TKey3> :
         Query<TEntity>,
         IQuery<TEntity, TKey1, TKey2, TKey3>
-        where TEntity : class, IEntity<TKey1, TKey2, TKey3>
+        where TEntity : class, IEntity<TKey1, TKey2, TKey3>, new()
     {
         public Query(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
@@ -36,7 +36,58 @@ namespace pdq.services
         /// <inheritdoc/>
         public IEnumerable<TEntity> Get(IEnumerable<ICompositeKeyValue<TKey1, TKey2, TKey3>> keys)
         {
-            throw new NotImplementedException();
+            var numKeys = keys?.Count() ?? 0;
+            if (numKeys == 0) return Enumerable.Empty<TEntity>();
+
+            var t = this.GetTransient();
+            const int take = 100;
+            var skip = 0;
+            var results = new List<TEntity>();
+
+            var table = base.reflectionHelper.GetTableName<TEntity>();
+            var tmp = new TEntity();
+            var entityType = typeof(TEntity);
+            var key1Prop = entityType.GetProperty(tmp.KeyMetadata.ComponentOne.Name);
+            var key1Name = base.reflectionHelper.GetFieldName(key1Prop);
+            var key2Prop = entityType.GetProperty(tmp.KeyMetadata.ComponentTwo.Name);
+            var key2Name = base.reflectionHelper.GetFieldName(key2Prop);
+            var key3Prop = entityType.GetProperty(tmp.KeyMetadata.ComponentThree.Name);
+            var key3Name = base.reflectionHelper.GetFieldName(key3Prop);
+
+            do
+            {
+                var keyBatch = keys.Skip(skip).Take(take);
+
+                using (var q = t.Query())
+                {
+                    var sel = q.Select()
+                        .From(table, "t")
+                        .Where(b =>
+                        {
+                            b.ClauseHandling.DefaultToOr();
+                            foreach (var k in keyBatch)
+                            {
+                                b.And(ab =>
+                                {
+                                    ab.Column(key1Name, "t").Is().EqualTo(k.ComponentOne);
+                                    ab.Column(key2Name, "t").Is().EqualTo(k.ComponentTwo);
+                                    ab.Column(key3Name, "t").Is().EqualTo(k.ComponentThree);
+                                });
+                            }
+                        })
+                        .SelectAll<TEntity>("t");
+                    NotifyPreExecution(this, q);
+
+                    var batchResults = sel.AsEnumerable();
+                    results.AddRange(batchResults);
+                }
+
+                skip += take;
+            } while (skip < numKeys);
+
+            if (this.disposeOnExit) t.Dispose();
+
+            return results;
         }
     }
 }

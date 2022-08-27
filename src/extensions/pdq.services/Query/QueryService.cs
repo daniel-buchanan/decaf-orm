@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using pdq.common;
-using Dapper.Contrib.Extensions;
 
 namespace pdq.services
 {
-    public class Query<TEntity> :
+    internal class Query<TEntity> :
         ServiceBase,
         IQuery<TEntity>
         where TEntity : class, IEntity
     {
+        public event EventHandler<PreExecutionEventArgs> PreExecution;
+
         public Query(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
         protected Query(ITransient transient) : base(transient) { }
@@ -20,20 +21,35 @@ namespace pdq.services
         /// <inheritdoc/>
         public IEnumerable<TEntity> All()
         {
-            var conn = this.GetTransient().Connection.GetUnderlyingConnection();
-            return conn.GetAll<TEntity>();
+            return ExecuteQuery(q =>
+            {
+                var sel = q.Select()
+                    .From<TEntity>(t => t)
+                    .SelectAll<TEntity>(t => t);
+                NotifyPreExecution(this, q);
+                return sel.AsEnumerable();
+            });
         }
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> query)
         {
-            using (var q = this.GetTransient().Query())
+            return ExecuteQuery(q =>
             {
-                return q.Select()
-                    .From<TEntity>()
+                var sel = q.Select()
+                    .From<TEntity>(t => t)
                     .Where(query)
-                    .AsEnumerable<TEntity>();
-            }
+                    .SelectAll<TEntity>(t => t);
+                NotifyPreExecution(this, q);
+                return sel.AsEnumerable();
+            });
+        }
+
+        protected void NotifyPreExecution(object sender, IQuery query)
+        {
+            var internalQuery = query as IQueryInternal;
+            var args = new PreExecutionEventArgs(internalQuery.Context);
+            PreExecution?.Invoke(sender, args);
         }
     }
 }

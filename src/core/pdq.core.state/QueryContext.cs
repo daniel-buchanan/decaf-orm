@@ -14,7 +14,7 @@ namespace pdq.state
 		private readonly IReflectionHelper reflectionHelper;
         private readonly IDynamicExpressionHelper dynamicExpressionHelper;
 		private readonly IAliasManager aliasManager;
-		private readonly ParserHolder parserHolder;
+		private readonly IQueryParsers parserHolder;
 		private readonly List<IQueryTarget> queryTargets;
 
 		protected QueryContext(

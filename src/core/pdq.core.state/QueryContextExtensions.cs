@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Reflection;
 using pdq.common;
 using pdq.state.Utilities;
 
@@ -40,6 +41,11 @@ namespace pdq.state
             Expression expression)
             => self.Context.ExpressionHelper.GetName(expression);
 
+        public static string GetColumnName(
+            this IHelperExtensions self,
+            PropertyInfo prop)
+            => self.Context.ReflectionHelper.GetFieldName(prop);
+
         public static IWhere ParseWhere(
             this IHelperExtensions self,
             Expression expression)
@@ -50,7 +56,7 @@ namespace pdq.state
             Expression expression)
             => self.Context.Parsers.Join.Parse(expression, self.Context);
 
-        public static IEnumerable<DynamicPropertyInfo> GetPropertyInformation(
+        public static IEnumerable<DynamicColumnInfo> GetPropertyInformation(
             this IHelperExtensions self,
             Expression obj)
             => self.Context.DynamicExpressionHelper.GetProperties(obj, self.Context);

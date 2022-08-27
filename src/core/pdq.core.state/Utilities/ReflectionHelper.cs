@@ -152,20 +152,20 @@ namespace pdq.state.Utilities
             return instance;
         }
 
-        public List<string> GetMemberNames(dynamic toUse, QueryTypes cmdType = QueryTypes.None)
+        public List<DynamicColumnInfo> GetMemberDetails(dynamic toUse, QueryTypes cmdType = QueryTypes.None)
         {
             // create list
-            var tList = new List<string>();
+            var tList = new List<DynamicColumnInfo>();
 
             // convert to metadata provider
             var tTarget = toUse as IDynamicMetaObjectProvider;
 
             // get member names from provider
             if (tTarget != null)
-                tList.AddRange(tTarget.GetMetaObject(Expression.Constant(tTarget)).GetDynamicMemberNames());
+                tList.AddRange(tTarget.GetMetaObject(Expression.Constant(tTarget)).GetDynamicMemberNames().Select(m => DynamicColumnInfo.Create(name: m, newName: m)));
             // get from normal type
             else
-                tList.AddRange(GetMemberNames((Type)toUse.GetType(), cmdType));
+                tList.AddRange(GetMemberDetails((Type)toUse.GetType(), cmdType));
 
             // enforce order of members
             tList.Sort();
@@ -174,20 +174,24 @@ namespace pdq.state.Utilities
             return tList;
         }
 
-        public List<string> GetMemberNames(Type toUse, QueryTypes queryType = QueryTypes.None)
+        public List<DynamicColumnInfo> GetMemberDetails(Type toUse, QueryTypes queryType = QueryTypes.None)
         {
-            var fieldNames = new List<string>();
+            var fieldNames = new List<DynamicColumnInfo>();
 
             // get object type and properties
             var objType = toUse;
             var properties = objType.GetProperties();
 
-            //igore any properties which have ignore set 
+            //igore any properties which have ignore set
+
             properties = (from p in properties
                           where p.GetCustomAttributes(typeof(IgnoreColumnForAttribute), true)
-                                 .Any(a => ((IgnoreColumnForAttribute)a)
-                                 .QueryType.HasFlag(queryType) ||
-                                 ((IgnoreColumnForAttribute)a).QueryType == QueryTypes.None) ||
+                                 .Any(a =>
+                                 {
+                                     var attr = (IgnoreColumnForAttribute)a;
+                                     return !attr.QueryType.HasFlag(queryType) ||
+                                        attr.QueryType == QueryTypes.None;
+                                 }) ||
                                  !p.GetCustomAttributes().Any()
                           select p).ToArray();
 
@@ -198,7 +202,10 @@ namespace pdq.state.Utilities
                 var name = GetFieldName(p);
 
                 // add to set
-                fieldNames.Add(name);
+                fieldNames.Add(DynamicColumnInfo.Create(
+                    name: name,
+                    newName: p.Name,
+                    valueType: p.PropertyType));
             }
 
             return fieldNames;
@@ -233,16 +240,19 @@ namespace pdq.state.Utilities
             return tp.Name;
         }
 
-        public string GetFieldName(PropertyInfo field)
+        public string GetFieldName(PropertyInfo field, QueryTypes queryType = QueryTypes.None)
         {
             // get rename attributes
-            var attributes = field.GetCustomAttributes(typeof(RenameColumnAttribute), true);
+            var attributes = field.GetCustomAttributes();
 
             // there should only be one
-            var attr = attributes.FirstOrDefault();
+            var renameAttr = attributes.FirstOrDefault(a => a is RenameColumnAttribute) as RenameColumnAttribute;
+            var ignoreAttr = attributes.FirstOrDefault(a => a is IgnoreColumnForAttribute) as IgnoreColumnForAttribute;
+
+            if (ignoreAttr?.QueryType.HasFlag(queryType) == true) return null;
 
             // if we have an attribute, return specified name
-            if (attr != null) return ((RenameColumnAttribute)attr).Name;
+            if (renameAttr != null) return ((RenameColumnAttribute)renameAttr).Name;
 
             // return property name
             return field.Name;

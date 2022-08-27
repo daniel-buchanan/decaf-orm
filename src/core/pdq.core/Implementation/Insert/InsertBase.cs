@@ -30,8 +30,8 @@ namespace pdq.Implementation
         protected void AddValues<T>(T value)
         {
             var internalContext = this.context as IQueryContextInternal;
-            var properties = internalContext.ReflectionHelper.GetMemberNames(value);
-            var values = properties.Select(p => internalContext.ReflectionHelper.GetPropertyValue(value, p));
+            var properties = internalContext.ReflectionHelper.GetMemberDetails(value);
+            var values = properties.Select(p => internalContext.ReflectionHelper.GetPropertyValue(value, p.NewName));
             var row = values.ToArray();
             this.context.Value(row);
         }

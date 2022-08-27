@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using pdq.common;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.services")]
 namespace pdq.state.Utilities
 {
     internal interface IExpressionHelper

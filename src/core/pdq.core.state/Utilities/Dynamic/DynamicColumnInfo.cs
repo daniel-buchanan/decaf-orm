@@ -3,9 +3,9 @@ using System.Linq.Expressions;
 
 namespace pdq.state.Utilities
 {
-	public class DynamicPropertyInfo
+	public class DynamicColumnInfo : IComparable<DynamicColumnInfo>
 	{
-		private DynamicPropertyInfo(
+		private DynamicColumnInfo(
 			string name,
 			string newName,
 			object value,
@@ -23,10 +23,10 @@ namespace pdq.state.Utilities
 			Function = function;
         }
 
-		public static DynamicPropertyInfo Empty()
-			=> new DynamicPropertyInfo(null, null, null, null, null, null, null);
+		public static DynamicColumnInfo Empty()
+			=> new DynamicColumnInfo(null, null, null, null, null, null, null);
 
-		public static DynamicPropertyInfo Create(
+		public static DynamicColumnInfo Create(
 			string name = null,
 			string newName = null,
 			object value = null,
@@ -34,7 +34,7 @@ namespace pdq.state.Utilities
 			Type type = null,
 			string alias = null,
 			IValueFunction function = null)
-			=> new DynamicPropertyInfo(name, newName, value, valueType, type, alias, function);
+			=> new DynamicColumnInfo(name, newName, value, valueType, type, alias, function);
 
 		public string Name { get; private set; }
 
@@ -64,7 +64,7 @@ namespace pdq.state.Utilities
 
 		public void SetFunction(IValueFunction function) => Function = function;
 
-		public bool IsEquivalentTo(DynamicPropertyInfo propertyInfo)
+		public bool IsEquivalentTo(DynamicColumnInfo propertyInfo)
         {
 			var equal = Name == propertyInfo.Name &&
 				NewName == propertyInfo.NewName &&
@@ -74,6 +74,11 @@ namespace pdq.state.Utilities
 
 			return Type == propertyInfo.Type;
         }
-	}
+
+        public int CompareTo(DynamicColumnInfo other)
+        {
+			return IsEquivalentTo(other) ? 1 : 0;
+        }
+    }
 }
 

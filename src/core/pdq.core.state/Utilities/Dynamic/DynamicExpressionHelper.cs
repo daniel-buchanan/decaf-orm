@@ -22,7 +22,7 @@ namespace pdq.state.Utilities
         }
 
         /// <inheritdoc/>
-        public IEnumerable<DynamicPropertyInfo> GetProperties(Expression expr, IQueryContextInternal context)
+        public IEnumerable<DynamicColumnInfo> GetProperties(Expression expr, IQueryContextInternal context)
         {
             var expression = (LambdaExpression)expr;
 
@@ -35,14 +35,14 @@ namespace pdq.state.Utilities
             return GetPropertiesForNew(expression, context);
         }
 
-        private List<DynamicPropertyInfo> GetPropertiesForMemberInit(
+        private List<DynamicColumnInfo> GetPropertiesForMemberInit(
             LambdaExpression expression,
             IQueryContextInternal context)
         {
             var initExpr = (MemberInitExpression)expression.Body;
 
             var numBindings = initExpr.Bindings.Count;
-            var properties = new DynamicPropertyInfo[numBindings];
+            var properties = new DynamicColumnInfo[numBindings];
 
             var index = 0;
             foreach (var b in initExpr.Bindings)
@@ -67,28 +67,28 @@ namespace pdq.state.Utilities
             return properties.ToList();
         }
 
-        private List<DynamicPropertyInfo> GetPropertiesForConstant(
+        private List<DynamicColumnInfo> GetPropertiesForConstant(
             LambdaExpression expression,
             IQueryContextInternal context)
         {
-            var results = new List<DynamicPropertyInfo>();
+            var results = new List<DynamicColumnInfo>();
             var constExpression = expression.Body as ConstantExpression;
             var obj = constExpression.Value;
 
             // get object type and properties
             var objType = obj.GetType();
-            var properties = context.ReflectionHelper.GetMemberNames(obj, context.Kind);
+            var properties = context.ReflectionHelper.GetMemberDetails(obj, context.Kind);
 
             // iternate through properties
             foreach (var p in properties)
             {
                 // get field name
-                var name = p;
-                var value = context.ReflectionHelper.GetPropertyValue(obj, name);
+                var value = context.ReflectionHelper.GetPropertyValue(obj, p.NewName);
 
                 // add to set
-                var info = DynamicPropertyInfo.Create(
-                    name: name,
+                var info = DynamicColumnInfo.Create(
+                    name: p.Name,
+                    newName: p.NewName,
                     value: value,
                     valueType: value?.GetType(),
                     type: objType);
@@ -98,22 +98,22 @@ namespace pdq.state.Utilities
             return results;
         }
 
-        private List<DynamicPropertyInfo> GetPropertiesForNew(
+        private List<DynamicColumnInfo> GetPropertiesForNew(
             LambdaExpression expression,
             IQueryContextInternal context)
         {
             var body = expression.Body as NewExpression;
-            if (body == null) return new List<DynamicPropertyInfo>();
+            if (body == null) return new List<DynamicColumnInfo>();
 
             var countArguments = body.Arguments.Count;
-            var properties = new DynamicPropertyInfo[countArguments];
+            var properties = new DynamicColumnInfo[countArguments];
 
             for (var i = 0; i < countArguments; i += 1)
             {
                 var a = body.Arguments[i];
                 if (!TryGetColumnDetails(a, context, out var info))
                 {
-                    info = DynamicPropertyInfo.Empty();
+                    info = DynamicColumnInfo.Empty();
                     var val = this.expressionHelper.GetValue(a);
                     var valueType = this.expressionHelper.GetType(a);
                     info.SetValue(val);
@@ -140,7 +140,7 @@ namespace pdq.state.Utilities
         private bool TryGetColumnDetails(
             Expression expression,
             IQueryContextInternal context,
-            out DynamicPropertyInfo info)
+            out DynamicColumnInfo info)
         {
             if (TryGetColumnDetailsDynamic(expression, out info))
                 return true;
@@ -150,7 +150,7 @@ namespace pdq.state.Utilities
 
         private bool TryGetColumnDetailsDynamic(
             Expression expression,
-            out DynamicPropertyInfo info)
+            out DynamicColumnInfo info)
         {
             info = null;
             string column, alias = null;
@@ -180,7 +180,7 @@ namespace pdq.state.Utilities
                 alias = arg.Value as string;
             }
 
-            info = DynamicPropertyInfo.Create(name: column, alias: alias, type: typeof(object));
+            info = DynamicColumnInfo.Create(name: column, alias: alias, type: typeof(object));
 
             return true;
         }
@@ -219,7 +219,7 @@ namespace pdq.state.Utilities
         private bool TryGetColumnDetailsConcrete(
             Expression expression,
             IQueryContextInternal context,
-            out DynamicPropertyInfo info)
+            out DynamicColumnInfo info)
         {
             info = null;
 
@@ -249,7 +249,7 @@ namespace pdq.state.Utilities
             var column = this.expressionHelper.GetName(memberExpression);
             var alias = this.expressionHelper.GetParameterName(memberExpression);
             var type = parameterExpression.Type;
-            info = DynamicPropertyInfo.Create(name: column, alias: alias, type: type, function: function);
+            info = DynamicColumnInfo.Create(name: column, alias: alias, type: type, function: function);
 
             return true;
         }

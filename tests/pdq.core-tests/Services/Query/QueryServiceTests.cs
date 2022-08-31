@@ -6,6 +6,7 @@ using pdq.core_tests.Mocks;
 using pdq.core_tests.Models;
 using pdq.services;
 using pdq.state;
+using pdq.state.Conditionals;
 using Xunit;
 
 namespace pdq.core_tests.Services.Query
@@ -69,6 +70,35 @@ namespace pdq.core_tests.Services.Query
                 c => c.Name.Equals(nameof(Person.Email)),
                 c => c.Name.Equals(nameof(Person.CreatedAt)),
                 c => c.Name.Equals(nameof(Person.AddressId)));
+        }
+
+        [Fact]
+        public void GetContextIsCorrect()
+        {
+            // Arrange
+            IQueryContext context = null;
+            this.personService.PreExecution += (sender, args) =>
+            {
+                context = args.Context;
+            };
+
+            // Act
+            this.personService.Get(p => p.Id == 42);
+
+            // Assert
+            context.Should().NotBeNull();
+            var selectContext = context as ISelectQueryContext;
+            selectContext.QueryTargets.Should().HaveCount(1);
+            selectContext.Columns.Should().Satisfy(
+                c => c.Name.Equals(nameof(Person.Id)),
+                c => c.Name.Equals(nameof(Person.FirstName)),
+                c => c.Name.Equals(nameof(Person.LastName)),
+                c => c.Name.Equals(nameof(Person.Email)),
+                c => c.Name.Equals(nameof(Person.CreatedAt)),
+                c => c.Name.Equals(nameof(Person.AddressId)));
+            var where = selectContext.WhereClause as IColumn;
+            where.EqualityOperator.Should().Be(EqualityOperator.Equals);
+            where.Value.Should().Be(42);
         }
     }
 }

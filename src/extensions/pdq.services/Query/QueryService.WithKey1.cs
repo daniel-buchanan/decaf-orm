@@ -33,44 +33,15 @@ namespace pdq.services
         /// <inheritdoc/>
         public IEnumerable<TEntity> Get(IEnumerable<TKey> keys)
         {
-            var numKeys = keys?.Count() ?? 0;
-            if (numKeys == 0) return Enumerable.Empty<TEntity>();
-
-            var t = this.GetTransient();
-            const int take = 100;
-            var skip = 0;
-            var results = new List<TEntity>();
-
-            var table = base.reflectionHelper.GetTableName<TEntity>();
             var tmp = new TEntity();
-            var keyProp = typeof(TEntity).GetProperty(tmp.KeyMetadata.Name);
+            var entityType = typeof(TEntity);
+            var keyProp = entityType.GetProperty(tmp.KeyMetadata.Name);
             var keyName = base.reflectionHelper.GetFieldName(keyProp);
 
-            do
+            return GetByKeys(keys, (keyBatch, b) =>
             {
-                var keyBatch = keys.Skip(skip).Take(take);
-
-                using (var q = t.Query())
-                {
-                    var sel = q.Select()
-                        .From(table, "t")
-                        .Where(b =>
-                        {
-                            b.Column(keyName, "t").Is().In(keyBatch);
-                        })
-                        .SelectAll<TEntity>("t");
-                    NotifyPreExecution(this, q);
-
-                    var batchResults = sel.AsEnumerable();
-                    results.AddRange(batchResults);
-                }
-
-                skip += take;
-            } while (skip < numKeys);
-
-            if (this.disposeOnExit) t.Dispose();
-
-            return results;
+                b.Column(keyName).Is().In(keyBatch);
+            });
         }
     }
 }

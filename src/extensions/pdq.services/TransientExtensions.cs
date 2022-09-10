@@ -53,7 +53,7 @@ namespace pdq.services
         /// <param name="transient"></param>
         /// <returns></returns>
 		public static IQuery<TEntity> GetQuery<TEntity>(this ITransient transient)
-            where TEntity : class, IEntity => Query<TEntity>.Create(transient);
+            where TEntity : class, IEntity, new() => Query<TEntity>.Create(transient);
 
         /// <summary>
         /// 

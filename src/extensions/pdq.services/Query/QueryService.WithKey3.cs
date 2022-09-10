@@ -36,15 +36,6 @@ namespace pdq.services
         /// <inheritdoc/>
         public IEnumerable<TEntity> Get(IEnumerable<ICompositeKeyValue<TKey1, TKey2, TKey3>> keys)
         {
-            var numKeys = keys?.Count() ?? 0;
-            if (numKeys == 0) return Enumerable.Empty<TEntity>();
-
-            var t = this.GetTransient();
-            const int take = 100;
-            var skip = 0;
-            var results = new List<TEntity>();
-
-            var table = base.reflectionHelper.GetTableName<TEntity>();
             var tmp = new TEntity();
             var entityType = typeof(TEntity);
             var key1Prop = entityType.GetProperty(tmp.KeyMetadata.ComponentOne.Name);
@@ -54,40 +45,19 @@ namespace pdq.services
             var key3Prop = entityType.GetProperty(tmp.KeyMetadata.ComponentThree.Name);
             var key3Name = base.reflectionHelper.GetFieldName(key3Prop);
 
-            do
+            return GetByKeys(keys, (keyBatch, b) =>
             {
-                var keyBatch = keys.Skip(skip).Take(take);
-
-                using (var q = t.Query())
+                b.ClauseHandling.DefaultToOr();
+                foreach (var k in keyBatch)
                 {
-                    var sel = q.Select()
-                        .From(table, "t")
-                        .Where(b =>
-                        {
-                            b.ClauseHandling.DefaultToOr();
-                            foreach (var k in keyBatch)
-                            {
-                                b.And(ab =>
-                                {
-                                    ab.Column(key1Name, "t").Is().EqualTo(k.ComponentOne);
-                                    ab.Column(key2Name, "t").Is().EqualTo(k.ComponentTwo);
-                                    ab.Column(key3Name, "t").Is().EqualTo(k.ComponentThree);
-                                });
-                            }
-                        })
-                        .SelectAll<TEntity>("t");
-                    NotifyPreExecution(this, q);
-
-                    var batchResults = sel.AsEnumerable();
-                    results.AddRange(batchResults);
+                    b.And(ab =>
+                    {
+                        ab.Column(key1Name, "t").Is().EqualTo(k.ComponentOne);
+                        ab.Column(key2Name, "t").Is().EqualTo(k.ComponentTwo);
+                        ab.Column(key3Name, "t").Is().EqualTo(k.ComponentThree);
+                    });
                 }
-
-                skip += take;
-            } while (skip < numKeys);
-
-            if (this.disposeOnExit) t.Dispose();
-
-            return results;
+            });
         }
     }
 }

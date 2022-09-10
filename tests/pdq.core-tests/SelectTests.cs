@@ -78,9 +78,8 @@ namespace pdq.core_tests
             var context = this.query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(2);
             context.Joins.Should().HaveCount(1);
-            var whereClause = context.WhereClause as And;
-            whereClause.Children.Should().HaveCount(1);
-            whereClause.Children.First().Should().BeAssignableTo(typeof(state.Conditionals.IColumn));
+            var whereClause = context.WhereClause as IColumn;
+            whereClause.Should().NotBeNull();
         }
 
         [Fact]

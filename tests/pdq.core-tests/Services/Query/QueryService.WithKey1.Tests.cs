@@ -125,9 +125,9 @@ namespace pdq.core_tests.Services.Query
                 c => c.Name.Equals(nameof(Person.Email)),
                 c => c.Name.Equals(nameof(Person.CreatedAt)),
                 c => c.Name.Equals(nameof(Person.AddressId)));
-            var where = selectContext.WhereClause as IColumn;
-            where.EqualityOperator.Should().Be(EqualityOperator.Equals);
-            where.Value.Should().Be(42);
+            var where = (IInValues)selectContext.WhereClause;
+            where.Should().NotBeNull();
+            where.GetValues().Should().Contain(42);
         }
     }
 }

@@ -57,8 +57,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var and = this.context.WhereClause.Children.First() as And;
+            var and = this.context.WhereClause as And;
             and.Should().NotBeNull();
             and.Children.Should().HaveCount(2);
         }
@@ -82,8 +81,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var or = this.context.WhereClause.Children.First() as Or;
+            var or = this.context.WhereClause as Or;
             or.Should().NotBeNull();
             or.Children.Should().HaveCount(2);
         }
@@ -103,8 +101,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var column = this.context.WhereClause.Children.First() as IColumn;
+            var column = this.context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Value.Should().Be(value);
@@ -127,8 +124,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var column = this.context.WhereClause.Children.First() as IColumn;
+            var column = this.context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -152,8 +148,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var inversion = this.context.WhereClause.Children.First() as Not;
+            var inversion = this.context.WhereClause as Not;
             inversion.Should().NotBeNull();
             var column = inversion.Item as IColumn;
             column.Should().NotBeNull();
@@ -180,8 +175,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var column = this.context.WhereClause.Children.First() as IColumn;
+            var column = this.context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -206,8 +200,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var inversion = this.context.WhereClause.Children.First() as Not;
+            var inversion = this.context.WhereClause as Not;
             inversion.Should().NotBeNull();
             var column = inversion.Item as IColumn;
             column.Should().NotBeNull();
@@ -234,8 +227,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var column = this.context.WhereClause.Children.First() as IColumn;
+            var column = this.context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -260,8 +252,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var inversion = this.context.WhereClause.Children.First() as Not;
+            var inversion = this.context.WhereClause as Not;
             inversion.Should().NotBeNull();
             var column = inversion.Item as IColumn;
             column.Should().NotBeNull();
@@ -288,8 +279,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var column = this.context.WhereClause.Children.First() as IColumn;
+            var column = this.context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -314,8 +304,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var column = this.context.WhereClause.Children.First() as IColumn;
+            var column = this.context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -340,8 +329,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var column = this.context.WhereClause.Children.First() as IBetween;
+            var column = this.context.WhereClause as IBetween;
             column.Should().NotBeNull();
             column.Column.Name.Should().Be("name");
             column.Column.Source.Alias.Should().Be("p");
@@ -366,8 +354,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var inversion = this.context.WhereClause.Children.First() as Not;
+            var inversion = this.context.WhereClause as Not;
             inversion.Should().NotBeNull();
             var column = inversion.Item as IBetween;
             column.Should().NotBeNull();
@@ -394,8 +381,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var column = this.context.WhereClause.Children.First() as IInValues;
+            var column = this.context.WhereClause as IInValues;
             column.Should().NotBeNull();
             column.Column.Name.Should().Be("name");
             column.Column.Source.Alias.Should().Be("p");
@@ -423,8 +409,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var column = this.context.WhereClause.Children.First() as IInValues;
+            var column = this.context.WhereClause as IInValues;
             column.Should().NotBeNull();
             column.Column.Name.Should().Be("name");
             column.Column.Source.Alias.Should().Be("p");
@@ -452,8 +437,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var column = this.context.WhereClause.Children.First() as IInValues;
+            var column = this.context.WhereClause as IInValues;
             column.Should().NotBeNull();
             column.Column.Name.Should().Be("name");
             column.Column.Source.Alias.Should().Be("p");
@@ -476,8 +460,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var column = this.context.WhereClause.Children.First() as IColumn;
+            var column = this.context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -501,8 +484,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var column = this.context.WhereClause.Children.First() as IColumn;
+            var column = this.context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -526,8 +508,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var column = this.context.WhereClause.Children.First() as IColumn;
+            var column = this.context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -551,8 +532,7 @@ namespace pdq.core_tests
             });
 
             // Assert
-            this.context.WhereClause.Children.Should().HaveCount(1);
-            var inversion = this.context.WhereClause.Children.First() as Not;
+            var inversion = this.context.WhereClause as Not;
             inversion.Should().NotBeNull();
             var column = inversion.Item as IColumn;
             column.Should().NotBeNull();

@@ -14,7 +14,7 @@ namespace pdq.services
         protected readonly IExpressionHelper expressionHelper;
         protected readonly IDynamicExpressionHelper dynamicExpressionHelper;
 
-        public ServiceBase()
+        protected ServiceBase()
         {
             reflectionHelper = new ReflectionHelper();
             expressionHelper = new ExpressionHelper(reflectionHelper);
@@ -27,7 +27,7 @@ namespace pdq.services
             this.disposeOnExit = false;
         }
 
-        public ServiceBase(IUnitOfWork unitOfWork) : this()
+        protected ServiceBase(IUnitOfWork unitOfWork) : this()
         {
             this.unitOfWork = unitOfWork;
             this.disposeOnExit = true;

@@ -15,8 +15,6 @@ namespace pdq.services
         ICommand<TEntity, TKey>
         where TEntity : class, IEntity<TKey>, new()
     {
-        const string Alias = "t";
-
         public Command(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
         private Command(ITransient transient) : base(transient) { }
@@ -60,7 +58,6 @@ namespace pdq.services
             if (numKeys == 0) return;
 
             var t = this.GetTransient();
-            var tmp = new TEntity();
             const int take = 100;
             var skip = 0;
 
@@ -99,7 +96,6 @@ namespace pdq.services
         {
             ExecuteQuery(q =>
             {
-                var internalContext = q as IQueryContextInternal;
                 GetTableAndKeyDetails(q, out var table, out var column, out _);
 
                 Action<IWhereBuilder> clause = b =>
@@ -124,8 +120,7 @@ namespace pdq.services
                 var internalContext = q as IQueryContextInternal;
                 GetTableAndKeyDetails(q, out var table, out var keyColumn, out _);
                 Expression<Func<dynamic>> propExpression = () => toUpdate;
-                var properties = internalContext.Helpers().GetPropertyInformation(propExpression);
-
+                
                 var partial = q.Update()
                     .Table(table)
                     .Set(toUpdate);

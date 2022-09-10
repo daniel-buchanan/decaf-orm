@@ -61,7 +61,6 @@ namespace pdq.services
             if (numKeys == 0) return;
 
             var t = this.GetTransient();
-            var tmp = new TEntity();
             const int take = 100;
             var skip = 0;
 

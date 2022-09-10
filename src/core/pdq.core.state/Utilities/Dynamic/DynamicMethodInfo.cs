@@ -36,7 +36,7 @@ namespace pdq.state.Utilities
 
         public override object[] GetCustomAttributes(Type attributeType, bool inherit) => new object[] { };
 
-        public override MethodImplAttributes GetMethodImplementationFlags() => MethodImplAttributes.Managed | MethodImplAttributes.Runtime;
+        public override MethodImplAttributes GetMethodImplementationFlags() => MethodImplAttributes.Managed;
 
         public override ParameterInfo[] GetParameters() => this.parameters;
 

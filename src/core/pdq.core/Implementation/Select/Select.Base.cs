@@ -79,8 +79,6 @@ namespace pdq.Implementation
 
             foreach (var p in properties)
             {
-                var columnName = p.Name;
-                
                 var typedIsMethod = isMethod.MakeGenericMethod(p.ValueType);
                 var nameExpression = Expression.Constant(p.NewName);
                 var aliasExpression = Expression.Constant(alias);

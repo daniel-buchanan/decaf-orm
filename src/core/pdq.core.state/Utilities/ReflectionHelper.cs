@@ -252,7 +252,7 @@ namespace pdq.state.Utilities
             if (ignoreAttr?.QueryType.HasFlag(queryType) == true) return null;
 
             // if we have an attribute, return specified name
-            if (renameAttr != null) return ((RenameColumnAttribute)renameAttr).Name;
+            if (renameAttr != null) return renameAttr.Name;
 
             // return property name
             return field.Name;

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
 using pdq.state;
@@ -14,15 +16,18 @@ namespace pdq.services
 
         protected Command(ITransient transient) : base(transient) { }
 
-        public event EventHandler<PreExecutionEventArgs> PreExecution;
+        public event EventHandler<PreExecutionEventArgs> PreExecution
+        {
+            add => base.preExecution += value;
+            remove => base.preExecution -= value;
+        }
 
         public static ICommand<TEntity> Create(ITransient transient) => new Command<TEntity>(transient);
 
         /// <inheritdoc/>
         public TEntity Add(TEntity toAdd)
         {
-            var t = this.GetTransient();
-            using(var q = t.Query())
+            return ExecuteQuery(q =>
             {
                 var query = q.Insert()
                     .Into<TEntity>()
@@ -30,11 +35,9 @@ namespace pdq.services
                     .Value(toAdd);
                 NotifyPreExecution(this, q);
                 query.Execute();
-            }
 
-            if (this.disposeOnExit) t.Dispose();
-
-            return toAdd;
+                return toAdd;
+            });
         }
 
         /// <inheritdoc/>
@@ -52,17 +55,7 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public void Update(TEntity toUpdate, Expression<Func<TEntity, bool>> expression)
-        {
-            ExecuteQuery(q =>
-            {
-                var query = q.Update()
-                    .Table<TEntity>()
-                    .Set(toUpdate)
-                    .Where(expression);
-                NotifyPreExecution(this, q);
-                query.Execute();
-            });
-        }
+            => Update(toUpdate as dynamic, expression);
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
@@ -71,7 +64,7 @@ namespace pdq.services
             {
                 var internalQuery = q as IQueryInternal;
                 var internalContext = internalQuery.Context as IQueryContextInternal;
-                var table = internalContext.Helpers().GetTableName<TEntity>();
+                var table = base.GetTableInfo<TEntity>(q);
                 var alias = internalContext.Helpers().GetTableAlias(expression);
 
                 var query = q.Update()
@@ -83,11 +76,35 @@ namespace pdq.services
             });
         }
 
-        protected void NotifyPreExecution(object sender, IQuery query)
+        protected void DeleteByKeys<TKey>(IEnumerable<TKey> keys, Action<IEnumerable<TKey>, IQuery, IWhereBuilder> action)
         {
-            var internalQuery = query as IQueryInternal;
-            var args = new PreExecutionEventArgs(internalQuery.Context);
-            PreExecution?.Invoke(sender, args);
+            var numKeys = keys?.Count() ?? 0;
+            if (numKeys == 0) return;
+
+            var t = this.GetTransient();
+            const int take = 100;
+            var skip = 0;
+            var results = new List<TEntity>();
+
+            do
+            {
+                var keyBatch = keys.Skip(skip).Take(take);
+
+                using (var q = t.Query())
+                {
+                    var table = base.GetTableInfo<TEntity>(q);
+                    var del = q.Delete()
+                        .From(table, "t")
+                        .Where(b => action(keyBatch, q, b));
+                    NotifyPreExecution(this, q);
+
+                    del.Execute();
+                }
+
+                skip += take;
+            } while (skip < numKeys);
+
+            if (this.disposeOnExit) t.Dispose();
         }
     }
 }

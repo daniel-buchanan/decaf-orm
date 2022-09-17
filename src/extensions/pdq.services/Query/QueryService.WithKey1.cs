@@ -34,12 +34,10 @@ namespace pdq.services
         public IEnumerable<TEntity> Get(IEnumerable<TKey> keys)
         {
             var tmp = new TEntity();
-            var entityType = typeof(TEntity);
-            var keyProp = entityType.GetProperty(tmp.KeyMetadata.Name);
-            var keyName = base.reflectionHelper.GetFieldName(keyProp);
-
-            return GetByKeys(keys, (keyBatch, b) =>
+         
+            return GetByKeys(keys, (keyBatch, q, b) =>
             {
+                var keyName = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata);
                 b.Column(keyName).Is().In(keyBatch);
             });
         }

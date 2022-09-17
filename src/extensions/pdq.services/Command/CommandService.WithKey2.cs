@@ -26,7 +26,7 @@ namespace pdq.services
             return ExecuteQuery<TEntity>(q =>
             {
                 var internalContext = q as IQueryContextInternal;
-                GetTableAndKeyDetails(q, out var table, out _, out _, out _, out _);
+                var table = GetTableInfo<TEntity>(q);
 
                 var query = q.Insert()
                     .Into(table)
@@ -38,11 +38,8 @@ namespace pdq.services
 
                 var result = query.FirstOrDefault<TEntity>();
 
-                var newValueOne = internalContext.ReflectionHelper.GetPropertyValue(result, toAdd.KeyMetadata.ComponentOne.Name);
-                toAdd.SetProperty(toAdd.KeyMetadata.ComponentOne.Name, newValueOne);
-
-                var newValueTwo = internalContext.ReflectionHelper.GetPropertyValue(result, toAdd.KeyMetadata.ComponentTwo.Name);
-                toAdd.SetProperty(toAdd.KeyMetadata.ComponentOne.Name, newValueTwo);
+                toAdd.SetPropertyFrom(toAdd.KeyMetadata.ComponentOne.Name, result);
+                toAdd.SetPropertyFrom(toAdd.KeyMetadata.ComponentTwo.Name, result);
 
                 return toAdd;
             });
@@ -57,44 +54,19 @@ namespace pdq.services
         /// <inheritdoc/>
         public void Delete(IEnumerable<ICompositeKeyValue<TKey1, TKey2>> keys)
         {
-            var numKeys = keys?.Count() ?? 0;
-            if (numKeys == 0) return;
-
-            var t = this.GetTransient();
-            const int take = 100;
-            var skip = 0;
-
-            do
+            DeleteByKeys(keys, (keyBatch, q, b) =>
             {
-                var keyBatch = keys.Skip(skip).Take(take);
-
-                using (var q = t.Query())
+                b.ClauseHandling.DefaultToOr();
+                GetKeyColumnNames<TEntity, TKey1, TKey2>(q, out var keyColumnOne, out var keyColumnTwo);
+                foreach(var k in keyBatch)
                 {
-                    GetTableAndKeyDetails(q, out var table, out var keyColumnOne, out var keyColumnTwo, out _, out _);
-                    var query = q.Delete()
-                        .From(table)
-                        .Where(b =>
-                        {
-                            b.Or(o =>
-                            {
-                                foreach (var k in keyBatch)
-                                {
-                                    o.And(a =>
-                                    {
-                                        a.Column(keyColumnOne).Is().EqualTo(k.ComponentOne);
-                                        a.Column(keyColumnTwo).Is().EqualTo(k.ComponentTwo);
-                                    });
-                                }
-                            });
-                        });
-                    NotifyPreExecution(this, q);
-                    query.Execute();
+                    b.And(a =>
+                    {
+                        a.Column(keyColumnOne).Is().EqualTo(k.ComponentOne);
+                        a.Column(keyColumnTwo).Is().EqualTo(k.ComponentTwo);
+                    });
                 }
-
-                skip += take;
-            } while (skip < numKeys);
-
-            if (this.disposeOnExit) t.Dispose();
+            });
         }
 
         /// <inheritdoc/>
@@ -131,33 +103,8 @@ namespace pdq.services
         /// <inheritdoc/>
         public void Update(TEntity toUpdate)
         {
-            var reflectionHelper = new ReflectionHelper();
-            var keyValueOne = (TKey1)reflectionHelper.GetPropertyValue(toUpdate, toUpdate.KeyMetadata.ComponentOne.Name);
-            var keyValueTwo = (TKey2)reflectionHelper.GetPropertyValue(toUpdate, toUpdate.KeyMetadata.ComponentTwo.Name);
-            Update(toUpdate, keyValueOne, keyValueTwo);
-        }
-
-        private void GetTableAndKeyDetails(
-            IQuery q,
-            out string table,
-            out string keyColumnOne,
-            out string keyColumnTwo,
-            out object keyValueOne,
-            out object keyValueTwo,
-            TEntity toUpdate = null)
-        {
-            var tmp = new TEntity();
-            var internalQuery = q as IQueryInternal;
-            var internalContext = internalQuery.Context as IQueryContextInternal;
-            table = internalContext.Helpers().GetTableName<TEntity>();
-
-            var propOne = typeof(TEntity).GetProperty(tmp.KeyMetadata.ComponentOne.Name);
-            keyColumnOne = internalContext.ReflectionHelper.GetFieldName(propOne);
-            keyValueOne = internalContext.ReflectionHelper.GetPropertyValue(toUpdate, keyColumnOne);
-
-            var propTwo = typeof(TEntity).GetProperty(tmp.KeyMetadata.ComponentTwo.Name);
-            keyColumnTwo = internalContext.ReflectionHelper.GetFieldName(propTwo);
-            keyValueTwo = internalContext.ReflectionHelper.GetPropertyValue(toUpdate, keyColumnTwo);
+            var key = toUpdate.GetKeyValue();
+            Update(toUpdate, key.ComponentOne, key.ComponentTwo);
         }
     }
 }

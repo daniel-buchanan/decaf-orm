@@ -11,7 +11,11 @@ namespace pdq.services
         IQuery<TEntity>
         where TEntity : class, IEntity, new()
     {
-        public event EventHandler<PreExecutionEventArgs> PreExecution;
+        public event EventHandler<PreExecutionEventArgs> PreExecution
+        {
+            add => base.preExecution += value;
+            remove => base.preExecution -= value;
+        }
 
         public Query(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
@@ -46,7 +50,7 @@ namespace pdq.services
             });
         }
 
-        protected IEnumerable<TEntity> GetByKeys<TKey>(IEnumerable<TKey> keys, Action<IEnumerable<TKey>, IWhereBuilder> action)
+        protected IEnumerable<TEntity> GetByKeys<TKey>(IEnumerable<TKey> keys, Action<IEnumerable<TKey>, IQuery, IWhereBuilder> action)
         {
             var numKeys = keys?.Count() ?? 0;
             if (numKeys == 0) return Enumerable.Empty<TEntity>();
@@ -66,7 +70,7 @@ namespace pdq.services
                 {
                     var sel = q.Select()
                         .From(table, "t")
-                        .Where(b => action(keyBatch, b))
+                        .Where(b => action(keyBatch, q, b))
                         .SelectAll<TEntity>("t");
                     NotifyPreExecution(this, q);
 
@@ -80,13 +84,6 @@ namespace pdq.services
             if (this.disposeOnExit) t.Dispose();
 
             return results;
-        }
-
-        protected void NotifyPreExecution(object sender, IQuery query)
-        {
-            var internalQuery = query as IQueryInternal;
-            var args = new PreExecutionEventArgs(internalQuery.Context);
-            PreExecution?.Invoke(sender, args);
         }
     }
 }

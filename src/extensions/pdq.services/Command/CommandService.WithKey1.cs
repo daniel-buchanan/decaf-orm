@@ -27,7 +27,7 @@ namespace pdq.services
             return ExecuteQuery<TEntity>(q =>
             {
                 var internalContext = q as IQueryContextInternal;
-                GetTableAndKeyDetails(q, out var table, out _, out _);
+                var table = GetTableInfo<TEntity>(q);
 
                 var query = q.Insert()
                     .Into(table)
@@ -54,62 +54,31 @@ namespace pdq.services
         /// <inheritdoc/>
         public void Delete(IEnumerable<TKey> keys)
         {
-            var numKeys = keys?.Count() ?? 0;
-            if (numKeys == 0) return;
-
-            var t = this.GetTransient();
-            const int take = 100;
-            var skip = 0;
-
-            do
+            DeleteByKeys(keys, (keyBatch, q, b) =>
             {
-                var keyBatch = keys.Skip(skip).Take(take);
-
-                using (var q = t.Query())
-                {
-                    GetTableAndKeyDetails(q, out var table, out var column, out _);
-                    q.Delete()
-                        .From(table)
-                        .Where(b =>
-                        {
-                            b.Column(column).Is().In(keyBatch);
-                        })
-                        .Execute();
-                }
-
-                skip += take;
-            } while (skip < numKeys);
-
-            if (this.disposeOnExit) t.Dispose();
+                GetKeyColumnNames<TEntity, TKey>(q, out var keyName);
+                b.Column(keyName).Is().In(keyBatch);
+            });
         }
 
         /// <inheritdoc/>
         public void Update(TEntity toUpdate)
         {
-            var reflectionHelper = new ReflectionHelper();
-            var keyValue = (TKey)reflectionHelper.GetPropertyValue(toUpdate, toUpdate.KeyMetadata.Name);
+            var keyValue = toUpdate.GetKeyValue();
             Update(toUpdate, keyValue);
         }
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, TKey key)
         {
-            ExecuteQuery(q =>
-            {
-                GetTableAndKeyDetails(q, out var table, out var column, out _);
+            var temp = new TEntity();
+            var parameterExpression = Expression.Parameter(typeof(TEntity), "t");
+            var keyOneConstantExpression = Expression.Constant(key);
+            var keyOnePropertyExpression = Expression.Property(parameterExpression, temp.KeyMetadata.Name);
+            var keyOneEqualsExpression = Expression.Equal(keyOnePropertyExpression, keyOneConstantExpression);
+            var lambdaExpression = Expression.Lambda<Func<TEntity, bool>>(keyOneEqualsExpression, parameterExpression);
 
-                Action<IWhereBuilder> clause = b =>
-                {
-                    b.Column(column).Is().EqualTo(key);
-                };
-
-                var query = q.Update()
-                    .Table(table)
-                    .Set(toUpdate)
-                    .Where(clause);
-                NotifyPreExecution(this, q);
-                query.Execute();
-            });
+            Update(toUpdate, lambdaExpression);
         }
 
         /// <inheritdoc/>
@@ -118,7 +87,7 @@ namespace pdq.services
             ExecuteQuery(q =>
             {
                 var internalContext = q as IQueryContextInternal;
-                GetTableAndKeyDetails(q, out var table, out var keyColumn, out _);
+                var table = GetTableInfo<TEntity>(q);
                 Expression<Func<dynamic>> propExpression = () => toUpdate;
                 
                 var partial = q.Update()
@@ -131,17 +100,6 @@ namespace pdq.services
                 NotifyPreExecution(this, q);
                 partial.Execute();
             });
-        }
-
-        private void GetTableAndKeyDetails(IQuery q, out string table, out string keyColumn, out object keyValue, TEntity toUpdate = null)
-        {
-            var tmp = new TEntity();
-            var internalQuery = q as IQueryInternal;
-            var internalContext = internalQuery.Context as IQueryContextInternal;
-            table = internalContext.Helpers().GetTableName<TEntity>();
-            var prop = typeof(TEntity).GetProperty(tmp.KeyMetadata.Name);
-            keyColumn = internalContext.ReflectionHelper.GetFieldName(prop);
-            keyValue = internalContext.ReflectionHelper.GetPropertyValue(toUpdate, keyColumn);
         }
     }
 }

@@ -37,14 +37,11 @@ namespace pdq.services
         public IEnumerable<TEntity> Get(IEnumerable<ICompositeKeyValue<TKey1, TKey2>> keys)
         {
             var tmp = new TEntity();
-            var entityType = typeof(TEntity);
-            var key1Prop = entityType.GetProperty(tmp.KeyMetadata.ComponentOne.Name);
-            var key1Name = base.reflectionHelper.GetFieldName(key1Prop);
-            var key2Prop = entityType.GetProperty(tmp.KeyMetadata.ComponentTwo.Name);
-            var key2Name = base.reflectionHelper.GetFieldName(key2Prop);
-
-            return GetByKeys(keys, (keyBatch, b) =>
+            
+            return GetByKeys(keys, (keyBatch, q, b) =>
             {
+                var key1Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentOne);
+                var key2Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentTwo);
                 b.ClauseHandling.DefaultToOr();
                 foreach (var k in keyBatch)
                 {

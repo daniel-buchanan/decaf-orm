@@ -10,7 +10,7 @@ namespace pdq.services
     /// An Entity with a single Primary Key.
     /// </summary>
     /// <typeparam name="TKey">The data type of the Key.</typeparam>
-	public interface IEntity<TKey> : IEntity
+	public interface IEntity<out TKey> : IEntity
     {
         /// <summary>
         /// Metadata about the Primary Key for this <see cref="IEntity{TKey}"/>

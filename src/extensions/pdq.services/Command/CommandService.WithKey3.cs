@@ -25,7 +25,6 @@ namespace pdq.services
         {
             return ExecuteQuery<TEntity>(q =>
             {
-                var internalContext = q as IQueryContextInternal;
                 var table = GetTableInfo<TEntity>(q);
 
                 var query = q.Insert()

@@ -88,7 +88,6 @@ namespace pdq.services
             {
                 var internalContext = q as IQueryContextInternal;
                 var table = GetTableInfo<TEntity>(q);
-                Expression<Func<dynamic>> propExpression = () => toUpdate;
                 
                 var partial = q.Update()
                     .Table(table)

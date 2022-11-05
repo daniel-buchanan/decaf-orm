@@ -104,7 +104,6 @@ namespace pdq.services
         protected string GetTableInfo<TEntity>(IQuery q)
             where TEntity : new()
         {
-            var tmp = new TEntity();
             var internalQuery = q as IQueryInternal;
             var internalContext = internalQuery?.Context as IQueryContextInternal;
             return internalContext?.Helpers().GetTableName<TEntity>();
@@ -147,7 +146,7 @@ namespace pdq.services
             where TEntity : IEntity<TKey>, new()
         {
             var tmp = new TEntity();
-            keyName = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata);;
+            keyName = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata);
         }
 
         /// <summary>

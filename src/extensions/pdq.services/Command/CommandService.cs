@@ -65,7 +65,6 @@ namespace pdq.services
                 var updateQ = q.Update();
                 var internalQuery = q as IQueryInternal;
                 var internalContext = internalQuery.Context as IQueryContextInternal;
-                var table = base.GetTableInfo<TEntity>(q);
                 var alias = internalContext.Helpers().GetTableAlias(expression);
                 var whereClause = internalContext.Helpers().ParseWhere(expression);
 
@@ -86,7 +85,6 @@ namespace pdq.services
             var t = this.GetTransient();
             const int take = 100;
             var skip = 0;
-            var results = new List<TEntity>();
 
             do
             {

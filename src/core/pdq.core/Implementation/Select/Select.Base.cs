@@ -77,6 +77,11 @@ namespace pdq.Implementation
             var emptyCtor = new DynamicConstructorInfo(properties, typeof(T));
             var isMethod = typeof(ISelectColumnBuilder).GetMethods().FirstOrDefault(m => m.IsGenericMethod && m.GetParameters().Count() == 2);
 
+            if(isMethod == null)
+            {
+                throw new ShouldNeverOccurException("The method .Is<T>(column, alias) could not be found on `ISelectColumnBuilder`, this should never happen!");
+            }    
+
             foreach (var p in properties)
             {
                 var typedIsMethod = isMethod.MakeGenericMethod(p.ValueType);

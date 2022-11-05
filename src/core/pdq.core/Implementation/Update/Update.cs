@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 using pdq.common;
 using pdq.state;
 using pdq.state.ValueSources.Update;
@@ -91,6 +92,17 @@ namespace pdq.Implementation
             var table = this.context.Helpers().GetTableName(expression);
             var alias = this.context.Helpers().GetTableAlias(expression);
 
+            var managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
+            var managedAlias = this.query.AliasManager.Add(alias, table);
+            this.context.Update(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
+
+            return UpdateTyped<T>.Create(this.context, this.query);
+        }
+
+        /// <inheritdoc/>
+        public IUpdateTable<T> Table<T>(string alias)
+        {
+            var table = this.context.Helpers().GetTableName<T>();
             var managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
             var managedAlias = this.query.AliasManager.Add(alias, table);
             this.context.Update(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));

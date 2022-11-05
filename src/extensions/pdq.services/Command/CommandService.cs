@@ -69,9 +69,10 @@ namespace pdq.services
                 var alias = internalContext.Helpers().GetTableAlias(expression);
                 var whereClause = internalContext.Helpers().ParseWhere(expression);
 
-                var executeQ = updateQ.Table(table, alias)
-                    .Set(toUpdate)
-                    .Where(whereClause);
+                IUpdateSet<TEntity> executeQ = updateQ.Table<TEntity>(alias)
+                    .Set(toUpdate);
+
+                executeQ.Where(whereClause);
                 NotifyPreExecution(this, q);
                 executeQ.Execute();
             });

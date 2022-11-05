@@ -68,6 +68,13 @@ namespace pdq.Implementation
             return this;
         }
 
+        /// <inheritdoc/>
+        public IUpdateSet<T> Where(IWhere clause)
+        {
+            this.context.Where(clause);
+            return this;
+        }
+
         private state.Column GetDestinationColumn(Expression expression)
         {
             var internalContext = this.context as IQueryContextInternal;

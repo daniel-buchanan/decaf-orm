@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
@@ -139,6 +140,78 @@ namespace pdq.core_tests.Services.Query
                 c => c.Name.Equals(nameof(Address.Country)));
             var where = selectContext.WhereClause as state.Conditionals.And;
             where.Children.Should().HaveCount(2);
+        }
+
+        [Fact]
+        public void GetByIdArrayContextIsCorrect()
+        {
+            // Arrange
+            IQueryContext context = null;
+            this.addressService.PreExecution += (sender, args) =>
+            {
+                context = args.Context;
+            };
+            var key = CompositeKeyValue.Create(42, 43);
+
+            // Act
+            this.addressService.Get(new[] { CompositeKeyValue.Create(42, 43) });
+
+            // Assert
+            context.Should().NotBeNull();
+            var selectContext = context as ISelectQueryContext;
+            selectContext.QueryTargets.Should().HaveCount(1);
+            selectContext.Columns.Should().Satisfy(
+                c => c.Name.Equals(nameof(Address.Id)),
+                c => c.Name.Equals(nameof(Address.City)),
+                c => c.Name.Equals(nameof(Address.Country)),
+                c => c.Name.Equals(nameof(Address.Line1)),
+                c => c.Name.Equals(nameof(Address.Line2)),
+                c => c.Name.Equals(nameof(Address.Line3)),
+                c => c.Name.Equals(nameof(Address.Line4)),
+                c => c.Name.Equals(nameof(Address.PersonId)),
+                c => c.Name.Equals(nameof(Address.PostCode)),
+                c => c.Name.Equals(nameof(Address.Region)));
+            var where = (And)selectContext.WhereClause;
+            where.Should().NotBeNull();
+            where.Children.Should().Satisfy(
+                c => ((Column<int>)c).Value == 42,
+                c => ((Column<int>)c).Value == 43);
+        }
+
+        [Fact]
+        public void GetByIdEnumerableContextIsCorrect()
+        {
+            // Arrange
+            IQueryContext context = null;
+            this.addressService.PreExecution += (sender, args) =>
+            {
+                context = args.Context;
+            };
+            var key = CompositeKeyValue.Create(42, 43);
+
+            // Act
+            this.addressService.Get(new List<ICompositeKeyValue<int, int>> { key });
+
+            // Assert
+            context.Should().NotBeNull();
+            var selectContext = context as ISelectQueryContext;
+            selectContext.QueryTargets.Should().HaveCount(1);
+            selectContext.Columns.Should().Satisfy(
+                c => c.Name.Equals(nameof(Address.Id)),
+                c => c.Name.Equals(nameof(Address.City)),
+                c => c.Name.Equals(nameof(Address.Country)),
+                c => c.Name.Equals(nameof(Address.Line1)),
+                c => c.Name.Equals(nameof(Address.Line2)),
+                c => c.Name.Equals(nameof(Address.Line3)),
+                c => c.Name.Equals(nameof(Address.Line4)),
+                c => c.Name.Equals(nameof(Address.PersonId)),
+                c => c.Name.Equals(nameof(Address.PostCode)),
+                c => c.Name.Equals(nameof(Address.Region)));
+            var where = (And)selectContext.WhereClause;
+            where.Should().NotBeNull();
+            where.Children.Should().Satisfy(
+                c => ((Column<int>)c).Value == 42,
+                c => ((Column<int>)c).Value == 43);
         }
     }
 }

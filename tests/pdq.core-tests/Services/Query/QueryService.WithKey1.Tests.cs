@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
@@ -129,6 +130,67 @@ namespace pdq.core_tests.Services.Query
             where.Should().NotBeNull();
             where.GetValues().Should().Contain(42);
         }
+
+        [Fact]
+        public void GetByIdArrayContextIsCorrect()
+        {
+            // Arrange
+            IQueryContext context = null;
+            this.personService.PreExecution += (sender, args) =>
+            {
+                context = args.Context;
+            };
+
+            // Act
+            this.personService.Get(new[] { 42, 43 });
+
+            // Assert
+            context.Should().NotBeNull();
+            var selectContext = context as ISelectQueryContext;
+            selectContext.QueryTargets.Should().HaveCount(1);
+            selectContext.Columns.Should().Satisfy(
+                c => c.Name.Equals(nameof(Person.Id)),
+                c => c.Name.Equals(nameof(Person.FirstName)),
+                c => c.Name.Equals(nameof(Person.LastName)),
+                c => c.Name.Equals(nameof(Person.Email)),
+                c => c.Name.Equals(nameof(Person.CreatedAt)),
+                c => c.Name.Equals(nameof(Person.AddressId)));
+            var where = (IInValues)selectContext.WhereClause;
+            where.Should().NotBeNull();
+            where.GetValues().Should().Satisfy(
+                c => ((int)c) == 42,
+                c => ((int)c) == 43);
+        }
+
+        [Fact]
+        public void GetByIdEnumerableContextIsCorrect()
+        {
+            // Arrange
+            IQueryContext context = null;
+            this.personService.PreExecution += (sender, args) =>
+            {
+                context = args.Context;
+            };
+
+            // Act
+            this.personService.Get(new List<int> { 42, 43 });
+
+            // Assert
+            context.Should().NotBeNull();
+            var selectContext = context as ISelectQueryContext;
+            selectContext.QueryTargets.Should().HaveCount(1);
+            selectContext.Columns.Should().Satisfy(
+                c => c.Name.Equals(nameof(Person.Id)),
+                c => c.Name.Equals(nameof(Person.FirstName)),
+                c => c.Name.Equals(nameof(Person.LastName)),
+                c => c.Name.Equals(nameof(Person.Email)),
+                c => c.Name.Equals(nameof(Person.CreatedAt)),
+                c => c.Name.Equals(nameof(Person.AddressId)));
+            var where = (IInValues)selectContext.WhereClause;
+            where.Should().NotBeNull();
+            where.GetValues().Should().Satisfy(
+                c => ((int)c) == 42,
+                c => ((int)c) == 43);
+        }
     }
 }
-

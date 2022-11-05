@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 
 namespace pdq.Exceptions
 {
+    [Serializable]
     public class ShouldNeverOccurException : Exception
     {
         public ShouldNeverOccurException(string message)

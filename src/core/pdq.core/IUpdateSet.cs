@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using pdq.state;
 
 namespace pdq
 {
@@ -31,6 +32,20 @@ namespace pdq
         /// execute the query.
         /// </returns>
         IUpdateSet Where(Action<IWhereBuilder> builder);
+
+        /// <summary>
+        /// Sets the filtering criteria for the update.
+        /// </summary>
+        /// <param name="clause">
+        /// An <see cref="IWhere"/> clause which provides for the filtering
+        /// of the query.
+        /// </param>
+        /// <returns>
+        /// (FluentApi) Returns an <see cref="IUpdateSet"/> which provides the
+        /// ability to continue setting column values, perform filtering or
+        /// execute the query.
+        /// </returns>
+        IUpdateSet Where(IWhere clause);
 
         /// <summary>
         /// Add a column to be returned as output from the query.

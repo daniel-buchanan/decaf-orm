@@ -62,17 +62,18 @@ namespace pdq.services
         {
             ExecuteQuery(q =>
             {
+                var updateQ = q.Update();
                 var internalQuery = q as IQueryInternal;
                 var internalContext = internalQuery.Context as IQueryContextInternal;
                 var table = base.GetTableInfo<TEntity>(q);
                 var alias = internalContext.Helpers().GetTableAlias(expression);
+                var whereClause = internalContext.Helpers().ParseWhere(expression);
 
-                var query = q.Update()
-                    .Table(table, alias)
+                var executeQ = updateQ.Table(table, alias)
                     .Set(toUpdate)
-                    .Where(expression);
+                    .Where(whereClause);
                 NotifyPreExecution(this, q);
-                query.Execute();
+                executeQ.Execute();
             });
         }
 

@@ -108,6 +108,14 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc/>
+        public IUpdateSet Where(IWhere clause)
+        {
+            if (clause == null) throw new ArgumentNullException(nameof(clause));
+            this.context.Where(clause);
+            return this;
+        }
+
+        /// <inheritdoc/>
         IUpdateSetFromQuery IUpdateSetFromQuery.Output(string column)
         {
             this.Output(column);

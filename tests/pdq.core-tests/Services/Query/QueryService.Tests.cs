@@ -13,7 +13,7 @@ namespace pdq.core_tests.Services.Query
 {
     public class QueryServiceTests
     {
-        private readonly IQuery<Person> personService;
+        private readonly IService<Person> personService;
 
         public QueryServiceTests()
         {
@@ -28,7 +28,7 @@ namespace pdq.core_tests.Services.Query
             services.AddScoped<IConnectionDetails, MockConnectionDetails>();
 
             var provider = services.BuildServiceProvider();
-            this.personService = provider.GetService<IQuery<Person>>();
+            this.personService = provider.GetService<IService<Person>>();
         }
 
         [Fact]
@@ -97,6 +97,33 @@ namespace pdq.core_tests.Services.Query
                 c => c.Name.Equals(nameof(Person.CreatedAt)),
                 c => c.Name.Equals(nameof(Person.AddressId)));
             var where = selectContext.WhereClause as IColumn;
+            where.EqualityOperator.Should().Be(EqualityOperator.Equals);
+            where.Value.Should().Be(42);
+        }
+
+        [Fact]
+        public void UpdateContextIsCorrect()
+        {
+            // Arrange
+            IQueryContext context = null;
+            this.personService.PreExecution += (sender, args) =>
+            {
+                context = args.Context;
+            };
+
+            // Act
+            this.personService.Update(new
+            {
+                FirstName = "bob"
+            },
+            p => p.Id == 42);
+
+            // Assert
+            context.Should().NotBeNull();
+            var updateContext = context as IUpdateQueryContext;
+            updateContext.QueryTargets.Should().HaveCount(1);
+            updateContext.Updates.Should().HaveCount(1);
+            var where = updateContext.WhereClause as IColumn;
             where.EqualityOperator.Should().Be(EqualityOperator.Equals);
             where.Value.Should().Be(42);
         }

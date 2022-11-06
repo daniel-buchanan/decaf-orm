@@ -13,7 +13,6 @@ namespace pdq.services
         ICommand<TEntity>
 		where TEntity: IEntity<TKey>, new()
     {
-
         /// <summary>
         /// Update only select fields for a specific item.
         /// </summary>

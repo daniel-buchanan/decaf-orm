@@ -37,10 +37,45 @@ namespace pdq.services
                 NotifyPreExecution(this, q);
 
                 var result = query.FirstOrDefault<TEntity>();
+                toAdd.SetPropertyFrom(toAdd.KeyMetadata.Name, result);
 
-                var newValue = internalContext.ReflectionHelper.GetPropertyValue(result, toAdd.KeyMetadata.Name);
-                toAdd.SetProperty(toAdd.KeyMetadata.Name, newValue);
+                return toAdd;
+            });
+        }
 
+        /// <inheritdoc/>
+        public override IEnumerable<TEntity> Add(params TEntity[] toAdd)
+            => Add(toAdd?.ToList());
+
+        /// <inheritdoc/>
+        public override IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
+        {
+            if (toAdd == null ||
+               toAdd.Count() == 0)
+                return new List<TEntity>();
+
+            var first = toAdd.First();
+            return ExecuteQuery(q =>
+            {
+                var internalContext = q as IQueryContextInternal;
+                var table = GetTableInfo<TEntity>(q);
+
+                var query = q.Insert()
+                    .Into(table)
+                    .Columns((t) => first)
+                    .Values(toAdd)
+                    .Output(first.KeyMetadata.Name);
+                NotifyPreExecution(this, q);
+
+                var results = query.ToList<TEntity>();
+
+                var i = 0;
+                foreach(var item in toAdd)
+                {
+                    var r = results[i];
+                    toAdd.SetPropertyFrom(first.KeyMetadata.Name, r);
+                    i += 1;
+                }
                 return toAdd;
             });
         }

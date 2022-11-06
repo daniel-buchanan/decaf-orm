@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
 using pdq.state;
+using static pdq.Attributes.IgnoreColumnFor;
 
 namespace pdq.services
 {
@@ -41,6 +42,30 @@ namespace pdq.services
         }
 
         /// <inheritdoc/>
+        public virtual IEnumerable<TEntity> Add(params TEntity[] toAdd)
+            => Add(toAdd?.ToList());
+
+        /// <inheritdoc/>
+        public virtual IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
+        {
+            if (toAdd == null ||
+               toAdd.Count() == 0)
+                return new List<TEntity>();
+
+            return ExecuteQuery(q =>
+            {
+                var first = toAdd.First();
+                var query = q.Insert()
+                    .Into<TEntity>()
+                    .Columns(e => first)
+                    .Values(toAdd);
+                NotifyPreExecution(this, q);
+                query.Execute();
+                return toAdd;
+            });
+        }
+
+        /// <inheritdoc/>
         public void Delete(Expression<Func<TEntity, bool>> expression)
         {
             ExecuteQuery(q =>
@@ -55,10 +80,13 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public void Update(TEntity toUpdate, Expression<Func<TEntity, bool>> expression)
-            => Update(toUpdate as dynamic, expression);
+            => UpdateInternal(toUpdate, expression);
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
+            => UpdateInternal(toUpdate, expression);
+
+        private void UpdateInternal(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
         {
             ExecuteQuery(q =>
             {

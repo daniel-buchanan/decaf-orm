@@ -50,6 +50,14 @@ namespace pdq.services
             => this.command.Add(toAdd);
 
         /// <inheritdoc/>
+        public IEnumerable<TEntity> Add(params TEntity[] toAdd)
+            => this.command.Add(toAdd);
+
+        /// <inheritdoc/>
+        public IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
+            => this.command.Add(toAdd);
+
+        /// <inheritdoc/>
         public IEnumerable<TEntity> All()
             => this.query.All();
 

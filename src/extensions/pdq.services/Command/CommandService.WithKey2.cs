@@ -45,6 +45,45 @@ namespace pdq.services
         }
 
         /// <inheritdoc/>
+        public override IEnumerable<TEntity> Add(params TEntity[] toAdd)
+            => Add(toAdd?.ToList());
+
+        /// <inheritdoc/>
+        public override IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
+        {
+            if (toAdd == null ||
+               toAdd.Count() == 0)
+                return new List<TEntity>();
+
+            var first = toAdd.First();
+            return ExecuteQuery(q =>
+            {
+                var internalContext = q as IQueryContextInternal;
+                var table = GetTableInfo<TEntity>(q);
+
+                var query = q.Insert()
+                    .Into(table)
+                    .Columns((t) => first)
+                    .Values(toAdd)
+                    .Output(first.KeyMetadata.ComponentOne.Name)
+                    .Output(first.KeyMetadata.ComponentTwo.Name);
+                NotifyPreExecution(this, q);
+
+                var results = query.ToList<TEntity>();
+
+                var i = 0;
+                foreach (var item in toAdd)
+                {
+                    var r = results[i];
+                    toAdd.SetPropertyFrom(first.KeyMetadata.ComponentOne.Name, r);
+                    toAdd.SetPropertyFrom(first.KeyMetadata.ComponentTwo.Name, r);
+                    i += 1;
+                }
+                return toAdd;
+            });
+        }
+
+        /// <inheritdoc/>
         public void Delete(TKey1 key1, TKey2 key2) => Delete(new[] { new CompositeKeyValue<TKey1, TKey2>(key1, key2) });
 
         /// <inheritdoc/>

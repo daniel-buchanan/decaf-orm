@@ -17,12 +17,26 @@ namespace pdq.services
         /// <returns>The updated <see cref="TEntity"/> which has been added.</returns>
 		TEntity Add(TEntity toAdd);
 
-		/// <summary>
+        /// <summary>
+        /// Add an item to the database.
+        /// </summary>
+        /// <param name="toAdd">The <see cref="TEntity"/> to be added.</param>
+        /// <returns>The updated <see cref="TEntity"/> which has been added.</returns>
+		IEnumerable<TEntity> Add(params TEntity[] toAdd);
+
+        /// <summary>
+        /// Add an item to the database.
+        /// </summary>
+        /// <param name="toAdd">The <see cref="TEntity"/> to be added.</param>
+        /// <returns>The updated <see cref="TEntity"/> which has been added.</returns>
+		IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd);
+
+        /// <summary>
         /// Update the provided item.
         /// </summary>
         /// <param name="toUpdate">The details to update.</param>
         /// <param name="expression">An expression specifying which item(s) to update.</param>
-		void Update(TEntity toUpdate, Expression<Func<TEntity, bool>> expression);
+        void Update(TEntity toUpdate, Expression<Func<TEntity, bool>> expression);
 
         /// <summary>
         /// Update the provided item.

@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.core-tests")]
-namespace pdq.services
+namespace pdq.state
 {
     internal static class ObjectExtensions
     {
@@ -17,9 +17,9 @@ namespace pdq.services
             return expressionHelper.GetName(expression);
         }
 
-        internal static object GetProperty<T>(this T self, string property)
+        internal static object GetProperty(this object self, string property)
         {
-            var type = typeof(T);
+            var type = self.GetType();
             var prop = type.GetProperty(property, Flags);
             if (prop == null) return null;
             return prop.GetValue(self);
@@ -47,6 +47,7 @@ namespace pdq.services
 
         internal static void SetPropertyFrom<T>(this T self, string property, object source)
         {
+            if (source == null) return;
             var newValue = source.GetProperty(property);
             self.SetProperty(property, newValue);
         }

@@ -46,6 +46,7 @@ namespace pdq.Implementation
             for(var i = 0; i < props.Count; i += 1)
             {
                 var p = props[i];
+                if (PropertyIsKey(value, p)) continue;
                 
                 var column = Column.Create(p.Name, this.context.Table);
                 var v = p.Value;
@@ -58,6 +59,40 @@ namespace pdq.Implementation
                 var source = state.ValueSources.Update.StaticValueSource.Create(column, valueType, v);
                 this.context.Set(source);
             }
+        }
+
+        private bool PropertyIsKey<T>(T value, DynamicColumnInfo info)
+        {
+            var metadata = value.GetProperty("KeyMetadata");
+            if (metadata == null) return false;
+
+            if(metadata.GetType().Name == "KeyMetadata`1")
+            {
+                var keyName = metadata.GetProperty("Name") as string;
+                return keyName == info.Name;
+            }
+            else if(metadata.GetType().Name == "CompositeKey")
+            {
+                var componentOne = metadata.GetProperty("ComponentOne");
+                var componentTwo = metadata.GetProperty("ComponentTwo");
+                var valueOne = componentOne.GetProperty("Name") as string;
+                var valueTwo = componentTwo.GetProperty("Name") as string;
+                return info.Name == valueOne || info.Name == valueTwo;
+            }
+            else if(metadata.GetType().Name == "CompositeKeyTriple")
+            {
+                var componentOne = metadata.GetProperty("ComponentOne");
+                var componentTwo = metadata.GetProperty("ComponentTwo");
+                var componentThree = metadata.GetProperty("ComponentThree");
+                var valueOne = componentOne.GetProperty("Name") as string;
+                var valueTwo = componentTwo.GetProperty("Name") as string;
+                var valueThree = componentTwo.GetProperty("Name") as string;
+                return info.Name == valueOne ||
+                    info.Name == valueTwo ||
+                    info.Name == valueThree;
+            }
+
+            return false;
         }
     }
 }

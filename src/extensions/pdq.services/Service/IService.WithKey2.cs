@@ -12,7 +12,10 @@ namespace pdq.services
 		ICommand<TEntity, TKey1, TKey2>
 		where TEntity: IEntity<TKey1, TKey2>, new()
     {
-
+        /// <summary>
+        /// Event fired before the query is executed.
+        /// </summary>
+        new event EventHandler<PreExecutionEventArgs> PreExecution;
     }
 }
 

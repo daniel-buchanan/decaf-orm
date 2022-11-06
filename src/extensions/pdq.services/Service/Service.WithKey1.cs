@@ -104,6 +104,10 @@ namespace pdq.services
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
             => this.command.Update(toUpdate, expression);
+
+        /// <inheritdoc/>
+        public void Update(TEntity item)
+            => this.command.Update(item);
     }
 }
 

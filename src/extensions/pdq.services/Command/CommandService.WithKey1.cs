@@ -26,16 +26,15 @@ namespace pdq.services
         {
             return ExecuteQuery(q =>
             {
+                var query = q.Insert();
                 var table = GetTableInfo<TEntity>(q);
-
-                var query = q.Insert()
-                    .Into(table)
+                var exec = query.Into(table)
                     .Columns((t) => toAdd)
                     .Value(toAdd)
                     .Output(toAdd.KeyMetadata.Name);
                 NotifyPreExecution(this, q);
 
-                var result = query.FirstOrDefault<TEntity>();
+                var result = exec.FirstOrDefault<TEntity>();
                 toAdd.SetPropertyFrom(toAdd.KeyMetadata.Name, result);
 
                 return toAdd;
@@ -50,31 +49,31 @@ namespace pdq.services
         public override IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
         {
             if (toAdd == null ||
-               toAdd.Any())
+               !toAdd.Any())
                 return new List<TEntity>();
 
             var first = toAdd.First();
             return ExecuteQuery(q =>
             {
+                var query = q.Insert();
                 var table = GetTableInfo<TEntity>(q);
-
-                var query = q.Insert()
-                    .Into(table)
+                var exec = query.Into(table)
                     .Columns((t) => first)
                     .Values(toAdd)
                     .Output(first.KeyMetadata.Name);
                 NotifyPreExecution(this, q);
 
-                var results = query.ToList<TEntity>();
+                var results = exec.ToList<TEntity>();
 
+                var inputItems = toAdd.ToArray();
                 var i = 0;
-                foreach(var item in toAdd)
+                foreach(var item in results)
                 {
-                    var r = results[i];
-                    toAdd.SetPropertyFrom(first.KeyMetadata.Name, r);
+                    var r = inputItems[i];
+                    r.SetPropertyFrom(first.KeyMetadata.Name, item);
                     i += 1;
                 }
-                return toAdd;
+                return inputItems;
             });
         }
 
@@ -106,10 +105,10 @@ namespace pdq.services
         {
             var temp = new TEntity();
             var parameterExpression = Expression.Parameter(typeof(TEntity), "t");
-            var keyOneConstantExpression = Expression.Constant(key);
-            var keyOnePropertyExpression = Expression.Property(parameterExpression, temp.KeyMetadata.Name);
-            var keyOneEqualsExpression = Expression.Equal(keyOnePropertyExpression, keyOneConstantExpression);
-            var lambdaExpression = Expression.Lambda<Func<TEntity, bool>>(keyOneEqualsExpression, parameterExpression);
+            var keyConstantExpression = Expression.Constant(key);
+            var keyPropertyExpression = Expression.Property(parameterExpression, temp.KeyMetadata.Name);
+            var keyEqualsExpression = Expression.Equal(keyPropertyExpression, keyConstantExpression);
+            var lambdaExpression = Expression.Lambda<Func<TEntity, bool>>(keyEqualsExpression, parameterExpression);
 
             Update(toUpdate, lambdaExpression);
         }
@@ -119,15 +118,16 @@ namespace pdq.services
         {
             ExecuteQuery(q =>
             {
-                var internalContext = q as IQueryContextInternal;
+                var internalQuery = q as IQueryInternal;
+                var query = q.Update();
+                var internalContext = internalQuery.Context as IQueryContextInternal;
                 var table = GetTableInfo<TEntity>(q);
                 
-                var partial = q.Update()
-                    .Table(table)
+                IUpdateSet partial = query.Table(table)
                     .Set(toUpdate);
 
                 var clause = internalContext.Parsers.Where.Parse(expression, internalContext);
-                (q as IUpdateQueryContext).Where(clause);
+                (internalContext as IUpdateQueryContext).Where(clause);
 
                 NotifyPreExecution(this, q);
                 partial.Execute();

@@ -23,10 +23,9 @@ namespace pdq.services
         /// <inheritdoc/>
         public new TEntity Add(TEntity toAdd)
         {
-            return ExecuteQuery<TEntity>(q =>
+            return ExecuteQuery(q =>
             {
                 var table = GetTableInfo<TEntity>(q);
-
                 var query = q.Insert()
                     .Into(table)
                     .Columns((t) => toAdd)
@@ -36,7 +35,6 @@ namespace pdq.services
                 NotifyPreExecution(this, q);
 
                 var result = query.FirstOrDefault<TEntity>();
-
                 toAdd.SetPropertyFrom(toAdd.KeyMetadata.ComponentOne.Name, result);
                 toAdd.SetPropertyFrom(toAdd.KeyMetadata.ComponentTwo.Name, result);
 
@@ -52,7 +50,7 @@ namespace pdq.services
         public override IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
         {
             if (toAdd == null ||
-               toAdd.Count() == 0)
+               toAdd.Any())
                 return new List<TEntity>();
 
             var first = toAdd.First();

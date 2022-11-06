@@ -24,9 +24,8 @@ namespace pdq.services
         /// <inheritdoc/>
         public new TEntity Add(TEntity toAdd)
         {
-            return ExecuteQuery<TEntity>(q =>
+            return ExecuteQuery(q =>
             {
-                var internalContext = q as IQueryContextInternal;
                 var table = GetTableInfo<TEntity>(q);
 
                 var query = q.Insert()
@@ -51,13 +50,12 @@ namespace pdq.services
         public override IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
         {
             if (toAdd == null ||
-               toAdd.Count() == 0)
+               toAdd.Any())
                 return new List<TEntity>();
 
             var first = toAdd.First();
             return ExecuteQuery(q =>
             {
-                var internalContext = q as IQueryContextInternal;
                 var table = GetTableInfo<TEntity>(q);
 
                 var query = q.Insert()

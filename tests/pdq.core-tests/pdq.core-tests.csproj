@@ -40,6 +40,7 @@
     <None Remove="Connections\" />
     <None Remove="Services\" />
     <None Remove="Services\Query\" />
+    <None Remove="Services\Command\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />
@@ -48,5 +49,6 @@
     <Folder Include="Connections\" />
     <Folder Include="Services\" />
     <Folder Include="Services\Query\" />
+    <Folder Include="Services\Command\" />
   </ItemGroup>
 </Project>

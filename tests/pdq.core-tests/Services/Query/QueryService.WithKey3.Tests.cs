@@ -13,7 +13,7 @@ namespace pdq.core_tests.Services.Query
 {
     public class QueryServiceWithKey3Tests
     {
-        private readonly IQuery<AddressNote, int, int, int> addressService;
+        private readonly IService<AddressNote, int, int, int> addressService;
 
         public QueryServiceWithKey3Tests()
         {
@@ -28,7 +28,7 @@ namespace pdq.core_tests.Services.Query
             services.AddScoped<IConnectionDetails, MockConnectionDetails>();
 
             var provider = services.BuildServiceProvider();
-            this.addressService = provider.GetService<IQuery<AddressNote, int, int, int>>();
+            this.addressService = provider.GetService<IService<AddressNote, int, int, int>>();
         }
 
         [Fact]

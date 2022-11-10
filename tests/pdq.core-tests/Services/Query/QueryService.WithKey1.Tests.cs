@@ -14,7 +14,7 @@ namespace pdq.core_tests.Services.Query
 {
     public class QueryServiceWithKey1Tests
     {
-        private readonly IQuery<Person, int> personService;
+        private readonly IService<Person, int> personService;
 
         public QueryServiceWithKey1Tests()
         {
@@ -29,7 +29,7 @@ namespace pdq.core_tests.Services.Query
             services.AddScoped<IConnectionDetails, MockConnectionDetails>();
 
             var provider = services.BuildServiceProvider();
-            this.personService = provider.GetService<IQuery<Person, int>>();
+            this.personService = provider.GetService<IService<Person, int>>();
         }
 
         [Fact]

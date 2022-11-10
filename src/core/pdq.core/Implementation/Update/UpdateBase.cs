@@ -86,7 +86,7 @@ namespace pdq.Implementation
                 var componentThree = metadata.GetProperty("ComponentThree");
                 var valueOne = componentOne.GetProperty("Name") as string;
                 var valueTwo = componentTwo.GetProperty("Name") as string;
-                var valueThree = componentTwo.GetProperty("Name") as string;
+                var valueThree = componentThree.GetProperty("Name") as string;
                 return info.Name == valueOne ||
                     info.Name == valueTwo ||
                     info.Name == valueThree;

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 using pdq.common;
 using pdq.state;
-using pdq.state.Utilities;
 
 namespace pdq.services
 {
@@ -22,25 +22,7 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public new TEntity Add(TEntity toAdd)
-        {
-            return ExecuteQuery(q =>
-            {
-                var table = GetTableInfo<TEntity>(q);
-                var query = q.Insert()
-                    .Into(table)
-                    .Columns((t) => toAdd)
-                    .Value(toAdd)
-                    .Output(toAdd.KeyMetadata.ComponentOne.Name)
-                    .Output(toAdd.KeyMetadata.ComponentTwo.Name);
-                NotifyPreExecution(this, q);
-
-                var result = query.FirstOrDefault<TEntity>();
-                toAdd.SetPropertyFrom(toAdd.KeyMetadata.ComponentOne.Name, result);
-                toAdd.SetPropertyFrom(toAdd.KeyMetadata.ComponentTwo.Name, result);
-
-                return toAdd;
-            });
-        }
+            => Add(new List<TEntity> { toAdd }).FirstOrDefault();
 
         /// <inheritdoc/>
         public override IEnumerable<TEntity> Add(params TEntity[] toAdd)
@@ -50,34 +32,35 @@ namespace pdq.services
         public override IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
         {
             if (toAdd == null ||
-               toAdd.Any())
+               !toAdd.Any())
                 return new List<TEntity>();
 
             var first = toAdd.First();
             return ExecuteQuery(q =>
             {
                 var internalContext = q as IQueryContextInternal;
+                
+                var query = q.Insert();
                 var table = GetTableInfo<TEntity>(q);
-
-                var query = q.Insert()
-                    .Into(table)
+                var exec = query.Into(table)
                     .Columns((t) => first)
                     .Values(toAdd)
                     .Output(first.KeyMetadata.ComponentOne.Name)
                     .Output(first.KeyMetadata.ComponentTwo.Name);
                 NotifyPreExecution(this, q);
 
-                var results = query.ToList<TEntity>();
+                var results = exec.ToList<TEntity>();
 
+                var inputItems = toAdd.ToArray();
                 var i = 0;
-                foreach (var item in toAdd)
+                foreach (var item in results)
                 {
-                    var r = results[i];
-                    toAdd.SetPropertyFrom(first.KeyMetadata.ComponentOne.Name, r);
-                    toAdd.SetPropertyFrom(first.KeyMetadata.ComponentTwo.Name, r);
+                    var r = inputItems[i];
+                    r.SetPropertyFrom(first.KeyMetadata.ComponentOne.Name, item);
+                    r.SetPropertyFrom(first.KeyMetadata.ComponentTwo.Name, item);
                     i += 1;
                 }
-                return toAdd;
+                return inputItems;
             });
         }
 
@@ -116,7 +99,7 @@ namespace pdq.services
             var keyOneEqualsExpression = Expression.Equal(keyOnePropertyExpression, keyOneConstantExpression);
             var keyTwoPropertyExpression = Expression.Property(parameterExpression, temp.KeyMetadata.ComponentTwo.Name);
             var keyTwoEqualsExpression = Expression.Equal(keyTwoPropertyExpression, keyTwoConstantExpression);
-            var andExpression = Expression.And(keyOneEqualsExpression, keyTwoEqualsExpression);
+            var andExpression = Expression.AndAlso(keyOneEqualsExpression, keyTwoEqualsExpression);
             var lambdaExpression = Expression.Lambda<Func<TEntity, bool>>(andExpression, parameterExpression);
 
             Update(toUpdate, lambdaExpression);
@@ -127,12 +110,19 @@ namespace pdq.services
         {
             ExecuteQuery(q =>
             {
-                var query = q.Update()
-                    .Table<TEntity>()
-                    .Set(toUpdate)
-                    .Where(expression);
+                var internalQuery = q as IQueryInternal;
+                var query = q.Update();
+                var internalContext = internalQuery.Context as IQueryContextInternal;
+                var table = GetTableInfo<TEntity>(q);
+
+                IUpdateSet partial = query.Table(table)
+                    .Set(toUpdate);
+
+                var clause = internalContext.Parsers.Where.Parse(expression, internalContext);
+                (internalContext as IUpdateQueryContext).Where(clause);
+
                 NotifyPreExecution(this, q);
-                query.Execute();
+                partial.Execute();
             });
         }
 

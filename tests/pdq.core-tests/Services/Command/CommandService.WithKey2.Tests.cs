@@ -12,11 +12,11 @@ using Xunit;
 
 namespace pdq.core_tests.Services.Command
 {
-    public class CommandServiceWithKey1Tests
+    public class CommandServiceWithKey2Tests
     {
-        private readonly IService<Person, int> personService;
+        private readonly IService<Address, int, int> addressService;
 
-        public CommandServiceWithKey1Tests()
+        public CommandServiceWithKey2Tests()
         {
             var services = new ServiceCollection();
             services.AddPdq(o =>
@@ -25,11 +25,11 @@ namespace pdq.core_tests.Services.Command
                 o.OverrideDefaultLogLevel(LogLevel.Debug);
                 o.UseMockDatabase();
             });
-            services.AddPdqService<Person, int>().AsScoped();
+            services.AddPdqService<Address, int, int>().AsScoped();
             services.AddScoped<IConnectionDetails, MockConnectionDetails>();
 
             var provider = services.BuildServiceProvider();
-            this.personService = provider.GetService<IService<Person, int>>();
+            this.addressService = provider.GetService<IService<Address, int, int>>();
         }
 
         [Fact]
@@ -37,15 +37,17 @@ namespace pdq.core_tests.Services.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.addressService.PreExecution += (sender, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.Add(new Person
+            this.addressService.Add(new Address
             {
-                Email = "bob@bob.com"
+                PersonId = 1,
+                Id = 42,
+                City = "Hamilton"
             });
 
             // Assert
@@ -59,19 +61,22 @@ namespace pdq.core_tests.Services.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.addressService.PreExecution += (sender, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.Add(new Person
+            this.addressService.Add(new Address
             {
-                Email = "bob@bob.com"
+                PersonId = 1,
+                Id = 42,
+                City = "Hamilton"
             },
-            new Person
-            {
-                Email = "james@bob.com"
+            new Address {
+                PersonId = 1,
+                Id = 43,
+                City = "Hamilton"
             });
 
             // Assert
@@ -87,20 +92,23 @@ namespace pdq.core_tests.Services.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.addressService.PreExecution += (sender, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.Add(new List<Person> {
-                new Person
+            this.addressService.Add(new List<Address> {
+                new Address
                 {
-                    Email = "bob@bob.com"
+                    PersonId = 1,
+                    Id = 42,
+                    City = "Hamilton"
                 },
-                new Person
-                {
-                    Email = "james@bob.com"
+                new Address {
+                    PersonId = 1,
+                    Id = 43,
+                    City = "Hamilton"
                 }
             });
 
@@ -117,14 +125,14 @@ namespace pdq.core_tests.Services.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.addressService.PreExecution += (sender, args) =>
             {
                 context = args.Context;
             };
-            var items = Enumerable.Empty<Person>();
+            var items = Enumerable.Empty<Address>();
 
             // Act
-            var results = this.personService.Add(items);
+            var results = this.addressService.Add(items);
 
             // Assert
             results.Should().BeEmpty();
@@ -135,16 +143,16 @@ namespace pdq.core_tests.Services.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.addressService.PreExecution += (sender, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.Update(new
+            this.addressService.Update(new
             {
-                Email = "smith@bob.com"
-            }, p => p.Email == "bob@bob.com");
+                City = "Auckland"
+            }, p => p.PostCode == "3216");
 
             // Assert
             context.Should().NotBeNull();
@@ -154,8 +162,8 @@ namespace pdq.core_tests.Services.Command
             var values = updateContext.Updates;
             var value = values.First() as state.ValueSources.Update.StaticValueSource;
             value.Column.Should().NotBeNull();
-            value.Column.Name.Should().Be(nameof(Person.Email));
-            value.Value.Should().BeEquivalentTo("smith@bob.com");
+            value.Column.Name.Should().Be(nameof(Address.City));
+            value.Value.Should().BeEquivalentTo("Auckland");
         }
 
         [Fact]
@@ -163,28 +171,29 @@ namespace pdq.core_tests.Services.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.addressService.PreExecution += (sender, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.Update(new Person
+            this.addressService.Update(new Address
             {
                 Id = 36,
-                Email = "smith@bob.com"
+                PersonId = 12,
+                Region = "Waikato"
             });
 
             // Assert
             context.Should().NotBeNull();
             var updateContext = context as IUpdateQueryContext;
             updateContext.Updates.Should().HaveCount(1);
-            updateContext.WhereClause.Should().BeOfType<state.Conditionals.Column<int>>();
+            updateContext.WhereClause.Should().BeOfType<state.Conditionals.And>();
             var values = updateContext.Updates;
             values.Should().HaveCount(1);
             var value = values.First() as state.ValueSources.Update.StaticValueSource;
-            value.Column.Name.Should().Be(nameof(Person.Email));
-            value.GetValue<string>().Should().Be("smith@bob.com");
+            value.Column.Name.Should().Be(nameof(Address.Region));
+            value.GetValue<string>().Should().Be("Waikato");
         }
 
         [Fact]
@@ -192,13 +201,13 @@ namespace pdq.core_tests.Services.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.addressService.PreExecution += (sender, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.Delete(p => p.Id == 42);
+            this.addressService.Delete(p => p.Id == 42);
 
             // Assert
             context.Should().NotBeNull();

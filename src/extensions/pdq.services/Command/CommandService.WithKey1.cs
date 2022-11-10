@@ -4,9 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
 using pdq.state;
-using pdq.state.Conditionals;
-using pdq.state.Utilities;
-using static pdq.Attributes.IgnoreColumnFor;
 
 namespace pdq.services
 {
@@ -19,27 +16,12 @@ namespace pdq.services
 
         private Command(ITransient transient) : base(transient) { }
 
-        public static new ICommand<TEntity, TKey> Create(ITransient transient) => new Command<TEntity, TKey>(transient);
+        public static new ICommand<TEntity, TKey> Create(ITransient transient)
+            => new Command<TEntity, TKey>(transient);
 
         /// <inheritdoc/>
         public new TEntity Add(TEntity toAdd)
-        {
-            return ExecuteQuery(q =>
-            {
-                var query = q.Insert();
-                var table = GetTableInfo<TEntity>(q);
-                var exec = query.Into(table)
-                    .Columns((t) => toAdd)
-                    .Value(toAdd)
-                    .Output(toAdd.KeyMetadata.Name);
-                NotifyPreExecution(this, q);
-
-                var result = exec.FirstOrDefault<TEntity>();
-                toAdd.SetPropertyFrom(toAdd.KeyMetadata.Name, result);
-
-                return toAdd;
-            });
-        }
+            => Add(new List<TEntity> { toAdd }).FirstOrDefault();
 
         /// <inheritdoc/>
         public override IEnumerable<TEntity> Add(params TEntity[] toAdd)

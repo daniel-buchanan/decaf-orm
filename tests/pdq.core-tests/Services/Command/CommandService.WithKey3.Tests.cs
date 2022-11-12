@@ -226,15 +226,15 @@ namespace pdq.core_tests.Services.Command
             var three = clause.Children.ToArray()[2] as state.Conditionals.Column<int>;
 
             one.Should().NotBeNull();
-            one.Details.Name.Should().Be(nameof(Address.Id));
+            one.Details.Name.Should().Be(nameof(AddressNote.Id));
             one.Value.Should().Be(42);
 
             two.Should().NotBeNull();
-            two.Details.Name.Should().Be(nameof(Address.PersonId));
+            two.Details.Name.Should().Be(nameof(AddressNote.PersonId));
             two.Value.Should().Be(43);
 
             three.Should().NotBeNull();
-            three.Details.Name.Should().Be(nameof(Address.PersonId));
+            three.Details.Name.Should().Be(nameof(AddressNote.AddressId));
             three.Value.Should().Be(44);
         }
     }

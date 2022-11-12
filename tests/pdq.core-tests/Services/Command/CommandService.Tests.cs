@@ -33,6 +33,27 @@ namespace pdq.core_tests.Services.Command
         }
 
         [Fact]
+        public void EventHandlerAddRemoveSucceeds()
+        {
+            // Arrange
+            IQueryContext context = null;
+            EventHandler<PreExecutionEventArgs> handler = (sender, args) =>
+            {
+                context = args.Context;
+            };
+
+            // Act
+            this.personService.PreExecution += handler;
+            this.personService.Add(new Person
+            {
+                Email = "bob@bob.com"
+            });
+
+            // Assert
+            context.Should().NotBeNull();
+        }
+
+        [Fact]
         public void AddSucceeds()
         {
             // Arrange

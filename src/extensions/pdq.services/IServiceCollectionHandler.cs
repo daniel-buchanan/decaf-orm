@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace pdq.services
+namespace pdq
 {
     /// <summary>
     /// 

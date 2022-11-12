@@ -6,10 +6,10 @@ using System.Linq;
 
 namespace pdq.services
 {
-    public class Query<TEntity, TKey1, TKey2, TKey3> :
+    internal class Query<TEntity, TKey1, TKey2, TKey3> :
         Query<TEntity>,
         IQuery<TEntity, TKey1, TKey2, TKey3>
-        where TEntity : class, IEntity<TKey1, TKey2, TKey3>
+        where TEntity : class, IEntity<TKey1, TKey2, TKey3>, new()
     {
         public Query(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
@@ -36,7 +36,24 @@ namespace pdq.services
         /// <inheritdoc/>
         public IEnumerable<TEntity> Get(IEnumerable<ICompositeKeyValue<TKey1, TKey2, TKey3>> keys)
         {
-            throw new NotImplementedException();
+            var tmp = new TEntity();
+
+            return GetByKeys(keys, (keyBatch, q, b) =>
+            {
+                var key1Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentOne);
+                var key2Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentTwo);
+                var key3Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentThree);
+                b.ClauseHandling.DefaultToOr();
+                foreach (var k in keyBatch)
+                {
+                    b.And(ab =>
+                    {
+                        ab.Column(key1Name, "t").Is().EqualTo(k.ComponentOne);
+                        ab.Column(key2Name, "t").Is().EqualTo(k.ComponentTwo);
+                        ab.Column(key3Name, "t").Is().EqualTo(k.ComponentThree);
+                    });
+                }
+            });
         }
     }
 }

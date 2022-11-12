@@ -29,6 +29,8 @@ namespace pdq.state
         public void Update(ITableTarget target)
         {
             var self = this as IQueryContextInternal;
+            var existingTarget = self.QueryTargets.FirstOrDefault(q => q.Alias == target.Alias);
+            if (existingTarget != null) return;
             self.AddQueryTarget(target);
         }
 

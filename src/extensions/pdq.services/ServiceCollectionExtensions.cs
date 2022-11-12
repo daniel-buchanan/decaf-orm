@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using pdq.services;
 
-namespace pdq.services
+namespace pdq
 {
 	public static class ServiceCollectionExtensions
 	{
@@ -11,7 +12,7 @@ namespace pdq.services
         /// <param name="services"></param>
         /// <returns></returns>
         public static IServiceCollectionHandler AddPdqService<TEntity>(this IServiceCollection services)
-            where TEntity : class, IEntity => ServiceCollectionHandler<TEntity>.Create(services);
+            where TEntity : class, IEntity, new() => ServiceCollectionHandler<TEntity>.Create(services);
 
         /// <summary>
         /// 
@@ -21,7 +22,29 @@ namespace pdq.services
         /// <param name="services"></param>
         /// <returns></returns>
         public static IServiceCollectionHandler AddPdqService<TEntity, TKey>(this IServiceCollection services)
-            where TEntity : class, IEntity<TKey> => ServiceCollectionHandler<TEntity, TKey>.Create(services);
+            where TEntity : class, IEntity<TKey>, new() => ServiceCollectionHandler<TEntity, TKey>.Create(services);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <typeparam name="TKey1"></typeparam>
+        /// <typeparam name="TKey2"></typeparam>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollectionHandler AddPdqService<TEntity, TKey1, TKey2>(this IServiceCollection services)
+            where TEntity : class, IEntity<TKey1, TKey2>, new() => ServiceCollectionHandler<TEntity, TKey1, TKey2>.Create(services);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <typeparam name="TKey1"></typeparam>
+        /// <typeparam name="TKey2"></typeparam>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollectionHandler AddPdqService<TEntity, TKey1, TKey2, TKey3>(this IServiceCollection services)
+            where TEntity : class, IEntity<TKey1, TKey2, TKey3>, new() => ServiceCollectionHandler<TEntity, TKey1, TKey2, TKey3>.Create(services);
     }
 }
 

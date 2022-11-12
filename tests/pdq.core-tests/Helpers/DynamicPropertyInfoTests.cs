@@ -19,7 +19,7 @@ namespace pdq.core_tests.Helpers
         public void SetNameSucceeds()
         {
             // Arrange
-            var info = DynamicPropertyInfo.Create();
+            var info = DynamicColumnInfo.Create();
 
             // Act
             info.SetName("bob");
@@ -33,7 +33,7 @@ namespace pdq.core_tests.Helpers
         public void SetNewNameSucceeds()
         {
             // Arrange
-            var info = DynamicPropertyInfo.Create();
+            var info = DynamicColumnInfo.Create();
 
             // Act
             info.SetNewName("bob");
@@ -47,7 +47,7 @@ namespace pdq.core_tests.Helpers
         public void SetAliasSucceeds()
         {
             // Arrange
-            var info = DynamicPropertyInfo.Create();
+            var info = DynamicColumnInfo.Create();
 
             // Act
             info.SetAlias("b");
@@ -61,7 +61,7 @@ namespace pdq.core_tests.Helpers
         public void SetTypeSucceeds()
         {
             // Arrange
-            var info = DynamicPropertyInfo.Create();
+            var info = DynamicColumnInfo.Create();
 
             // Act
             info.SetType(typeof(Person));
@@ -76,7 +76,7 @@ namespace pdq.core_tests.Helpers
         public void SetValueSucceeds(object value)
         {
             // Arrange
-            var info = DynamicPropertyInfo.Create();
+            var info = DynamicColumnInfo.Create();
 
             // Act
             info.SetValue(value);
@@ -90,7 +90,7 @@ namespace pdq.core_tests.Helpers
         public void SetFunctionSucceeds(IValueFunction function)
         {
             // Arrange
-            var info = DynamicPropertyInfo.Create();
+            var info = DynamicColumnInfo.Create();
 
             // Act
             info.SetFunction(function);

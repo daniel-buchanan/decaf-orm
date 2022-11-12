@@ -1,14 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using pdq.common;
 using pdq.state;
+using pdq.state.Utilities;
+using static Dapper.SqlMapper;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.core-tests")]
 namespace pdq.Implementation
 {
-	internal class Select
-        : SelectBase, ISelectWithAlias, ISelectFrom, IOrderByThen, IGroupBy, IGroupByThen
+	internal class Select :
+        SelectBase,
+        ISelectWithAlias,
+        ISelectFrom,
+        IOrderByThen,
+        IGroupBy,
+        IGroupByThen
 	{
         private Select(
             ISelectQueryContext context,
@@ -47,7 +56,15 @@ namespace pdq.Implementation
         {
             var b = WhereBuilder.Create(this.options, this.context) as IWhereBuilderInternal;
             builder(b);
-            this.context.Where(b.GetClauses().First());
+            var clause = b.GetClauses().First();
+            if((clause is state.Conditionals.And ||
+               clause is state.Conditionals.Or) &&
+               clause.Children.Count == 1)
+            {
+                clause = clause.Children.First();
+            }
+
+            this.context.Where(clause);
             return this;
         }
 
@@ -157,6 +174,13 @@ namespace pdq.Implementation
         IExecute<TResult> ISelectColumn.Select<TResult>(Expression<Func<ISelectColumnBuilder, TResult>> expression)
         {
             base.AddColumns(expression);
+            return Execute<TResult, ISelectQueryContext>.Create(this.query, this.context);
+        }
+
+        /// <inheritdoc/>
+        public IExecute<TResult> SelectAll<TResult>(string alias)
+        {
+            base.AddAllColumns<TResult>(alias);
             return Execute<TResult, ISelectQueryContext>.Create(this.query, this.context);
         }
     }

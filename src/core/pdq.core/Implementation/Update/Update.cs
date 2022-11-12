@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 using pdq.common;
 using pdq.state;
 using pdq.state.ValueSources.Update;
@@ -99,11 +100,30 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc/>
+        public IUpdateTable<T> Table<T>(string alias)
+        {
+            var table = this.context.Helpers().GetTableName<T>();
+            var managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
+            var managedAlias = this.query.AliasManager.Add(alias, table);
+            this.context.Update(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
+
+            return UpdateTyped<T>.Create(this.context, this.query);
+        }
+
+        /// <inheritdoc/>
         public IUpdateSet Where(Action<IWhereBuilder> builder)
         {
             var whereBuilder = WhereBuilder.Create(base.query.Options, this.context) as IWhereBuilderInternal;
             builder(whereBuilder);
             this.context.Where(whereBuilder.GetClauses().First());
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public IUpdateSet Where(IWhere clause)
+        {
+            if (clause == null) throw new ArgumentNullException(nameof(clause));
+            this.context.Where(clause);
             return this;
         }
 

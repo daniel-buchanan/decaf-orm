@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using pdq.services;
 
-namespace pdq.services
+namespace pdq
 {
     public class ServiceCollectionHandler<TEntity, TKey> :
         IServiceCollectionHandler
-        where TEntity : class, IEntity<TKey>
+        where TEntity : class, IEntity<TKey>, new()
     {
         private readonly IServiceCollection services;
 

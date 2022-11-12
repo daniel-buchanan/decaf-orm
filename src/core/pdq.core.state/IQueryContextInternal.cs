@@ -2,6 +2,7 @@
 using pdq.common;
 using pdq.state.Utilities;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.services")]
 namespace pdq.state
 {
 	internal interface IQueryContextInternal : IQueryContext

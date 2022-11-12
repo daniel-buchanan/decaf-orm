@@ -30,6 +30,27 @@ namespace pdq.services
         public TKey1 ComponentOne { get; }
 
         public TKey2 ComponentTwo { get; }
+
+        /// <inheritdoc/>
+        public override bool Equals(object obj)
+        {
+            var incoming = obj as ICompositeKeyValue<TKey1, TKey2>;
+            if (incoming == null) return false;
+            return ComponentOne.Equals(incoming.ComponentOne) &&
+                ComponentTwo.Equals(incoming.ComponentTwo);
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            var hash1 = ComponentOne.GetHashCode();
+            var hash2 = ComponentTwo.GetHashCode();
+            return (hash1 + hash2) / 2;
+        }
+
+        /// <inheritdoc/>
+        public override string ToString()
+            => $"({ComponentOne},{ComponentTwo})";
     }
 
     public class CompositeKeyValue<TKey1, TKey2, TKey3>
@@ -43,6 +64,29 @@ namespace pdq.services
         }
 
         public TKey3 ComponentThree { get; }
+
+        /// <inheritdoc/>
+        public override bool Equals(object obj)
+        {
+            var incoming = obj as ICompositeKeyValue<TKey1, TKey2, TKey3>;
+            if (incoming == null) return false;
+            return ComponentOne.Equals(incoming.ComponentOne) &&
+                ComponentTwo.Equals(incoming.ComponentTwo) &&
+                ComponentThree.Equals(incoming.ComponentThree);
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            var hash1 = ComponentOne.GetHashCode();
+            var hash2 = ComponentTwo.GetHashCode();
+            var hash3 = ComponentThree.GetHashCode();
+            return (hash1 + hash2 + hash3) / 2;
+        }
+
+        /// <inheritdoc/>
+        public override string ToString()
+            => $"({ComponentOne},{ComponentTwo},{ComponentThree})";
     }
 }
 

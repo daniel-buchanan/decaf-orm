@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.services")]
 namespace pdq.state.Utilities
 {
     internal interface IDynamicExpressionHelper
@@ -15,7 +16,7 @@ namespace pdq.state.Utilities
         /// An <see cref="IEnumerable{DynamicPropertyInfo}"/> containing the set
         /// of properties in the object returned from the <see cref="Expression"/>.
         /// </returns>
-        IEnumerable<DynamicPropertyInfo> GetProperties(
+        IEnumerable<DynamicColumnInfo> GetProperties(
             Expression expr,
             IQueryContextInternal context);
     }

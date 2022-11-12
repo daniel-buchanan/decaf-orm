@@ -10,8 +10,14 @@ namespace pdq.services
     /// <typeparam name="TKey">The data type of the primary key.</typeparam>
 	public interface ICommand<TEntity, TKey1, TKey2> :
         ICommand<TEntity>
-		where TEntity: IEntity<TKey1, TKey2>
+		where TEntity: IEntity<TKey1, TKey2>, new()
     {
+        /// <summary>
+        /// Updated an entire entity, using the values of the keys to restrict it.
+        /// </summary>
+        /// <param name="toUpdate">The entity to update.</param>
+        void Update(TEntity toUpdate);
+
         /// <summary>
         /// Update only select fields for a specific item.
         /// </summary>

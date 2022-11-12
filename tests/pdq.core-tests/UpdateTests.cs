@@ -153,7 +153,7 @@ namespace pdq.core_tests
         }
 
         [Fact]
-        public void SimpleUpdateFromQUerySucceeds()
+        public void SimpleUpdateFromQuerySucceeds()
         {
             // Act
             this.query

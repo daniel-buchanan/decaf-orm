@@ -1,65 +1,119 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
-using Dapper.Contrib.Extensions;
+using pdq.state;
 
 namespace pdq.services
 {
-    public class Command<TEntity, TKey> :
-        ServiceBase,
+    internal class Command<TEntity, TKey> :
+        Command<TEntity>,
         ICommand<TEntity, TKey>
-        where TEntity : class, IEntity<TKey>
+        where TEntity : class, IEntity<TKey>, new()
     {
         public Command(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
         private Command(ITransient transient) : base(transient) { }
 
-        public static ICommand<TEntity, TKey> Create(ITransient transient) => new Command<TEntity, TKey>(transient);
+        public static new ICommand<TEntity, TKey> Create(ITransient transient)
+            => new Command<TEntity, TKey>(transient);
 
-        public TEntity Add(TEntity toAdd)
+        /// <inheritdoc/>
+        public new TEntity Add(TEntity toAdd)
+            => Add(new List<TEntity> { toAdd }).FirstOrDefault();
+
+        /// <inheritdoc/>
+        public override IEnumerable<TEntity> Add(params TEntity[] toAdd)
+            => Add(toAdd?.ToList());
+
+        /// <inheritdoc/>
+        public override IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
         {
-            throw new NotImplementedException();
+            if (toAdd == null ||
+               !toAdd.Any())
+                return new List<TEntity>();
+
+            var first = toAdd.First();
+            return ExecuteQuery(q =>
+            {
+                var query = q.Insert();
+                var table = GetTableInfo<TEntity>(q);
+                var exec = query.Into(table)
+                    .Columns((t) => first)
+                    .Values(toAdd)
+                    .Output(first.KeyMetadata.Name);
+                NotifyPreExecution(this, q);
+
+                var results = exec.ToList<TEntity>();
+
+                var inputItems = toAdd.ToArray();
+                var i = 0;
+                foreach(var item in results)
+                {
+                    var r = inputItems[i];
+                    r.SetPropertyValueFrom(first.KeyMetadata.Name, item);
+                    i += 1;
+                }
+                return inputItems;
+            });
         }
 
-        public void Delete(TKey key)
-        {
-            throw new NotImplementedException();
-        }
+        /// <inheritdoc/>
+        public void Delete(TKey key) => Delete(new[] { key });
 
-        public void Delete(params TKey[] keys)
-        {
-            throw new NotImplementedException();
-        }
+        /// <inheritdoc/>
+        public void Delete(params TKey[] keys) => Delete(keys?.AsEnumerable());
 
+        /// <inheritdoc/>
         public void Delete(IEnumerable<TKey> keys)
         {
-            throw new NotImplementedException();
+            DeleteByKeys(keys, (keyBatch, q, b) =>
+            {
+                GetKeyColumnNames<TEntity, TKey>(q, out var keyName);
+                b.Column(keyName).Is().In(keyBatch);
+            });
         }
 
-        public void Delete(Expression<Func<TEntity, bool>> expression)
+        /// <inheritdoc/>
+        public void Update(TEntity item)
         {
-            throw new NotImplementedException();
+            var keyValue = item.GetKeyValue();
+            Update(item, keyValue);
         }
 
-        public void Update(TEntity toUpdate)
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <inheritdoc/>
         public void Update(dynamic toUpdate, TKey key)
         {
-            throw new NotImplementedException();
+            var temp = new TEntity();
+            var parameterExpression = Expression.Parameter(typeof(TEntity), "t");
+            var keyConstantExpression = Expression.Constant(key);
+            var keyPropertyExpression = Expression.Property(parameterExpression, temp.KeyMetadata.Name);
+            var keyEqualsExpression = Expression.Equal(keyPropertyExpression, keyConstantExpression);
+            var lambdaExpression = Expression.Lambda<Func<TEntity, bool>>(keyEqualsExpression, parameterExpression);
+
+            Update(toUpdate, lambdaExpression);
         }
 
-        public void Update(TEntity toUpdate, Expression<Func<TEntity, bool>> expression)
+        /// <inheritdoc/>
+        public new void Update(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
         {
-            throw new NotImplementedException();
-        }
+            ExecuteQuery(q =>
+            {
+                var internalQuery = q as IQueryInternal;
+                var query = q.Update();
+                var internalContext = internalQuery.Context as IQueryContextInternal;
+                var table = GetTableInfo<TEntity>(q);
+                
+                IUpdateSet partial = query.Table(table)
+                    .Set(toUpdate);
 
-        public void Update(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
-        {
-            throw new NotImplementedException();
+                var clause = internalContext.Parsers.Where.Parse(expression, internalContext);
+                (internalContext as IUpdateQueryContext).Where(clause);
+
+                NotifyPreExecution(this, q);
+                partial.Execute();
+            });
         }
     }
 }

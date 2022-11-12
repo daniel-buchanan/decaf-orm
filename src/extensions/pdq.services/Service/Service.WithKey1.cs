@@ -7,7 +7,7 @@ namespace pdq.services
 {
     public class Service<TEntity, TKey> :
         IService<TEntity, TKey>
-        where TEntity : class, IEntity<TKey>
+        where TEntity : class, IEntity<TKey>, new()
     {
         private readonly IQuery<TEntity, TKey> query;
         private readonly ICommand<TEntity, TKey> command;
@@ -30,7 +30,31 @@ namespace pdq.services
             => new Service<TEntity, TKey>(transient);
 
         /// <inheritdoc/>
+        public event EventHandler<PreExecutionEventArgs> PreExecution
+        {
+            add
+            {
+                this.query.PreExecution += value;
+                this.command.PreExecution += value;
+            }
+
+            remove
+            {
+                this.query.PreExecution -= value;
+                this.command.PreExecution -= value;
+            }
+        }
+
+        /// <inheritdoc/>
         public TEntity Add(TEntity toAdd)
+            => this.command.Add(toAdd);
+
+        /// <inheritdoc/>
+        public IEnumerable<TEntity> Add(params TEntity[] toAdd)
+            => this.command.Add(toAdd);
+
+        /// <inheritdoc/>
+        public IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
             => this.command.Add(toAdd);
 
         /// <inheritdoc/>
@@ -80,6 +104,10 @@ namespace pdq.services
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
             => this.command.Update(toUpdate, expression);
+
+        /// <inheritdoc/>
+        public void Update(TEntity item)
+            => this.command.Update(item);
     }
 }
 

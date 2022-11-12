@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using pdq.common;
-using Dapper.Contrib.Extensions;
 using System.Linq;
 
 namespace pdq.services
 {
-    public class Query<TEntity, TKey> :
+    internal class Query<TEntity, TKey> :
         Query<TEntity>,
         IQuery<TEntity, TKey>
-        where TEntity : class, IEntity<TKey>
+        where TEntity : class, IEntity<TKey>, new()
     {
         public Query(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
@@ -34,15 +33,13 @@ namespace pdq.services
         /// <inheritdoc/>
         public IEnumerable<TEntity> Get(IEnumerable<TKey> keys)
         {
-            var results = new List<TEntity>();
-            var conn = this.GetTransient().Connection.GetUnderlyingConnection();
-            foreach(var k in keys)
+            var tmp = new TEntity();
+         
+            return GetByKeys(keys, (keyBatch, q, b) =>
             {
-                var r = conn.Get<TEntity>(k);
-                if (r == default(TEntity)) continue;
-                results.Add(r);
-            }
-            return results;
+                var keyName = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata);
+                b.Column(keyName).Is().In(keyBatch);
+            });
         }
     }
 }

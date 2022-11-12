@@ -1,8 +1,12 @@
 ﻿using System;
+using pdq.services;
+
 namespace pdq.core_tests.Models
 {
-	public class Person
+	public class Person : Entity<int>
 	{
+        public Person() : base(nameof(Id)) { }
+
         public int Id { get; set; }
 
         public string FirstName { get; set; }

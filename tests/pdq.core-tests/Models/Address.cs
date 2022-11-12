@@ -1,9 +1,18 @@
 ﻿using System;
+using pdq.services;
+
 namespace pdq.core_tests.Models
 {
-	public class Address
+	public class Address : Entity<int, int>
 	{
-		public int Id { get; set; }
+        public Address()
+			: base(nameof(Id), nameof(PersonId))
+        {
+        }
+
+        public int Id { get; set; }
+
+		public int PersonId { get; set; }
 
 		public string Line1 { get; set; }
 

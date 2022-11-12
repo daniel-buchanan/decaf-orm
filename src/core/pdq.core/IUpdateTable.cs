@@ -88,6 +88,20 @@ namespace pdq
         /// execute the query.
         /// </returns>
         IUpdateSet<T> Set(T values);
+
+        /// <summary>
+        /// Set multiple columns and their values at once by providing a
+        /// object which represents them.
+        /// </summary>
+        /// <param name="values">
+        /// A dynamic object, providing the values to be updated.
+        /// </param>
+        /// <returns>
+        /// (FluentApi) Returns an <see cref="IUpdateSet{T}"/> which provides the
+        /// ability to continue setting column values, perform filtering or
+        /// execute the query.
+        /// </returns>
+        IUpdateSet<T> Set(dynamic values);
     }
 }
 

@@ -40,8 +40,8 @@ namespace pdq.core_tests.Helpers
 
             // Assert
             properties.Should().HaveCount(2);
-            properties.Should().ContainEquivalentOf(DynamicPropertyInfo.Create("Age", type: typeof(ParamItem), alias: "p"));
-            properties.Should().ContainEquivalentOf(DynamicPropertyInfo.Create("City", type: typeof(ParamItem), alias: "p"));
+            properties.Should().ContainEquivalentOf(DynamicColumnInfo.Create("Age", type: typeof(ParamItem), alias: "p"));
+            properties.Should().ContainEquivalentOf(DynamicColumnInfo.Create("City", type: typeof(ParamItem), alias: "p"));
         }
 
         [Fact]
@@ -59,8 +59,8 @@ namespace pdq.core_tests.Helpers
 
             // Assert
             properties.Should().HaveCount(2);
-            properties.Should().ContainEquivalentOf(DynamicPropertyInfo.Create("Age", type: typeof(ParamItem), alias: "p"));
-            properties.Should().ContainEquivalentOf(DynamicPropertyInfo.Create("City", type: typeof(ParamItem), alias: "p", newName: "CityName"));
+            properties.Should().ContainEquivalentOf(DynamicColumnInfo.Create("Age", type: typeof(ParamItem), alias: "p"));
+            properties.Should().ContainEquivalentOf(DynamicColumnInfo.Create("City", type: typeof(ParamItem), alias: "p", newName: "CityName"));
         }
 
         [Fact]
@@ -79,14 +79,14 @@ namespace pdq.core_tests.Helpers
 
             // Assert
             properties.Should().HaveCount(3);
-            properties.Should().ContainEquivalentOf(DynamicPropertyInfo.Create("Age", alias: "s", type: typeof(int), newName: "Age"));
-            properties.Should().ContainEquivalentOf(DynamicPropertyInfo.Create("City", alias: "s", type: typeof(string), newName: "City"));
-            properties.Should().ContainEquivalentOf(DynamicPropertyInfo.Create("FullName", alias: "s", type: typeof(string), newName: "Name"));
+            properties.Should().ContainEquivalentOf(DynamicColumnInfo.Create("Age", alias: "s", type: typeof(int), newName: "Age"));
+            properties.Should().ContainEquivalentOf(DynamicColumnInfo.Create("City", alias: "s", type: typeof(string), newName: "City"));
+            properties.Should().ContainEquivalentOf(DynamicColumnInfo.Create("FullName", alias: "s", type: typeof(string), newName: "Name"));
         }
 
         [Theory]
         [MemberData(nameof(ValidExpressions))]
-        public void ParseExpressionDynamicSucceeds(Expression expression, IEnumerable<DynamicPropertyInfo> expected)
+        public void ParseExpressionDynamicSucceeds(Expression expression, IEnumerable<DynamicColumnInfo> expected)
         {
             // Act
             var results = this.dynamicExpressionHelper.GetProperties(expression, this.queryContext);
@@ -107,11 +107,11 @@ namespace pdq.core_tests.Helpers
                         City = b.Is("city"),
                         Region = b.Is("region_name", "r")
                     }),
-                    new DynamicPropertyInfo[]
+                    new DynamicColumnInfo[]
                     {
-                        DynamicPropertyInfo.Create("name", "Name", type: typeof(object)),
-                        DynamicPropertyInfo.Create("city", "City", type: typeof(object)),
-                        DynamicPropertyInfo.Create("region_name", "Region", alias: "r", type: typeof(object))
+                        DynamicColumnInfo.Create("name", "Name", type: typeof(object)),
+                        DynamicColumnInfo.Create("city", "City", type: typeof(object)),
+                        DynamicColumnInfo.Create("region_name", "Region", alias: "r", type: typeof(object))
                     }
                 };
 
@@ -123,11 +123,11 @@ namespace pdq.core_tests.Helpers
                         Email = p.Email,
                         Region = p.AddressId
                     }),
-                    new DynamicPropertyInfo[]
+                    new DynamicColumnInfo[]
                     {
-                        DynamicPropertyInfo.Create(name: nameof(Person.AddressId), newName: "Region", alias: "p", type: typeof(Person)),
-                        DynamicPropertyInfo.Create(name: nameof(Person.Email), newName: null, alias: "p", type: typeof(Person)),
-                        DynamicPropertyInfo.Create(name: nameof(Person.FirstName), newName: "Name", alias: "p", type: typeof(Person))
+                        DynamicColumnInfo.Create(name: nameof(Person.AddressId), newName: "Region", alias: "p", type: typeof(Person)),
+                        DynamicColumnInfo.Create(name: nameof(Person.Email), newName: null, alias: "p", type: typeof(Person)),
+                        DynamicColumnInfo.Create(name: nameof(Person.FirstName), newName: "Name", alias: "p", type: typeof(Person))
                     }
                 };
 
@@ -139,11 +139,11 @@ namespace pdq.core_tests.Helpers
                         p.Email,
                         Region = p.AddressId
                     }),
-                    new DynamicPropertyInfo[]
+                    new DynamicColumnInfo[]
                     {
-                        DynamicPropertyInfo.Create(name: nameof(Person.FirstName), newName: null, alias: "p", type: typeof(Person)),
-                        DynamicPropertyInfo.Create(name: nameof(Person.Email), newName: null, alias: "p", type: typeof(Person)),
-                        DynamicPropertyInfo.Create(name: nameof(Person.AddressId), newName: "Region", alias: "p", type: typeof(Person))
+                        DynamicColumnInfo.Create(name: nameof(Person.FirstName), newName: null, alias: "p", type: typeof(Person)),
+                        DynamicColumnInfo.Create(name: nameof(Person.Email), newName: null, alias: "p", type: typeof(Person)),
+                        DynamicColumnInfo.Create(name: nameof(Person.AddressId), newName: "Region", alias: "p", type: typeof(Person))
                     }
                 };
 
@@ -156,12 +156,12 @@ namespace pdq.core_tests.Helpers
                         Region = p.AddressId,
                         Timestamp = p.CreatedAt.DatePart(DatePart.Epoch)
                     }),
-                    new DynamicPropertyInfo[]
+                    new DynamicColumnInfo[]
                     {
-                        DynamicPropertyInfo.Create(name: nameof(Person.FirstName), newName: null, alias: "p", type: typeof(Person)),
-                        DynamicPropertyInfo.Create(name: nameof(Person.Email), newName: null, alias: "p", type: typeof(Person)),
-                        DynamicPropertyInfo.Create(name: nameof(Person.AddressId), newName: "Region", alias: "p", type: typeof(Person)),
-                        DynamicPropertyInfo.Create(name: nameof(Person.CreatedAt), newName: "Timestamp", alias: "p", type: typeof(Person), function: state.Conditionals.ValueFunctions.DatePart.Create(DatePart.Epoch))
+                        DynamicColumnInfo.Create(name: nameof(Person.FirstName), newName: null, alias: "p", type: typeof(Person)),
+                        DynamicColumnInfo.Create(name: nameof(Person.Email), newName: null, alias: "p", type: typeof(Person)),
+                        DynamicColumnInfo.Create(name: nameof(Person.AddressId), newName: "Region", alias: "p", type: typeof(Person)),
+                        DynamicColumnInfo.Create(name: nameof(Person.CreatedAt), newName: "Timestamp", alias: "p", type: typeof(Person), function: state.Conditionals.ValueFunctions.DatePart.Create(DatePart.Epoch))
                     }
                 };
             }

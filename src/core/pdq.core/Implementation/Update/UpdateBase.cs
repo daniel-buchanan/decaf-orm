@@ -63,30 +63,30 @@ namespace pdq.Implementation
 
         private bool PropertyIsKey<T>(T value, DynamicColumnInfo info)
         {
-            var metadata = value.GetProperty("KeyMetadata");
+            var metadata = value.GetPropertyValue("KeyMetadata");
             if (metadata == null) return false;
 
             if(metadata.GetType().Name == "KeyMetadata`1")
             {
-                var keyName = metadata.GetProperty("Name") as string;
+                var keyName = metadata.GetPropertyValue("Name") as string;
                 return keyName == info.Name;
             }
             else if(metadata.GetType().Name == "CompositeKey")
             {
-                var componentOne = metadata.GetProperty("ComponentOne");
-                var componentTwo = metadata.GetProperty("ComponentTwo");
-                var valueOne = componentOne.GetProperty("Name") as string;
-                var valueTwo = componentTwo.GetProperty("Name") as string;
+                var componentOne = metadata.GetPropertyValue("ComponentOne");
+                var componentTwo = metadata.GetPropertyValue("ComponentTwo");
+                var valueOne = componentOne.GetPropertyValue("Name") as string;
+                var valueTwo = componentTwo.GetPropertyValue("Name") as string;
                 return info.Name == valueOne || info.Name == valueTwo;
             }
             else if(metadata.GetType().Name == "CompositeKeyTriple")
             {
-                var componentOne = metadata.GetProperty("ComponentOne");
-                var componentTwo = metadata.GetProperty("ComponentTwo");
-                var componentThree = metadata.GetProperty("ComponentThree");
-                var valueOne = componentOne.GetProperty("Name") as string;
-                var valueTwo = componentTwo.GetProperty("Name") as string;
-                var valueThree = componentThree.GetProperty("Name") as string;
+                var componentOne = metadata.GetPropertyValue("ComponentOne");
+                var componentTwo = metadata.GetPropertyValue("ComponentTwo");
+                var componentThree = metadata.GetPropertyValue("ComponentThree");
+                var valueOne = componentOne.GetPropertyValue("Name") as string;
+                var valueTwo = componentTwo.GetPropertyValue("Name") as string;
+                var valueThree = componentThree.GetPropertyValue("Name") as string;
                 return info.Name == valueOne ||
                     info.Name == valueTwo ||
                     info.Name == valueThree;

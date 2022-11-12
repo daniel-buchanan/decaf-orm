@@ -17,7 +17,7 @@ namespace pdq.state
             return expressionHelper.GetName(expression);
         }
 
-        internal static object GetProperty(this object self, string property)
+        internal static object GetPropertyValue(this object self, string property)
         {
             var type = self.GetType();
             var prop = type.GetProperty(property, Flags);
@@ -25,19 +25,19 @@ namespace pdq.state
             return prop.GetValue(self);
         }
 
-        internal static object GetProperty<T>(this T self, Expression<Func<T, object>> expression)
+        internal static object GetPropertyValue<T>(this T self, Expression<Func<T, object>> expression)
         {
             var propertyName = ParseExpression(expression);
-            return self.GetProperty(propertyName);
+            return self.GetPropertyValue(propertyName);
         }
 
         internal static void SetProperty<T>(this T self, Expression<Func<T, object>> expression, object value)
         {
             var propertyName = ParseExpression(expression);
-            self.SetProperty(propertyName, value);
+            self.SetPropertyValue(propertyName, value);
         }
 
-        internal static void SetProperty<T>(this T self, string property, object value)
+        internal static void SetPropertyValue<T>(this T self, string property, object value)
         {
             var type = typeof(T);
             var prop = type.GetProperty(property, Flags);
@@ -45,11 +45,11 @@ namespace pdq.state
             prop.SetValue(self, value);
         }
 
-        internal static void SetPropertyFrom<T>(this T self, string property, object source)
+        internal static void SetPropertyValueFrom<T>(this T self, string property, object source)
         {
             if (source == null) return;
-            var newValue = source.GetProperty(property);
-            self.SetProperty(property, newValue);
+            var newValue = source.GetPropertyValue(property);
+            self.SetPropertyValue(property, newValue);
         }
     }
 }

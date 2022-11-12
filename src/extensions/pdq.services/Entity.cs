@@ -19,7 +19,7 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public TKey GetKeyValue()
-            => (TKey)this.GetProperty(KeyMetadata.Name);
+            => (TKey)this.GetPropertyValue(KeyMetadata.Name);
     }
 
     public abstract class Entity<TKey1, TKey2> : IEntity<TKey1, TKey2>
@@ -40,8 +40,8 @@ namespace pdq.services
         /// <inheritdoc/>
         public ICompositeKeyValue<TKey1, TKey2> GetKeyValue()
         {
-            var value1 = (TKey1)this.GetProperty(KeyMetadata.ComponentOne.Name);
-            var value2 = (TKey2)this.GetProperty(KeyMetadata.ComponentTwo.Name);
+            var value1 = (TKey1)this.GetPropertyValue(KeyMetadata.ComponentOne.Name);
+            var value2 = (TKey2)this.GetPropertyValue(KeyMetadata.ComponentTwo.Name);
             return CompositeKeyValue.Create(value1, value2);
         }
     }
@@ -65,9 +65,9 @@ namespace pdq.services
         /// <inheritdoc/>
         public ICompositeKeyValue<TKey1, TKey2, TKey3> GetKeyValue()
         {
-            var value1 = (TKey1)this.GetProperty(KeyMetadata.ComponentOne.Name);
-            var value2 = (TKey2)this.GetProperty(KeyMetadata.ComponentTwo.Name);
-            var value3 = (TKey3)this.GetProperty(KeyMetadata.ComponentThree.Name);
+            var value1 = (TKey1)this.GetPropertyValue(KeyMetadata.ComponentOne.Name);
+            var value2 = (TKey2)this.GetPropertyValue(KeyMetadata.ComponentTwo.Name);
+            var value3 = (TKey3)this.GetPropertyValue(KeyMetadata.ComponentThree.Name);
             return CompositeKeyValue.Create(value1, value2, value3);
         }
     }

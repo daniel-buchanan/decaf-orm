@@ -22,7 +22,7 @@ namespace pdq.core_tests
             };
 
             // Act
-            var prop = p.GetProperty("PropertyDoesntExist");
+            var prop = p.GetPropertyValue("PropertyDoesntExist");
 
             // Assert
             prop.Should().BeNull();
@@ -38,7 +38,7 @@ namespace pdq.core_tests
 			};
 
 			// Act
-			var prop = p.GetProperty("Email");
+			var prop = p.GetPropertyValue("Email");
 
 			// Assert
 			prop.Should().NotBeNull();
@@ -54,7 +54,7 @@ namespace pdq.core_tests
             };
 
             // Act
-            var prop = p.GetProperty(x => x.Email);
+            var prop = p.GetPropertyValue(x => x.Email);
 
             // Assert
             prop.Should().NotBeNull();
@@ -70,7 +70,7 @@ namespace pdq.core_tests
             };
 
             // Act
-            p.SetProperty("Email", "smith@bob.com");
+            p.SetPropertyValue("Email", "smith@bob.com");
 
             // Assert
             p.Email.Should().Be("smith@bob.com");
@@ -106,7 +106,7 @@ namespace pdq.core_tests
             };
 
             // Act
-            p1.SetPropertyFrom("Email", p2);
+            p1.SetPropertyValueFrom("Email", p2);
 
             // Assert
             p1.Email.Should().Be("bob@smith.com");

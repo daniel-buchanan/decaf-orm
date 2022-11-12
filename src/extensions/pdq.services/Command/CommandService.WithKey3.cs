@@ -54,9 +54,9 @@ namespace pdq.services
                 foreach (var item in results)
                 {
                     var r = inputItems[i];
-                    r.SetPropertyFrom(first.KeyMetadata.ComponentOne.Name, item);
-                    r.SetPropertyFrom(first.KeyMetadata.ComponentTwo.Name, item);
-                    r.SetPropertyFrom(first.KeyMetadata.ComponentThree.Name, item);
+                    r.SetPropertyValueFrom(first.KeyMetadata.ComponentOne.Name, item);
+                    r.SetPropertyValueFrom(first.KeyMetadata.ComponentTwo.Name, item);
+                    r.SetPropertyValueFrom(first.KeyMetadata.ComponentThree.Name, item);
                     i += 1;
                 }
                 return inputItems;

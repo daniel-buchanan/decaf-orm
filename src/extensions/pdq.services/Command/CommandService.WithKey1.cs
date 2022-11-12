@@ -52,7 +52,7 @@ namespace pdq.services
                 foreach(var item in results)
                 {
                     var r = inputItems[i];
-                    r.SetPropertyFrom(first.KeyMetadata.Name, item);
+                    r.SetPropertyValueFrom(first.KeyMetadata.Name, item);
                     i += 1;
                 }
                 return inputItems;

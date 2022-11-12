@@ -204,6 +204,7 @@ namespace pdq.core_tests.Services.Command
         public void DeleteSucceeds()
         {
             // Arrange
+            // Arrange
             IQueryContext context = null;
             this.addressNoteService.PreExecution += (sender, args) =>
             {
@@ -211,15 +212,30 @@ namespace pdq.core_tests.Services.Command
             };
 
             // Act
-            this.addressNoteService.Delete(p => p.Id == 42);
+            this.addressNoteService.Delete(42, 43, 44);
 
             // Assert
             context.Should().NotBeNull();
             var deleteContext = context as IDeleteQueryContext;
-            deleteContext.WhereClause.Should().BeOfType<state.Conditionals.Column<int>>();
-            var clause = deleteContext.WhereClause as state.Conditionals.Column<int>;
-            clause.Details.Name.Should().Be(nameof(AddressNote.Id));
-            clause.Value.Should().Be(42);
+            deleteContext.WhereClause.Should().BeOfType<state.Conditionals.Or>();
+            var orClause = deleteContext.WhereClause as state.Conditionals.Or;
+            var clause = orClause.Children.First() as state.Conditionals.And;
+            clause.Children.Should().HaveCount(3);
+            var one = clause.Children.ToArray()[0] as state.Conditionals.Column<int>;
+            var two = clause.Children.ToArray()[1] as state.Conditionals.Column<int>;
+            var three = clause.Children.ToArray()[2] as state.Conditionals.Column<int>;
+
+            one.Should().NotBeNull();
+            one.Details.Name.Should().Be(nameof(Address.Id));
+            one.Value.Should().Be(42);
+
+            two.Should().NotBeNull();
+            two.Details.Name.Should().Be(nameof(Address.PersonId));
+            two.Value.Should().Be(43);
+
+            three.Should().NotBeNull();
+            three.Details.Name.Should().Be(nameof(Address.PersonId));
+            three.Value.Should().Be(44);
         }
     }
 }

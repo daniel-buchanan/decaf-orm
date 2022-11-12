@@ -196,17 +196,19 @@ namespace pdq.core_tests.Services.Command
             {
                 context = args.Context;
             };
+            const int key = 42;
 
             // Act
-            this.personService.Delete(p => p.Id == 42);
+            this.personService.Delete(key);
 
             // Assert
             context.Should().NotBeNull();
             var deleteContext = context as IDeleteQueryContext;
-            deleteContext.WhereClause.Should().BeOfType<state.Conditionals.Column<int>>();
-            var clause = deleteContext.WhereClause as state.Conditionals.Column<int>;
-            clause.Details.Name.Should().Be(nameof(Person.Id));
-            clause.Value.Should().Be(42);
+            var clause = deleteContext.WhereClause as state.Conditionals.And;
+            clause.Children.Should().HaveCount(1);
+            var valueClause = clause.Children.First() as state.Conditionals.InValues<int>;
+            valueClause.Column.Name.Should().Be(nameof(Person.Id));
+            valueClause.ValueSet.Should().Contain(key);
         }
     }
 }

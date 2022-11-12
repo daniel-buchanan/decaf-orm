@@ -207,15 +207,25 @@ namespace pdq.core_tests.Services.Command
             };
 
             // Act
-            this.addressService.Delete(p => p.Id == 42);
+            this.addressService.Delete(42, 43);
 
             // Assert
             context.Should().NotBeNull();
             var deleteContext = context as IDeleteQueryContext;
-            deleteContext.WhereClause.Should().BeOfType<state.Conditionals.Column<int>>();
-            var clause = deleteContext.WhereClause as state.Conditionals.Column<int>;
-            clause.Details.Name.Should().Be(nameof(Person.Id));
-            clause.Value.Should().Be(42);
+            deleteContext.WhereClause.Should().BeOfType<state.Conditionals.Or>();
+            var orClause = deleteContext.WhereClause as state.Conditionals.Or;
+            var clause = orClause.Children.First() as state.Conditionals.And;
+            clause.Children.Should().HaveCount(2);
+            var left = clause.Children.ToArray()[0] as state.Conditionals.Column<int>;
+            var right = clause.Children.ToArray()[1] as state.Conditionals.Column<int>;
+
+            left.Should().NotBeNull();
+            left.Details.Name.Should().Be(nameof(Address.Id));
+            left.Value.Should().Be(42);
+
+            right.Should().NotBeNull();
+            right.Details.Name.Should().Be(nameof(Address.PersonId));
+            right.Value.Should().Be(43);
         }
     }
 }

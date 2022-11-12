@@ -120,13 +120,13 @@ namespace pdq.services
 
                 using (var q = t.Query())
                 {
+                    var query = q.Delete();
                     var table = base.GetTableInfo<TEntity>(q);
-                    var del = q.Delete()
-                        .From(table, "t")
+                    var exec = query.From(table, "t")
                         .Where(b => action(keyBatch, q, b));
                     NotifyPreExecution(this, q);
 
-                    del.Execute();
+                    exec.Execute();
                 }
 
                 skip += take;

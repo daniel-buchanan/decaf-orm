@@ -49,7 +49,7 @@ namespace pdq.services
         public virtual IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
         {
             if (toAdd == null ||
-               toAdd.Count() == 0)
+               !toAdd.Any())
                 return new List<TEntity>();
 
             return ExecuteQuery(q =>

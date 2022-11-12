@@ -38,8 +38,6 @@ namespace pdq.services
             var first = toAdd.First();
             return ExecuteQuery(q =>
             {
-                var internalContext = q as IQueryContextInternal;
-                
                 var query = q.Insert();
                 var table = GetTableInfo<TEntity>(q);
                 var exec = query.Into(table)

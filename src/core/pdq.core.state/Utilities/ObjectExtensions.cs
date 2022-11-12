@@ -8,7 +8,7 @@ namespace pdq.state
 {
     internal static class ObjectExtensions
     {
-        internal static readonly BindingFlags Flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+        internal static readonly BindingFlags Flags = BindingFlags.Instance | BindingFlags.Public;
 
         private static string ParseExpression<T>(Expression<Func<T, object>> expression)
         {

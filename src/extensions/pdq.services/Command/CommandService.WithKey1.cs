@@ -76,10 +76,10 @@ namespace pdq.services
         }
 
         /// <inheritdoc/>
-        public void Update(TEntity toUpdate)
+        public void Update(TEntity item)
         {
-            var keyValue = toUpdate.GetKeyValue();
-            Update(toUpdate, keyValue);
+            var keyValue = item.GetKeyValue();
+            Update(item, keyValue);
         }
 
         /// <inheritdoc/>

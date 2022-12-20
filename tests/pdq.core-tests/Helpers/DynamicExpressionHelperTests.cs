@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using FluentAssertions;
 using pdq.common;
+using pdq.common.Utilities;
 using pdq.core_tests.Models;
 using pdq.state;
 using pdq.state.Utilities;
@@ -18,11 +19,12 @@ namespace pdq.core_tests.Helpers
         public DynamicExpressionHelperTests()
         {
             var aliasManager = AliasManager.Create();
+            var hashProvider = new HashProvider();
             var reflectionHelper = new ReflectionHelper();
             var expressionHelper = new ExpressionHelper(reflectionHelper);
             var callExpressionHelper = new CallExpressionHelper(expressionHelper);
             this.dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, callExpressionHelper);
-            this.queryContext = SelectQueryContext.Create(aliasManager) as IQueryContextInternal;
+            this.queryContext = SelectQueryContext.Create(aliasManager, hashProvider) as IQueryContextInternal;
         }
 
         [Fact]

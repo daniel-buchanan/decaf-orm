@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using pdq.common.Connections;
 using pdq.common.Logging;
+using pdq.common.Utilities;
 
 namespace pdq.common
 {
@@ -14,6 +15,7 @@ namespace pdq.common
         private readonly ISqlFactory sqlFactory;
         private readonly ILoggerProxy logger;
         private readonly PdqOptions options;
+        private readonly IHashProvider hashProvider;
         private readonly List<IQuery> queries;
 
 		private Transient(
@@ -21,6 +23,7 @@ namespace pdq.common
             ITransaction transaction,
             ISqlFactory sqlFactory,
             ILoggerProxy logger,
+            IHashProvider hashProvider,
             PdqOptions options)
 		{
             this.factory = factory as ITransientFactoryInternal;
@@ -29,6 +32,7 @@ namespace pdq.common
             this.sqlFactory = sqlFactory;
             this.logger = logger;
             this.options = options;
+            this.hashProvider = hashProvider;
             this.queries = new List<IQuery>();
 
             Id = Guid.NewGuid();
@@ -52,8 +56,9 @@ namespace pdq.common
             ITransaction transaction,
             ISqlFactory sqlFactory,
             ILoggerProxy logger,
+            IHashProvider hashProvider,
             PdqOptions options)
-            => new Transient(factory, transaction, sqlFactory, logger, options);
+            => new Transient(factory, transaction, sqlFactory, logger, hashProvider, options);
 
         /// <inheritdoc />
         public void Dispose()
@@ -104,7 +109,7 @@ namespace pdq.common
         /// <inheritdoc />
         public IQuery Query()
         {
-            var query = common.Query.Create(this.options, logger, this);
+            var query = common.Query.Create(this.options, this.logger, this, this.hashProvider);
             this.logger.Debug($"Transient({Id}) :: Creating new Query");
             this.queries.Add(query);
             return query;

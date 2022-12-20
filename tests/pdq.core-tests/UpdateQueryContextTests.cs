@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using pdq.common;
+using pdq.common.Utilities;
 using pdq.state;
 using pdq.state.QueryTargets;
 using Xunit;
@@ -14,7 +15,8 @@ namespace pdq.core_tests
         public UpdateQueryContextTests()
         {
             var aliasManager = AliasManager.Create();
-            this.context = UpdateQueryContext.Create(aliasManager);
+            var hashProvider = new HashProvider();
+            this.context = UpdateQueryContext.Create(aliasManager, hashProvider);
         }
 
         [Fact]

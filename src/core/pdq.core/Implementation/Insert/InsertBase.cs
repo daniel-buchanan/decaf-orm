@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
-using pdq.Exceptions;
 using pdq.state;
 
 namespace pdq.Implementation
@@ -18,7 +17,7 @@ namespace pdq.Implementation
 
         protected void FromQuery(Action<ISelect> queryBuilder)
         {
-            var context = SelectQueryContext.Create(this.query.AliasManager);
+            var context = SelectQueryContext.Create(this.query.AliasManager, this.query.HashProvider);
             var query = this.query.Transient.Query() as IQueryInternal;
             var select = Select.Create(context, query);
 

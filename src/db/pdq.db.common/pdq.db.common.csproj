@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Builders\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Builders\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\core\pdq.core.state\pdq.state.csproj" />
+  </ItemGroup>
+</Project>

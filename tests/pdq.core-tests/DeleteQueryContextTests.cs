@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using pdq.common;
+using pdq.common.Utilities;
 using pdq.state;
 using pdq.state.QueryTargets;
 using Xunit;
@@ -16,7 +17,8 @@ namespace pdq.core_tests
 		public DeleteQueryContextTests()
 		{
 			var aliasManager = AliasManager.Create();
-			this.context = DeleteQueryContext.Create(aliasManager);
+            var hashProvider = new HashProvider();
+			this.context = DeleteQueryContext.Create(aliasManager, hashProvider);
 		}
 
         [Fact]

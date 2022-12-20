@@ -12,6 +12,7 @@ using pdq.state;
 using pdq.state.Conditionals;
 using Xunit;
 using pdq.services;
+using pdq.common.Utilities;
 
 namespace pdq.core_tests
 {
@@ -26,15 +27,16 @@ namespace pdq.core_tests
             this.options = new PdqOptions();
             var loggerProxy = new DefaultLogger(this.options);
             var aliasManager = AliasManager.Create();
-            this.context = SelectQueryContext.Create(aliasManager);
+            var hashProvider = new HashProvider();
+            this.context = SelectQueryContext.Create(aliasManager, hashProvider);
             var connectionFactory = new MockConnectionFactory(loggerProxy);
             var transactionFactory = new MockTransactionFactory(connectionFactory, loggerProxy, this.options);
             var sqlFactory = new MockSqlFactory();
-            var transientFactory = new TransientFactory(this.options, loggerProxy, transactionFactory, sqlFactory);
+            var transientFactory = new TransientFactory(this.options, loggerProxy, transactionFactory, sqlFactory, hashProvider);
             var connectionDetails = new MockConnectionDetails();
             var transient = transientFactory.Create(connectionDetails);
 
-            var query = Query.Create(this.options, loggerProxy, transient) as IQueryInternal;
+            var query = Query.Create(this.options, loggerProxy, transient, hashProvider) as IQueryInternal;
             this.select = Select.Create(this.context, query);
         }
 

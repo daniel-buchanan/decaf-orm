@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using pdq.common;
 
 namespace pdq.core_tests.Mocks
@@ -9,19 +10,39 @@ namespace pdq.core_tests.Mocks
         {
         }
 
-        protected override SqlTemplate ParseDelete(IQueryContext context)
+        protected override SqlTemplate ParseDeleteQuery(IQueryContext context)
             => GetTemplate();
 
-        protected override SqlTemplate ParseInsert(IQueryContext context)
+        protected override SqlTemplate ParseInsertQuery(IQueryContext context)
             => GetTemplate();
 
-        protected override SqlTemplate ParseSelect(IQueryContext context)
+        protected override SqlTemplate ParseSelectQuery(IQueryContext context)
             => GetTemplate();
 
-        protected override SqlTemplate ParseUpdate(IQueryContext context)
+        protected override SqlTemplate ParseUpdateQuery(IQueryContext context)
             => GetTemplate();
 
         private static SqlTemplate GetTemplate() => SqlTemplate.Create(string.Empty, null);
+
+        protected override Dictionary<string, object> ParseSelectParameters(IQueryContext context, SqlTemplate template)
+        {
+            return new Dictionary<string, object>();
+        }
+
+        protected override Dictionary<string, object> ParseDeleteParameters(IQueryContext context, SqlTemplate template)
+        {
+            return new Dictionary<string, object>();
+        }
+
+        protected override Dictionary<string, object> ParseUpdateParameters(IQueryContext context, SqlTemplate template)
+        {
+            return new Dictionary<string, object>();
+        }
+
+        protected override Dictionary<string, object> ParseInsertParameters(IQueryContext context, SqlTemplate template)
+        {
+            return new Dictionary<string, object>();
+        }
     }
 }
 

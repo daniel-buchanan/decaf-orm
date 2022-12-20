@@ -1,30 +1,79 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using pdq.common.Utilities;
+
 namespace pdq.common
 {
     public abstract class SqlFactory : ISqlFactory
     {
-        protected SqlFactory() { }
+        private readonly Dictionary<string, SqlTemplate> cache;
 
-        /// <inheritdoc/>
-        public SqlTemplate ParseContext(IQueryContext context)
+        protected SqlFactory()
         {
-            switch(context.Kind)
-            {
-                case QueryTypes.Select: return ParseSelect(context);
-                case QueryTypes.Delete: return ParseDelete(context);
-                case QueryTypes.Update: return ParseUpdate(context);
-                case QueryTypes.Insert: return ParseInsert(context);
-                default: return null;
-            }
+            this.cache = new Dictionary<string, SqlTemplate>();
         }
 
-        protected abstract SqlTemplate ParseSelect(IQueryContext context);
+        /// <inheritdoc/>
+        public SqlTemplate ParseTemplate(IQueryContext context)
+        {
+            SqlTemplate template = null;
+            var key = context.GetHash();
+            var existing = this.cache.TryGetValue(key, out template);
 
-        protected abstract SqlTemplate ParseDelete(IQueryContext context);
+            if (existing) return template;
 
-        protected abstract SqlTemplate ParseUpdate(IQueryContext context);
+            if (context.Kind == QueryTypes.Select)
+                template = ParseSelectQuery(context);
+            if (context.Kind == QueryTypes.Delete)
+                template = ParseDeleteQuery(context);
+            if (context.Kind == QueryTypes.Update)
+                template = ParseUpdateQuery(context);
+            if (context.Kind == QueryTypes.Insert)
+                template = ParseInsertQuery(context);
 
-        protected abstract SqlTemplate ParseInsert(IQueryContext context);
+            if (template == null) return null;
+            this.cache.Add(key, template);
+            return template;
+        }
+
+        /// <inheritdoc/>
+        public object ParseParameters(IQueryContext context, SqlTemplate template)
+        {
+            Dictionary<string, object> values = null;
+
+            if (context.Kind == QueryTypes.Select)
+                values = ParseSelectParameters(context, template);
+            if (context.Kind == QueryTypes.Delete)
+                values = ParseDeleteParameters(context, template);
+            if (context.Kind == QueryTypes.Update)
+                values = ParseUpdateParameters(context, template);
+            if (context.Kind == QueryTypes.Insert)
+                values = ParseInsertParameters(context, template);
+
+            if (values == null) return new { };
+
+            return MapDictionary(values);
+        }
+
+        protected abstract SqlTemplate ParseSelectQuery(IQueryContext context);
+
+        protected abstract SqlTemplate ParseDeleteQuery(IQueryContext context);
+
+        protected abstract SqlTemplate ParseUpdateQuery(IQueryContext context);
+
+        protected abstract SqlTemplate ParseInsertQuery(IQueryContext context);
+
+        protected abstract Dictionary<string, object> ParseSelectParameters(IQueryContext context, SqlTemplate template);
+
+        protected abstract Dictionary<string, object> ParseDeleteParameters(IQueryContext context, SqlTemplate template);
+
+        protected abstract Dictionary<string, object> ParseUpdateParameters(IQueryContext context, SqlTemplate template);
+
+        protected abstract Dictionary<string, object> ParseInsertParameters(IQueryContext context, SqlTemplate template);
+
+        private object MapDictionary(Dictionary<string, object> dict)
+            => DynamicDictionary.FromDictionary(dict);
     }
 }
 

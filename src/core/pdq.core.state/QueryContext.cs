@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
+using pdq.common.Utilities;
 using pdq.state.Utilities;
 using pdq.state.Utilities.Parsers;
 
@@ -16,10 +17,12 @@ namespace pdq.state
 		private readonly IAliasManager aliasManager;
 		private readonly IQueryParsers parserHolder;
 		private readonly List<IQueryTarget> queryTargets;
+        private readonly IHashProvider hashProvider;
 
 		protected QueryContext(
 			IAliasManager aliasManager,
-			QueryTypes kind)
+			QueryTypes kind,
+            IHashProvider hashProvider)
 		{
 			Id = Guid.NewGuid();
 			Kind = kind;
@@ -30,6 +33,7 @@ namespace pdq.state
             this.dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, callExpressionHelper);
             this.aliasManager = aliasManager;
             this.parserHolder = new ParserHolder(expressionHelper, reflectionHelper, callExpressionHelper);
+            this.hashProvider = hashProvider;
 		}
 
 		/// <inheritdoc/>
@@ -38,8 +42,11 @@ namespace pdq.state
 		/// <inheritdoc/>
 		public QueryTypes Kind { get; private set; }
 
-		/// <inheritdoc/>
-		public IReadOnlyCollection<IQueryTarget> QueryTargets => this.queryTargets;
+        /// <inheritdoc/>
+        public string GetHash() => this.hashProvider.GetHash(this);
+
+        /// <inheritdoc/>
+        public IReadOnlyCollection<IQueryTarget> QueryTargets => this.queryTargets;
 
 		/// <inheritdoc/>
 		IExpressionHelper IQueryContextInternal.ExpressionHelper => this.expressionHelper;
@@ -53,6 +60,7 @@ namespace pdq.state
         /// <inheritdoc/>
         IAliasManager IQueryContextInternal.AliasManager => this.aliasManager;
 
+        /// <inheritdoc/>
         IDynamicExpressionHelper IQueryContextInternal.DynamicExpressionHelper => this.dynamicExpressionHelper;
 
         /// <inheritdoc/>

@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using pdq.common;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq")]
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.services")]
 namespace pdq.state.Utilities
 {
-    internal interface IReflectionHelper
+    public interface IReflectionHelper
     {
         bool DetermineIfAnonymous(Type type);
         string GetFieldName(PropertyInfo field, QueryTypes queryType = QueryTypes.None);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using pdq.common;
+using pdq.common.Utilities;
 
 namespace pdq.state
 {
@@ -10,8 +11,8 @@ namespace pdq.state
         private readonly List<IUpdateValueSource> sets;
         private readonly List<Output> outputs;
 
-        private UpdateQueryContext(IAliasManager aliasManager)
-            : base(aliasManager, QueryTypes.Update)
+        private UpdateQueryContext(IAliasManager aliasManager, IHashProvider hashProvider)
+            : base(aliasManager, QueryTypes.Update, hashProvider)
         {
             this.sets = new List<IUpdateValueSource>();
             this.outputs = new List<Output>();
@@ -22,8 +23,8 @@ namespace pdq.state
         /// </summary>
         /// <param name="aliasManager">The <see cref="IAliasManager"/> to use.</param>
         /// <returns>A new instance which implements <see cref="IUpdateQueryContext"/>.</returns>
-		public static IUpdateQueryContext Create(IAliasManager aliasManager)
-            => new UpdateQueryContext(aliasManager);
+		public static IUpdateQueryContext Create(IAliasManager aliasManager, IHashProvider hashProvider)
+            => new UpdateQueryContext(aliasManager, hashProvider);
 
         /// <inheritdoc/>
         public void Update(ITableTarget target)

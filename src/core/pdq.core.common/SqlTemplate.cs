@@ -1,19 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace pdq.common
 {
     public class SqlTemplate
     {
-        public SqlTemplate(string sql, object parameters)
+        public SqlTemplate(string sql, IEnumerable<string> parameterNames)
         {
             Sql = sql;
-            Parameters = parameters;
+            ParameterNames = parameterNames;
         }
 
-        public static SqlTemplate Create(string sql, object parameters)
-            => new SqlTemplate(sql, parameters);
+        public static SqlTemplate Create(string sql, IEnumerable<string> parameterNames)
+            => new SqlTemplate(sql, parameterNames);
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string Sql { get; }
-        public object Parameters { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IEnumerable<string> ParameterNames { get; }
     }
 }
 

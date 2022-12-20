@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using FluentAssertions;
 using pdq.common;
+using pdq.common.Utilities;
 using pdq.core_tests.Models;
 using pdq.state;
 using pdq.state.Conditionals;
@@ -15,6 +16,7 @@ namespace pdq.core_tests
     public class JoinParserTests
     {
         private readonly IAliasManager aliasManager;
+        private readonly IHashProvider hashProvider;
         private readonly JoinParser parser;
 
         public JoinParserTests()
@@ -22,6 +24,7 @@ namespace pdq.core_tests
             var reflectionHelper = new ReflectionHelper();
             var expressionHelper = new ExpressionHelper(reflectionHelper);
             this.aliasManager = AliasManager.Create();
+            this.hashProvider = new HashProvider();
             var callExpressionHelper = new CallExpressionHelper(expressionHelper);
             var valueParser = new ValueParser(expressionHelper, callExpressionHelper, reflectionHelper);
             var joinParser = new JoinParser(expressionHelper, reflectionHelper);
@@ -32,7 +35,7 @@ namespace pdq.core_tests
         public void ParseSimpleJoinSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Person, Address, bool>> expression = (p, a) => p.AddressId == a.Id;
 
@@ -54,7 +57,7 @@ namespace pdq.core_tests
         public void ParseReverseSimpleJoinSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Address, Person, bool>> expression = (a, p) => a.Id == p.AddressId;
 

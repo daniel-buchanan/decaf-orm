@@ -1,4 +1,5 @@
 ﻿using System;
+using pdq.common.Utilities;
 
 [assembly:System.Runtime.CompilerServices.InternalsVisibleTo("pdq")]
 namespace pdq.common
@@ -30,6 +31,11 @@ namespace pdq.common
         /// Gets the <see cref="ISqlFactory"/> for this query.
         /// </summary>
         ISqlFactory SqlFactory { get; }
+
+        /// <summary>
+        /// Gets the <see cref="IHashProvider"/> for this query.
+        /// </summary>
+        IHashProvider HashProvider { get; }
 
 		/// <summary>
         /// Set the <see cref="IQueryContext"/> associated with this query.

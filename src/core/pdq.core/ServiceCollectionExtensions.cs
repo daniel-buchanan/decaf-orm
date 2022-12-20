@@ -5,6 +5,7 @@ using pdq.common;
 using pdq.state.Utilities;
 using pdq.common.Connections;
 using pdq.common.Exceptions;
+using pdq.common.Utilities;
 
 namespace pdq
 {
@@ -28,9 +29,11 @@ namespace pdq
         /// <param name="services">The <see cref="IServiceCollection"/> to add to.</param>
         /// <param name="options">An <see cref="Action{T}"/> that resolves the pdq options.</param>
         /// <returns></returns>
-        public static IServiceCollection AddPdq(this IServiceCollection services, Action<IPdqOptionsBuilder> options)
+        public static IServiceCollection AddPdq(
+            this IServiceCollection services,
+            Action<IPdqOptionsBuilder> options)
         {
-			var b = new PdqOptionsBuilder() as IPdqOptionsBuilderInternal;
+			var b = new PdqOptionsBuilder(services) as IPdqOptionsBuilderInternal;
 			options(b);
 			return AddPdq(services, b.Build());
         }
@@ -42,7 +45,9 @@ namespace pdq
         /// <param name="services">The <see cref="IServiceCollection"/> to add to.</param>
         /// <param name="options">A set of pre-configured <see cref="PdqOptions"/>.</param>
         /// <returns></returns>
-        public static IServiceCollection AddPdq(this IServiceCollection services, PdqOptions options)
+        public static IServiceCollection AddPdq(
+            this IServiceCollection services,
+            PdqOptions options)
         {
             ValidateOptions(options);
 
@@ -51,8 +56,10 @@ namespace pdq
 			services.AddScoped(typeof(ILoggerProxy), options.LoggerProxyType);
             services.AddScoped(typeof(IConnectionFactory), options.ConnectionFactoryType);
             services.AddScoped(typeof(ITransactionFactory), options.TransactionFactoryType);
-            services.AddScoped(typeof(ISqlFactory), options.SqlFactoryType);
+            services.AddSingleton(typeof(ISqlFactory), options.SqlFactoryType);
+            services.AddSingleton<IHashProvider, HashProvider>();
             services.AddScoped<ITransientFactory, TransientFactory>();
+            services.AddSingleton<IReflectionHelper, ReflectionHelper>();
 			return services;
 		}
 

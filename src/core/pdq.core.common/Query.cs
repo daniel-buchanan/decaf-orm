@@ -1,5 +1,6 @@
 ﻿using System;
 using pdq.common.Logging;
+using pdq.common.Utilities;
 
 namespace pdq.common
 {
@@ -9,17 +10,20 @@ namespace pdq.common
 		private readonly ITransientInternal transient;
 		private readonly IAliasManager aliasManager;
 		private readonly PdqOptions options;
+		private readonly IHashProvider hashProvider;
 		private IQueryContext context;
 
 		private Query(
 			PdqOptions options,
 			ILoggerProxy logger,
-			ITransient transient)
+			ITransient transient,
+			IHashProvider hashProvider)
 		{
 			this.logger = logger;
 			this.transient = transient as ITransientInternal;
 			this.aliasManager = AliasManager.Create();
 			this.options = options;
+			this.hashProvider = hashProvider;
 
 			Id = Guid.NewGuid();
 			Status = QueryStatus.Empty;
@@ -42,14 +46,17 @@ namespace pdq.common
 		/// <inheritdoc/>
 		IQueryContext IQueryInternal.Context => this.context;
 
-		/// <inheritdoc/>
-		PdqOptions IQueryInternal.Options => this.options;
+        /// <inheritdoc/>
+        IHashProvider IQueryInternal.HashProvider => this.hashProvider;
+
+        /// <inheritdoc/>
+        PdqOptions IQueryInternal.Options => this.options;
 
 		/// <inheritdoc/>
 		public ISqlFactory SqlFactory => this.transient.SqlFactory;
 
-		/// <inheritdoc/>
-		string IQueryInternal.GetHash() => this.Id.ToString("N");
+        /// <inheritdoc/>
+        string IQueryInternal.GetHash() => this.context.GetHash();
 
 		/// <summary>
         /// 
@@ -58,8 +65,12 @@ namespace pdq.common
         /// <param name="logger"></param>
         /// <param name="transient"></param>
         /// <returns></returns>
-		public static IQuery Create(PdqOptions options, ILoggerProxy logger, ITransient transient)
-			=> new Query(options, logger, transient);
+		public static IQuery Create(
+			PdqOptions options,
+			ILoggerProxy logger,
+			ITransient transient,
+			IHashProvider hashProvider)
+			=> new Query(options, logger, transient, hashProvider);
 
 		/// <inheritdoc/>
 		void IQueryInternal.SetContext(IQueryContext context) => this.context = context;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using pdq.common;
+using pdq.common.Utilities;
 using pdq.state;
 using pdq.state.QueryTargets;
 using pdq.state.ValueSources.Insert;
@@ -17,7 +18,8 @@ namespace pdq.core_tests
 		public InsertQueryContextTests()
 		{
 			var aliasManager = AliasManager.Create();
-			this.context = InsertQueryContext.Create(aliasManager);
+            var hashProvider = new HashProvider();
+			this.context = InsertQueryContext.Create(aliasManager, hashProvider);
 		}
 
         [Fact]

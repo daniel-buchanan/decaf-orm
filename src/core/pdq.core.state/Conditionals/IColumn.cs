@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using pdq.common;
 
 namespace pdq.state.Conditionals
@@ -13,6 +14,7 @@ namespace pdq.state.Conditionals
 
         IValueFunction ValueFunction { get; }
 
+        [JsonIgnore]
         object Value { get; }
     }
 }

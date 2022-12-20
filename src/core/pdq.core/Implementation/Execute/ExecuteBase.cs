@@ -44,17 +44,18 @@ namespace pdq.Implementation
         protected async Task<T> ExecuteAsync<T>(
             Func<string, object, IDbConnection, IDbTransaction, Task<T>> func)
         {
-            var template = this.sqlFactory.ParseContext(this.context);
+            var template = this.sqlFactory.ParseTemplate(this.context);
+            var parameters = this.sqlFactory.ParseParameters(this.context, template);
             var connection = GetConnection();
             var transaction = GetTransaction();
 
-            return await func(template.Sql, template.Parameters, connection, transaction);
+            return await func(template.Sql, parameters, connection, transaction);
         }
 
         /// <inheritdoc/>
         public string GetSql()
         {
-            var template = this.sqlFactory.ParseContext(this.context);
+            var template = this.sqlFactory.ParseTemplate(this.context);
             return template?.Sql;
         }
     }

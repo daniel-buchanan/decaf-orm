@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using FluentAssertions;
 using pdq.common;
+using pdq.common.Utilities;
 using pdq.core_tests.Models;
 using pdq.state;
 using pdq.state.Conditionals;
@@ -16,6 +17,7 @@ namespace pdq.core_tests
     public class WhereParserTests
     {
         private readonly IAliasManager aliasManager;
+        private readonly IHashProvider hashProvider;
         private readonly WhereParser parser;
 
         public WhereParserTests()
@@ -23,6 +25,7 @@ namespace pdq.core_tests
             var reflectionHelper = new ReflectionHelper();
             var expressionHelper = new ExpressionHelper(reflectionHelper);
             this.aliasManager = AliasManager.Create();
+            this.hashProvider = new HashProvider();
             var callExpressionHelper = new CallExpressionHelper(expressionHelper);
             var valueParser = new ValueParser(expressionHelper, callExpressionHelper, reflectionHelper);
             var joinParser = new JoinParser(expressionHelper, reflectionHelper);
@@ -39,7 +42,7 @@ namespace pdq.core_tests
             Type functionType)
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
 
             // Act
@@ -62,7 +65,7 @@ namespace pdq.core_tests
         public void ParseContainsExpressionSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Person, bool>> expression = (p) => p.FirstName.Contains("smith");
 
@@ -83,7 +86,7 @@ namespace pdq.core_tests
         public void ParseNotContainsExpressionSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Person, bool>> expression = (p) => !p.FirstName.Contains("smith");
 
@@ -106,7 +109,7 @@ namespace pdq.core_tests
         public void ParseContainsEqualsFalseExpressionSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Person, bool>> expression = (p) => p.FirstName.Contains("smith") == false;
 
@@ -123,6 +126,27 @@ namespace pdq.core_tests
             col.EqualityOperator.Should().Be(EqualityOperator.Equals);
             col.ValueFunction.Should().BeEquivalentTo(StringContains.Create("smith"));
             col.Value.Should().Be(true);
+        }
+
+        [Fact]
+        public void ParseTrimEqualsValueExpressionSucceeds()
+        {
+            // Arrange
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
+            context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
+            Expression<Func<Person, bool>> expression = (p) => p.FirstName.Trim() == "bob";
+
+            // Act
+            var result = this.parser.Parse(expression, context);
+
+            // Assert
+            var col = result as IColumn;
+            col.Should().NotBeNull();
+            col.Details.Name.Should().Be(nameof(Person.FirstName));
+            col.Details.Source.Alias.Should().Be("p");
+            col.EqualityOperator.Should().Be(EqualityOperator.Equals);
+            col.ValueFunction.Should().BeEquivalentTo(Trim.Create());
+            col.Value.Should().Be("bob");
         }
 
         public static IEnumerable<object[]> ValueTests

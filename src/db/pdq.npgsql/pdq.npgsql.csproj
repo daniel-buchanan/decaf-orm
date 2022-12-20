@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Npgsql" />
+    <None Remove="Builders\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Npgsql" Version="7.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\core\pdq.core\pdq.csproj" />
+    <ProjectReference Include="..\..\core\pdq.core.common\pdq.common.csproj" />
+    <ProjectReference Include="..\pdq.db.common\pdq.db.common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Builders\" />
+  </ItemGroup>
+</Project>

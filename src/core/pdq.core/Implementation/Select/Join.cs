@@ -85,7 +85,7 @@ namespace pdq.Implementation
         /// <inheritdoc/>
         public IJoinConditions To(Action<ISelectWithAlias> query)
         {
-            var selectContext = SelectQueryContext.Create(this.context.AliasManager);
+            var selectContext = SelectQueryContext.Create(this.context.AliasManager, this.query.HashProvider);
             var select = Select.Create(selectContext, this.query);
             query(select);
             

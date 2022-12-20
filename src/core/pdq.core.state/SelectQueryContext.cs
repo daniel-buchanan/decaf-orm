@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using pdq.common;
+using pdq.common.Utilities;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.core-tests")]
 namespace pdq.state
@@ -15,8 +16,10 @@ namespace pdq.state
         private readonly List<GroupBy> groupByClauses;
 
 
-		private SelectQueryContext(IAliasManager aliasManager)
-            : base(aliasManager, QueryTypes.Select)
+		private SelectQueryContext(
+            IAliasManager aliasManager,
+            IHashProvider hashProvider)
+            : base(aliasManager, QueryTypes.Select, hashProvider)
 		{
             this.columns = new List<Column>();
             this.joins = new List<Join>();
@@ -24,8 +27,8 @@ namespace pdq.state
             this.groupByClauses = new List<GroupBy>();
 		}
 
-        internal static ISelectQueryContext Create(IAliasManager aliasManager)
-            => new SelectQueryContext(aliasManager);
+        internal static ISelectQueryContext Create(IAliasManager aliasManager, IHashProvider hashProvider)
+            => new SelectQueryContext(aliasManager, hashProvider);
 
         /// <inheritdoc/>
         public IReadOnlyCollection<Column> Columns => this.columns.AsReadOnly();

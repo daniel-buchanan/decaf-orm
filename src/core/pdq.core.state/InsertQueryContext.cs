@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using pdq.common;
+using pdq.common.Utilities;
 
 namespace pdq.state
 {
@@ -10,15 +11,17 @@ namespace pdq.state
         private readonly List<Output> outputs;
         private readonly List<Column> columns;
 
-        private InsertQueryContext(IAliasManager aliasManager, QueryTypes kind)
-            : base(aliasManager, kind)
+        private InsertQueryContext(
+            IAliasManager aliasManager,
+            IHashProvider hashProvider)
+            : base(aliasManager, QueryTypes.Insert, hashProvider)
         {
             outputs = new List<Output>();
             columns = new List<Column>();
         }
 
-        public static IInsertQueryContext Create(IAliasManager aliasManager)
-            => new InsertQueryContext(aliasManager, QueryTypes.Insert);
+        public static IInsertQueryContext Create(IAliasManager aliasManager, IHashProvider hashProvider)
+            => new InsertQueryContext(aliasManager, hashProvider);
 
         /// <inheritdoc/>
         public ITableTarget Target

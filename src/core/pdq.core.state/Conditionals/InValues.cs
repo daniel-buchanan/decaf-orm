@@ -39,6 +39,8 @@ namespace pdq.state.Conditionals
 
 
         public override Type ValueType { get; protected set; }
+
+        public int CountValues => this.values.Count;
     }
 }
 

@@ -18,7 +18,7 @@ namespace pdq.Implementation
 
         protected void FromQuery(Action<ISelectWithAlias> queryBuilder)
         {
-            var context = SelectQueryContext.Create(this.query.AliasManager);
+            var context = SelectQueryContext.Create(this.query.AliasManager, this.query.HashProvider);
             var query = this.query.Transient.Query() as IQueryInternal;
             var select = Select.Create(context, query) as ISelectWithAlias;
 

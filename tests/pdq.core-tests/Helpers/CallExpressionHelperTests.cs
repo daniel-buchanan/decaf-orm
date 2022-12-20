@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using FluentAssertions;
 using pdq.common;
+using pdq.common.Utilities;
 using pdq.core_tests.Models;
 using pdq.state;
 using pdq.state.Conditionals;
@@ -16,6 +17,7 @@ namespace pdq.core_tests
     public class CallExpressionHelperTests
     {
         private readonly IAliasManager aliasManager;
+        private readonly IHashProvider hashProvider;
         private readonly CallExpressionHelper helper;
 
         public CallExpressionHelperTests()
@@ -23,6 +25,7 @@ namespace pdq.core_tests
             var reflectionHelper = new ReflectionHelper();
             var expressionHelper = new ExpressionHelper(reflectionHelper);
             this.aliasManager = AliasManager.Create();
+            this.hashProvider = new HashProvider();
             this.helper = new CallExpressionHelper(expressionHelper);
         }
 
@@ -30,7 +33,7 @@ namespace pdq.core_tests
         public void ParseStringContainsConstant()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             Expression<Func<Person, bool>> expr = (p) => p.FirstName.Contains("hello");
             context.AddQueryTarget(expr);
 
@@ -50,7 +53,7 @@ namespace pdq.core_tests
         public void ParseStringContainsVariable()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             var str = "hello";
             Expression<Func<Person, bool>> expr = (p) => p.FirstName.Contains(str);
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
@@ -71,7 +74,7 @@ namespace pdq.core_tests
         public void ParseArrayConstantAccessEqualsTrue()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             var constantValues = new[] { "hello", "world" };
             Expression<Func<Person, bool>> expr = (p) => constantValues.Contains(p.FirstName) == true;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
@@ -90,7 +93,7 @@ namespace pdq.core_tests
         public void ParseTrueEqualsArrayConstantAccess()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             var constantValues = new[] { "hello", "world" };
             Expression<Func<Person, bool>> expr = (p) => true == constantValues.Contains(p.FirstName);
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
@@ -109,7 +112,7 @@ namespace pdq.core_tests
         public void ParseArrayConstantAccessEqualsFalse()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             var constantValues = new[] { "hello", "world" };
             Expression<Func<Person, bool>> expr = (p) => constantValues.Contains(p.FirstName) == false;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
@@ -130,7 +133,7 @@ namespace pdq.core_tests
         public void ParseFalseEqualsArrayConstantAccess()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             var constantValues = new[] { "hello", "world" };
             Expression<Func<Person, bool>> expr = (p) => false == constantValues.Contains(p.FirstName);
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
@@ -151,7 +154,7 @@ namespace pdq.core_tests
         public void ParseNotEqualsTrueArrayConstantAccess()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             var constantValues = new[] { "hello", "world" };
             Expression<Func<Person, bool>> expr = (p) => true != constantValues.Contains(p.FirstName);
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
@@ -172,7 +175,7 @@ namespace pdq.core_tests
         public void ParseArrayConstantAccess()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             var constantValues = new[] { "hello", "world" };
             Expression<Func<Person, bool>> expr = (p) => constantValues.Contains(p.FirstName);
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
@@ -191,7 +194,7 @@ namespace pdq.core_tests
         public void ParseEnumerableConstantAccess()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             var constantValues = (new List<string> { "hello", "world" }).AsEnumerable();
             Expression<Func<Person, bool>> expr = (p) => constantValues.Contains(p.FirstName);
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
@@ -210,7 +213,7 @@ namespace pdq.core_tests
         public void ParseListConstantAccess()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             var constantValues = new List<string> { "hello", "world" };
             Expression<Func<Person, bool>> expr = (p) => constantValues.Contains(p.FirstName);
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
@@ -229,7 +232,7 @@ namespace pdq.core_tests
         public void ParseSubStringEqualsConstant()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             Expression<Func<Person, bool>> expr = (p) => p.FirstName.Substring(2) == "hello";
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
 
@@ -248,7 +251,7 @@ namespace pdq.core_tests
         public void ParseConstantEqualsSubString()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             Expression<Func<Person, bool>> expr = (p) => "hello" == p.FirstName.Substring(2);
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
 
@@ -267,7 +270,7 @@ namespace pdq.core_tests
         public void ParseSubStringNotEqualsConstant()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             Expression<Func<Person, bool>> expr = (p) => p.FirstName.Substring(2) != "hello";
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
 
@@ -288,7 +291,7 @@ namespace pdq.core_tests
         public void ParseConstantNotEqualsSubString()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
             Expression<Func<Person, bool>> expr = (p) => "hello" != p.FirstName.Substring(2);
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
 

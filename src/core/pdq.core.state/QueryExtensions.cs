@@ -19,16 +19,16 @@ namespace pdq.state
 			if (internalQuery == null) return default(T);
 
 			if(queryContextType.IsAssignableFrom(typeof(ISelectQueryContext)))
-				return (T)SelectQueryContext.Create(internalQuery.AliasManager);
+				return (T)SelectQueryContext.Create(internalQuery.AliasManager, internalQuery.HashProvider);
 
 			if (queryContextType.IsAssignableFrom(typeof(IDeleteQueryContext)))
-				return (T)DeleteQueryContext.Create(internalQuery.AliasManager);
+				return (T)DeleteQueryContext.Create(internalQuery.AliasManager, internalQuery.HashProvider);
 
 			if (queryContextType.IsAssignableFrom(typeof(IInsertQueryContext)))
-				return (T)InsertQueryContext.Create(internalQuery.AliasManager);
+				return (T)InsertQueryContext.Create(internalQuery.AliasManager, internalQuery.HashProvider);
 
 			if (queryContextType.IsAssignableFrom(typeof(IUpdateQueryContext)))
-				return (T)UpdateQueryContext.Create(internalQuery.AliasManager);
+				return (T)UpdateQueryContext.Create(internalQuery.AliasManager, internalQuery.HashProvider);
 
 			return default(T);
         }

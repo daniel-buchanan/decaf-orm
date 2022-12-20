@@ -93,6 +93,8 @@ namespace pdq.state.Utilities
                     return ParseContains(callExpression);
                 case SupportedMethods.Substring:
                     return ParseSubString(callExpression);
+                case SupportedMethods.Trim:
+                    return Trim.Create();
             }
 
             return null;
@@ -371,6 +373,7 @@ namespace pdq.state.Utilities
             public const string ToUpper = "ToUpper";
             public const string Contains = "Contains";
             public const string Substring = "Substring";
+            public const string Trim = "Trim";
         }
     }
 }

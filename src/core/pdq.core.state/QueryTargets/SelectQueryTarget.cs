@@ -3,7 +3,7 @@ using pdq.common;
 
 namespace pdq.state.QueryTargets
 {
-	public class SelectQueryTarget : IQueryTarget
+	public class SelectQueryTarget : ISelectQueryTarget
 	{
 		private SelectQueryTarget(ISelectQueryContext context, string alias)
 		{

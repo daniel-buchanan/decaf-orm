@@ -19,6 +19,12 @@ namespace pdq.common
         /// The targets of the <see cref="IQueryContext"/>.
         /// </summary>
 		IReadOnlyCollection<IQueryTarget> QueryTargets { get; }
+
+		/// <summary>
+		/// Get the hash of this context
+		/// </summary>
+		/// <returns>The hash of this context.</returns>
+		string GetHash();
 	}
 }
 

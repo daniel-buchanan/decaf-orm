@@ -1,7 +1,9 @@
 ﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using pdq.common.Connections;
 using pdq.common.Logging;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.npgsql")]
 namespace pdq.common
 {
     public interface IPdqOptionsBuilder
@@ -54,6 +56,8 @@ namespace pdq.common
         void SetConnectionFactory<T>() where T : IConnectionFactory;
 
         void SetTransactionFactory<T>() where T : ITransactionFactory;
+
+        IServiceCollection Services { get; }
 
         PdqOptions Build();
     }

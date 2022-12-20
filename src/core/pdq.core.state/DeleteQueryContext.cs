@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using pdq.common;
+using pdq.common.Utilities;
 
 namespace pdq.state
 {
@@ -11,8 +12,10 @@ namespace pdq.state
 	{
         private readonly List<Output> outputs;
 
-		private DeleteQueryContext(IAliasManager aliasManager)
-			: base(aliasManager, QueryTypes.Delete)
+		private DeleteQueryContext(
+            IAliasManager aliasManager,
+            IHashProvider hashProvider)
+			: base(aliasManager, QueryTypes.Delete, hashProvider)
         {
 			WhereClause = null;
             this.outputs = new List<Output>();
@@ -54,8 +57,8 @@ namespace pdq.state
         /// </summary>
         /// <param name="aliasManager">The <see cref="IAliasManager"/> to use.</param>
         /// <returns>A new instance which implements <see cref="IDeleteQueryContext"/>.</returns>
-        public static IDeleteQueryContext Create(IAliasManager aliasManager)
-			=> new DeleteQueryContext(aliasManager);
+        public static IDeleteQueryContext Create(IAliasManager aliasManager, IHashProvider hashProvider)
+			=> new DeleteQueryContext(aliasManager, hashProvider);
 
 		protected override void Dispose(bool disposing)
         {

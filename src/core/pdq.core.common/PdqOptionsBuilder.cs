@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using pdq.common.Connections;
 using pdq.common.Logging;
 
@@ -10,7 +11,10 @@ namespace pdq.common
     {
         private readonly Dictionary<string, object> values = new Dictionary<string, object>();
 
-        public PdqOptionsBuilder() { }
+        public PdqOptionsBuilder(IServiceCollection services)
+        {
+            Services = services;
+        }
 
         /// <inheritdoc/>
         public PdqOptions Build()
@@ -29,6 +33,9 @@ namespace pdq.common
 
             return options;
         }
+
+        /// <inheritdoc/>
+        public IServiceCollection Services { get; private set; }
 
         /// <inheritdoc/>
         public void EnableTransientTracking()

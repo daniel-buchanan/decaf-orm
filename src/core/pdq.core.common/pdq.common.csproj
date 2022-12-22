@@ -18,5 +18,9 @@
     <None Remove="Microsoft.CSharp" />
     <None Remove="System.Dynamic.Runtime" />
     <None Remove="System.Runtime" />
+    <None Remove="Templates\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Templates\" />
   </ItemGroup>
 </Project>

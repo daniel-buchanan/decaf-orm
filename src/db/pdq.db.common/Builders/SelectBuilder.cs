@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using pdq.common;
+using pdq.common.Templates;
+using pdq.common.Utilities;
 using pdq.state;
 
 namespace pdq.db.common.Builders
@@ -8,40 +9,38 @@ namespace pdq.db.common.Builders
 	public abstract class SelectBuilder : Builder<ISelectQueryContext>
 	{
         public SelectBuilder(
-            ISqlBuilder sqlBuilder,
-            IWhereBuilder whereBuilder)
-            : base(sqlBuilder, whereBuilder) { }
-
-		protected abstract void AddColumns(ISelectQueryContext context);
-
-		protected abstract void AddTables(ISelectQueryContext context, IList<string> parameters);
-
-		protected abstract void AddJoins(ISelectQueryContext context, IList<string> parameters);
-
-		protected abstract void AddOrderBy(ISelectQueryContext context);
-
-		protected abstract void AddGroupBy(ISelectQueryContext context);
-
-        public override SqlTemplate Build(ISelectQueryContext context)
+            IWhereBuilder whereBuilder,
+            IHashProvider hashProvider,
+            PdqOptions pdqOptions)
+            : base(whereBuilder, hashProvider, pdqOptions)
         {
-            var parameters = new List<string>();
-            return Build(context, parameters);
         }
 
-        protected SqlTemplate Build(ISelectQueryContext context, IList<string> parameters)
+		protected abstract void AddColumns(ISelectQueryContext context, ISqlBuilder sqlBuilder);
+
+		protected abstract void AddTables(ISelectQueryContext context, ISqlBuilder sqlBuilder);
+
+		protected abstract void AddJoins(ISelectQueryContext context, ISqlBuilder sqlBuilder);
+
+		protected abstract void AddOrderBy(ISelectQueryContext context, ISqlBuilder sqlBuilder);
+
+		protected abstract void AddGroupBy(ISelectQueryContext context, ISqlBuilder sqlBuilder);
+
+        protected override void Build(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            this.sqlBuilder.AppendLine("{0} pdq :: query hash: {1}", CommentCharacter, context.GetHash());
-            this.sqlBuilder.AppendLine("{0} pdq :: generated at: {1}", CommentCharacter, DateTime.Now.ToString());
-            this.sqlBuilder.AppendLine("select");
-            AddColumns(context);
-            AddTables(context, parameters);
-            AddJoins(context, parameters);
-            AddOrderBy(context);
-            AddGroupBy(context);
+            sqlBuilder.AppendLine("select");
+            AddColumns(context, sqlBuilder);
+            AddTables(context, sqlBuilder);
+            AddJoins(context, sqlBuilder);
+            AddOrderBy(context, sqlBuilder);
+            AddGroupBy(context, sqlBuilder);
+            this.whereBuilder.AddWhere(context.WhereClause, sqlBuilder, parameterManager);
+        }
 
-            this.whereBuilder.AddWhere(context.WhereClause, this.sqlBuilder);
-
-            return SqlTemplate.Create(this.sqlBuilder.GetSql(), parameters);
+        protected override void GetParameters(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        {
+            AddJoins(context, sqlBuilder);
+            this.whereBuilder.AddWhere(context.WhereClause, sqlBuilder, parameterManager);
         }
     }
 }

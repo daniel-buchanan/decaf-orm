@@ -45,6 +45,13 @@ namespace pdq.common
         /// connections will be re-used for multiple queries across a transaction.
         /// </summary>
         void CloseConnectionsOnCommitOrRollback();
+
+        /// <summary>
+        /// Disables header comments for queries generated.
+        /// This means primarily that the query hash and timestamp will not
+        /// be included as comments at the beginning of the query.
+        /// </summary>
+        void DisableSqlHeaderComments();
     }
 
     internal interface IPdqOptionsBuilderInternal : IPdqOptionsBuilder

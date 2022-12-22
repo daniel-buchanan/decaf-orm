@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace pdq
 {
@@ -9,6 +10,12 @@ namespace pdq
         /// </summary>
         /// <returns>The generated SQL statement as a <see cref="string"/>.</returns>
 		string GetSql();
+
+        /// <summary>
+        /// Get the parameter values for the current query.
+        /// </summary>
+        /// <returns>A dictionary of parameter names and values.</returns>
+        Dictionary<string, object> GetSqlParameters();
 	}
 }
 

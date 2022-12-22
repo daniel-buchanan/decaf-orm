@@ -1,4 +1,5 @@
 ﻿using System;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
 using Xunit;
@@ -16,6 +17,7 @@ namespace pdq.npgsql.tests
 			{
 				o.EnableTransientTracking();
 				o.OverrideDefaultLogLevel(LogLevel.Debug);
+				o.DisableSqlHeaderComments();
 				o.UseNpgsql(options =>
 				{
 
@@ -33,24 +35,56 @@ namespace pdq.npgsql.tests
 		public void SimpleSelectSucceeds()
 		{
 			// Arrange
+			var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  sub = '@p1'\\r\\n)";
+			expected = expected.Replace("\\r\\n", Environment.NewLine);
+			var subValue = Guid.NewGuid();
 
 			// Act
 			var q = this.query.Select()
 				.From("users", "u")
 				.Where(b =>
 				{
-					b.Column("sub").Is().EqualTo(Guid.NewGuid());
+					b.Column("sub").Is().EqualTo(subValue);
 				})
 				.Select(c => new
 				{
 					email = c.Is("email"),
 					id = c.Is("sub")
 				});
+
 			var sql = q.GetSql();
-			var x = sql;
 
 			// Assert
+			sql.Should().Be(expected);
 		}
-	}
+
+        [Fact]
+        public void SimpleSelectReturnsCorrectParameters()
+        {
+            // Arrange
+            var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  sub = '@p1'\\r\\n)";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
+            var subValue = Guid.NewGuid();
+
+            // Act
+            var q = this.query.Select()
+                .From("users", "u")
+                .Where(b =>
+                {
+                    b.Column("sub").Is().EqualTo(subValue);
+                })
+                .Select(c => new
+                {
+                    email = c.Is("email"),
+                    id = c.Is("sub")
+                });
+
+			var parameters = q.GetSqlParameters();
+
+			// Assert
+			parameters.Should().Satisfy(
+				p => p.Key == "@p1" && ((Guid)p.Value) == subValue);
+        }
+    }
 }
 

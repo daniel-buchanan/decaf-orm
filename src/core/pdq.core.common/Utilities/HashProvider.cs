@@ -20,15 +20,8 @@ namespace pdq.common.Utilities
         /// <inheritdoc/>
         public string GetHash<T>(T input)
         {
-            byte[] hash;
             var json = JsonConvert.SerializeObject(input);
-            using(var memoryStream = new MemoryStream())
-            using (var writer = new StreamWriter(memoryStream))
-            {
-                writer.Write(json);
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                hash = this.hashAlgorithm.ComputeHash(memoryStream);
-            }
+            var hash = this.hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(json));
 
             return Convert.ToBase64String(hash);
         }

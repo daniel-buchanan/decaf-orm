@@ -43,6 +43,11 @@ namespace pdq
         public bool CloseConnectionOnCommitOrRollback { get; private set; }
 
         /// <summary>
+        /// Whether or not to include header comments in generated SQL.
+        /// </summary>
+        public bool IncludeHeaderCommentsInSql { get; private set; }
+
+        /// <summary>
         /// The type of the logger proxy to use.
         /// </summary>
         internal Type LoggerProxyType { get; private set; }

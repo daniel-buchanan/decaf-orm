@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using pdq.common.Templates;
 using pdq.common.Utilities;
 
 namespace pdq.common

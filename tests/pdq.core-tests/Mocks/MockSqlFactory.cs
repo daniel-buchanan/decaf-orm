@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using pdq.common;
+using pdq.common.Templates;
 
 namespace pdq.core_tests.Mocks
 {

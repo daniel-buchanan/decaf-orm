@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using pdq.common;
+using pdq.common.Templates;
 using pdq.db.common;
 using pdq.db.common.Builders;
 using pdq.state;
@@ -11,6 +12,7 @@ namespace pdq.npgsql.Builders
     public class WhereBuilder : db.common.Builders.IWhereBuilder
     {
         private readonly IValueParser valueParser;
+
         private readonly QuotedIdentifierBuilder quotedIdentifierBuilder;
 
         public WhereBuilder(
@@ -21,9 +23,10 @@ namespace pdq.npgsql.Builders
             this.quotedIdentifierBuilder = quotedIdentifierBuilder;
         }
 
-        public void AddWhere(IWhere context, ISqlBuilder sqlBuilder) => AddWhere(context, sqlBuilder, 0);
+        public void AddWhere(IWhere context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+            => AddWhere(context, sqlBuilder, parameterManager, 0);
 
-        private void AddWhere(IWhere context, ISqlBuilder sqlBuilder, int level)
+        private void AddWhere(IWhere context, ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
         {
             if (context == null) return;
 
@@ -38,10 +41,10 @@ namespace pdq.npgsql.Builders
             {
                 sqlBuilder.IncreaseIndent();
                 sqlBuilder.PrependIndent();
-                if (context is IColumn) AddColumn(context as IColumn, sqlBuilder, level);
-                else if (context is ColumnMatch) AddColumnMatch(context as ColumnMatch, sqlBuilder, level);
-                else if (context is IBetween) AddBetween(context as IBetween, sqlBuilder, level);
-                else if (context is IInValues) AddInValues(context as IInValues, sqlBuilder, level);
+                if (context is IColumn) AddColumn(context as IColumn, sqlBuilder, parameterManager);
+                else if (context is ColumnMatch) AddColumnMatch(context as ColumnMatch, sqlBuilder);
+                else if (context is IBetween) AddBetween(context as IBetween, sqlBuilder, parameterManager);
+                else if (context is IInValues) AddInValues(context as IInValues, sqlBuilder, parameterManager);
                 sqlBuilder.DecreaseIndent();
 
                 sqlBuilder.AppendLine();
@@ -59,7 +62,7 @@ namespace pdq.npgsql.Builders
             var index = 0;
             foreach (var w in context.Children)
             {
-                AddWhere(w, sqlBuilder, indentLevel);
+                AddWhere(w, sqlBuilder, parameterManager, indentLevel);
 
                 if (index > 0) sqlBuilder.AppendLine(combinator);
                 index += 1;
@@ -72,8 +75,10 @@ namespace pdq.npgsql.Builders
                 sqlBuilder.DecreaseIndent();
         }
 
-        private void AddColumn(IColumn context, ISqlBuilder sqlBuilder, int level)
+        private void AddColumn(IColumn context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
+            var parameter = parameterManager.Add(context, context.Value);
+
             this.quotedIdentifierBuilder.AddColumn(context.Details, sqlBuilder);
 
             var op = context.EqualityOperator.ToOperatorString();
@@ -82,16 +87,16 @@ namespace pdq.npgsql.Builders
             var value = this.valueParser.ToString(context.Value, context.ValueType);
 
             if (context.EqualityOperator == EqualityOperator.Like)
-                sqlBuilder.Append("'%{0}%'", value);
+                sqlBuilder.Append("'%{0}%'", parameter.Name);
             else if (context.EqualityOperator == EqualityOperator.StartsWith)
-                sqlBuilder.Append("'{0}%'", value);
+                sqlBuilder.Append("'{0}%'", parameter.Name);
             else if (context.EqualityOperator == EqualityOperator.EndsWith)
-                sqlBuilder.Append("'%{0}'", value);
+                sqlBuilder.Append("'%{0}'", parameter.Name);
             else
-                sqlBuilder.Append(this.valueParser.QuoteValue(context.Value, context.ValueType));
+                sqlBuilder.Append(this.valueParser.QuoteValue(parameter.Name, context.ValueType));
         }
 
-        private void AddColumnMatch(ColumnMatch context, ISqlBuilder sqlBuilder, int level)
+        private void AddColumnMatch(ColumnMatch context, ISqlBuilder sqlBuilder)
         {
             this.quotedIdentifierBuilder.AddColumn(context.Left, sqlBuilder);
 
@@ -101,16 +106,19 @@ namespace pdq.npgsql.Builders
             this.quotedIdentifierBuilder.AddColumn(context.Right, sqlBuilder);
         }
 
-        private void AddBetween(IBetween context, ISqlBuilder sqlBuilder, int level)
+        private void AddBetween(IBetween context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
+            var betweenStartParameter = parameterManager.Add(ParameterWrapper.Create(context, context.Start), context.Start);
+            var betweenEndParameter = parameterManager.Add(ParameterWrapper.Create(context, context.End), context.End);
+
             this.quotedIdentifierBuilder.AddColumn(context.Column, sqlBuilder);
 
-            var start = this.valueParser.QuoteValue(context.Start, context.ValueType);
-            var end = this.valueParser.QuoteValue(context.End, context.ValueType);
+            var start = this.valueParser.QuoteValue(betweenStartParameter.Name, context.ValueType);
+            var end = this.valueParser.QuoteValue(betweenEndParameter.Name, context.ValueType);
             sqlBuilder.Append(" between {0} and {1}", start, end);
         }
 
-        private void AddInValues(IInValues context, ISqlBuilder sqlBuilder, int level)
+        private void AddInValues(IInValues context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             this.quotedIdentifierBuilder.AddColumn(context.Column, sqlBuilder);
             sqlBuilder.AppendLine(" in (");
@@ -120,8 +128,9 @@ namespace pdq.npgsql.Builders
             var lastValueIndex = values.Length - 1;
             for (var i = 0; i < values.Length; i++)
             {
+                var parameter = parameterManager.Add(ParameterWrapper.Create(context, values[i]), values[i]);
                 var seperator = i <= lastValueIndex ? "," : string.Empty;
-                sqlBuilder.AppendLine("{0}{1}",valueParser.QuoteValue(values[i], context.ValueType), seperator);
+                sqlBuilder.AppendLine("{0}{1}",valueParser.QuoteValue(parameter.Name, context.ValueType), seperator);
             }
 
             sqlBuilder.DecreaseIndent();

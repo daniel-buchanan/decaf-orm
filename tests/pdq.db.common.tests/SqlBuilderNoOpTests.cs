@@ -7,11 +7,11 @@ namespace pdq.db.common.tests
 {
 	public class SqlBuilderNoOpTests
 	{
-		private readonly ISqlBuilder sqlBuilder;
+		private readonly SqlBuilder sqlBuilder;
 
 		public SqlBuilderNoOpTests()
 		{
-			this.sqlBuilder = SqlBuilder.CreateNoOp();
+			this.sqlBuilder = SqlBuilder.CreateNoOp() as SqlBuilder;
 		}
 
 		[Fact]

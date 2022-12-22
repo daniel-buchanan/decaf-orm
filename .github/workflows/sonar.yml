@@ -64,13 +64,13 @@ jobs:
             /d:sonar.cs.opencover.reportsPaths=coverage.xml
           dotnet build --no-incremental pdq.sln 
 
-          ./.coverlet/coverlet ./tests/pdq.core-tests/bin/Debug/net6.0/pdq.db.common.tests.dll \
+          ./.coverlet/coverlet ./tests/pdq.db.common.tests/bin/Debug/net6.0/pdq.db.common.tests.dll \
             --target "dotnet" \
             --targetargs "test --no-build" \
             -f=json \
             -o="db-common.json"
 
-          ./.coverlet/coverlet ./tests/pdq.core-tests/bin/Debug/net6.0/pdq.npgsql.tests.dll \
+          ./.coverlet/coverlet ./tests/pdq.npgsql.tests/bin/Debug/net6.0/pdq.npgsql.tests.dll \
             --target "dotnet" \
             --targetargs "test --no-build" \
             --merge-with "db-common.json" \

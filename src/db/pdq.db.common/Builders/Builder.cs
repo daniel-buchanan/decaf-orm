@@ -14,7 +14,7 @@ namespace pdq.db.common.Builders
 		protected readonly IHashProvider hashProvider;
 		protected readonly PdqOptions pdqOptions;
 
-		public Builder(
+		protected Builder(
 			IWhereBuilder whereBuilder,
 			IHashProvider hashProvider,
 			PdqOptions pdqOptions)

@@ -7,7 +7,7 @@ namespace pdq.db.common.Builders
 {
 	public interface IWhereBuilder
 	{
-		void AddWhere(IWhere whereClause, ISqlBuilder sqlBuilder, IParameterManager parameterManager);
+		void AddWhere(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager);
 	}
 
 	public interface IWhereBuilder<T>

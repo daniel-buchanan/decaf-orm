@@ -5,13 +5,13 @@ using Xunit;
 
 namespace pdq.db.common.tests
 {
-	public class SqlBuilderTests
+	public class SqlBuilderNoOpTests
 	{
 		private readonly ISqlBuilder sqlBuilder;
 
-		public SqlBuilderTests()
+		public SqlBuilderNoOpTests()
 		{
-			this.sqlBuilder = SqlBuilder.Create();
+			this.sqlBuilder = SqlBuilder.CreateNoOp();
 		}
 
 		[Fact]
@@ -41,7 +41,6 @@ namespace pdq.db.common.tests
         public void IndentMultiplesAreCorrectIncreasing(int indentLevel)
         {
 			// Arrange
-			var indent = SqlBuilder.Indent;
 
             // Act
             for (var i = 0; i < indentLevel; i++)
@@ -51,7 +50,7 @@ namespace pdq.db.common.tests
             var sql = this.sqlBuilder.GetSql();
 
             // Assert
-            sql.Should().HaveLength(indent.Length * indentLevel);
+            sql.Should().HaveLength(0);
         }
 
         [Theory]
@@ -94,7 +93,6 @@ namespace pdq.db.common.tests
         {
             // Arrange
             var prefix = "hello ";
-            var expected = prefix + toAppend;
 
             // Act
             this.sqlBuilder.Append(prefix);
@@ -102,7 +100,7 @@ namespace pdq.db.common.tests
             var sql = this.sqlBuilder.GetSql();
 
             // Assert
-            sql.Should().Be(expected);
+            sql.Should().Be(string.Empty);
         }
     }
 }

@@ -5,7 +5,7 @@ namespace pdq.db.common.Builders
 {
 	public sealed class SqlBuilder : ISqlBuilder
 	{
-        const string Indent = "  ";
+        public const string Indent = "  ";
 
         private int indentLevel = 0;
         private readonly string lineFeedChar;

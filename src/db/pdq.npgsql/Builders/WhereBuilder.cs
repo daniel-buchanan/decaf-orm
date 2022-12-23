@@ -44,6 +44,8 @@ namespace pdq.npgsql.Builders
 
             if (level > 0)
                 sqlBuilder.DecreaseIndent();
+
+            sqlBuilder.AppendLine();
         }
 
         private void AddClause(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager)

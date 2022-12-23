@@ -68,7 +68,8 @@ namespace pdq.npgsql.Builders
         public void AddOrderBy(OrderBy orderBy, ISqlBuilder sqlBuilder)
         {
             var alias = string.Empty;
-            var formatStr = "{0}{2}{0} {3}{4}";
+            var formatStr = "{0}{2}{0} {3}";
+            var order = orderBy.Order == common.SortOrder.Ascending ? "asc" : "desc";
             if (!string.IsNullOrWhiteSpace(orderBy.Source.Alias))
             {
                 alias = orderBy.Source.Alias;
@@ -79,7 +80,7 @@ namespace pdq.npgsql.Builders
                 formatStr = "{1}" + formatStr;
             }
 
-            sqlBuilder.Append(formatStr, this.quote, alias, orderBy.Name, orderBy.Order);
+            sqlBuilder.Append(formatStr, this.quote, alias, orderBy.Name, order);
         }
 
         public void AddGroupBy(GroupBy groupBy, ISqlBuilder sqlBuilder)

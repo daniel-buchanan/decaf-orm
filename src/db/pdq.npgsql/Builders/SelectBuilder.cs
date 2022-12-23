@@ -9,8 +9,8 @@ using pdq.state;
 
 namespace pdq.npgsql.Builders
 {
-	public class SelectBuilder : db.common.Builders.SelectBuilder
-	{
+    public class SelectBuilder : db.common.Builders.SelectBuilder
+    {
         private readonly QuotedIdentifierBuilder quotedIdentifierBuilder;
 
         protected override string CommentCharacter => "--";
@@ -141,8 +141,10 @@ namespace pdq.npgsql.Builders
                 if (i < lastClauseIndex)
                     delimiter = ",";
 
+                sqlBuilder.PrependIndent();
                 this.quotedIdentifierBuilder.AddOrderBy(clauses[i], sqlBuilder);
-                sqlBuilder.AppendLine(delimiter);
+                sqlBuilder.Append(delimiter);
+                sqlBuilder.AppendLine();
             }
 
             sqlBuilder.DecreaseIndent();

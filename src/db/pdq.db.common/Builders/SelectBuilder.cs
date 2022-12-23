@@ -32,9 +32,9 @@ namespace pdq.db.common.Builders
             AddColumns(context, sqlBuilder);
             AddTables(context, sqlBuilder);
             AddJoins(context, sqlBuilder);
+            this.whereBuilder.AddWhere(context.WhereClause, sqlBuilder, parameterManager);
             AddOrderBy(context, sqlBuilder);
             AddGroupBy(context, sqlBuilder);
-            this.whereBuilder.AddWhere(context.WhereClause, sqlBuilder, parameterManager);
         }
 
         protected override void GetParameters(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)

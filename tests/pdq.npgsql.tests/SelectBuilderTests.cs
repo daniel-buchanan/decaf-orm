@@ -83,7 +83,7 @@ namespace pdq.npgsql.tests
 
 			// Assert
 			parameters.Should().Satisfy(
-				p => p.Key == "@p1" && ((Guid)p.Value) == subValue);
+				p => p.Key == "p1" && ((Guid)p.Value) == subValue);
         }
 
         [Fact]

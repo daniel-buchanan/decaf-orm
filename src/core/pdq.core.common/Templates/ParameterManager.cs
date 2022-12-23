@@ -54,7 +54,8 @@ namespace pdq.common.Templates
             var result = new Dictionary<string, object>();
             foreach(var kp in this.parameters)
             {
-                result.Add(kp.Value.Name, this.parameterValues[kp.Key]);
+                var parameterName = kp.Value.Name.Replace(ParameterPrefix, string.Empty);
+                result.Add(parameterName, this.parameterValues[kp.Key]);
             }
 
             return result;

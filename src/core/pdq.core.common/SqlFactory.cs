@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using pdq.common.Exceptions;
 using pdq.common.Templates;
 using pdq.common.Utilities;
 
@@ -44,15 +45,18 @@ namespace pdq.common
             Dictionary<string, object> values = null;
 
             if (context.Kind == QueryTypes.Select)
-                values = ParseSelectParameters(context, template);
+                values = ParseSelectParameters(context);
             if (context.Kind == QueryTypes.Delete)
-                values = ParseDeleteParameters(context, template);
+                values = ParseDeleteParameters(context);
             if (context.Kind == QueryTypes.Update)
-                values = ParseUpdateParameters(context, template);
+                values = ParseUpdateParameters(context);
             if (context.Kind == QueryTypes.Insert)
-                values = ParseInsertParameters(context, template);
+                values = ParseInsertParameters(context);
 
             if (values == null) return new { };
+
+            if (!CheckParameters(values.Keys.ToArray(), template))
+                throw new SqlTemplateMismatchException("Provided template, does not match provided parameters.");
 
             return MapDictionary(values);
         }
@@ -65,16 +69,31 @@ namespace pdq.common
 
         protected abstract SqlTemplate ParseInsertQuery(IQueryContext context);
 
-        protected abstract Dictionary<string, object> ParseSelectParameters(IQueryContext context, SqlTemplate template);
+        protected abstract Dictionary<string, object> ParseSelectParameters(IQueryContext context);
 
-        protected abstract Dictionary<string, object> ParseDeleteParameters(IQueryContext context, SqlTemplate template);
+        protected abstract Dictionary<string, object> ParseDeleteParameters(IQueryContext context);
 
-        protected abstract Dictionary<string, object> ParseUpdateParameters(IQueryContext context, SqlTemplate template);
+        protected abstract Dictionary<string, object> ParseUpdateParameters(IQueryContext context);
 
-        protected abstract Dictionary<string, object> ParseInsertParameters(IQueryContext context, SqlTemplate template);
+        protected abstract Dictionary<string, object> ParseInsertParameters(IQueryContext context);
 
         private object MapDictionary(Dictionary<string, object> dict)
             => DynamicDictionary.FromDictionary(dict);
+
+        private bool CheckParameters(string[] parameterNames, SqlTemplate template)
+        {
+            if (parameterNames.Length != (template.Parameters?.Count() ?? 0))
+                return false;
+
+            var result = true;
+            for(var i = 0; i < parameterNames.Length; i++)
+            {
+                var existing = template.Parameters.FirstOrDefault(p => p.Name.EndsWith(parameterNames[i]));
+                result &= existing != null;
+            }
+
+            return result;
+        }
     }
 }
 

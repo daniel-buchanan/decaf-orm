@@ -58,7 +58,7 @@ namespace pdq.Implementation
         public string GetSql()
         {
             var template = this.sqlFactory.ParseTemplate(this.context);
-            return template?.Sql;
+            return template.Sql;
         }
 
         /// <inheritdoc/>
@@ -66,7 +66,7 @@ namespace pdq.Implementation
         {
             var template = this.sqlFactory.ParseTemplate(this.context);
             var parameters = this.sqlFactory.ParseParameters(context, template) as DynamicDictionary;
-            return parameters?.ToDictionary();
+            return parameters.ToDictionary();
         }
     }
 }

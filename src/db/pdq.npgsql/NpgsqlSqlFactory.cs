@@ -20,25 +20,25 @@ namespace pdq.npgsql
             this.selectBuilder = selectBuilder;
         }
 
-        protected override Dictionary<string, object> ParseDeleteParameters(IQueryContext context, SqlTemplate template)
+        protected override Dictionary<string, object> ParseDeleteParameters(IQueryContext context)
             => this.deleteBuilder.GetParameters(context as IDeleteQueryContext);
 
         protected override SqlTemplate ParseDeleteQuery(IQueryContext context)
             => this.deleteBuilder.Build(context as IDeleteQueryContext);
 
-        protected override Dictionary<string, object> ParseInsertParameters(IQueryContext context, SqlTemplate template)
+        protected override Dictionary<string, object> ParseInsertParameters(IQueryContext context)
             => this.insertBuilder.GetParameters(context as IInsertQueryContext);
 
         protected override SqlTemplate ParseInsertQuery(IQueryContext context)
             => this.insertBuilder.Build(context as IInsertQueryContext);
 
-        protected override Dictionary<string, object> ParseSelectParameters(IQueryContext context, SqlTemplate template)
+        protected override Dictionary<string, object> ParseSelectParameters(IQueryContext context)
             => this.selectBuilder.GetParameters(context as ISelectQueryContext);
 
         protected override SqlTemplate ParseSelectQuery(IQueryContext context)
             => this.selectBuilder.Build(context as ISelectQueryContext);
 
-        protected override Dictionary<string, object> ParseUpdateParameters(IQueryContext context, SqlTemplate template)
+        protected override Dictionary<string, object> ParseUpdateParameters(IQueryContext context)
             => this.updateBuilder.GetParameters(context as IUpdateQueryContext);
 
         protected override SqlTemplate ParseUpdateQuery(IQueryContext context)

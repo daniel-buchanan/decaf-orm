@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -59,6 +60,24 @@ namespace pdq.npgsql.tests
             // Assert
             template.Sql.Should().Be(expected);
         }
-	}
+
+        [Fact]
+        public void ParameterParsingFails()
+        {
+            // Arrange
+            IQueryContext context = null;
+            this.personService.PreExecution += (sender, args) =>
+            {
+                context = args.Context;
+            };
+            this.personService.Get(p => p.Email == "bob@bob.com");
+
+            // Act
+            Action method = () => this.sqlFactory.ParseParameters(context, new common.Templates.SqlTemplate("", new List<common.Templates.SqlParameter>()));
+
+            // Assert
+            method.Should().Throw<common.Exceptions.SqlTemplateMismatchException>();
+        }
+    }
 }
 

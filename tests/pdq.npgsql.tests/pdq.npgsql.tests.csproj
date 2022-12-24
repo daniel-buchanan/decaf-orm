@@ -27,6 +27,7 @@
     <ProjectReference Include="..\..\src\core\pdq.core\pdq.csproj" />
     <ProjectReference Include="..\..\src\extensions\pdq.services\pdq.services.csproj" />
     <ProjectReference Include="..\..\src\db\pdq.npgsql\pdq.npgsql.csproj" />
+    <ProjectReference Include="..\pdq.core-tests\pdq.core-tests.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Microsoft.NET.Test.Sdk" />
@@ -37,6 +38,7 @@
     <None Remove="Mocks\" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Mocks\" />
     <Folder Include="Mocks\" />
   </ItemGroup>
 </Project>

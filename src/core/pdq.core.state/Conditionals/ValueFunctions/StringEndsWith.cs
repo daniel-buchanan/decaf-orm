@@ -5,12 +5,15 @@ namespace pdq.state.Conditionals.ValueFunctions
 {
 	public class StringEndsWith : ValueFunction<string>
 	{
-		private StringEndsWith()
-			: base(ValueFunction.EndsWith)
-		{
-		}
+        private StringEndsWith(string value)
+            : base(ValueFunction.EndsWith)
+        {
+            Value = value;
+        }
 
-		public static StringEndsWith Create() => new StringEndsWith();
-	}
+        public string Value { get; private set; }
+
+        public static StringEndsWith Create(string value) => new StringEndsWith(value);
+    }
 }
 

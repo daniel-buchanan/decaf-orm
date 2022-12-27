@@ -91,7 +91,6 @@ namespace pdq.npgsql.tests
         {
             // Arrange
             var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  sub = '@p1'\\r\\n)\\r\\norder by\\r\\n  u.sub desc\\r\\n";
-            var expected2 = "select\n  email,\n  sub as sub\nfrom\n  users as u\nwhere\n(\n  sub = '@p1'\n)\norder by\n  u.sub desc  \n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 

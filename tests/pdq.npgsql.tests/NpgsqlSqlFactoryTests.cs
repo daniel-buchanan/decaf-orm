@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using pdq.common;
 using pdq.common.Connections;
+using pdq.common.Utilities;
 using pdq.core_tests.Helpers;
 using pdq.core_tests.Mocks;
 using pdq.core_tests.Models;
@@ -77,6 +79,78 @@ namespace pdq.npgsql.tests
 
             // Assert
             method.Should().Throw<common.Exceptions.SqlTemplateMismatchException>();
+        }
+
+        [Fact]
+        public void ParameterParsingSucceeds()
+        {
+            // Arrange
+            IQueryContext context = null;
+            this.personService.PreExecution += (sender, args) =>
+            {
+                context = args.Context;
+            };
+            this.personService.Get(p => p.Email == "bob@bob.com");
+            var template = this.sqlFactory.ParseTemplate(context);
+
+            // Act
+            var parameters = this.sqlFactory.ParseParameters(context, template);
+
+            // Assert
+            var dict = parameters as DynamicDictionary;
+            dict.Should().BeEquivalentTo(DynamicDictionary.FromDictionary(new Dictionary<string, object>
+            {
+                { "p1", "bob@bob.com" }
+            }));
+        }
+
+        [Fact]
+        public void InValuesParameterParsingSucceeds()
+        {
+            // Arrange
+            IQueryContext context = null;
+            this.personService.PreExecution += (sender, args) =>
+            {
+                context = args.Context;
+            };
+            var ids = new int[] { 1, 2, 3 };
+            this.personService.Get(p => ids.Contains(p.Id));
+            var template = this.sqlFactory.ParseTemplate(context);
+
+            // Act
+            var parameters = this.sqlFactory.ParseParameters(context, template);
+
+            // Assert
+            var dict = parameters as DynamicDictionary;
+            dict.Should().BeEquivalentTo(DynamicDictionary.FromDictionary(new Dictionary<string, object>
+            {
+                { "p1", 1 },
+                { "p2", 2 },
+                { "p3", 3 }
+            }));
+        }
+
+        [Fact]
+        public void LikeParameterParsingSucceeds()
+        {
+            // Arrange
+            IQueryContext context = null;
+            this.personService.PreExecution += (sender, args) =>
+            {
+                context = args.Context;
+            };
+            this.personService.Get(p => p.Email.Contains("bob"));
+            var template = this.sqlFactory.ParseTemplate(context);
+
+            // Act
+            var parameters = this.sqlFactory.ParseParameters(context, template);
+
+            // Assert
+            var dict = parameters as DynamicDictionary;
+            dict.Should().BeEquivalentTo(DynamicDictionary.FromDictionary(new Dictionary<string, object>
+            {
+                { "p1", "bob" }
+            }));
         }
     }
 }

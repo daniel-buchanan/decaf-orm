@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Common;
 using System.Linq;
 using System.Reflection.Emit;
 using pdq.common;
@@ -7,6 +8,7 @@ using pdq.db.common;
 using pdq.db.common.Builders;
 using pdq.state;
 using pdq.state.Conditionals;
+using static Npgsql.Replication.PgOutput.Messages.RelationMessage;
 
 namespace pdq.npgsql.Builders
 {
@@ -87,21 +89,53 @@ namespace pdq.npgsql.Builders
 
         private void AddColumn(IColumn column, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
+            if(column.ValueFunction is state.Conditionals.ValueFunctions.StringContains ||
+               column.ValueFunction is state.Conditionals.ValueFunctions.StringStartsWith ||
+               column.ValueFunction is state.Conditionals.ValueFunctions.StringEndsWith)
+            {
+                AddLike(column, sqlBuilder, parameterManager);
+                return;
+            }
+
             var parameter = parameterManager.Add(column, column.Value);
+            var op = column.EqualityOperator.ToOperatorString();
+            this.quotedIdentifierBuilder.AddColumn(column.Details, sqlBuilder);
+            sqlBuilder.Append(" {0} ", op);
+            sqlBuilder.Append(this.valueParser.QuoteValue(parameter.Name, column.ValueType));
+        }
+
+        private void AddLike(IColumn column, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        {
+            var value = column.Value;
+            var format = string.Empty;
+
+            if (column.ValueFunction is state.Conditionals.ValueFunctions.StringContains contains)
+            {
+                format = "%{0}%";
+                value = contains.Value;
+            }
+            else if (column.ValueFunction is state.Conditionals.ValueFunctions.StringStartsWith startsWith)
+            {
+                format = "{0}%";
+                value = startsWith.Value;
+            }
+            else if (column.ValueFunction is state.Conditionals.ValueFunctions.StringEndsWith endsWith)
+            {
+                format = "%{0}";
+                value = endsWith.Value;
+            }
+            else
+            {
+                return;
+            }
+
+            var parameter = parameterManager.Add(column, value);
 
             this.quotedIdentifierBuilder.AddColumn(column.Details, sqlBuilder);
-
             var op = column.EqualityOperator.ToOperatorString();
-            sqlBuilder.Append(" {0} ", op);
-
-            if (column.EqualityOperator == EqualityOperator.Like)
-                sqlBuilder.Append("'%{0}%'", parameter.Name);
-            else if (column.EqualityOperator == EqualityOperator.StartsWith)
-                sqlBuilder.Append("'{0}%'", parameter.Name);
-            else if (column.EqualityOperator == EqualityOperator.EndsWith)
-                sqlBuilder.Append("'%{0}'", parameter.Name);
-            else
-                sqlBuilder.Append(this.valueParser.QuoteValue(parameter.Name, column.ValueType));
+            sqlBuilder.Append(" like '");
+            sqlBuilder.Append(format, parameter.Name);
+            sqlBuilder.Append("'");
         }
 
         private void AddColumnMatch(ColumnMatch columnMatch, ISqlBuilder sqlBuilder)
@@ -131,14 +165,16 @@ namespace pdq.npgsql.Builders
             this.quotedIdentifierBuilder.AddColumn(inValues.Column, sqlBuilder);
             sqlBuilder.AppendLine(" in (");
             sqlBuilder.IncreaseIndent();
+            var parameterNeedsQuoting = valueParser.ValueNeedsQuoting(inValues.ValueType);
 
             var values = inValues.GetValues().ToArray();
-            var lastValueIndex = values.Length - 1;
+            var lastValueIndex = values.Length;
             for (var i = 0; i < values.Length; i++)
             {
                 var parameter = parameterManager.Add(ParameterWrapper.Create(inValues, i), values[i]);
                 var seperator = i <= lastValueIndex ? "," : string.Empty;
-                sqlBuilder.AppendLine("{0}{1}",valueParser.QuoteValue(parameter.Name, inValues.ValueType), seperator);
+                var quoteChar = parameterNeedsQuoting ? "'" : string.Empty;
+                sqlBuilder.AppendLine("{0}{1}{0}{2}", quoteChar, parameter.Name, seperator);
             }
 
             sqlBuilder.DecreaseIndent();

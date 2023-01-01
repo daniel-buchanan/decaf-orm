@@ -46,6 +46,13 @@ namespace pdq.common.Templates
             return newParameter;
         }
 
+        public void Clear()
+        {
+            this.parameters.Clear();
+            this.parameterValues.Clear();
+            this.parameterCount = 0;
+        }
+
         public IEnumerable<SqlParameter> GetParameters()
             => this.parameters.Select(kp => kp.Value);
 

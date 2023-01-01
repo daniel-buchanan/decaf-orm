@@ -113,6 +113,87 @@ namespace pdq.npgsql.tests
             // Assert
             sql.Should().Be(expected);
         }
+
+        [Fact]
+        public void SelectWithLikeSucceeds()
+        {
+            // Arrange
+            var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  sub like '%@p1%'\\r\\n)\\r\\n";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
+            var subValue = Guid.NewGuid();
+
+            // Act
+            var q = this.query.Select()
+                .From("users", "u")
+                .Where(b =>
+                {
+                    b.Column("sub").Is().Like("bob");
+                })
+                .Select(c => new
+                {
+                    email = c.Is("email"),
+                    id = c.Is("sub")
+                });
+
+            var sql = q.GetSql();
+
+            // Assert
+            sql.Should().Be(expected);
+        }
+
+        [Fact]
+        public void SelectWithStartsWithSucceeds()
+        {
+            // Arrange
+            var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  sub like '@p1%'\\r\\n)\\r\\n";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
+            var subValue = Guid.NewGuid();
+
+            // Act
+            var q = this.query.Select()
+                .From("users", "u")
+                .Where(b =>
+                {
+                    b.Column("sub").Is().StartsWith("bob");
+                })
+                .Select(c => new
+                {
+                    email = c.Is("email"),
+                    id = c.Is("sub")
+                });
+
+            var sql = q.GetSql();
+
+            // Assert
+            sql.Should().Be(expected);
+        }
+
+        [Fact]
+        public void SelectWithEndsWithSucceeds()
+        {
+            // Arrange
+            var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  sub like '%@p1'\\r\\n)\\r\\n";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
+            var subValue = Guid.NewGuid();
+
+            // Act
+            var q = this.query.Select()
+                .From("users", "u")
+                .Where(b =>
+                {
+                    b.Column("sub").Is().EndsWith("bob");
+                })
+                .Select(c => new
+                {
+                    email = c.Is("email"),
+                    id = c.Is("sub")
+                });
+
+            var sql = q.GetSql();
+
+            // Assert
+            sql.Should().Be(expected);
+        }
     }
 }
 

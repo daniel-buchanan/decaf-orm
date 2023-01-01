@@ -45,7 +45,7 @@ namespace pdq.npgsql.Builders
             if (!string.IsNullOrWhiteSpace(tableTarget.Alias))
                 format = format + "{0}{2}{0} as {0}{3}{0}";
 
-            sqlBuilder.AppendLine(format, this.quote, tableTarget.Schema, tableTarget.Name, tableTarget.Alias);
+            sqlBuilder.Append(format, this.quote, tableTarget.Schema, tableTarget.Name, tableTarget.Alias);
         }
 
         public void AddFromQuery(string query, string alias, ISqlBuilder sqlBuilder)
@@ -53,7 +53,7 @@ namespace pdq.npgsql.Builders
             sqlBuilder.AppendLine(Constants.OpeningParen);
             query = query.Replace(Environment.NewLine, $"{Environment.NewLine}  ");
             sqlBuilder.AppendLine(query);
-            sqlBuilder.AppendLine("{0} as {1}{2}{1}", Constants.ClosingParen, this.quote, alias);
+            sqlBuilder.Append("{0} as {1}{2}{1}", Constants.ClosingParen, this.quote, alias);
         }
 
         public void AddJoinTable(ITableTarget tableTarget, ISqlBuilder sqlBuilder)

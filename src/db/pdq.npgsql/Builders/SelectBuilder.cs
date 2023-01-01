@@ -50,14 +50,16 @@ namespace pdq.npgsql.Builders
             sqlBuilder.IncreaseIndent();
 
             var joins = context.Joins.Select(j => j.To);
-            var filteredTables = context.QueryTargets.Where(qt => !joins.Any(j => j.IsEquivalentTo(qt)));
+            var filteredTables = context.QueryTargets.Where(qt => !joins.Any(j => j.IsEquivalentTo(qt))).ToList();
             var index = 0;
+            var noTables = filteredTables.Count - 1;
             foreach (var q in filteredTables)
             {
                 var delimiter = string.Empty;
-                if (index < context.Columns.Count)
+                if (index < noTables)
                     delimiter = Constants.Seperator;
 
+                sqlBuilder.PrependIndent();
                 if(q is ITableTarget)
                 {
                     var tableTarget = q as ITableTarget;
@@ -72,6 +74,8 @@ namespace pdq.npgsql.Builders
 
                 if (delimiter.Length > 0)
                     sqlBuilder.Append(delimiter);
+
+                sqlBuilder.AppendLine();
                 
                 index += 1;
             }

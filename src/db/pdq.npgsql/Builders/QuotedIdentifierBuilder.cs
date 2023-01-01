@@ -56,27 +56,6 @@ namespace pdq.npgsql.Builders
             sqlBuilder.Append("{0} as {1}{2}{1}", Constants.ClosingParen, this.quote, alias);
         }
 
-        public void AddJoinTable(ITableTarget tableTarget, ISqlBuilder sqlBuilder)
-        {
-            var format = string.Empty;
-
-            if (!string.IsNullOrWhiteSpace(tableTarget.Schema))
-                format = "{0}{1}{0}.";
-
-            if (!string.IsNullOrWhiteSpace(tableTarget.Alias))
-                format = format + "{0}{2}{0} as {0}{3}{0}";
-
-            sqlBuilder.Append(format, this.quote, tableTarget.Schema, tableTarget.Name, tableTarget.Alias);
-        }
-
-        public void AddJoinQuery(string query, string alias, ISqlBuilder sqlBuilder)
-        {
-            sqlBuilder.AppendLine(Constants.OpeningParen);
-            query = query.Replace(Environment.NewLine, $"{Environment.NewLine}  ");
-            sqlBuilder.AppendLine(query);
-            sqlBuilder.Append("{0} as {1}{2}{1}", Constants.ClosingParen, this.quote, alias);
-        }
-
         public void AddOrderBy(OrderBy orderBy, ISqlBuilder sqlBuilder)
         {
             var alias = string.Empty;

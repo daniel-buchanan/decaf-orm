@@ -46,7 +46,7 @@ namespace pdq.npgsql.Builders
 
         protected override void AddTables(ISelectQueryContext context, ISqlBuilder sqlBuilder)
         {
-            sqlBuilder.AppendLine("from");
+            sqlBuilder.AppendLine(Constants.From);
             sqlBuilder.IncreaseIndent();
 
             var joins = context.Joins.Select(j => j.To);
@@ -96,10 +96,10 @@ namespace pdq.npgsql.Builders
             {
                 var qSqlBuilder = SqlBuilder.Create();
                 Build(selectTarget.Context, qSqlBuilder, parameterManager);
-                this.quotedIdentifierBuilder.AddJoinQuery(qSqlBuilder.GetSql(), selectTarget.Alias, sqlBuilder);
+                this.quotedIdentifierBuilder.AddFromQuery(qSqlBuilder.GetSql(), selectTarget.Alias, sqlBuilder);
             }
             else if (j.To is ITableTarget tableTarget)
-                this.quotedIdentifierBuilder.AddJoinTable(tableTarget, sqlBuilder);
+                this.quotedIdentifierBuilder.AddFromTable(tableTarget, sqlBuilder);
 
             sqlBuilder.Append(" {0}", Constants.On);
             sqlBuilder.AppendLine();
@@ -114,7 +114,7 @@ namespace pdq.npgsql.Builders
             var clauses = context.OrderByClauses.ToArray();
             if (clauses.Length == 0) return;
 
-            sqlBuilder.AppendLine("order by");
+            sqlBuilder.AppendLine(Constants.OrderBy);
             sqlBuilder.IncreaseIndent();
 
             var lastClauseIndex = clauses.Length - 1;
@@ -138,7 +138,7 @@ namespace pdq.npgsql.Builders
             var clauses = context.GroupByClauses.ToArray();
             if (clauses.Length == 0) return;
 
-            sqlBuilder.AppendLine("group by");
+            sqlBuilder.AppendLine(Constants.GroupBy);
             sqlBuilder.IncreaseIndent();
 
             var lastClauseIndex = clauses.Length - 1;
@@ -146,7 +146,7 @@ namespace pdq.npgsql.Builders
             {
                 var delimiter = string.Empty;
                 if (i < lastClauseIndex)
-                    delimiter = ",";
+                    delimiter = Constants.Seperator;
 
                 this.quotedIdentifierBuilder.AddGroupBy(clauses[i], sqlBuilder);
                 sqlBuilder.AppendLine(delimiter);

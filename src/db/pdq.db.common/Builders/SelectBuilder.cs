@@ -26,13 +26,16 @@ namespace pdq.db.common.Builders
 
 		protected abstract void AddGroupBy(ISelectQueryContext context, ISqlBuilder sqlBuilder);
 
+        private void AddWhere(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+            => this.whereBuilder.AddWhere(context.WhereClause, sqlBuilder, parameterManager);
+
         protected override void Build(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            sqlBuilder.AppendLine("select");
+            sqlBuilder.AppendLine(Constants.Select);
             AddColumns(context, sqlBuilder);
             AddTables(context, sqlBuilder);
             AddJoins(context, sqlBuilder, parameterManager);
-            this.whereBuilder.AddWhere(context.WhereClause, sqlBuilder, parameterManager);
+            AddWhere(context, sqlBuilder, parameterManager);
             AddOrderBy(context, sqlBuilder);
             AddGroupBy(context, sqlBuilder);
         }

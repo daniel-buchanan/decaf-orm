@@ -20,6 +20,8 @@ namespace pdq.npgsql.Builders
 		public const string Comment = "--";
 		public const string Join = "join";
 		public const string On = "on";
+		public const string From = "from";
+		public const string Where = "where";
 	}
 }
 

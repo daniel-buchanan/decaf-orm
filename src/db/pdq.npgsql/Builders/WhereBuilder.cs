@@ -29,7 +29,7 @@ namespace pdq.npgsql.Builders
         public void AddWhere(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             if (clause == null) return;
-            sqlBuilder.AppendLine("where");
+            sqlBuilder.AppendLine(Constants.Where);
 
             AddWhere(clause, sqlBuilder, parameterManager, 0);
         }
@@ -54,7 +54,7 @@ namespace pdq.npgsql.Builders
             else AddClause(clause, sqlBuilder, parameterManager);
 
             if (level > 0)
-                level = sqlBuilder.DecreaseIndent();
+                sqlBuilder.DecreaseIndent();
 
             sqlBuilder.AppendLine();
         }

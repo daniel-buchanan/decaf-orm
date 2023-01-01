@@ -69,6 +69,9 @@ namespace pdq.npgsql.Builders
                     var parsedQuery = this.Build(queryTarget.Context);
                     this.quotedIdentifierBuilder.AddFromQuery(parsedQuery.Sql, q.Alias, sqlBuilder);
                 }
+
+                if (delimiter.Length > 0)
+                    sqlBuilder.Append(delimiter);
                 
                 index += 1;
             }

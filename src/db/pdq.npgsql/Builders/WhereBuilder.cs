@@ -63,16 +63,12 @@ namespace pdq.npgsql.Builders
         {
             sqlBuilder.PrependIndent();
             sqlBuilder.Append(Constants.OpeningParen);
-            //sqlBuilder.IncreaseIndent();
             
             if (clause is IColumn) AddColumn(clause as IColumn, sqlBuilder, parameterManager);
             else if (clause is ColumnMatch) AddColumnMatch(clause as ColumnMatch, sqlBuilder);
             else if (clause is IBetween) AddBetween(clause as IBetween, sqlBuilder, parameterManager);
             else if (clause is IInValues) AddInValues(clause as IInValues, sqlBuilder, parameterManager);
-            //sqlBuilder.DecreaseIndent();
-
-            //sqlBuilder.AppendLine();
-            //sqlBuilder.PrependIndent();
+            
             sqlBuilder.Append(Constants.ClosingParen);
         }
 
@@ -98,11 +94,12 @@ namespace pdq.npgsql.Builders
 
             var indentLevel = level + 1;
             var index = 0;
+            var noChildren = clause.Children.Count - 1;
             foreach (var w in clause.Children)
             {
                 AddWhere(w, sqlBuilder, parameterManager, indentLevel);
 
-                if (index >= 0 && index < clause.Children.Count() - 1)
+                if (index >= 0 && index < noChildren)
                 {
                     sqlBuilder.IncreaseIndent();
                     sqlBuilder.AppendLine(combinator);

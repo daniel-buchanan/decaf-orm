@@ -17,6 +17,7 @@ namespace pdq
             TrackTransients = false;
             CloseConnectionOnCommitOrRollback = false;
             LoggerProxyType = typeof(DefaultLogger);
+            IncludeHeaderCommentsInSql = true;
         }
 
         /// <summary>

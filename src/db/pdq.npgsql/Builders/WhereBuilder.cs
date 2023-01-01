@@ -106,8 +106,7 @@ namespace pdq.npgsql.Builders
 
         private void AddLike(IColumn column, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            var value = column.Value;
-            var format = string.Empty;
+            string value, format;
 
             if (column.ValueFunction is state.Conditionals.ValueFunctions.StringContains contains)
             {
@@ -132,7 +131,6 @@ namespace pdq.npgsql.Builders
             var parameter = parameterManager.Add(column, value);
 
             this.quotedIdentifierBuilder.AddColumn(column.Details, sqlBuilder);
-            var op = column.EqualityOperator.ToOperatorString();
             sqlBuilder.Append(" like '");
             sqlBuilder.Append(format, parameter.Name);
             sqlBuilder.Append("'");

@@ -39,20 +39,23 @@ namespace pdq.npgsql.Builders
             if (clause == null) return;
 
             if (level > 0)
-                sqlBuilder.IncreaseIndent();
+                level = sqlBuilder.IncreaseIndent();
 
-            if (clause.Children.Any()) AddAndOr(clause, sqlBuilder, parameterManager, level);
+            if (clause is And ||
+                clause is Or ||
+                clause is Not)
+                AddAndOrNot(clause, sqlBuilder, parameterManager, level);
             else AddClause(clause, sqlBuilder, parameterManager);
 
             if (level > 0)
-                sqlBuilder.DecreaseIndent();
+                level = sqlBuilder.DecreaseIndent();
 
             sqlBuilder.AppendLine();
         }
 
         private void AddClause(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            sqlBuilder.AppendLine("(");
+            sqlBuilder.AppendLine(Constants.OpeningParen);
             sqlBuilder.IncreaseIndent();
             sqlBuilder.PrependIndent();
             if (clause is IColumn) AddColumn(clause as IColumn, sqlBuilder, parameterManager);
@@ -62,16 +65,29 @@ namespace pdq.npgsql.Builders
             sqlBuilder.DecreaseIndent();
 
             sqlBuilder.AppendLine();
-            sqlBuilder.Append(")");
+            sqlBuilder.PrependIndent();
+            sqlBuilder.Append(Constants.ClosingParen);
+        }
+
+        private void AddAndOrNot(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
+        {
+            sqlBuilder.AppendLine(Constants.OpeningParen);
+
+            if (clause is And ||
+               clause is Or)
+                AddAndOr(clause, sqlBuilder, parameterManager, level);
+            else if (clause is Not)
+                AddNot(clause, sqlBuilder, parameterManager, level);
+
+            sqlBuilder.PrependIndent();
+            sqlBuilder.Append(Constants.ClosingParen);
         }
 
         private void AddAndOr(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
         {
-            sqlBuilder.AppendLine("(");
             string combinator = null;
-            if (clause is And) combinator = "and";
-            else if (clause is Or) combinator = "or";
-            else if (clause is Not) sqlBuilder.Append("NOT ");
+            if (clause is And) combinator = Constants.And;
+            else if (clause is Or) combinator = Constants.Or;
 
             var indentLevel = level + 1;
             var index = 0;
@@ -79,12 +95,24 @@ namespace pdq.npgsql.Builders
             {
                 AddWhere(w, sqlBuilder, parameterManager, indentLevel);
 
-                if (index > 0) sqlBuilder.AppendLine(combinator);
+                if (index >= 0 && index < clause.Children.Count() - 1)
+                {
+                    sqlBuilder.IncreaseIndent();
+                    sqlBuilder.AppendLine(combinator);
+                    sqlBuilder.DecreaseIndent();
+                }
                 index += 1;
             }
+        }
 
-            sqlBuilder.AppendLine();
-            sqlBuilder.Append(")");
+        private void AddNot(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
+        {
+            var not = clause as Not;
+            sqlBuilder.IncreaseIndent();
+            sqlBuilder.AppendLine(Constants.Not);
+            sqlBuilder.DecreaseIndent();
+
+            AddWhere(not.Item, sqlBuilder, parameterManager, level);
         }
 
         private void AddColumn(IColumn column, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
@@ -101,7 +129,10 @@ namespace pdq.npgsql.Builders
             var op = column.EqualityOperator.ToOperatorString();
             this.quotedIdentifierBuilder.AddColumn(column.Details, sqlBuilder);
             sqlBuilder.Append(" {0} ", op);
-            sqlBuilder.Append(this.valueParser.QuoteValue(parameter.Name, column.ValueType));
+
+            var parameterNeedsQuoting = valueParser.ValueNeedsQuoting(column.ValueType);
+            var quoteChar = parameterNeedsQuoting ? Constants.Quote : string.Empty;
+            sqlBuilder.Append("{0}{1}{0}", quoteChar, parameter.Name);
         }
 
         private void AddLike(IColumn column, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
@@ -131,9 +162,9 @@ namespace pdq.npgsql.Builders
             var parameter = parameterManager.Add(column, value);
 
             this.quotedIdentifierBuilder.AddColumn(column.Details, sqlBuilder);
-            sqlBuilder.Append(" like '");
+            sqlBuilder.Append(" {0} {1}", Constants.Like, Constants.Quote);
             sqlBuilder.Append(format, parameter.Name);
-            sqlBuilder.Append("'");
+            sqlBuilder.Append(Constants.Quote);
         }
 
         private void AddColumnMatch(ColumnMatch columnMatch, ISqlBuilder sqlBuilder)
@@ -161,7 +192,7 @@ namespace pdq.npgsql.Builders
         private void AddInValues(IInValues inValues, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             this.quotedIdentifierBuilder.AddColumn(inValues.Column, sqlBuilder);
-            sqlBuilder.AppendLine(" in (");
+            sqlBuilder.AppendLine(" in {0}", Constants.OpeningParen);
             sqlBuilder.IncreaseIndent();
             var parameterNeedsQuoting = valueParser.ValueNeedsQuoting(inValues.ValueType);
 
@@ -171,12 +202,12 @@ namespace pdq.npgsql.Builders
             {
                 var parameter = parameterManager.Add(ParameterWrapper.Create(inValues, i), values[i]);
                 var seperator = i <= lastValueIndex ? "," : string.Empty;
-                var quoteChar = parameterNeedsQuoting ? "'" : string.Empty;
+                var quoteChar = parameterNeedsQuoting ? Constants.Quote : string.Empty;
                 sqlBuilder.AppendLine("{0}{1}{0}{2}", quoteChar, parameter.Name, seperator);
             }
 
             sqlBuilder.DecreaseIndent();
-            sqlBuilder.Append(")");
+            sqlBuilder.Append(Constants.ClosingParen);
         }
     }
 }

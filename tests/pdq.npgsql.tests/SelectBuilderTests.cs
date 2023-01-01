@@ -194,6 +194,73 @@ namespace pdq.npgsql.tests
             // Assert
             sql.Should().Be(expected);
         }
+
+        [Fact]
+        public void SelectWithMultipleConditionsSucceeds()
+        {
+            // Arrange
+            var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  (\\r\\n    sub = '@p1'\\r\\n  )\\r\\n  and\\r\\n  (\\r\\n    email like '%@p2'\\r\\n  )\\r\\n)\\r\\n";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
+            var subValue = Guid.NewGuid();
+
+            // Act
+            var q = this.query.Select()
+                .From("users", "u")
+                .Where(b =>
+                {
+                    b.And(ba =>
+                    {
+                        ba.Column("sub").Is().EqualTo("bob");
+                        ba.Column("email").Is().EndsWith(".com");
+                    });
+                })
+                .Select(c => new
+                {
+                    email = c.Is("email"),
+                    id = c.Is("sub")
+                });
+
+            var sql = q.GetSql();
+
+            // Assert
+            sql.Should().Be(expected);
+        }
+
+        [Fact]
+        public void SelectWithManyConditionsSucceeds()
+        {
+            // Arrange
+            var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(\n  (\\r\\n    sub = '@p1'\\r\\n  )\\r\\n  and\\r\\n  (\\r\\n    email like '%@p2'\\r\\n  )\\r\\n  and\\r\\n  (\\r\\n    (\\r\\n      not\\r\\n      (\\r\\n        id = @p3\\r\\n      )\\r\\n    )\\r\\n    or\\r\\n    (\\r\\n      sub like '%@p4'\\r\\n    )\\r\\n  )\\r\\n)\\r\\n";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
+            var subValue = Guid.NewGuid();
+
+            // Act
+            var q = this.query.Select()
+                .From("users", "u")
+                .Where(b =>
+                {
+                    b.And(ba =>
+                    {
+                        ba.Column("sub").Is().EqualTo("bob");
+                        ba.Column("email").Is().EndsWith(".com");
+                        ba.Or(bo =>
+                        {
+                            bo.Column("id").IsNot().EqualTo(0);
+                            bo.Column("sub").Is().EndsWith("abc");
+                        });
+                    });
+                })
+                .Select(c => new
+                {
+                    email = c.Is("email"),
+                    id = c.Is("sub")
+                });
+
+            var sql = q.GetSql();
+
+            // Assert
+            sql.Should().Be(expected);
+        }
     }
 }
 

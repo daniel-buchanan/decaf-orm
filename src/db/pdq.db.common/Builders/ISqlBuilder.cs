@@ -5,9 +5,9 @@ namespace pdq.db.common.Builders
 	{
 		string LineEnding { get; }
 
-		void IncreaseIndent();
+		int IncreaseIndent();
 
-		void DecreaseIndent();
+		int DecreaseIndent();
 
 		void PrependIndent();
 

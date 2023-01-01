@@ -30,17 +30,19 @@ namespace pdq.db.common.Builders
         /// <inheritdoc/>
         public string LineEnding => this.lineFeedChar;
 
-        public void IncreaseIndent()
+        public int IncreaseIndent()
         {
-            if (noOp) return;
+            if (noOp) return this.indentLevel;
             this.indentLevel = this.indentLevel + 1;
+            return this.indentLevel;
         }
 
-        public void DecreaseIndent()
+        public int DecreaseIndent()
         {
-            if (noOp) return;
-            if (this.indentLevel == 0) return;
+            if (noOp) return this.indentLevel;
+            if (this.indentLevel == 0) return this.indentLevel;
             this.indentLevel = this.indentLevel - 1;
+            return this.indentLevel;
         }
 
         public void Append(string value)

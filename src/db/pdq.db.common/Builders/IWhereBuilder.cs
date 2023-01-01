@@ -8,14 +8,7 @@ namespace pdq.db.common.Builders
 	public interface IWhereBuilder
 	{
 		void AddWhere(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager);
-	}
-
-	public interface IWhereBuilder<T>
-		where T: IQueryContext
-	{
-		void AddWhere(T context, ISqlBuilder sqlBuilder, IParameterManager parameterManager);
-
-		IWhereBuilder Builder { get; }
+		void AddJoin(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager);
 	}
 }
 

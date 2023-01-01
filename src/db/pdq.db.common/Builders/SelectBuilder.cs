@@ -20,7 +20,7 @@ namespace pdq.db.common.Builders
 
 		protected abstract void AddTables(ISelectQueryContext context, ISqlBuilder sqlBuilder);
 
-		protected abstract void AddJoins(ISelectQueryContext context, ISqlBuilder sqlBuilder);
+		protected abstract void AddJoins(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager);
 
 		protected abstract void AddOrderBy(ISelectQueryContext context, ISqlBuilder sqlBuilder);
 
@@ -31,7 +31,7 @@ namespace pdq.db.common.Builders
             sqlBuilder.AppendLine("select");
             AddColumns(context, sqlBuilder);
             AddTables(context, sqlBuilder);
-            AddJoins(context, sqlBuilder);
+            AddJoins(context, sqlBuilder, parameterManager);
             this.whereBuilder.AddWhere(context.WhereClause, sqlBuilder, parameterManager);
             AddOrderBy(context, sqlBuilder);
             AddGroupBy(context, sqlBuilder);
@@ -39,7 +39,7 @@ namespace pdq.db.common.Builders
 
         protected override void GetParameters(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            AddJoins(context, sqlBuilder);
+            AddJoins(context, sqlBuilder, parameterManager);
             this.whereBuilder.AddWhere(context.WhereClause, sqlBuilder, parameterManager);
         }
     }

@@ -34,6 +34,12 @@ namespace pdq.npgsql.Builders
             AddWhere(clause, sqlBuilder, parameterManager, 0);
         }
 
+        public void AddJoin(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        {
+            if (clause == null) return;
+            AddWhere(clause, sqlBuilder, parameterManager, 0);
+        }
+
         private void AddWhere(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
         {
             if (clause == null) return;
@@ -55,17 +61,18 @@ namespace pdq.npgsql.Builders
 
         private void AddClause(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            sqlBuilder.AppendLine(Constants.OpeningParen);
-            sqlBuilder.IncreaseIndent();
             sqlBuilder.PrependIndent();
+            sqlBuilder.Append(Constants.OpeningParen);
+            //sqlBuilder.IncreaseIndent();
+            
             if (clause is IColumn) AddColumn(clause as IColumn, sqlBuilder, parameterManager);
             else if (clause is ColumnMatch) AddColumnMatch(clause as ColumnMatch, sqlBuilder);
             else if (clause is IBetween) AddBetween(clause as IBetween, sqlBuilder, parameterManager);
             else if (clause is IInValues) AddInValues(clause as IInValues, sqlBuilder, parameterManager);
-            sqlBuilder.DecreaseIndent();
+            //sqlBuilder.DecreaseIndent();
 
-            sqlBuilder.AppendLine();
-            sqlBuilder.PrependIndent();
+            //sqlBuilder.AppendLine();
+            //sqlBuilder.PrependIndent();
             sqlBuilder.Append(Constants.ClosingParen);
         }
 
@@ -131,7 +138,7 @@ namespace pdq.npgsql.Builders
             sqlBuilder.Append(" {0} ", op);
 
             var parameterNeedsQuoting = valueParser.ValueNeedsQuoting(column.ValueType);
-            var quoteChar = parameterNeedsQuoting ? Constants.Quote : string.Empty;
+            var quoteChar = parameterNeedsQuoting ? Constants.ValueQuote : string.Empty;
             sqlBuilder.Append("{0}{1}{0}", quoteChar, parameter.Name);
         }
 
@@ -162,9 +169,9 @@ namespace pdq.npgsql.Builders
             var parameter = parameterManager.Add(column, value);
 
             this.quotedIdentifierBuilder.AddColumn(column.Details, sqlBuilder);
-            sqlBuilder.Append(" {0} {1}", Constants.Like, Constants.Quote);
+            sqlBuilder.Append(" {0} {1}", Constants.Like, Constants.ValueQuote);
             sqlBuilder.Append(format, parameter.Name);
-            sqlBuilder.Append(Constants.Quote);
+            sqlBuilder.Append(Constants.ValueQuote);
         }
 
         private void AddColumnMatch(ColumnMatch columnMatch, ISqlBuilder sqlBuilder)
@@ -202,7 +209,7 @@ namespace pdq.npgsql.Builders
             {
                 var parameter = parameterManager.Add(ParameterWrapper.Create(inValues, i), values[i]);
                 var seperator = i <= lastValueIndex ? "," : string.Empty;
-                var quoteChar = parameterNeedsQuoting ? Constants.Quote : string.Empty;
+                var quoteChar = parameterNeedsQuoting ? Constants.ValueQuote : string.Empty;
                 sqlBuilder.AppendLine("{0}{1}{0}{2}", quoteChar, parameter.Name, seperator);
             }
 

@@ -13,7 +13,7 @@ namespace pdq.npgsql.Builders
     {
         private readonly QuotedIdentifierBuilder quotedIdentifierBuilder;
 
-        protected override string CommentCharacter => "--";
+        protected override string CommentCharacter => Constants.Comment;
 
         public SelectBuilder(
             IHashProvider hashProvider,
@@ -35,7 +35,7 @@ namespace pdq.npgsql.Builders
             {
                 sqlBuilder.PrependIndent();
                 var delimiter = string.Empty;
-                if (i < lastColumnIndex) delimiter = ",";
+                if (i < lastColumnIndex) delimiter = Constants.Seperator;
                 this.quotedIdentifierBuilder.AddSelect(columns[i], sqlBuilder);
                 sqlBuilder.Append(delimiter);
                 sqlBuilder.AppendLine();
@@ -49,12 +49,14 @@ namespace pdq.npgsql.Builders
             sqlBuilder.AppendLine("from");
             sqlBuilder.IncreaseIndent();
 
+            var joins = context.Joins.Select(j => j.To);
+            var filteredTables = context.QueryTargets.Where(qt => !joins.Any(j => j.IsEquivalentTo(qt)));
             var index = 0;
-            foreach (var q in context.QueryTargets)
+            foreach (var q in filteredTables)
             {
                 var delimiter = string.Empty;
                 if (index < context.Columns.Count)
-                    delimiter = ",";
+                    delimiter = Constants.Seperator;
 
                 if(q is ITableTarget)
                 {
@@ -63,8 +65,6 @@ namespace pdq.npgsql.Builders
                 }
                 else if(q is ISelectQueryTarget)
                 {
-                    
-                    sqlBuilder.AppendLine("(");
                     var queryTarget = q as ISelectQueryTarget;
                     var parsedQuery = this.Build(queryTarget.Context);
                     this.quotedIdentifierBuilder.AddFromQuery(parsedQuery.Sql, q.Alias, sqlBuilder);
@@ -76,54 +76,30 @@ namespace pdq.npgsql.Builders
             sqlBuilder.DecreaseIndent();
         }
 
-        protected override void AddJoins(ISelectQueryContext context, ISqlBuilder sqlBuilder)
+        protected override void AddJoins(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            
-            /*foreach(var j in context.Joins)
+            foreach (var j in context.Joins) AddJoin(j, sqlBuilder, parameterManager);
+        }
+
+        private void AddJoin(Join j, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        {
+            sqlBuilder.Append("{0} ", Constants.Join);
+
+            if (j.To is ISelectQueryTarget selectTarget)
             {
-                var alias = string.Empty;
-                var formatStr = "join ";
-                if (!string.IsNullOrWhiteSpace(j.To.Alias))
-                    alias = j.To.Alias;
+                var qSqlBuilder = SqlBuilder.Create();
+                Build(selectTarget.Context, qSqlBuilder, parameterManager);
+                this.quotedIdentifierBuilder.AddJoinQuery(qSqlBuilder.GetSql(), selectTarget.Alias, sqlBuilder);
+            }
+            else if (j.To is ITableTarget tableTarget)
+                this.quotedIdentifierBuilder.AddJoinTable(tableTarget, sqlBuilder);
 
-                if (j.To is ISelectQueryTarget)
-                {
-                    var selectTarget = j.To as ISelectQueryTarget;
-                    formatStr += "(";
-                    sqlBuilder.AppendLine(formatStr);
-                    sqlBuilder.IncreaseIndent();
-                    Build(selectTarget.Context);
-                    sqlBuilder.DecreaseIndent();
-                    sqlBuilder.AppendLine(") as {0}{1}{0}", this.quote, alias);
-                }
-                else if(j.To is ITableTarget)
-                {
-                    var tableTarget = j.To as ITableTarget;
-                    var schema = string.Empty;
-                    if (!string.IsNullOrWhiteSpace(tableTarget.Schema))
-                    {
-                        schema = tableTarget.Schema;
-                        formatStr = "{0}{1}{0}.";
-                    }
-                    else
-                        formatStr = "{1}";
+            sqlBuilder.Append(" {0}", Constants.On);
+            sqlBuilder.AppendLine();
 
-                    formatStr += "{0}{2}{0}";
-
-                    if (!string.IsNullOrWhiteSpace(alias))
-                        formatStr += " {0}{3}{0}";
-                    else
-                        formatStr += "{3}";
-
-                    formatStr += " on";
-
-                    sqlBuilder.AppendLine(formatStr, this.quote, schema, tableTarget.Name, alias);
-                }
-
-                sqlBuilder.IncreaseIndent();
-                this.whereBuilder.AddWhere(j.Conditions, sqlBuilder);
-                sqlBuilder.DecreaseIndent();
-            }*/
+            sqlBuilder.IncreaseIndent();
+            this.whereBuilder.AddJoin(j.Conditions, sqlBuilder, parameterManager);
+            sqlBuilder.DecreaseIndent();
         }
 
         protected override void AddOrderBy(ISelectQueryContext context, ISqlBuilder sqlBuilder)

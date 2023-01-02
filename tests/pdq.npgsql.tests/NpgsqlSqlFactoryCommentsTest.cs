@@ -15,22 +15,21 @@ using Xunit;
 
 namespace pdq.npgsql.tests
 {
-	public class NpgsqlSqlFactoryTests
+	public class NpgsqlSqlFactoryCommentTest
 	{
         private readonly ISqlFactory sqlFactory;
         private readonly IService<Person> personService;
 
-		public NpgsqlSqlFactoryTests()
+		public NpgsqlSqlFactoryCommentTest()
 		{
             var services = new ServiceCollection();
             services.AddPdq(o =>
             {
                 o.EnableTransientTracking();
                 o.OverrideDefaultLogLevel(LogLevel.Debug);
-                o.DisableSqlHeaderComments();
                 o.UseNpgsql(options =>
                 {
-
+                    
                 });
             });
             services.Replace<IConnectionFactory, MockConnectionFactory>();
@@ -44,27 +43,7 @@ namespace pdq.npgsql.tests
         }
 
         [Fact]
-        public void TemplateParsingSucceeds()
-        {
-            // Arrange
-            var expected = "select\r\n  t.Id,\r\n  t.FirstName,\r\n  t.LastName,\r\n  t.Email,\r\n  t.AddressId,\r\n  t.CreatedAt\r\nfrom\r\n  Person as t\r\nwhere\r\n(t.Email = '@p1')\r\n";
-            expected = expected.Replace("\r\n", Environment.NewLine);
-            IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
-            {
-                context = args.Context;
-            };
-            this.personService.Get(p => p.Email == "bob@bob.com");
-
-            // Act
-            var template = this.sqlFactory.ParseTemplate(context);
-
-            // Assert
-            template.Sql.Should().Be(expected);
-        }
-
-        [Fact]
-        public void ParameterParsingFails()
+        public void QueryHeadersPresent()
         {
             // Arrange
             IQueryContext context = null;
@@ -75,82 +54,13 @@ namespace pdq.npgsql.tests
             this.personService.Get(p => p.Email == "bob@bob.com");
 
             // Act
-            Action method = () => this.sqlFactory.ParseParameters(context, new common.Templates.SqlTemplate("", new List<common.Templates.SqlParameter>()));
-
-            // Assert
-            method.Should().Throw<common.Exceptions.SqlTemplateMismatchException>();
-        }
-
-        [Fact]
-        public void ParameterParsingSucceeds()
-        {
-            // Arrange
-            IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
-            {
-                context = args.Context;
-            };
-            this.personService.Get(p => p.Email == "bob@bob.com");
             var template = this.sqlFactory.ParseTemplate(context);
-
-            // Act
-            var parameters = this.sqlFactory.ParseParameters(context, template);
+            var sql = template.Sql;
 
             // Assert
-            var dict = parameters as DynamicDictionary;
-            dict.Should().BeEquivalentTo(DynamicDictionary.FromDictionary(new Dictionary<string, object>
-            {
-                { "p1", "bob@bob.com" }
-            }));
-        }
-
-        [Fact]
-        public void InValuesParameterParsingSucceeds()
-        {
-            // Arrange
-            IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
-            {
-                context = args.Context;
-            };
-            var ids = new int[] { 1, 2, 3 };
-            this.personService.Get(p => ids.Contains(p.Id));
-            var template = this.sqlFactory.ParseTemplate(context);
-
-            // Act
-            var parameters = this.sqlFactory.ParseParameters(context, template);
-
-            // Assert
-            var dict = parameters as DynamicDictionary;
-            dict.Should().BeEquivalentTo(DynamicDictionary.FromDictionary(new Dictionary<string, object>
-            {
-                { "p1", 1 },
-                { "p2", 2 },
-                { "p3", 3 }
-            }));
-        }
-
-        [Fact]
-        public void LikeParameterParsingSucceeds()
-        {
-            // Arrange
-            IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
-            {
-                context = args.Context;
-            };
-            this.personService.Get(p => p.Email.Contains("bob"));
-            var template = this.sqlFactory.ParseTemplate(context);
-
-            // Act
-            var parameters = this.sqlFactory.ParseParameters(context, template);
-
-            // Assert
-            var dict = parameters as DynamicDictionary;
-            dict.Should().BeEquivalentTo(DynamicDictionary.FromDictionary(new Dictionary<string, object>
-            {
-                { "p1", "bob" }
-            }));
+            var lines = sql.Split(Environment.NewLine);
+            lines[0].Should().StartWith("-- pdq :: query hash:");
+            lines[1].Should().StartWith("-- pdq :: generated at:");
         }
     }
 }

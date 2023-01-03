@@ -52,7 +52,7 @@ namespace pdq.Implementation
         protected IQueryTarget GetQueryTarget(string table)
         {
             var alias = this.query.AliasManager.FindByAssociation(table).FirstOrDefault();
-            if (alias == null) throw new TableNotFoundException(alias.Name, table);
+            if (alias == null) throw new TableNotFoundException(table);
 
             var target = this.context.QueryTargets.FirstOrDefault(t => t.Alias == alias.Name);
             if (target == null) throw new TableNotFoundException(alias.Name, table);

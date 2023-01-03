@@ -19,8 +19,8 @@ namespace pdq.state
 			this IHelperExtensions self,
 			Expression expression)
         {
-			var tableType = self.Context.ExpressionHelper.GetType(expression);
-			return self.Context.ReflectionHelper.GetTableName(tableType);
+			var tableType = self.Context.ExpressionHelper.GetParameterType(expression);
+			return GetTableName(self, tableType);
         }
 
         public static string GetTableName(
@@ -39,7 +39,7 @@ namespace pdq.state
         public static string GetColumnName(
             this IHelperExtensions self,
             Expression expression)
-            => self.Context.ExpressionHelper.GetName(expression);
+            => self.Context.ExpressionHelper.GetMemberName(expression);
 
         public static string GetColumnName(
             this IHelperExtensions self,

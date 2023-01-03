@@ -46,6 +46,12 @@ namespace pdq.core_tests
 
             // Assert
             var col = result as IColumn;
+            if (col == null)
+            {
+                var not = result as Not;
+                col = not.Item as IColumn;
+            }
+
             col.Should().NotBeNull();
             col.Details.Name.Should().Be(expectedPropertyName);
             col.Details.Source.Alias.Should().Be("p");
@@ -69,6 +75,12 @@ namespace pdq.core_tests
 
             // Assert
             var col = result as IColumn;
+            if (col == null)
+            {
+                var not = result as Not;
+                col = not.Item as IColumn;
+            }
+
             col.Should().NotBeNull();
             col.Details.Name.Should().Be(expectedPropertyName);
             col.Details.Source.Alias.Should().Be("p");
@@ -103,7 +115,7 @@ namespace pdq.core_tests
                 {
                     GetExpression<Person>((p) => p.FirstName != "john"),
                     nameof(Person.FirstName),
-                    EqualityOperator.NotEquals,
+                    EqualityOperator.Equals,
                     getString
                 };
 
@@ -119,7 +131,7 @@ namespace pdq.core_tests
                 {
                     GetExpression<Person>((p) => p.AddressId != 42),
                     nameof(Person.AddressId),
-                    EqualityOperator.NotEquals,
+                    EqualityOperator.Equals,
                     getInt
                 };
 

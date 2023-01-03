@@ -30,7 +30,7 @@ namespace pdq.common.Templates
 
         public SqlParameter Add<T>(T state, object value)
         {
-            var hash = this.hashProvider.GetHash(state);
+            var hash = this.hashProvider.GetHash(state, value);
             var existing = this.parameters.TryGetValue(hash, out var existingParameter);
             if (existing) return existingParameter;
 

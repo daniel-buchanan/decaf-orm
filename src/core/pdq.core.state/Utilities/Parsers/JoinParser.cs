@@ -129,8 +129,8 @@ namespace pdq.state.Utilities.Parsers
             var right = operationTuple.Item2;
 
             //start with left
-            var leftField = this.expressionHelper.GetName(left);
-            var rightField = this.expressionHelper.GetName(right);
+            var leftField = this.expressionHelper.GetMemberName(left);
+            var rightField = this.expressionHelper.GetMemberName(right);
 
             //get operation
             var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(operation.NodeType);

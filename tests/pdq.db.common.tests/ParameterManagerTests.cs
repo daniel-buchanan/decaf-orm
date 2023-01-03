@@ -86,12 +86,12 @@ namespace pdq.db.common.tests
             // Arrange
             var source = TableTarget.Create("users", "u");
             var state1 = Column.Equals<int>(pdq.state.Column.Create("id", source), 42);
-            var state2 = Column.Equals<int>(pdq.state.Column.Create("id", source), 64);
+            var state2 = Column.Equals<int>(pdq.state.Column.Create("id", source), 42);
 
             // Act
             var result1 = this.parameterManager.Add(state1, 42);
             this.parameterManager.Clear();
-            var result2 = this.parameterManager.Add(state2, 64);
+            var result2 = this.parameterManager.Add(state2, 42);
 
             // Assert
             result1.Hash.Should().BeEquivalentTo(result2.Hash);

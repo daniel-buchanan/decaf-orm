@@ -35,7 +35,7 @@ namespace pdq.npgsql.tests
 		public void SimpleSelectSucceeds()
 		{
 			// Arrange
-			var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(sub = '@p1')\\r\\n";
+			var expected = "select\\r\\n  email,\\r\\n  sub as id\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(sub = '@p1')\\r\\n";
 			expected = expected.Replace("\\r\\n", Environment.NewLine);
 			var subValue = Guid.NewGuid();
 
@@ -62,7 +62,7 @@ namespace pdq.npgsql.tests
         public void SimpleSelectReturnsCorrectParameters()
         {
             // Arrange
-            var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  sub = '@p1'\\r\\n)";
+            var expected = "select\\r\\n  email,\\r\\n  sub as id\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  sub = '@p1'\\r\\n)";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -90,7 +90,7 @@ namespace pdq.npgsql.tests
         public void SimpleSelectWithOrderBySucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(sub = '@p1')\\r\\norder by\\r\\n  u.sub desc\\r\\n";
+            var expected = "select\\r\\n  email,\\r\\n  sub as id\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(sub = '@p1')\\r\\norder by\\r\\n  u.sub desc\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -118,7 +118,7 @@ namespace pdq.npgsql.tests
         public void SelectWithLikeSucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(sub like '%@p1%')\\r\\n";
+            var expected = "select\\r\\n  email,\\r\\n  sub as id\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(sub like '%@p1%')\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -145,7 +145,7 @@ namespace pdq.npgsql.tests
         public void SelectWithStartsWithSucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(sub like '@p1%')\\r\\n";
+            var expected = "select\\r\\n  email,\\r\\n  sub as id\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(sub like '@p1%')\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -172,7 +172,7 @@ namespace pdq.npgsql.tests
         public void SelectWithEndsWithSucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(sub like '%@p1')\\r\\n";
+            var expected = "select\\r\\n  email,\\r\\n  sub as id\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(sub like '%@p1')\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -199,7 +199,7 @@ namespace pdq.npgsql.tests
         public void SelectWithMultipleConditionsSucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  (sub = '@p1')\\r\\n  and\\r\\n  (email like '%@p2')\\r\\n)\\r\\n";
+            var expected = "select\\r\\n  email,\\r\\n  sub as id\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  (sub = '@p1')\\r\\n  and\\r\\n  (email like '%@p2')\\r\\n)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -230,7 +230,7 @@ namespace pdq.npgsql.tests
         public void SelectWithManyConditionsSucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  email,\\r\\n  sub as sub\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  (sub = '@p1')\\r\\n  and\\r\\n  (email like '%@p2')\\r\\n  and\\r\\n  (\\r\\n    (\\r\\n      not\\r\\n      (id = @p3)\\r\\n    )\\r\\n    or\\r\\n    (sub like '%@p4')\\r\\n  )\\r\\n)\\r\\n";
+            var expected = "select\\r\\n  email,\\r\\n  sub as id\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  (sub = '@p1')\\r\\n  and\\r\\n  (email like '%@p2')\\r\\n  and\\r\\n  (\\r\\n    (\\r\\n      not\\r\\n      (id = @p3)\\r\\n    )\\r\\n    or\\r\\n    (sub like '%@p4')\\r\\n  )\\r\\n)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -266,7 +266,7 @@ namespace pdq.npgsql.tests
         public void SelectWithSimpleJoinSucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  r.name as name,\\r\\n  u.email,\\r\\n  u.sub as sub\\r\\nfrom\\r\\n  users as u\\r\\njoin roles as r on\\r\\n  (\\r\\n    (r.user_id = u.id)\\r\\n  )\\r\\nwhere\\r\\n(id = @p1)\\r\\n";
+            var expected = "select\\r\\n  r.name as role,\\r\\n  u.email,\\r\\n  u.sub as id\\r\\nfrom\\r\\n  users as u\\r\\njoin roles as r on\\r\\n  (\\r\\n    (r.user_id = u.id)\\r\\n  )\\r\\nwhere\\r\\n(id = @p1)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             
             // Arrange

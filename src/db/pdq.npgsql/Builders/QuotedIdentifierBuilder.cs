@@ -24,7 +24,7 @@ namespace pdq.npgsql.Builders
             if (string.IsNullOrWhiteSpace(column.NewName))
                 sqlBuilder.Append("{0}{1}{0}", this.quote, column.Name);
             else
-                sqlBuilder.Append("{0}{1}{0} as {0}{1}{0}", this.quote, column.Name, column.NewName);
+                sqlBuilder.Append("{0}{1}{0} as {0}{2}{0}", this.quote, column.Name, column.NewName);
         }
 
         public void AddColumn(Column column, ISqlBuilder sqlBuilder)

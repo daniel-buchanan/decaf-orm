@@ -14,12 +14,8 @@ namespace pdq.state.Utilities
             this.reflectionHelper = reflectionHelper;
         }
 
-        /// <summary>
-        /// Get the field name from the expression. i.e. p => p.ID (ID would be the field name). Note that this *should* be a SIMPLE expression, as in the previous example.
-        /// </summary>
-        /// <param name="expression">The expression to get the name from</param>
-        /// <returns>The name of the field</returns>
-        public string GetName(Expression expression)
+        /// <inheritdoc/>
+        public string GetMemberName(Expression expression)
         {
             // switch on node type
             switch (expression.NodeType)
@@ -35,19 +31,20 @@ namespace pdq.state.Utilities
                         var call = (MethodCallExpression)expression;
                         if (call.Object == null)
                         {
-                            return GetName(call.Arguments[0]);
+                            return GetMemberName(call.Arguments[0]);
                         }
-                        return GetName(call.Object);
+                        return GetMemberName(call.Object);
                     }
                 case ExpressionType.Lambda:
                     var body = ((LambdaExpression)expression).Body;
-                    return this.GetName(body);
+                    return this.GetMemberName(body);
             }
 
             // if not found, return null
             return null;
         }
 
+        /// <inheritdoc/>
         public string GetMethodName(Expression expression)
         {
             if (expression.NodeType == ExpressionType.Lambda) expression = ((LambdaExpression)expression).Body;
@@ -59,22 +56,18 @@ namespace pdq.state.Utilities
             return methodExpression.Method.Name;
         }
 
-        /// <summary>
-        /// Get the name of the parameter used in an expression. i.e. p => p.ID (p would be the parameter name). Note that this *should* be a SIMPLE expression, as in the previous example.
-        /// </summary>
-        /// <param name="expr">The expression to get the parameter name from</param>
-        /// <returns>The paramter name</returns>
-        public string GetParameterName(Expression expr)
+        /// <inheritdoc/>
+        public string GetParameterName(Expression expression)
         {
             // check the expression for null
-            if (expr == null)
-                throw new ArgumentNullException(nameof(expr), "The provided expression cannot be null.");
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression), "The provided expression cannot be null.");
 
             // check for member expressions
-            if (expr is MemberExpression)
+            if (expression is MemberExpression)
             {
                 // get member expression
-                var memberExpression = expr as MemberExpression;
+                var memberExpression = expression as MemberExpression;
 
                 // check if we have a parameter expression
                 if (memberExpression?.Expression is ParameterExpression)
@@ -84,9 +77,9 @@ namespace pdq.state.Utilities
                 }
             }
 
-            if (expr is MethodCallExpression)
+            if (expression is MethodCallExpression)
             {
-                var call = expr as MethodCallExpression;
+                var call = expression as MethodCallExpression;
                 if (call == null) return null;
                 if (call.Object == null) return GetParameterName(call.Arguments[0]);
 
@@ -94,10 +87,10 @@ namespace pdq.state.Utilities
             }
 
             // if the expression is not a lambda, return nothing
-            if (!(expr is LambdaExpression)) return null;
+            if (!(expression is LambdaExpression)) return null;
 
             // get lambda and parameter
-            var lambdaExpr = (LambdaExpression)expr;
+            var lambdaExpr = (LambdaExpression)expression;
             var param = lambdaExpr.Parameters[0];
 
             // if no parameter, return null
@@ -108,11 +101,7 @@ namespace pdq.state.Utilities
             return param.Name;
         }
 
-        /// <summary>
-        /// Get the table/type name
-        /// </summary>
-        /// <typeparam name="TObject">The type to get the name for</typeparam>
-        /// <returns>The name of the type or table</returns>
+        /// <inheritdoc/>
         public string GetTypeName<TObject>()
         {
             // use the reflection helper to get the table name
@@ -120,6 +109,7 @@ namespace pdq.state.Utilities
             return reflectionHelper.GetTableName(typeof(TObject));
         }
 
+        /// <inheritdoc/>
         public EqualityOperator ConvertExpressionTypeToEqualityOperator(ExpressionType type)
         {
             // convert expression EqualityOperator into our EqualityOperator
@@ -143,6 +133,7 @@ namespace pdq.state.Utilities
             return EqualityOperator.Equals;
         }
 
+        /// <inheritdoc/>
         public EqualityOperator ConvertExpressionTypeToEqualityOperator(Expression expression)
         {
             var binaryExpr = expression as BinaryExpression;
@@ -194,15 +185,16 @@ namespace pdq.state.Utilities
             return null;
         }
 
-        public Type GetType(Expression expression)
+        /// <inheritdoc/>
+        public Type GetMemberType(Expression expression)
         {
             if (expression.NodeType == ExpressionType.Convert)
             {
-                return ConvertAccess.GetType(expression, this);
+                return ConvertAccess.GetMemberType(expression, this);
             }
             else if (expression.NodeType == ExpressionType.MemberAccess)
             {
-                return MemberAccess.GetType(expression);
+                return MemberAccess.GetMemberType(expression);
             }
             else if (expression.NodeType == ExpressionType.Constant)
             {
@@ -215,7 +207,35 @@ namespace pdq.state.Utilities
             else if (expression.NodeType == ExpressionType.Lambda)
             {
                 var body = ((LambdaExpression)expression).Body;
-                return GetType(body);
+                return GetMemberType(body);
+            }
+
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public Type GetParameterType(Expression expression)
+        {
+            if (expression.NodeType == ExpressionType.Convert)
+            {
+                return ConvertAccess.GetParameterType(expression, this);
+            }
+            else if (expression.NodeType == ExpressionType.MemberAccess)
+            {
+                return MemberAccess.GetParameterType(expression);
+            }
+            else if (expression.NodeType == ExpressionType.Constant)
+            {
+                return ConstantAccess.GetType(expression);
+            }
+            else if (expression.NodeType == ExpressionType.Parameter)
+            {
+                return ParameterAccess.GetType(expression);
+            }
+            else if (expression.NodeType == ExpressionType.Lambda)
+            {
+                var body = ((LambdaExpression)expression).Body;
+                return GetParameterType(body);
             }
 
             return null;

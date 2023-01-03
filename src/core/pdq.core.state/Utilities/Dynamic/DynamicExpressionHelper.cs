@@ -115,7 +115,7 @@ namespace pdq.state.Utilities
                 {
                     info = DynamicColumnInfo.Empty();
                     var val = this.expressionHelper.GetValue(a);
-                    var valueType = this.expressionHelper.GetType(a);
+                    var valueType = this.expressionHelper.GetMemberType(a);
                     info.SetValue(val);
                     info.SetValueType(valueType);
                 }
@@ -246,7 +246,7 @@ namespace pdq.state.Utilities
             if (memberExpression == null) return false;
 
             var parameterExpression = memberExpression.Expression as ParameterExpression;
-            var column = this.expressionHelper.GetName(memberExpression);
+            var column = this.expressionHelper.GetMemberName(memberExpression);
             var alias = this.expressionHelper.GetParameterName(memberExpression);
             var type = parameterExpression.Type;
             info = DynamicColumnInfo.Create(name: column, alias: alias, type: type, function: function);

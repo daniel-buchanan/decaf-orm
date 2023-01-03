@@ -22,9 +22,14 @@ namespace pdq.state.Utilities
             }
         }
 
-        public static Type GetType(Expression expression)
+        public static Type GetMemberType(Expression expression)
         {
             return ((MemberExpression)expression).Type;
+        }
+
+        public static Type GetParameterType(Expression expression)
+        {
+            return ((MemberExpression)expression).Member.DeclaringType;
         }
 
         public static string GetName(Expression expression, IReflectionHelper helper)

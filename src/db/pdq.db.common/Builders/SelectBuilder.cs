@@ -43,7 +43,7 @@ namespace pdq.db.common.Builders
         protected override void GetParameters(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             AddJoins(context, sqlBuilder, parameterManager);
-            this.whereBuilder.AddWhere(context.WhereClause, sqlBuilder, parameterManager);
+            AddWhere(context, sqlBuilder, parameterManager);
         }
     }
 }

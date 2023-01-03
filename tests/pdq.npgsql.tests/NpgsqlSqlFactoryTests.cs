@@ -105,6 +105,32 @@ namespace pdq.npgsql.tests
         }
 
         [Fact]
+        public void ComplexParameterParsingSucceeds()
+        {
+            // Arrange
+            IQueryContext context = null;
+            this.personService.PreExecution += (sender, args) =>
+            {
+                context = args.Context;
+            };
+            this.personService.Get(u => u.Id == 42 && u.Email.EndsWith(".com") && (u.Id != 0 || u.Email.EndsWith("abc")));
+            var template = this.sqlFactory.ParseTemplate(context);
+
+            // Act
+            var parameters = this.sqlFactory.ParseParameters(context, template);
+
+            // Assert
+            var dict = parameters as DynamicDictionary;
+            dict.Should().BeEquivalentTo(DynamicDictionary.FromDictionary(new Dictionary<string, object>
+            {
+                { "p1", 42 },
+                { "p2", ".com" },
+                { "p3", 0 },
+                { "p4", "abc" }
+            }));
+        }
+
+        [Fact]
         public void InValuesParameterParsingSucceeds()
         {
             // Arrange

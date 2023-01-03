@@ -29,6 +29,10 @@ namespace pdq.state.Utilities.Parsers
             
             var col = state.Column.Create(valueResult.Field, valueResult.Table);
 
+            var isNotEquals = valueResult.Operator == EqualityOperator.NotEquals;
+            if (isNotEquals)
+                valueResult.Operator = EqualityOperator.Equals;
+
             //add the model type for the type def of the repository
             var convertedValue = GetConvertedValue(valueResult.Value, valueResult.ValueType);
             var parameters = new[] { col, valueResult.Operator, convertedValue };
@@ -45,6 +49,9 @@ namespace pdq.state.Utilities.Parsers
 
             if(ctor != null) instance = ctor.Invoke(parameters);
             else instance = Activator.CreateInstance(constructedType, parameters);
+
+            if (isNotEquals)
+                return Not.This((state.IWhere)instance);
 
             return (state.IWhere)instance;
         }
@@ -75,8 +82,8 @@ namespace pdq.state.Utilities.Parsers
             if (memberExpression == null) return null;
 
             var val = Parse(expression, context);
-            var valType = this.expressionHelper.GetType(expression);
-            var field = this.expressionHelper.GetName(expression);
+            var valType = this.expressionHelper.GetMemberType(expression);
+            var field = this.expressionHelper.GetMemberName(expression);
             var op = EqualityOperator.Equals;
 
             var target = context.GetQueryTarget(memberExpression);
@@ -122,9 +129,9 @@ namespace pdq.state.Utilities.Parsers
             if (valueExpression == null || memberExpression == null)
                 return null;
 
-            var field = this.expressionHelper.GetName(memberExpression);
+            var field = this.expressionHelper.GetMemberName(memberExpression);
             var value = this.expressionHelper.GetValue(valueExpression);
-            var valueType = this.expressionHelper.GetType(valueExpression);
+            var valueType = this.expressionHelper.GetMemberType(valueExpression);
 
             var target = context.GetQueryTarget(memberExpression);
             if(target == null)

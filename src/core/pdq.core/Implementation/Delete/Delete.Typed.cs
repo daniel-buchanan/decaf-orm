@@ -26,7 +26,7 @@ namespace pdq.Implementation
         public IDeleteFrom<T> Output(Expression<Func<T, object>> column)
         {
             var internalContext = this.context as IQueryContextInternal;
-            var columnName = internalContext.ExpressionHelper.GetName(column);
+            var columnName = internalContext.ExpressionHelper.GetMemberName(column);
             var col = state.Column.Create(columnName, this.context.Table);
             this.context.Output(state.Output.Create(col, OutputSources.Deleted));
             return this;

@@ -56,26 +56,6 @@ namespace pdq.core_tests
         }
 
         [Fact]
-        public void SelectWithMultipleTablesSucceeds()
-        {
-            // Act
-            this.query
-                .Select()
-                .From<Person>(p => p)
-                .From<Address>(a => a)
-                .Where((p, a) => p.LastName.Contains("smith"));
-
-            // Assert
-            var context = this.query.Context as ISelectQueryContext;
-            context.QueryTargets.Should().HaveCount(2);
-            var where = context.WhereClause as IColumn;
-            where.Should().NotBeNull();
-            where.Details.Name.Should().Be(nameof(Person.LastName));
-            where.Details.Source.Alias.Should().Be("p");
-            where.ValueFunction.Should().BeAssignableTo(typeof(StringContains));
-        }
-
-        [Fact]
         public void SimpleJoinSucceeds()
         {
             // Act

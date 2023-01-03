@@ -3,7 +3,7 @@
 namespace pdq
 {
 	public interface ISelectFrom :
-		ISelect,
+		IExecute,
 		ISelectColumn,
 		IJoin
 	{

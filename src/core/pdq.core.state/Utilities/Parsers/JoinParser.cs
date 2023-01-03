@@ -8,8 +8,6 @@ namespace pdq.state.Utilities.Parsers
 {
 	internal class JoinParser : BaseParser
 	{
-        private readonly IParser whereParser;
-
         public JoinParser(
             IExpressionHelper expressionHelper,
             IReflectionHelper reflectionHelper)

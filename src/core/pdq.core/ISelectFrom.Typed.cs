@@ -8,6 +8,8 @@ namespace pdq
         ISelectColumnTyped<T>,
 		IJoinTyped<T>
 	{
+        ISelectFromTyped<T, T1> From<T1>();
+        ISelectFromTyped<T, T1> From<T1>(Expression<Func<T1, object>> expression);
 		IGroupByTyped<T> Where(Expression<Func<T, bool>> builder);
 	}
 
@@ -15,6 +17,8 @@ namespace pdq
         IExecute,
         IJoinTyped<T1, T2>
     {
+        ISelectFromTyped<T1, T2, T3> From<T3>();
+        ISelectFromTyped<T1, T2, T3> From<T3>(Expression<Func<T3, object>> expression);
         IGroupByTyped<T1, T2> Where(Expression<Func<T1, T2, bool>> builder);
     }
 
@@ -22,6 +26,8 @@ namespace pdq
         IExecute,
         IJoinTyped<T1, T2, T3>
     {
+        ISelectFromTyped<T1, T2, T3, T4> From<T4>();
+        ISelectFromTyped<T1, T2, T3, T4> From<T4>(Expression<Func<T4, object>> expression);
         IGroupByTyped<T1, T2, T3> Where(Expression<Func<T1, T2, T3, bool>> builder);
     }
 
@@ -29,6 +35,8 @@ namespace pdq
         IExecute,
         IJoinTyped<T1, T2, T3, T4>
     {
+        ISelectFromTyped<T1, T2, T3, T4, T5> From<T5>();
+        ISelectFromTyped<T1, T2, T3, T4, T5> From<T5>(Expression<Func<T5, object>> expression);
         IGroupByTyped<T1, T2, T3, T4> Where(Expression<Func<T1, T2, T3, T4, bool>> builder);
     }
 

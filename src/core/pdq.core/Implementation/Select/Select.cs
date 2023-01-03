@@ -88,7 +88,7 @@ namespace pdq.Implementation
             var select = Create(selectContext, this.query);
             query(select);
 
-            this.query.AliasManager.Add(null, alias);
+            this.query.AliasManager.Add(alias, "query");
             var builtQuery = state.QueryTargets.SelectQueryTarget.Create(select.context, alias);
             this.context.From(builtQuery);
 

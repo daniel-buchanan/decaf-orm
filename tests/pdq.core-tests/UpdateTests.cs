@@ -165,7 +165,7 @@ namespace pdq.core_tests
                         .Where(w => w.Column("id", "p").Is().EqualTo().Column("id", "u"))
                         .Select(s => new
                         {
-                            first_name = s.Is<string>("firstName", "u")
+                            first_name = s.Is<string>("firstName", "p")
                         });
                 })
                 .Set("first_name", "first_name")

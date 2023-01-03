@@ -73,21 +73,27 @@ namespace pdq.Implementation
         protected void AddGroupBy(Expression expression)
         {
             var column = this.context.Helpers().GetColumnName(expression);
-            var target = GetQueryTarget(expression);
+            var target = GetQueryTargetFromExpression(expression);
             this.context.GroupBy(state.GroupBy.Create(column, target));
         }
 
         protected void AddOrderBy(Expression expression, SortOrder order)
         {
             var column = this.context.Helpers().GetColumnName(expression);
-            var target = GetQueryTarget(expression);
+            var target = GetQueryTargetFromExpression(expression);
             this.context.OrderBy(state.OrderBy.Create(column, target, order));
+        }
+
+        private IQueryTarget GetQueryTargetFromExpression(Expression expression)
+        {
+            var table = this.context.Helpers().GetTableName(expression);
+            return GetQueryTargetByTable(table);
         }
 
         protected IQueryTarget GetQueryTarget<T>()
         {
             var table = this.context.Helpers().GetTableName<T>();
-            return GetQueryTarget(table);
+            return GetQueryTargetByTable(table);
         }
     }
 }

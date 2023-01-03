@@ -95,7 +95,7 @@ namespace pdq.core_tests
             // Act
             this.query
                 .Select()
-                .From<Person>()
+                .From<Person>(p => p)
                 .Where(p => p.Id == 42)
                 .SelectAll<Person>(p => p);
 

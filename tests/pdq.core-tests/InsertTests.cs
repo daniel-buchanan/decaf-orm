@@ -107,7 +107,7 @@ namespace pdq.core_tests
             Action<ISelect> fromQuery = (b) =>
             {
                 var fromDate = DateTime.Parse("2022-01-01");
-                b.From<Person>()
+                b.From<Person>(p => p)
                     .Where(p => p.CreatedAt > fromDate)
                     .Select(p => new
                     {
@@ -119,7 +119,7 @@ namespace pdq.core_tests
 
             // Act
             this.query.Insert()
-                .Into("users")
+                .Into("users", "b")
                 .Columns(b => new
                 {
                     email = b.Is<string>(),

@@ -8,6 +8,8 @@ namespace pdq.state.Utilities.Parsers
 {
 	internal class JoinParser : BaseParser
 	{
+        private readonly IParser whereParser;
+
         public JoinParser(
             IExpressionHelper expressionHelper,
             IReflectionHelper reflectionHelper)
@@ -35,7 +37,7 @@ namespace pdq.state.Utilities.Parsers
             if (ParseAndOr(binaryExpression, context, out result)) return result;
             if (ParseLambdaClause(lambdaExpression, binaryExpression, context, out result)) return result;
 
-            return ParseSimpleBinary(expression, context);
+            return null;
         }
 
         private bool ParseAndOr(BinaryExpression binaryExpression, IQueryContextInternal context, out IWhere result)
@@ -96,6 +98,10 @@ namespace pdq.state.Utilities.Parsers
                 var unaryRight = operation.Right as UnaryExpression;
                 rightExpression = unaryRight.Operand as MemberExpression;
             }
+            else if (operation.Right is ConstantExpression)
+            {
+                return false;
+            }
             else
             {
                 rightExpression = operation.Right as MemberExpression;
@@ -116,30 +122,6 @@ namespace pdq.state.Utilities.Parsers
                 Column.Create(rightField, rightTarget)
             );
             return true;
-        }
-
-        private IWhere ParseSimpleBinary(Expression expression, IQueryContextInternal context)
-        {
-            if (!(expression is BinaryExpression)) return null;
-
-            var operation = (BinaryExpression)expression;
-
-            var operationTuple = UpdateNullableExpression(operation);
-            var left = operationTuple.Item1;
-            var right = operationTuple.Item2;
-
-            //start with left
-            var leftField = this.expressionHelper.GetMemberName(left);
-            var rightField = this.expressionHelper.GetMemberName(right);
-
-            //get operation
-            var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(operation.NodeType);
-
-            // create column
-            return Conditionals.Column.Equals(
-                Column.Create(leftField, context.GetQueryTarget(left)),
-                op,
-                Column.Create(rightField, context.GetQueryTarget(right)));
         }
     }
 }

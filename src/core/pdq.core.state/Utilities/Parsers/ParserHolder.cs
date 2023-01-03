@@ -15,9 +15,9 @@ namespace pdq.state.Utilities.Parsers
 			CallExpressionHelper callExpressionHelper)
 		{
 			this.value = new ValueParser(expressionHelper, callExpressionHelper, reflectionHelper);
-			this.join = new JoinParser(expressionHelper, reflectionHelper);
-			this.where = new WhereParser(expressionHelper, reflectionHelper, callExpressionHelper, this.join, this.value);
-		}
+            this.join = new JoinParser(expressionHelper, reflectionHelper);
+            this.where = new WhereParser(expressionHelper, reflectionHelper, callExpressionHelper, this.join, this.value);
+        }
 
 		IParser IQueryParsers.Join => this.join;
 

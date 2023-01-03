@@ -292,6 +292,41 @@ namespace pdq.npgsql.tests
             // Assert
             sql.Should().Be(expected);
         }
+
+        [Fact]
+        public void SelectFromQuerySucceeds()
+        {
+            // Arrange
+            var expected = "select\\r\\n  q.name,\\r\\n  q.id\\r\\nfrom\\r\\n  (\\r\\n    select\\r\\n      u.id,\\r\\n      u.name\\r\\n    from\\r\\n      users as u\\r\\n    where\\r\\n    (u.id = @p1)\\r\\n  ) as q\\r\\nwhere\\r\\n(q.name like '%@p2')\\r\\n";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
+
+            // Arrange
+            var q = this.query.Select()
+                .From(q =>
+                {
+                    q.From("users", "u")
+                     .Where(b => b.Column("id", "u").Is().EqualTo(42))
+                     .Select(e => new
+                     {
+                         id = e.Is("id", "u"),
+                         name = e.Is("name", "u")
+                     });
+                }, "q")
+                .Where(b =>
+                {
+                    b.Column("name", "q").Is().EndsWith("Smith");
+                })
+                .Select(c => new
+                {
+                    name = c.Is("name", "q"),
+                    id = c.Is("id", "q")
+                });
+
+            var sql = q.GetSql();
+
+            // Assert
+            sql.Should().Be(expected);
+        }
     }
 }
 

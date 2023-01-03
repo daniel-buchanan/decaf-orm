@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using pdq.common;
 using pdq.common.Templates;
 using pdq.common.Utilities;
 using pdq.db.common;
 using pdq.db.common.Builders;
 using pdq.state;
+using pdq.state.QueryTargets;
 
 namespace pdq.npgsql.Builders
 {
@@ -25,7 +27,7 @@ namespace pdq.npgsql.Builders
             this.quotedIdentifierBuilder = quotedIdentifierBuilder;
         }
 
-        protected override void AddColumns(ISelectQueryContext context, ISqlBuilder sqlBuilder)
+        protected override void AddColumns(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             sqlBuilder.IncreaseIndent();
             var columns = context.Columns.ToArray();
@@ -44,7 +46,7 @@ namespace pdq.npgsql.Builders
             sqlBuilder.DecreaseIndent();
         }
 
-        protected override void AddTables(ISelectQueryContext context, ISqlBuilder sqlBuilder)
+        protected override void AddTables(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             sqlBuilder.AppendLine(Constants.From);
             sqlBuilder.IncreaseIndent();
@@ -59,18 +61,10 @@ namespace pdq.npgsql.Builders
                 if (index < noTables)
                     delimiter = Constants.Seperator;
 
-                sqlBuilder.PrependIndent();
-                if(q is ITableTarget)
-                {
-                    var tableTarget = q as ITableTarget;
-                    this.quotedIdentifierBuilder.AddFromTable(tableTarget, sqlBuilder);
-                }
-                else if(q is ISelectQueryTarget)
-                {
-                    var queryTarget = q as ISelectQueryTarget;
-                    var parsedQuery = this.Build(queryTarget.Context);
-                    this.quotedIdentifierBuilder.AddFromQuery(parsedQuery.Sql, q.Alias, sqlBuilder);
-                }
+                if (q is ITableTarget tableTarget)
+                    AddFromTable(tableTarget, sqlBuilder);
+                else if (q is ISelectQueryTarget queryTarget)
+                    AddFromQuery(queryTarget, sqlBuilder, parameterManager);
 
                 if (delimiter.Length > 0)
                     sqlBuilder.Append(delimiter);
@@ -92,14 +86,10 @@ namespace pdq.npgsql.Builders
         {
             sqlBuilder.Append("{0} ", Constants.Join);
 
-            if (j.To is ISelectQueryTarget selectTarget)
-            {
-                var qSqlBuilder = SqlBuilder.Create();
-                Build(selectTarget.Context, qSqlBuilder, parameterManager);
-                this.quotedIdentifierBuilder.AddFromQuery(qSqlBuilder.GetSql(), selectTarget.Alias, sqlBuilder);
-            }
+            if (j.To is ISelectQueryTarget queryTarget)
+                AddFromQuery(queryTarget, sqlBuilder, parameterManager);
             else if (j.To is ITableTarget tableTarget)
-                this.quotedIdentifierBuilder.AddFromTable(tableTarget, sqlBuilder);
+                AddFromTable(tableTarget, sqlBuilder);
 
             sqlBuilder.Append(" {0}", Constants.On);
             sqlBuilder.AppendLine();
@@ -109,7 +99,22 @@ namespace pdq.npgsql.Builders
             sqlBuilder.DecreaseIndent();
         }
 
-        protected override void AddOrderBy(ISelectQueryContext context, ISqlBuilder sqlBuilder)
+        private void AddFromTable(ITableTarget target, ISqlBuilder sqlBuilder)
+        {
+            sqlBuilder.PrependIndent();
+            this.quotedIdentifierBuilder.AddFromTable(target, sqlBuilder);
+        }
+
+        private void AddFromQuery(ISelectQueryTarget target, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        {
+            sqlBuilder.AppendLine(Constants.OpeningParen);
+            sqlBuilder.IncreaseIndent();
+            this.Build(target.Context, sqlBuilder, parameterManager);
+            sqlBuilder.DecreaseIndent();
+            this.quotedIdentifierBuilder.AddClosingFromQuery(target.Alias, sqlBuilder);
+        }
+
+        protected override void AddOrderBy(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             var clauses = context.OrderByClauses.ToArray();
             if (clauses.Length == 0) return;
@@ -133,7 +138,7 @@ namespace pdq.npgsql.Builders
             sqlBuilder.DecreaseIndent();
         }
 
-        protected override void AddGroupBy(ISelectQueryContext context, ISqlBuilder sqlBuilder)
+        protected override void AddGroupBy(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             var clauses = context.GroupByClauses.ToArray();
             if (clauses.Length == 0) return;

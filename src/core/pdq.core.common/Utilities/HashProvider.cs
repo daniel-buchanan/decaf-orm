@@ -32,6 +32,8 @@ namespace pdq.common.Utilities
 
 		public HashProvider() => this.hashAlgorithm = SHA256.Create();
 
+        public static IHashProvider Create() => new HashProvider();
+
         /// <inheritdoc/>
         public string GetHash<T>(T input)
         {

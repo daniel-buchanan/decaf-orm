@@ -48,11 +48,9 @@ namespace pdq.npgsql.Builders
             sqlBuilder.Append(format, this.quote, tableTarget.Schema, tableTarget.Name, tableTarget.Alias);
         }
 
-        public void AddFromQuery(string query, string alias, ISqlBuilder sqlBuilder)
+        public void AddClosingFromQuery(string alias, ISqlBuilder sqlBuilder)
         {
-            sqlBuilder.AppendLine(Constants.OpeningParen);
-            query = query.Replace(Environment.NewLine, $"{Environment.NewLine}  ");
-            sqlBuilder.AppendLine(query);
+            sqlBuilder.PrependIndent();
             sqlBuilder.Append("{0} as {1}{2}{1}", Constants.ClosingParen, this.quote, alias);
         }
 

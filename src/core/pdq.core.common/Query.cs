@@ -56,6 +56,9 @@ namespace pdq.common
 		public ISqlFactory SqlFactory => this.transient.SqlFactory;
 
         /// <inheritdoc/>
+        public ILoggerProxy Logger => this.logger;
+
+        /// <inheritdoc/>
         string IQueryInternal.GetHash() => this.context.GetHash();
 
 		/// <summary>

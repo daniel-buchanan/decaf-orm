@@ -16,15 +16,15 @@ namespace pdq.db.common.Builders
         {
         }
 
-		protected abstract void AddColumns(ISelectQueryContext context, ISqlBuilder sqlBuilder);
+		protected abstract void AddColumns(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager);
 
-		protected abstract void AddTables(ISelectQueryContext context, ISqlBuilder sqlBuilder);
+		protected abstract void AddTables(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager);
 
 		protected abstract void AddJoins(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager);
 
-		protected abstract void AddOrderBy(ISelectQueryContext context, ISqlBuilder sqlBuilder);
+		protected abstract void AddOrderBy(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager);
 
-		protected abstract void AddGroupBy(ISelectQueryContext context, ISqlBuilder sqlBuilder);
+		protected abstract void AddGroupBy(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager);
 
         private void AddWhere(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
             => this.whereBuilder.AddWhere(context.WhereClause, sqlBuilder, parameterManager);
@@ -32,12 +32,12 @@ namespace pdq.db.common.Builders
         protected override void Build(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             sqlBuilder.AppendLine(Constants.Select);
-            AddColumns(context, sqlBuilder);
-            AddTables(context, sqlBuilder);
+            AddColumns(context, sqlBuilder, parameterManager);
+            AddTables(context, sqlBuilder, parameterManager);
             AddJoins(context, sqlBuilder, parameterManager);
             AddWhere(context, sqlBuilder, parameterManager);
-            AddOrderBy(context, sqlBuilder);
-            AddGroupBy(context, sqlBuilder);
+            AddOrderBy(context, sqlBuilder, parameterManager);
+            AddGroupBy(context, sqlBuilder, parameterManager);
         }
 
         protected override void GetParameters(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)

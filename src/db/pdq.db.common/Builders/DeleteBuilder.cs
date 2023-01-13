@@ -7,7 +7,7 @@ namespace pdq.db.common.Builders
 {
 	public abstract class DeleteBuilder : Builder<IDeleteQueryContext>
 	{
-        public DeleteBuilder(
+        protected DeleteBuilder(
             IWhereBuilder whereBuilder,
             IHashProvider hashProvider,
             PdqOptions pdqOptions)

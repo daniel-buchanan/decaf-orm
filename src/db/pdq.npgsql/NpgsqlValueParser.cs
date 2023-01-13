@@ -32,8 +32,6 @@ namespace pdq.npgsql
 
             if (isNullable && value == null) return default(T);
 
-            object toReturn;
-
             if (underlyingType == typeof(byte[]))
             {
                 if (value.StartsWith(@"\x") || value.StartsWith(@"\\x"))
@@ -48,56 +46,48 @@ namespace pdq.npgsql
                         for (int i = 0; i < NumberChars; i++)
                             bytes[i] = Convert.ToByte(new string(new char[2] { (char)sr.Read(), (char)sr.Read() }), 16);
                     }
-                    toReturn = bytes;
+                    return ChangeType<T>(bytes);
                 }
-                else
-                {
-                    toReturn = null;
-                }
+
+                return default(T);
             }
-            else if (underlyingType == typeof(bool))
+
+            if (underlyingType == typeof(bool))
+                return ChangeType<T>(value == "1" ? true : false);
+
+            if (underlyingType == typeof(DateTime))
+                return ChangeType<T>(Convert.ToDateTime(value));
+
+            if (underlyingType == typeof(int))
+                return ChangeType<T>(Convert.ToInt32(value));
+
+            if (underlyingType == typeof(double) ||
+                underlyingType == typeof(Single) ||
+                underlyingType == typeof(float))
+                return ChangeType<T>(Convert.ToDecimal(value));
+
+            if (underlyingType == typeof(string))
             {
-                toReturn = value == "1" ? true : false;
-            }
-            else if (underlyingType == typeof(DateTime))
-            {
-                toReturn = Convert.ToDateTime(value);
-            }
-            else if (underlyingType == typeof(int))
-            {
-                toReturn = Convert.ToInt32(value);
-            }
-            else if (underlyingType == typeof(double) || underlyingType == typeof(Single) || underlyingType == typeof(float))
-            {
-                toReturn = Convert.ToDecimal(value);
-            }
-            else if (underlyingType == typeof(string))
-            {
-                string s = Convert.ToString(value);
+                var s = Convert.ToString(value);
                 if (s == null)
-                {
                     return default(T);
-                }
 
                 foreach (Tuple<string, string> r in this.replacements)
                 {
                     s = s.Replace(r.Item1, r.Item2);
                 }
 
-                toReturn = s;
-            }
-            else
-            {
-                if (value == null)
-                {
-                    return default(T);
-                }
-
-                toReturn = Convert.ToString(value);
+                return ChangeType<T>(s);
             }
 
-            return (T)Convert.ChangeType(toReturn, typeof(T));
+            if (value == null)
+                return default(T);
+
+            return ChangeType<T>(Convert.ToString(value));
         }
+
+        private T ChangeType<T>(object input)
+            => (T)Convert.ChangeType(input, typeof(T));
 
         /// <inheritdoc/>
         public string QuoteValue<T>(T value) => QuoteValue(value, typeof(T));

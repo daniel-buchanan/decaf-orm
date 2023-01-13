@@ -5,7 +5,7 @@ namespace pdq.npgsql.Builders
 	{
         private readonly string quote = string.Empty;
 
-        public Builder(NpgsqlOptions options)
+        protected Builder(NpgsqlOptions options)
 		{
             if (options.QuotedIdentifiers)
                 this.quote = "\"";

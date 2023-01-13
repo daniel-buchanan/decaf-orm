@@ -34,7 +34,7 @@ namespace pdq.Implementation
 
         /// <inheritdoc />
         public void EndsWith<T>(T value)
-            => AddClause(common.EqualityOperator.EndsWith, StringEndsWith.Create(), value);
+            => AddClause(common.EqualityOperator.EndsWith, StringEndsWith.Create(value as string), value);
 
         /// <inheritdoc />
         public IColumnMatchBuilder EqualTo()
@@ -111,7 +111,7 @@ namespace pdq.Implementation
 
         /// <inheritdoc />
         public void StartsWith<T>(T value)
-            => AddClause(common.EqualityOperator.StartsWith, StringStartsWith.Create(), value);
+            => AddClause(common.EqualityOperator.StartsWith, StringStartsWith.Create(value as string), value);
 
         private void AddClause<T>(common.EqualityOperator op, IValueFunction function, T value)
         {

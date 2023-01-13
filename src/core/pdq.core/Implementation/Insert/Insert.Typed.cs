@@ -36,7 +36,7 @@ namespace pdq.Implementation
         public IInsertValues<T> Output(Expression<Func<T, object>> column)
         {
             var internalContext = this.context as IQueryContextInternal;
-            var columnName = internalContext.ExpressionHelper.GetName(column);
+            var columnName = internalContext.ExpressionHelper.GetMemberName(column);
             var col = state.Column.Create(columnName, this.context.Target);
             this.context.Output(state.Output.Create(col, OutputSources.Inserted));
             return this;

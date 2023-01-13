@@ -58,6 +58,9 @@ namespace pdq.common.Utilities
             return true;
         }
 
+        public Dictionary<string, object> ToDictionary()
+            => dictionary;
+
         public static dynamic FromDictionary(IDictionary<string, object> dict)
             => new DynamicDictionary(dict);
     }

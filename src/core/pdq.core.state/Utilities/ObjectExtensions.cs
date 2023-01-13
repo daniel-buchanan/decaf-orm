@@ -14,7 +14,7 @@ namespace pdq.state
         {
             var reflectionHelper = new ReflectionHelper();
             var expressionHelper = new ExpressionHelper(reflectionHelper);
-            return expressionHelper.GetName(expression);
+            return expressionHelper.GetMemberName(expression);
         }
 
         internal static object GetPropertyValue(this object self, string property)

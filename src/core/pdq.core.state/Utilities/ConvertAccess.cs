@@ -12,23 +12,18 @@ namespace pdq.state.Utilities
         }
 
         public static Expression GetExpression(Expression expression)
-        {
-            return GetOperand(expression);
-        }
+            => GetOperand(expression);
 
         public static object GetValue(Expression expression)
-        {
-            throw new NotImplementedException();
-        }
+            => throw new NotImplementedException();
 
-        public static Type GetType(Expression expression, ExpressionHelper helper)
-        {
-            return helper.GetType(GetOperand(expression));
-        }
+        public static Type GetMemberType(Expression expression, IExpressionHelper helper)
+            => helper.GetMemberType(GetOperand(expression));
 
-        public static string GetName(Expression expression, ExpressionHelper helper)
-        {
-            return helper.GetName(GetOperand(expression));
-        }
+        public static Type GetParameterType(Expression expression, IExpressionHelper helper)
+            => helper.GetParameterType(GetOperand(expression));
+
+        public static string GetName(Expression expression, IExpressionHelper helper)
+            => helper.GetMemberName(GetOperand(expression));
     }
 }

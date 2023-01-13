@@ -41,10 +41,7 @@ namespace pdq.core_tests.Mocks
         public override void Prepare() { }
 
         /// <inheritdoc/>
-        protected override DbParameter CreateDbParameter()
-        {
-            throw new NotImplementedException();
-        }
+        protected override DbParameter CreateDbParameter() => new MockDbParameter();
 
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior) => new MockDbDataReader();
     }

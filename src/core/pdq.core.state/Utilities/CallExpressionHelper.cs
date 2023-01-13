@@ -95,6 +95,10 @@ namespace pdq.state.Utilities
                     return ParseSubString(callExpression);
                 case SupportedMethods.Trim:
                     return Trim.Create();
+                case SupportedMethods.StartsWith:
+                    return ParseStartsWith(callExpression);
+                case SupportedMethods.EndsWith:
+                    return ParseEndsWith(callExpression);
             }
 
             return null;
@@ -170,7 +174,7 @@ namespace pdq.state.Utilities
                                    callExpr.Arguments.First() as MemberExpression;
 
             var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(expression);
-            var fieldName = this.expressionHelper.GetName(memberExpression);
+            var fieldName = this.expressionHelper.GetMemberName(memberExpression);
             var target = context.GetQueryTarget(memberExpression);
             var col = state.Column.Create(fieldName, target);
 
@@ -205,7 +209,7 @@ namespace pdq.state.Utilities
 
             if (nonCallExpr.NodeType == ExpressionType.MemberAccess)
             {
-                var fieldB = this.expressionHelper.GetName(nonCallExpr);
+                var fieldB = this.expressionHelper.GetMemberName(nonCallExpr);
                 var targetB = context.GetQueryTarget(nonCallExpr);
                 var colB = state.Column.Create(fieldB, targetB);
                 result = Conditionals.Column.Equals(col, op, valueFunction, colB);
@@ -215,7 +219,7 @@ namespace pdq.state.Utilities
             {
                 var rightCallExpr = nonCallExpr as MethodCallExpression;
                 var rightBody = rightCallExpr.Object;
-                var fieldB = this.expressionHelper.GetName(rightBody);
+                var fieldB = this.expressionHelper.GetMemberName(rightBody);
                 var targetB = context.GetQueryTarget(rightBody);
                 var colB = state.Column.Create(fieldB, targetB);
                 valueFunction = ParseFunction(rightCallExpr);
@@ -265,6 +269,20 @@ namespace pdq.state.Utilities
             var arg = expression.Arguments[0];
             var value = this.expressionHelper.GetValue(arg) as string;
             return StringContains.Create(value);
+        }
+
+        private IValueFunction ParseStartsWith(MethodCallExpression expression)
+        {
+            var arg = expression.Arguments[0];
+            var value = this.expressionHelper.GetValue(arg) as string;
+            return StringStartsWith.Create(value);
+        }
+
+        private IValueFunction ParseEndsWith(MethodCallExpression expression)
+        {
+            var arg = expression.Arguments[0];
+            var value = this.expressionHelper.GetValue(arg) as string;
+            return StringEndsWith.Create(value);
         }
 
         private IValueFunction ParseDatePart(MethodCallExpression expression)
@@ -337,7 +355,7 @@ namespace pdq.state.Utilities
             object values = this.expressionHelper.GetValue(valueMember);
 
             // get alias and field name
-            var fieldName = this.expressionHelper.GetName(memberAccessExp);
+            var fieldName = this.expressionHelper.GetMemberName(memberAccessExp);
 
             // setup arguments
             var typeArgs = new[] { memberAccessExp.Type };
@@ -374,6 +392,8 @@ namespace pdq.state.Utilities
             public const string Contains = "Contains";
             public const string Substring = "Substring";
             public const string Trim = "Trim";
+            public const string StartsWith = "StartsWith";
+            public const string EndsWith = "EndsWith";
         }
     }
 }

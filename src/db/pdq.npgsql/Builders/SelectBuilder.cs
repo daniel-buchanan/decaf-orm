@@ -1,133 +1,126 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using pdq.common;
+using pdq.common.Templates;
+using pdq.common.Utilities;
+using pdq.db.common;
 using pdq.db.common.Builders;
 using pdq.state;
+using pdq.state.QueryTargets;
 
 namespace pdq.npgsql.Builders
 {
-	public class SelectBuilder : db.common.Builders.SelectBuilder
-	{
+    public class SelectBuilder : db.common.Builders.SelectBuilder
+    {
         private readonly QuotedIdentifierBuilder quotedIdentifierBuilder;
 
-        protected override string CommentCharacter => "--";
+        protected override string CommentCharacter => Constants.Comment;
 
         public SelectBuilder(
+            IHashProvider hashProvider,
             QuotedIdentifierBuilder quotedIdentifierBuilder,
-            db.common.Builders.IWhereBuilder whereBuilder)
-            : base(new SqlBuilder(), whereBuilder)
+            db.common.Builders.IWhereBuilder whereBuilder,
+            PdqOptions pdqOptions)
+            : base(whereBuilder, hashProvider, pdqOptions)
         {
             this.quotedIdentifierBuilder = quotedIdentifierBuilder;
         }
 
-        protected override void AddColumns(ISelectQueryContext context)
+        protected override void AddColumns(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            this.sqlBuilder.IncreaseIndent();
+            sqlBuilder.IncreaseIndent();
             var columns = context.Columns.ToArray();
 
             var lastColumnIndex = columns.Length - 1;
             for(var i = 0; i < columns.Length; i++)
             {
-                this.sqlBuilder.PrependIndent();
+                sqlBuilder.PrependIndent();
                 var delimiter = string.Empty;
-                if (i < lastColumnIndex) delimiter = ",";
-                this.quotedIdentifierBuilder.AddSelect(columns[i], this.sqlBuilder);
-                this.sqlBuilder.Append(delimiter);
-                this.sqlBuilder.AppendLine();
+                if (i < lastColumnIndex) delimiter = Constants.Seperator;
+                this.quotedIdentifierBuilder.AddSelect(columns[i], sqlBuilder);
+                sqlBuilder.Append(delimiter);
+                sqlBuilder.AppendLine();
             }
 
-            this.sqlBuilder.DecreaseIndent();
+            sqlBuilder.DecreaseIndent();
         }
 
-        protected override void AddTables(ISelectQueryContext context, IList<string> parameters)
+        protected override void AddTables(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            this.sqlBuilder.AppendLine("from");
-            this.sqlBuilder.IncreaseIndent();
+            sqlBuilder.AppendLine(Constants.From);
+            sqlBuilder.IncreaseIndent();
 
+            var joins = context.Joins.Select(j => j.To);
+            var filteredTables = context.QueryTargets.Where(qt => !joins.Any(j => j.IsEquivalentTo(qt))).ToList();
             var index = 0;
-            foreach (var q in context.QueryTargets)
+            var noTables = filteredTables.Count - 1;
+            foreach (var q in filteredTables)
             {
                 var delimiter = string.Empty;
-                if (index < context.Columns.Count)
-                    delimiter = ",";
+                if (index < noTables)
+                    delimiter = Constants.Seperator;
 
-                if(q is ITableTarget)
-                {
-                    var tableTarget = q as ITableTarget;
-                    this.quotedIdentifierBuilder.AddFromTable(tableTarget, this.sqlBuilder);
-                }
-                else if(q is ISelectQueryTarget)
-                {
-                    
-                    this.sqlBuilder.AppendLine("(");
-                    var queryTarget = q as ISelectQueryTarget;
-                    var parsedQuery = this.Build(queryTarget.Context, parameters);
-                    this.quotedIdentifierBuilder.AddFromQuery(parsedQuery.Sql, q.Alias, this.sqlBuilder);
-                }
+                if (q is ITableTarget tableTarget)
+                    AddFromTable(tableTarget, sqlBuilder);
+                else if (q is ISelectQueryTarget queryTarget)
+                    AddFromQuery(queryTarget, sqlBuilder, parameterManager);
+
+                if (delimiter.Length > 0)
+                    sqlBuilder.Append(delimiter);
+
+                sqlBuilder.AppendLine();
                 
                 index += 1;
             }
 
-            this.sqlBuilder.DecreaseIndent();
+            sqlBuilder.DecreaseIndent();
         }
 
-        protected override void AddJoins(ISelectQueryContext context, IList<string> parameters)
+        protected override void AddJoins(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            
-            /*foreach(var j in context.Joins)
-            {
-                var alias = string.Empty;
-                var formatStr = "join ";
-                if (!string.IsNullOrWhiteSpace(j.To.Alias))
-                    alias = j.To.Alias;
-
-                if (j.To is ISelectQueryTarget)
-                {
-                    var selectTarget = j.To as ISelectQueryTarget;
-                    formatStr += "(";
-                    this.sqlBuilder.AppendLine(formatStr);
-                    this.sqlBuilder.IncreaseIndent();
-                    Build(selectTarget.Context);
-                    this.sqlBuilder.DecreaseIndent();
-                    this.sqlBuilder.AppendLine(") as {0}{1}{0}", this.quote, alias);
-                }
-                else if(j.To is ITableTarget)
-                {
-                    var tableTarget = j.To as ITableTarget;
-                    var schema = string.Empty;
-                    if (!string.IsNullOrWhiteSpace(tableTarget.Schema))
-                    {
-                        schema = tableTarget.Schema;
-                        formatStr = "{0}{1}{0}.";
-                    }
-                    else
-                        formatStr = "{1}";
-
-                    formatStr += "{0}{2}{0}";
-
-                    if (!string.IsNullOrWhiteSpace(alias))
-                        formatStr += " {0}{3}{0}";
-                    else
-                        formatStr += "{3}";
-
-                    formatStr += " on";
-
-                    this.sqlBuilder.AppendLine(formatStr, this.quote, schema, tableTarget.Name, alias);
-                }
-
-                this.sqlBuilder.IncreaseIndent();
-                this.whereBuilder.AddWhere(j.Conditions, this.sqlBuilder);
-                this.sqlBuilder.DecreaseIndent();
-            }*/
+            foreach (var j in context.Joins) AddJoin(j, sqlBuilder, parameterManager);
         }
 
-        protected override void AddOrderBy(ISelectQueryContext context)
+        private void AddJoin(Join j, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        {
+            sqlBuilder.Append("{0} ", Constants.Join);
+
+            if (j.To is ISelectQueryTarget queryTarget)
+                AddFromQuery(queryTarget, sqlBuilder, parameterManager);
+            else if (j.To is ITableTarget tableTarget)
+                AddFromTable(tableTarget, sqlBuilder);
+
+            sqlBuilder.Append(" {0}", Constants.On);
+            sqlBuilder.AppendLine();
+
+            sqlBuilder.IncreaseIndent();
+            this.whereBuilder.AddJoin(j.Conditions, sqlBuilder, parameterManager);
+            sqlBuilder.DecreaseIndent();
+        }
+
+        private void AddFromTable(ITableTarget target, ISqlBuilder sqlBuilder)
+        {
+            sqlBuilder.PrependIndent();
+            this.quotedIdentifierBuilder.AddFromTable(target, sqlBuilder);
+        }
+
+        private void AddFromQuery(ISelectQueryTarget target, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        {
+            sqlBuilder.AppendLine(Constants.OpeningParen);
+            sqlBuilder.IncreaseIndent();
+            this.Build(target.Context, sqlBuilder, parameterManager);
+            sqlBuilder.DecreaseIndent();
+            this.quotedIdentifierBuilder.AddClosingFromQuery(target.Alias, sqlBuilder);
+        }
+
+        protected override void AddOrderBy(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             var clauses = context.OrderByClauses.ToArray();
             if (clauses.Length == 0) return;
 
-            this.sqlBuilder.AppendLine("order by");
-            this.sqlBuilder.IncreaseIndent();
+            sqlBuilder.AppendLine(Constants.OrderBy);
+            sqlBuilder.IncreaseIndent();
 
             var lastClauseIndex = clauses.Length - 1;
             for(var i = 0; i < clauses.Length; i++)
@@ -136,33 +129,35 @@ namespace pdq.npgsql.Builders
                 if (i < lastClauseIndex)
                     delimiter = ",";
 
-                this.quotedIdentifierBuilder.AddOrderBy(clauses[i], this.sqlBuilder);
-                this.sqlBuilder.AppendLine(delimiter);
+                sqlBuilder.PrependIndent();
+                this.quotedIdentifierBuilder.AddOrderBy(clauses[i], sqlBuilder);
+                sqlBuilder.Append(delimiter);
+                sqlBuilder.AppendLine();
             }
 
-            this.sqlBuilder.DecreaseIndent();
+            sqlBuilder.DecreaseIndent();
         }
 
-        protected override void AddGroupBy(ISelectQueryContext context)
+        protected override void AddGroupBy(ISelectQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             var clauses = context.GroupByClauses.ToArray();
             if (clauses.Length == 0) return;
 
-            this.sqlBuilder.AppendLine("group by");
-            this.sqlBuilder.IncreaseIndent();
+            sqlBuilder.AppendLine(Constants.GroupBy);
+            sqlBuilder.IncreaseIndent();
 
             var lastClauseIndex = clauses.Length - 1;
             for(var i = 0; i < clauses.Length; i++)
             {
                 var delimiter = string.Empty;
                 if (i < lastClauseIndex)
-                    delimiter = ",";
+                    delimiter = Constants.Seperator;
 
                 this.quotedIdentifierBuilder.AddGroupBy(clauses[i], sqlBuilder);
-                this.sqlBuilder.AppendLine(delimiter);
+                sqlBuilder.AppendLine(delimiter);
             }
 
-            this.sqlBuilder.DecreaseIndent();
+            sqlBuilder.DecreaseIndent();
         }
     }
 }

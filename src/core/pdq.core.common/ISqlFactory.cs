@@ -1,4 +1,6 @@
 ﻿using System;
+using pdq.common.Templates;
+
 namespace pdq.common
 {
     public interface ISqlFactory

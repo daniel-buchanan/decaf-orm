@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using pdq.common;
+using pdq.common.Utilities;
 
 namespace pdq.Implementation
 {
@@ -56,7 +58,15 @@ namespace pdq.Implementation
         public string GetSql()
         {
             var template = this.sqlFactory.ParseTemplate(this.context);
-            return template?.Sql;
+            return template.Sql;
+        }
+
+        /// <inheritdoc/>
+        public Dictionary<string, object> GetSqlParameters()
+        {
+            var template = this.sqlFactory.ParseTemplate(this.context);
+            var parameters = this.sqlFactory.ParseParameters(context, template) as DynamicDictionary;
+            return parameters.ToDictionary();
         }
     }
 }

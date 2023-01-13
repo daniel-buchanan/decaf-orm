@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Reflection.Emit;
 using pdq.common;
 using pdq.Exceptions;
 using pdq.state;
@@ -30,32 +31,35 @@ namespace pdq.Implementation
             var properties = this.context.Helpers().GetPropertyInformation(expression);
             foreach (var p in properties)
             {
-                var target = p.Type is object ?
-                    this.context.QueryTargets.FirstOrDefault(t => t.Alias == p.Alias) :
-                    GetQueryTarget(p.Type);
+                var target = GetQueryTargetByAlias(p.Alias);
+                if (target == null) target = GetQueryTargetByType(p.Type);
+                
                 this.context.Select(state.Column.Create(p.Name, target, p.NewName));
             }
         }
 
-        protected IQueryTarget GetQueryTarget(Type type)
+        private IQueryTarget GetQueryTargetByType(Type type)
         {
             var table = this.context.Helpers().GetTableName(type);
-            return GetQueryTarget(table);
+            return GetQueryTargetByTable(table);
         }
 
-        protected IQueryTarget GetQueryTarget(Expression expression)
-        {
-            var table = this.context.Helpers().GetTableName(expression);
-            return GetQueryTarget(table);
-        }
-
-        protected IQueryTarget GetQueryTarget(string table)
+        protected IQueryTarget GetQueryTargetByTable(string table)
         {
             var alias = this.query.AliasManager.FindByAssociation(table).FirstOrDefault();
-            if (alias == null) throw new TableNotFoundException(alias.Name, table);
+            if (alias == null) throw new TableNotFoundException(table);
 
-            var target = this.context.QueryTargets.FirstOrDefault(t => t.Alias == alias.Name);
-            if (target == null) throw new TableNotFoundException(alias.Name, table);
+            return GetQueryTargetByAlias(alias.Name);
+        }
+
+        private IQueryTarget GetQueryTargetByAlias(string alias)
+        {
+            var managedAlias = this.query.AliasManager.GetAssociation(alias);
+            if (string.IsNullOrWhiteSpace(managedAlias))
+                throw new TableNotFoundException(alias ?? "\"No ALIAS Provided\"");
+
+            var target = this.context.QueryTargets.FirstOrDefault(t => t.Alias == alias);
+            if (target == null) throw new TableNotFoundException(null, managedAlias);
             return target;
         }
 

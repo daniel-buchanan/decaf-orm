@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using pdq.common;
+using pdq.common.Utilities;
 using pdq.state;
 using pdq.state.Utilities;
 using static Dapper.SqlMapper;
@@ -83,10 +84,11 @@ namespace pdq.Implementation
         /// <inheritdoc/>
         public ISelectFrom From(Action<ISelect> query, string alias)
         {
-            var select = Create(this.context, this.query);
+            var selectContext = SelectQueryContext.Create(AliasManager.Create(), HashProvider.Create());
+            var select = Create(selectContext, this.query);
             query(select);
 
-            this.query.AliasManager.Add(null, alias);
+            this.query.AliasManager.Add(alias, "query");
             var builtQuery = state.QueryTargets.SelectQueryTarget.Create(select.context, alias);
             this.context.From(builtQuery);
 
@@ -118,13 +120,15 @@ namespace pdq.Implementation
         /// <inheritdoc/>
         public ISelectFromTyped<T> From<T>(Action<ISelectWithAlias> query, string alias)
         {
-            var select = Create(this.context, this.query);
+            var selectContext = SelectQueryContext.Create(AliasManager.Create(), this.query.HashProvider);
+            var selectQuery = Query.Create(this.query.Options, this.query.Logger, this.query.Transient, this.query.HashProvider) as IQueryInternal;
+            var select = Create(selectContext, selectQuery);
             query(select);
 
-            var target = state.QueryTargets.SelectQueryTarget.Create(select.context, select.Alias);
+            var target = state.QueryTargets.SelectQueryTarget.Create(selectContext, select.Alias ?? alias);
 
             var table = this.context.Helpers().GetTableName<T>();
-            this.query.AliasManager.Add(table, alias);
+            this.query.AliasManager.Add(table, select.Alias ?? alias);
 
             this.context.From(target);
             return Select<T>.Create(this.context, this.query);

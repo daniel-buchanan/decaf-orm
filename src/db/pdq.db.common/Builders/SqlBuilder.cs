@@ -1,22 +1,27 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace pdq.db.common.Builders
 {
 	public sealed class SqlBuilder : ISqlBuilder
 	{
-        const string Indent = "  ";
-        const string Crlf = "\r\n";
-        const string Lf = "\n";
+        public const string Indent = "  ";
 
         private int indentLevel = 0;
-        private string lineFeedChar;
+        private readonly string lineFeedChar;
         private readonly StringBuilder stringBuilder;
+        private readonly bool noOp;
 
-        public SqlBuilder()
+        private SqlBuilder(bool noOp)
 		{
             this.stringBuilder = new StringBuilder();
-            this.lineFeedChar = Crlf;
+            this.lineFeedChar = Environment.NewLine;
+            this.noOp = noOp;
 		}
+
+        public static ISqlBuilder Create() => new SqlBuilder(false);
+
+        public static ISqlBuilder CreateNoOp() => new SqlBuilder(true);
 
         /// <inheritdoc/>
         public string GetSql()
@@ -25,38 +30,49 @@ namespace pdq.db.common.Builders
         /// <inheritdoc/>
         public string LineEnding => this.lineFeedChar;
 
-        public void IncreaseIndent()
-            => this.indentLevel = this.indentLevel + 1;
-
-        public void DecreaseIndent()
+        public int IncreaseIndent()
         {
-            if (this.indentLevel == 0) return;
-            this.indentLevel = this.indentLevel - 1;
+            if (noOp) return this.indentLevel;
+            this.indentLevel = this.indentLevel + 1;
+            return this.indentLevel;
         }
 
-        public void UseCrlf()
-            => this.lineFeedChar = Crlf;
-
-        public void UseLf()
-            => this.lineFeedChar = Lf;
+        public int DecreaseIndent()
+        {
+            if (noOp) return this.indentLevel;
+            if (this.indentLevel == 0) return this.indentLevel;
+            this.indentLevel = this.indentLevel - 1;
+            return this.indentLevel;
+        }
 
         public void Append(string value)
-            => this.stringBuilder.Append(value);
+        {
+            if (noOp) return;
+            this.stringBuilder.Append(value);
+        }
 
         public void Append(string formatStr, params object[] parameters)
-            => this.stringBuilder.AppendFormat(formatStr, parameters);
+        {
+            if (noOp) return;
+            this.stringBuilder.AppendFormat(formatStr, parameters);
+        }
 
         public void AppendLine()
-            => this.stringBuilder.Append(this.lineFeedChar);
+        {
+            if (noOp) return;
+            this.stringBuilder.Append(this.lineFeedChar);
+        }
 
         public void AppendLine(string value)
         {
+            if (noOp) return;
             this.PrependIndent();
             this.stringBuilder.AppendFormat("{0}{1}", value, this.lineFeedChar);
         }
 
         public void AppendLine(string formatStr, params object[] parameters)
         {
+            if (noOp) return;
             this.PrependIndent();
             var newLength = parameters.Length + 1;
             var newEnd = parameters.Length;
@@ -71,6 +87,7 @@ namespace pdq.db.common.Builders
 
         public void PrependIndent()
         {
+            if (noOp) return;
             for(var i = 0; i < this.indentLevel; i++)
             {
                 this.stringBuilder.Append(Indent);

@@ -47,7 +47,7 @@ namespace pdq.Implementation
         private state.Column GetColumnFromExpression(Expression expression, IQueryTarget target)
         {
             var internalContext = this.context as IQueryContextInternal;
-            var columnName = internalContext.ExpressionHelper.GetName(expression);
+            var columnName = internalContext.ExpressionHelper.GetMemberName(expression);
             return state.Column.Create(columnName, target);
         }
     }

@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using pdq.common;
+using pdq.common.Templates;
 
 namespace pdq.core_tests.Mocks
 {
     public class MockSqlFactory : SqlFactory
     {
-        public MockSqlFactory()
-        {
-        }
+        public MockSqlFactory() { }
 
         protected override SqlTemplate ParseDeleteQuery(IQueryContext context)
             => GetTemplate();
@@ -24,25 +23,17 @@ namespace pdq.core_tests.Mocks
 
         private static SqlTemplate GetTemplate() => SqlTemplate.Create(string.Empty, null);
 
-        protected override Dictionary<string, object> ParseSelectParameters(IQueryContext context, SqlTemplate template)
-        {
-            return new Dictionary<string, object>();
-        }
+        protected override Dictionary<string, object> ParseSelectParameters(IQueryContext context)
+            => new Dictionary<string, object>();
 
-        protected override Dictionary<string, object> ParseDeleteParameters(IQueryContext context, SqlTemplate template)
-        {
-            return new Dictionary<string, object>();
-        }
+        protected override Dictionary<string, object> ParseDeleteParameters(IQueryContext context)
+            => new Dictionary<string, object>();
 
-        protected override Dictionary<string, object> ParseUpdateParameters(IQueryContext context, SqlTemplate template)
-        {
-            return new Dictionary<string, object>();
-        }
+        protected override Dictionary<string, object> ParseUpdateParameters(IQueryContext context)
+            => new Dictionary<string, object>();
 
-        protected override Dictionary<string, object> ParseInsertParameters(IQueryContext context, SqlTemplate template)
-        {
-            return new Dictionary<string, object>();
-        }
+        protected override Dictionary<string, object> ParseInsertParameters(IQueryContext context)
+            => new Dictionary<string, object>();
     }
 }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using pdq.common;
 using pdq.db.common.Builders;
 using pdq.state;
 using pdq.state.QueryTargets;
@@ -12,7 +13,7 @@ namespace pdq.npgsql.Builders
         public QuotedIdentifierBuilder(NpgsqlOptions options)
 		{
             if (options.QuotedIdentifiers)
-                this.quote = "\"";
+                this.quote = Constants.ColumnQuote;
         }
 
         public void AddSelect(Column column, ISqlBuilder sqlBuilder)
@@ -23,7 +24,7 @@ namespace pdq.npgsql.Builders
             if (string.IsNullOrWhiteSpace(column.NewName))
                 sqlBuilder.Append("{0}{1}{0}", this.quote, column.Name);
             else
-                sqlBuilder.Append("{0}{1}{0} as {0}{1}{0}", this.quote, column.Name, column.NewName);
+                sqlBuilder.Append("{0}{1}{0} as {0}{2}{0}", this.quote, column.Name, column.NewName);
         }
 
         public void AddColumn(Column column, ISqlBuilder sqlBuilder)
@@ -44,31 +45,20 @@ namespace pdq.npgsql.Builders
             if (!string.IsNullOrWhiteSpace(tableTarget.Alias))
                 format = format + "{0}{2}{0} as {0}{3}{0}";
 
-            sqlBuilder.AppendLine(format, this.quote, tableTarget.Schema, tableTarget.Name, tableTarget.Alias);
+            sqlBuilder.Append(format, this.quote, tableTarget.Schema, tableTarget.Name, tableTarget.Alias);
         }
 
-        public void AddFromQuery(string query, string alias, ISqlBuilder sqlBuilder)
+        public void AddClosingFromQuery(string alias, ISqlBuilder sqlBuilder)
         {
-            sqlBuilder.AppendLine("(");
-            query = query.Replace("\r\n", "\r\n  ");
-            sqlBuilder.AppendLine(query);
-            sqlBuilder.AppendLine(") as {0}{1}{0}", this.quote, alias);
-        }
-
-        public void AddJoinTable()
-        {
-
-        }
-
-        public void AddJoinQuery()
-        {
-
+            sqlBuilder.PrependIndent();
+            sqlBuilder.Append("{0} as {1}{2}{1}", Constants.ClosingParen, this.quote, alias);
         }
 
         public void AddOrderBy(OrderBy orderBy, ISqlBuilder sqlBuilder)
         {
             var alias = string.Empty;
-            var formatStr = "{0}{2}{0} {3}{4}";
+            var formatStr = "{0}{2}{0} {3}";
+            var order = orderBy.Order == common.SortOrder.Ascending ? Constants.Ascending : Constants.Descending;
             if (!string.IsNullOrWhiteSpace(orderBy.Source.Alias))
             {
                 alias = orderBy.Source.Alias;
@@ -79,7 +69,7 @@ namespace pdq.npgsql.Builders
                 formatStr = "{1}" + formatStr;
             }
 
-            sqlBuilder.Append(formatStr, this.quote, alias, orderBy.Name, orderBy.Order);
+            sqlBuilder.Append(formatStr, this.quote, alias, orderBy.Name, order);
         }
 
         public void AddGroupBy(GroupBy groupBy, ISqlBuilder sqlBuilder)

@@ -25,6 +25,20 @@ namespace pdq.Implementation
             => new Select<T1, T2, T3, T4>(context, query);
 
         /// <inheritdoc/>
+        public ISelectFromTyped<T1, T2, T3, T4, T5> From<T5>()
+        {
+            AddFrom<T5>();
+            return Select<T1, T2, T3, T4, T5>.Create(this.context, this.query);
+        }
+
+        /// <inheritdoc/>
+        public ISelectFromTyped<T1, T2, T3, T4, T5> From<T5>(Expression<Func<T5, object>> expression)
+        {
+            AddFrom<T5>(expression);
+            return Select<T1, T2, T3, T4, T5>.Create(this.context, this.query);
+        }
+
+        /// <inheritdoc/>
         public IGroupByThenTyped<T1, T2, T3, T4> GroupBy(Expression<Func<T1, T2, T3, T4, object>> builder)
         {
             this.AddGroupBy(builder);

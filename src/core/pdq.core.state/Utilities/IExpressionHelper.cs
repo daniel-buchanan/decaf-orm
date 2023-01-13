@@ -9,10 +9,25 @@ namespace pdq.state.Utilities
 {
     internal interface IExpressionHelper
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         EqualityOperator ConvertExpressionTypeToEqualityOperator(Expression expression);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         EqualityOperator ConvertExpressionTypeToEqualityOperator(ExpressionType type);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         string GetMethodName(Expression expression);
 
         /// <summary>
@@ -20,16 +35,28 @@ namespace pdq.state.Utilities
         /// </summary>
         /// <param name="expression">The expression to get the name from</param>
         /// <returns>The name of the field</returns>
-        string GetName(Expression expression);
+        string GetMemberName(Expression expression);
 
         /// <summary>
         /// Get the name of the parameter used in an expression. i.e. p => p.ID (p would be the parameter name). Note that this *should* be a SIMPLE expression, as in the previous example.
         /// </summary>
-        /// <param name="expr">The expression to get the parameter name from</param>
+        /// <param name="expression">The expression to get the parameter name from</param>
         /// <returns>The paramter name</returns>
-        string GetParameterName(Expression expr);
+        string GetParameterName(Expression expression);
 
-        Type GetType(Expression expression);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        Type GetMemberType(Expression expression);
+
+        /// <summary>
+        /// Get the type of the parameter used in the expression. i.e. p => p.Id (p would be the parameter).
+        /// </summary>
+        /// <param name="expression">The expression to parse.</param>
+        /// <returnsThe type of the expression parameter></returns>
+        Type GetParameterType(Expression expression);
 
         /// <summary>
         /// Get the table/type name

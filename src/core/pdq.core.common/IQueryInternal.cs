@@ -1,4 +1,5 @@
 ﻿using System;
+using pdq.common.Logging;
 using pdq.common.Utilities;
 
 [assembly:System.Runtime.CompilerServices.InternalsVisibleTo("pdq")]
@@ -36,6 +37,11 @@ namespace pdq.common
         /// Gets the <see cref="IHashProvider"/> for this query.
         /// </summary>
         IHashProvider HashProvider { get; }
+
+        /// <summary>
+        /// Gets the <see cref="ILoggerProxy"/> for this query.
+        /// </summary>
+        ILoggerProxy Logger { get; }
 
 		/// <summary>
         /// Set the <see cref="IQueryContext"/> associated with this query.

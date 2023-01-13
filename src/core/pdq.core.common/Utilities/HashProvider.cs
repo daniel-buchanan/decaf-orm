@@ -8,7 +8,22 @@ namespace pdq.common.Utilities
 {
     public interface IHashProvider
     {
+        /// <summary>
+        /// Get a hashed value for the provided input.
+        /// </summary>
+        /// <typeparam name="T">The type of the object to hash.</typeparam>
+        /// <param name="input">The object to be hashed.</param>
+        /// <returns>The Hash as a Bas64 encdoded string.</returns>
         string GetHash<T>(T input);
+
+        /// <summary>
+        /// Get a hashed value for the provided input and appendix.
+        /// </summary>
+        /// <typeparam name="T">The type of the object to hash.</typeparam>
+        /// <param name="input">The object to be hashed.</param>
+        /// <param name="appendix">The object to use as an appendix.</param>
+        /// <returns></returns>
+        string GetHash<T>(T input, object appendix);
     }
 
     public class HashProvider : IHashProvider
@@ -17,20 +32,28 @@ namespace pdq.common.Utilities
 
 		public HashProvider() => this.hashAlgorithm = SHA256.Create();
 
+        public static IHashProvider Create() => new HashProvider();
+
         /// <inheritdoc/>
         public string GetHash<T>(T input)
         {
-            byte[] hash;
             var json = JsonConvert.SerializeObject(input);
-            using(var memoryStream = new MemoryStream())
-            using (var writer = new StreamWriter(memoryStream))
-            {
-                writer.Write(json);
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                hash = this.hashAlgorithm.ComputeHash(memoryStream);
-            }
+            var hash = this.hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(json));
 
             return Convert.ToBase64String(hash);
+        }
+
+        /// <inheritdoc/>
+        public string GetHash<T>(T input, object appendix)
+        {
+            var json = JsonConvert.SerializeObject(input);
+            var hashBytes = this.hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(json));
+            json = JsonConvert.SerializeObject(appendix);
+            var appendixHashBytes = this.hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(json));
+
+            var hash = Convert.ToBase64String(hashBytes);
+            var appendixHash = Convert.ToBase64String(appendixHashBytes);
+            return $"{hash}:{appendixHash}";
         }
     }
 }

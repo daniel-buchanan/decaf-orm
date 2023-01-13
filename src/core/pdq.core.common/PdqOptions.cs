@@ -17,6 +17,7 @@ namespace pdq
             TrackTransients = false;
             CloseConnectionOnCommitOrRollback = false;
             LoggerProxyType = typeof(DefaultLogger);
+            IncludeHeaderCommentsInSql = true;
         }
 
         /// <summary>
@@ -41,6 +42,11 @@ namespace pdq
         /// Whether or not to close the connection on commit or rollback of the transaction.
         /// </summary>
         public bool CloseConnectionOnCommitOrRollback { get; private set; }
+
+        /// <summary>
+        /// Whether or not to include header comments in generated SQL.
+        /// </summary>
+        public bool IncludeHeaderCommentsInSql { get; private set; }
 
         /// <summary>
         /// The type of the logger proxy to use.

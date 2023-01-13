@@ -1,16 +1,21 @@
 ﻿using System;
+using System.Data.Common;
 using System.Linq;
+using System.Reflection.Emit;
 using pdq.common;
+using pdq.common.Templates;
 using pdq.db.common;
 using pdq.db.common.Builders;
 using pdq.state;
 using pdq.state.Conditionals;
+using static Npgsql.Replication.PgOutput.Messages.RelationMessage;
 
 namespace pdq.npgsql.Builders
 {
     public class WhereBuilder : db.common.Builders.IWhereBuilder
     {
         private readonly IValueParser valueParser;
+
         private readonly QuotedIdentifierBuilder quotedIdentifierBuilder;
 
         public WhereBuilder(
@@ -21,111 +26,192 @@ namespace pdq.npgsql.Builders
             this.quotedIdentifierBuilder = quotedIdentifierBuilder;
         }
 
-        public void AddWhere(IWhere context, ISqlBuilder sqlBuilder) => AddWhere(context, sqlBuilder, 0);
-
-        private void AddWhere(IWhere context, ISqlBuilder sqlBuilder, int level)
+        public void AddWhere(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            if (context == null) return;
+            if (clause == null) return;
+            sqlBuilder.AppendLine(Constants.Where);
 
-            sqlBuilder.AppendLine("where");
+            AddWhere(clause, sqlBuilder, parameterManager, 0);
+        }
+
+        public void AddJoin(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        {
+            if (clause == null) return;
+            AddWhere(clause, sqlBuilder, parameterManager, 0);
+        }
+
+        private void AddWhere(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
+        {
+            if (clause == null) return;
 
             if (level > 0)
-                sqlBuilder.IncreaseIndent();
+                level = sqlBuilder.IncreaseIndent();
 
-            sqlBuilder.AppendLine("(");
+            if (clause is And ||
+                clause is Or ||
+                clause is Not)
+                AddAndOrNot(clause, sqlBuilder, parameterManager, level);
+            else AddClause(clause, sqlBuilder, parameterManager);
 
-            if(!context.Children.Any())
-            {
-                sqlBuilder.IncreaseIndent();
-                sqlBuilder.PrependIndent();
-                if (context is IColumn) AddColumn(context as IColumn, sqlBuilder, level);
-                else if (context is ColumnMatch) AddColumnMatch(context as ColumnMatch, sqlBuilder, level);
-                else if (context is IBetween) AddBetween(context as IBetween, sqlBuilder, level);
-                else if (context is IInValues) AddInValues(context as IInValues, sqlBuilder, level);
+            if (level > 0)
                 sqlBuilder.DecreaseIndent();
 
-                sqlBuilder.AppendLine();
-                sqlBuilder.Append(")");
+            sqlBuilder.AppendLine();
+        }
 
-                return;
-            }
+        private void AddClause(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        {
+            sqlBuilder.PrependIndent();
+            sqlBuilder.Append(Constants.OpeningParen);
+            
+            if (clause is IColumn) AddColumn(clause as IColumn, sqlBuilder, parameterManager);
+            else if (clause is ColumnMatch) AddColumnMatch(clause as ColumnMatch, sqlBuilder);
+            else if (clause is IBetween) AddBetween(clause as IBetween, sqlBuilder, parameterManager);
+            else if (clause is IInValues) AddInValues(clause as IInValues, sqlBuilder, parameterManager);
+            
+            sqlBuilder.Append(Constants.ClosingParen);
+        }
 
+        private void AddAndOrNot(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
+        {
+            sqlBuilder.AppendLine(Constants.OpeningParen);
+
+            if (clause is And ||
+               clause is Or)
+                AddAndOr(clause, sqlBuilder, parameterManager, level);
+            else if (clause is Not)
+                AddNot(clause, sqlBuilder, parameterManager, level);
+
+            sqlBuilder.PrependIndent();
+            sqlBuilder.Append(Constants.ClosingParen);
+        }
+
+        private void AddAndOr(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
+        {
             string combinator = null;
-            if (context is And) combinator = "and";
-            else if (context is Or) combinator = "or";
-            else if (context is Not) sqlBuilder.Append("NOT ");
+            if (clause is And) combinator = Constants.And;
+            else if (clause is Or) combinator = Constants.Or;
 
             var indentLevel = level + 1;
             var index = 0;
-            foreach (var w in context.Children)
+            var noChildren = clause.Children.Count - 1;
+            foreach (var w in clause.Children)
             {
-                AddWhere(w, sqlBuilder, indentLevel);
+                AddWhere(w, sqlBuilder, parameterManager, indentLevel);
 
-                if (index > 0) sqlBuilder.AppendLine(combinator);
+                if (index >= 0 && index < noChildren)
+                {
+                    sqlBuilder.IncreaseIndent();
+                    sqlBuilder.AppendLine(combinator);
+                    sqlBuilder.DecreaseIndent();
+                }
                 index += 1;
             }
-
-            sqlBuilder.AppendLine();
-            sqlBuilder.Append(")");
-
-            if (level > 0)
-                sqlBuilder.DecreaseIndent();
         }
 
-        private void AddColumn(IColumn context, ISqlBuilder sqlBuilder, int level)
+        private void AddNot(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
         {
-            this.quotedIdentifierBuilder.AddColumn(context.Details, sqlBuilder);
+            var not = clause as Not;
+            sqlBuilder.IncreaseIndent();
+            sqlBuilder.AppendLine(Constants.Not);
+            sqlBuilder.DecreaseIndent();
 
-            var op = context.EqualityOperator.ToOperatorString();
+            AddWhere(not.Item, sqlBuilder, parameterManager, level);
+        }
+
+        private void AddColumn(IColumn column, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        {
+            if(column.ValueFunction is state.Conditionals.ValueFunctions.StringContains ||
+               column.ValueFunction is state.Conditionals.ValueFunctions.StringStartsWith ||
+               column.ValueFunction is state.Conditionals.ValueFunctions.StringEndsWith)
+            {
+                AddLike(column, sqlBuilder, parameterManager);
+                return;
+            }
+
+            var parameter = parameterManager.Add(column, column.Value);
+            var op = column.EqualityOperator.ToOperatorString();
+            this.quotedIdentifierBuilder.AddColumn(column.Details, sqlBuilder);
             sqlBuilder.Append(" {0} ", op);
 
-            var value = this.valueParser.ToString(context.Value, context.ValueType);
+            var parameterNeedsQuoting = valueParser.ValueNeedsQuoting(column.ValueType);
+            var quoteChar = parameterNeedsQuoting ? Constants.ValueQuote : string.Empty;
+            sqlBuilder.Append("{0}{1}{0}", quoteChar, parameter.Name);
+        }
 
-            if (context.EqualityOperator == EqualityOperator.Like)
-                sqlBuilder.Append("'%{0}%'", value);
-            else if (context.EqualityOperator == EqualityOperator.StartsWith)
-                sqlBuilder.Append("'{0}%'", value);
-            else if (context.EqualityOperator == EqualityOperator.EndsWith)
-                sqlBuilder.Append("'%{0}'", value);
+        private void AddLike(IColumn column, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        {
+            string value, format;
+
+            if (column.ValueFunction is state.Conditionals.ValueFunctions.StringContains contains)
+            {
+                format = "%{0}%";
+                value = contains.Value;
+            }
+            else if (column.ValueFunction is state.Conditionals.ValueFunctions.StringStartsWith startsWith)
+            {
+                format = "{0}%";
+                value = startsWith.Value;
+            }
+            else if (column.ValueFunction is state.Conditionals.ValueFunctions.StringEndsWith endsWith)
+            {
+                format = "%{0}";
+                value = endsWith.Value;
+            }
             else
-                sqlBuilder.Append(this.valueParser.QuoteValue(context.Value, context.ValueType));
+            {
+                return;
+            }
+
+            var parameter = parameterManager.Add(column, value);
+
+            this.quotedIdentifierBuilder.AddColumn(column.Details, sqlBuilder);
+            sqlBuilder.Append(" {0} {1}", Constants.Like, Constants.ValueQuote);
+            sqlBuilder.Append(format, parameter.Name);
+            sqlBuilder.Append(Constants.ValueQuote);
         }
 
-        private void AddColumnMatch(ColumnMatch context, ISqlBuilder sqlBuilder, int level)
+        private void AddColumnMatch(ColumnMatch columnMatch, ISqlBuilder sqlBuilder)
         {
-            this.quotedIdentifierBuilder.AddColumn(context.Left, sqlBuilder);
+            this.quotedIdentifierBuilder.AddColumn(columnMatch.Left, sqlBuilder);
 
-            var op = context.EqualityOperator.ToOperatorString();
+            var op = columnMatch.EqualityOperator.ToOperatorString();
             sqlBuilder.Append(" {0} ", op);
 
-            this.quotedIdentifierBuilder.AddColumn(context.Right, sqlBuilder);
+            this.quotedIdentifierBuilder.AddColumn(columnMatch.Right, sqlBuilder);
         }
 
-        private void AddBetween(IBetween context, ISqlBuilder sqlBuilder, int level)
+        private void AddBetween(IBetween between, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            this.quotedIdentifierBuilder.AddColumn(context.Column, sqlBuilder);
+            var betweenStartParameter = parameterManager.Add(ParameterWrapper.Create(between, "start"), between.Start);
+            var betweenEndParameter = parameterManager.Add(ParameterWrapper.Create(between, "end"), between.End);
 
-            var start = this.valueParser.QuoteValue(context.Start, context.ValueType);
-            var end = this.valueParser.QuoteValue(context.End, context.ValueType);
+            this.quotedIdentifierBuilder.AddColumn(between.Column, sqlBuilder);
+
+            var start = this.valueParser.QuoteValue(betweenStartParameter.Name, between.ValueType);
+            var end = this.valueParser.QuoteValue(betweenEndParameter.Name, between.ValueType);
             sqlBuilder.Append(" between {0} and {1}", start, end);
         }
 
-        private void AddInValues(IInValues context, ISqlBuilder sqlBuilder, int level)
+        private void AddInValues(IInValues inValues, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            this.quotedIdentifierBuilder.AddColumn(context.Column, sqlBuilder);
-            sqlBuilder.AppendLine(" in (");
+            this.quotedIdentifierBuilder.AddColumn(inValues.Column, sqlBuilder);
+            sqlBuilder.AppendLine(" in {0}", Constants.OpeningParen);
             sqlBuilder.IncreaseIndent();
+            var parameterNeedsQuoting = valueParser.ValueNeedsQuoting(inValues.ValueType);
 
-            var values = context.GetValues().ToArray();
-            var lastValueIndex = values.Length - 1;
+            var values = inValues.GetValues().ToArray();
+            var lastValueIndex = values.Length;
             for (var i = 0; i < values.Length; i++)
             {
+                var parameter = parameterManager.Add(ParameterWrapper.Create(inValues, i), values[i]);
                 var seperator = i <= lastValueIndex ? "," : string.Empty;
-                sqlBuilder.AppendLine("{0}{1}",valueParser.QuoteValue(values[i], context.ValueType), seperator);
+                var quoteChar = parameterNeedsQuoting ? Constants.ValueQuote : string.Empty;
+                sqlBuilder.AppendLine("{0}{1}{0}{2}", quoteChar, parameter.Name, seperator);
             }
 
             sqlBuilder.DecreaseIndent();
-            sqlBuilder.Append(")");
+            sqlBuilder.Append(Constants.ClosingParen);
         }
     }
 }

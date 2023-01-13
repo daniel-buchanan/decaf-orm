@@ -54,6 +54,10 @@ namespace pdq.common
             => ConfigureProperty(nameof(PdqOptions.CloseConnectionOnCommitOrRollback), true);
 
         /// <inheritdoc/>
+        public void DisableSqlHeaderComments()
+            => ConfigureProperty(nameof(PdqOptions.IncludeHeaderCommentsInSql), false);
+
+        /// <inheritdoc/>
         public void SetConnectionFactory<T>() where T : IConnectionFactory
             => ConfigureProperty(nameof(PdqOptions.ConnectionFactoryType), typeof(T));
 

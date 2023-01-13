@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
 using pdq.core_tests.Mocks;
 using pdq.core_tests.Models;
+using pdq.Exceptions;
 using pdq.state;
 using pdq.state.Conditionals;
 using pdq.state.Conditionals.ValueFunctions;
@@ -140,6 +141,28 @@ namespace pdq.core_tests
                 c => c.Name.Equals(nameof(Person.Email)),
                 c => c.Name.Equals(nameof(Person.CreatedAt)),
                 c => c.Name.Equals(nameof(Person.AddressId)));
+        }
+
+        [Fact]
+        public void SelectFromNonExistentTableThrows()
+        {
+            // Arrange
+
+            // Act
+            Action method = () =>
+            {
+                this.query.Select()
+                    .From("users", "u")
+                    .Where(b => b.Column("name", "p").Is().StartsWith("bob"))
+                    .Select(b => new
+                    {
+                        id = b.Is("id", "u"),
+                        name = b.Is("name", "p")
+                    });
+            };
+
+            // Assert
+            method.Should().Throw<TableNotFoundException>();
         }
 
         public static IEnumerable<object[]> DateTimeExtensionTests

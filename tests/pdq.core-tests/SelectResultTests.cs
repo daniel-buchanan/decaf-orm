@@ -94,11 +94,11 @@ namespace pdq.core_tests
             // Act
             Action method = () =>
             {
-                interim.Select(b => new Person
+                interim.Select(p => new Person
                 {
-                    Id = b.Id,
-                    FirstName = b.FirstName.ToLower(),
-                    LastName = b.LastName.ToUpper()
+                    Id = p.Id,
+                    FirstName = p.FirstName.ToLower(),
+                    LastName = p.LastName.ToUpper()
                 });
             };
 
@@ -117,11 +117,11 @@ namespace pdq.core_tests
             // Act
             Action method = () =>
             {
-                interim.Select(b => new Person
+                interim.Select(p => new Person
                 {
-                    Id = b.Id,
-                    FirstName = b.FirstName.Substring(1),
-                    LastName = b.LastName
+                    Id = p.Id,
+                    FirstName = p.FirstName.Substring(1),
+                    LastName = p.LastName
                 });
             };
 

@@ -27,8 +27,8 @@ namespace pdq.npgsql
         /// <inheritdoc/>
         public T FromString<T>(string value)
         {
-            bool isNullable = this.reflectionHelper.IsNullableType<T>();
-            Type underlyingType = this.reflectionHelper.GetUnderlyingType<T>();
+            var isNullable = this.reflectionHelper.IsNullableType<T>();
+            var underlyingType = this.reflectionHelper.GetUnderlyingType<T>();
 
             if (isNullable && value == null) return default(T);
 
@@ -53,7 +53,7 @@ namespace pdq.npgsql
             }
 
             if (underlyingType == typeof(bool))
-                return ChangeType<T>(value == "1" ? true : false);
+                return ChangeType<T>(value == "1");
 
             if (underlyingType == typeof(DateTime))
                 return ChangeType<T>(Convert.ToDateTime(value));
@@ -183,8 +183,7 @@ namespace pdq.npgsql
         /// <inheritdoc/>
         public bool ValueNeedsQuoting(Type type)
         {
-            bool isNullable = this.reflectionHelper.IsNullableType(type);
-            Type underlyingType = this.reflectionHelper.GetUnderlyingType(type);
+            var underlyingType = this.reflectionHelper.GetUnderlyingType(type);
 
             if (underlyingType == typeof(bool))
             {

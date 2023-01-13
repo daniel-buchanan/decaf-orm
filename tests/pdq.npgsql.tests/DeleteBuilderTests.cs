@@ -60,8 +60,7 @@ namespace pdq.npgsql.tests
             // Act
             var q = this.query.Delete()
                 .From("users", "u")
-                .Where(b => b.Column("sub", "u").Is().EqualTo(subValue))
-                .Output("id");
+                .Where(b => b.Column("sub", "u").Is().EqualTo(subValue));
 
             var parameters = q.GetSqlParameters();
 
@@ -134,7 +133,7 @@ namespace pdq.npgsql.tests
         public void DeleteWithMultipleConditionsSucceeds()
         {
             // Arrange
-            var expected = "delete from\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  (u.sub = '@p1')\\r\\n  and\\r\\n  (u.email like '%@p2')\\r\\n)\\r\\nreturning\\r\\n  deleted.id\\r\\n";
+            var expected = "delete from\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  (u.sub = '@p1')\\r\\n  and\\r\\n  (u.email like '%@p2')\\r\\n)\\r\\nreturning\\r\\n  deleted.id,\\r\\n  deleted.sub\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -149,7 +148,8 @@ namespace pdq.npgsql.tests
                         ba.Column("email", "u").Is().EndsWith(".com");
                     });
                 })
-                .Output("id");
+                .Output("id")
+                .Output("sub");
 
             var sql = q.GetSql();
 

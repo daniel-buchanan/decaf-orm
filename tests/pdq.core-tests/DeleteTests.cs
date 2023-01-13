@@ -88,9 +88,7 @@ namespace pdq.core_tests
             // Assert
             var context = this.query.Context as IDeleteQueryContext;
             context.QueryTargets.Should().HaveCount(1);
-            var and = context.WhereClause as And;
-            and.Should().NotBeNull();
-            var where = and.Children.First() as IColumn;
+            var where = context.WhereClause as state.Conditionals.IColumn;
             where.Should().NotBeNull();
             where.Details.Name.Should().Be("last_name");
             where.Details.Source.Alias.Should().Be("p");

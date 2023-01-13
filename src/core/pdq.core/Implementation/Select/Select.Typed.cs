@@ -6,33 +6,13 @@ using pdq.state.QueryTargets;
 
 namespace pdq.Implementation
 {
-    internal class SelectTypedBase : SelectBase
+    internal abstract class SelectTyped : SelectCommon
 	{
-        protected SelectTypedBase(
+        protected SelectTyped(
             ISelectQueryContext context,
             IQueryInternal query)
             : base(context, query)
         {
-        }
-
-        protected void AddFrom<T>(Expression<Func<T, object>> expression = null)
-        {
-            string managedTable, managedAlias;
-
-            if (expression is null)
-            {
-                managedTable = this.context.Helpers().GetTableName<T>();
-                managedAlias = this.query.AliasManager.Add(null, managedTable);
-            }
-            else
-            {
-                var table = this.context.Helpers().GetTableName(expression);
-                var alias = this.context.Helpers().GetTableAlias(expression);
-                managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
-                managedAlias = this.query.AliasManager.Add(alias, table);
-            }
-
-            this.context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
         }
 
         protected void AddJoin<T1, T2>(Expression expression, JoinType type)

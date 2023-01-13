@@ -212,9 +212,8 @@ namespace pdq.core_tests.Services.Command
             // Assert
             context.Should().NotBeNull();
             var deleteContext = context as IDeleteQueryContext;
-            deleteContext.WhereClause.Should().BeOfType<state.Conditionals.Or>();
-            var orClause = deleteContext.WhereClause as state.Conditionals.Or;
-            var clause = orClause.Children.First() as state.Conditionals.And;
+            deleteContext.WhereClause.Should().BeOfType<state.Conditionals.And>();
+            var clause = deleteContext.WhereClause as state.Conditionals.And;
             clause.Children.Should().HaveCount(2);
             var left = clause.Children.ToArray()[0] as state.Conditionals.Column<int>;
             var right = clause.Children.ToArray()[1] as state.Conditionals.Column<int>;

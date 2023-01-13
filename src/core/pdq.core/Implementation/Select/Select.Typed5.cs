@@ -5,24 +5,24 @@ using pdq.state;
 
 namespace pdq.Implementation
 {
-    internal class Select<T1, T2, T3, T4, T5>
-        : SelectTypedBase,
+    internal class SelectTyped<T1, T2, T3, T4, T5>
+        : SelectTyped,
         ISelectFromTyped<T1, T2, T3, T4, T5>,
         IGroupByTyped<T1, T2, T3, T4, T5>,
         IGroupByThenTyped<T1, T2, T3, T4, T5>,
         IOrderByThenTyped<T1, T2, T3, T4, T5>
     {
-        private Select(
+        private SelectTyped(
             ISelectQueryContext context,
             IQueryInternal query)
             : base(context, query)
         {
         }
 
-        public static Select<T1, T2, T3, T4, T5> Create(
+        public static SelectTyped<T1, T2, T3, T4, T5> Create(
             ISelectQueryContext context,
             IQueryInternal query)
-            => new Select<T1, T2, T3, T4, T5>(context, query);
+            => new SelectTyped<T1, T2, T3, T4, T5>(context, query);
 
         /// <inheritdoc/>
         public IGroupByThenTyped<T1, T2, T3, T4, T5> GroupBy(Expression<Func<T1, T2, T3, T4, T5, object>> builder)

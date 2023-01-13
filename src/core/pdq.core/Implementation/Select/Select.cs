@@ -13,7 +13,7 @@ using static Dapper.SqlMapper;
 namespace pdq.Implementation
 {
 	internal class Select :
-        SelectBase,
+        SelectCommon,
         ISelectWithAlias,
         ISelectFrom,
         IOrderByThen,
@@ -98,23 +98,15 @@ namespace pdq.Implementation
         /// <inheritdoc/>
         public ISelectFromTyped<T> From<T>()
         {
-            var table = this.context.Helpers().GetTableName<T>();
-            var alias = this.query.AliasManager.Add(null, table);
-            this.context.From(state.QueryTargets.TableTarget.Create(table, alias));
-            return Select<T>.Create(this.context, this.query);
+            AddFrom<T>();
+            return SelectTyped<T>.Create(this.context, this.query);
         }
 
         /// <inheritdoc/>
         public ISelectFromTyped<T> From<T>(Expression<Func<T, T>> aliasExpression)
         {
-            var table = this.context.Helpers().GetTableName(aliasExpression);
-            var alias = this.context.Helpers().GetTableAlias(aliasExpression);
-
-            var managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
-            var managedAlias = this.query.AliasManager.Add(alias, table);
-
-            this.context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
-            return Select<T>.Create(this.context, this.query);
+            AddFrom<T>(aliasExpression);
+            return SelectTyped<T>.Create(this.context, this.query);
         }
 
         /// <inheritdoc/>
@@ -131,7 +123,7 @@ namespace pdq.Implementation
             this.query.AliasManager.Add(table, select.Alias ?? alias);
 
             this.context.From(target);
-            return Select<T>.Create(this.context, this.query);
+            return SelectTyped<T>.Create(this.context, this.query);
         }
 
         /// <inheritdoc/>

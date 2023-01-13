@@ -35,6 +35,12 @@ namespace pdq.npgsql.Builders
             sqlBuilder.Append("{0}{1}{0}", this.quote, column.Name);
         }
 
+        public void AddOutput(Output output, ISqlBuilder sqlBuilder)
+        {
+            string prefix = output.Source.ToString().ToLower();
+            sqlBuilder.Append("{1}.{0}{2}{0}", this.quote, prefix, output.Name);
+        }
+
         public void AddFromTable(ITableTarget tableTarget, ISqlBuilder sqlBuilder)
         {
             var format = string.Empty;

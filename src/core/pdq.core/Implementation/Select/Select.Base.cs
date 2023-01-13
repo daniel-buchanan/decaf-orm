@@ -11,12 +11,12 @@ using pdq.state.Utilities;
 
 namespace pdq.Implementation
 {
-	internal abstract class SelectBase : Execute<ISelectQueryContext>
+	internal abstract class SelectCommon : Execute<ISelectQueryContext>
 	{
         protected readonly PdqOptions options;
         protected new readonly ISelectQueryContext context;
 
-        protected SelectBase(
+        protected SelectCommon(
             ISelectQueryContext context,
             IQuery query)
             : base((IQueryInternal)query, context)
@@ -24,6 +24,26 @@ namespace pdq.Implementation
             this.options = (query as IQueryInternal).Options;
             this.context = context;
             this.query.SetContext(this.context);
+        }
+
+        protected void AddFrom<T>(Expression<Func<T, T>> expression = null)
+        {
+            string managedTable, managedAlias;
+
+            if (expression is null)
+            {
+                managedTable = this.context.Helpers().GetTableName<T>();
+                managedAlias = this.query.AliasManager.Add(null, managedTable);
+            }
+            else
+            {
+                var table = this.context.Helpers().GetTableName(expression);
+                var alias = this.context.Helpers().GetTableAlias(expression);
+                managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
+                managedAlias = this.query.AliasManager.Add(alias, table);
+            }
+
+            this.context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
         }
 
         protected void AddColumns(Expression expression)

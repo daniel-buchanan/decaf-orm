@@ -48,7 +48,7 @@ namespace pdq.npgsql.tests
                 yield return new object[] { (long)42, "42" };
                 yield return new object[] { (double)42.2, "42.2" };
                 yield return new object[] { (uint)42, "42" };
-                yield return new object[] { new byte[] { 0, 1, 2 }, "\\x000102" };
+                yield return new object[] { new byte[] { 0, 1, 2 }, @"\x000102" };
                 yield return new object[] { true, "1" };
                 yield return new object[] { false, "0" };
                 yield return new object[] { "hello world", "hello world" };
@@ -72,7 +72,8 @@ namespace pdq.npgsql.tests
                 yield return new object[] { "42", (long)42 };
                 yield return new object[] { "42.2", (double)42.2 };
                 yield return new object[] { "42", (uint)42 };
-                yield return new object[] { "\\x000102", new byte[] { 0, 1, 2 } };
+                yield return new object[] { @"\x000102", new byte[] { 0, 1, 2 } };
+                yield return new object[] { "\\\\x000102", new byte[] { 0, 1, 2 } };
                 yield return new object[] { "1" , true};
                 yield return new object[] { "0", false };
                 yield return new object[] { "hello world", "hello world" };

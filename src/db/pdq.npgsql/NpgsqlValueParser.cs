@@ -36,7 +36,7 @@ namespace pdq.npgsql
             {
                 if (value.StartsWith(@"\x") || value.StartsWith(@"\\x"))
                 {
-                    if (value.StartsWith("@\\x")) value = value.Substring(3);
+                    if (value.StartsWith(@"\\x")) value = value.Substring(3);
                     else if (value.StartsWith(@"\x")) value = value.Substring(2);
 
                     int NumberChars = value.Length / 2;

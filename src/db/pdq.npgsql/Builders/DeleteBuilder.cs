@@ -4,6 +4,7 @@ using pdq.common.Templates;
 using pdq.common.Utilities;
 using pdq.db.common.Builders;
 using pdq.state;
+using pdq.state.QueryTargets;
 
 namespace pdq.npgsql.Builders
 {
@@ -58,27 +59,9 @@ namespace pdq.npgsql.Builders
         {
             sqlBuilder.IncreaseIndent();
 
-            var index = 0;
-            var noTables = context.QueryTargets.Count - 1;
-            foreach (var t in context.QueryTargets)
-            {
-                var delimiter = string.Empty;
-                if (index < noTables)
-                    delimiter = Constants.Seperator;
-
-                if (!(t is ITableTarget tableTarget))
-                    continue;
-
-                sqlBuilder.PrependIndent();
-                this.quotedIdentifierBuilder.AddFromTable(tableTarget, sqlBuilder);
-
-                if (delimiter.Length > 0)
-                    sqlBuilder.Append(delimiter);
-
-                sqlBuilder.AppendLine();
-
-                index += 1;
-            }
+            sqlBuilder.PrependIndent();
+            this.quotedIdentifierBuilder.AddFromTable(context.Table, sqlBuilder);
+            sqlBuilder.AppendLine();
 
             sqlBuilder.DecreaseIndent();
         }

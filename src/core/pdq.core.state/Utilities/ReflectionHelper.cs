@@ -11,7 +11,7 @@ using pdq.common;
 
 namespace pdq.state.Utilities
 {
-    internal class ReflectionHelper : IReflectionHelper
+    public sealed class ReflectionHelper : IReflectionHelper
     {
         public object GetPropertyValue(object o, string member)
         {

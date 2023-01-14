@@ -204,9 +204,8 @@ namespace pdq.core_tests.Services.Command
             // Assert
             context.Should().NotBeNull();
             var deleteContext = context as IDeleteQueryContext;
-            var clause = deleteContext.WhereClause as state.Conditionals.And;
-            clause.Children.Should().HaveCount(1);
-            var valueClause = clause.Children.First() as state.Conditionals.InValues<int>;
+            var valueClause = deleteContext.WhereClause as state.Conditionals.InValues<int>;
+            valueClause.Should().NotBeNull();
             valueClause.Column.Name.Should().Be(nameof(Person.Id));
             valueClause.ValueSet.Should().Contain(key);
         }

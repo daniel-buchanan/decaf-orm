@@ -8,7 +8,7 @@ namespace pdq.db.common.Builders
 {
 	public abstract class SelectBuilder : Builder<ISelectQueryContext>
 	{
-        public SelectBuilder(
+        protected SelectBuilder(
             IWhereBuilder whereBuilder,
             IHashProvider hashProvider,
             PdqOptions pdqOptions)

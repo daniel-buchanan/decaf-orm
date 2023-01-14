@@ -5,37 +5,37 @@ using pdq.state;
 
 namespace pdq.Implementation
 {
-    internal class Select<T>
-        : SelectTypedBase,
+    internal class SelectTyped<T>
+        : SelectTyped,
         ISelectFromTyped<T>,
         IGroupByTyped<T>,
         IGroupByThenTyped<T>,
         IOrderByThenTyped<T>
 	{
-        private Select(
+        private SelectTyped(
             ISelectQueryContext context,
             IQueryInternal query)
             : base(context, query)
         {
         }
 
-        public static Select<T> Create(
+        public static SelectTyped<T> Create(
             ISelectQueryContext context,
             IQueryInternal query)
-            => new Select<T>(context, query);
+            => new SelectTyped<T>(context, query);
 
         /// <inheritdoc/>
         public ISelectFromTyped<T, T1> From<T1>()
         {
             AddFrom<T1>();
-            return Select<T, T1>.Create(this.context, this.query);
+            return SelectTyped<T, T1>.Create(this.context, this.query);
         }
 
         /// <inheritdoc/>
-        public ISelectFromTyped<T, T1> From<T1>(Expression<Func<T1, object>> expression)
+        public ISelectFromTyped<T, T1> From<T1>(Expression<Func<T1, T1>> expression)
         {
             AddFrom<T1>(expression);
-            return Select<T, T1>.Create(this.context, this.query);
+            return SelectTyped<T, T1>.Create(this.context, this.query);
         }
 
         /// <inheritdoc/>
@@ -51,7 +51,7 @@ namespace pdq.Implementation
             JoinType type = JoinType.Default)
         {
             this.AddJoin<T, TDestination>(joinExpression, type);
-            return Select<T, TDestination>.Create(this.context, this.query);
+            return SelectTyped<T, TDestination>.Create(this.context, this.query);
         }
 
         /// <inheritdoc/>
@@ -61,7 +61,7 @@ namespace pdq.Implementation
             JoinType type = JoinType.Default)
         {
             this.AddJoin<T, TDestination>(query, joinExpression, type);
-            return Select<T, TDestination>.Create(this.context, this.query);
+            return SelectTyped<T, TDestination>.Create(this.context, this.query);
         }
 
         public ISelectFromTyped<T, TDestination> Join<TDestination>(Func<ISelectWithAlias, Expression<Func<T, TDestination, bool>>> query, JoinType type = JoinType.Default)

@@ -69,7 +69,15 @@ namespace pdq.Implementation
         {
             var b = WhereBuilder.Create(this.query.Options, this.context) as IWhereBuilderInternal;
             builder(b);
-            context.Where(b.GetClauses().First());
+            var clause = b.GetClauses().First();
+            if ((clause is state.Conditionals.And ||
+               clause is state.Conditionals.Or) &&
+               clause.Children.Count == 1)
+            {
+                clause = clause.Children.First();
+            }
+
+            this.context.Where(clause);
             return this;
         }
     }

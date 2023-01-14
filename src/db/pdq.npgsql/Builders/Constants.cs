@@ -22,6 +22,7 @@ namespace pdq.npgsql.Builders
 		public const string On = "on";
 		public const string From = "from";
 		public const string Where = "where";
+		public const string Returning = "returning";
 	}
 }
 

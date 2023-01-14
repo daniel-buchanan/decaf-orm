@@ -138,7 +138,7 @@ namespace pdq.npgsql
             if (underlyingType == typeof(DateTime))
             {
                 // convert to db format
-                return Convert.ToDateTime(value).ToString("yyyy-MM-dd HH:mm:ss");
+                return Convert.ToDateTime(value).ToString("yyyy-MM-ddTHH:mm:ss");
             }
 
             // check for integer

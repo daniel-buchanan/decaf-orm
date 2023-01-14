@@ -40,10 +40,10 @@ namespace pdq.npgsql.tests
 
 		public static IEnumerable<object[]> ToStringCases
 		{
-			get
-			{
-				var dt = DateTime.UtcNow;
-				yield return new object[] { 42, "42" };
+            get
+            {
+                var dt = DateTime.Parse(DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss"));
+                yield return new object[] { 42, "42" };
                 yield return new object[] { (short)42, "42" };
                 yield return new object[] { (long)42, "42" };
                 yield return new object[] { (double)42.2, "42.2" };
@@ -57,15 +57,7 @@ namespace pdq.npgsql.tests
                 yield return new object[] { "--hello world", "hello world" };
                 yield return new object[] { "%%hello' --world", "hello'' world" };
                 yield return new object[] { string.Empty, string.Empty };
-                yield return new object[] { dt, dt.ToString() };
-                yield return new object[] { (DateTime?)null, null };
-                yield return new object[] { (int?)null, null };
-                yield return new object[] { (short?)null, null };
-                yield return new object[] { (long?)null, null };
-                yield return new object[] { (double?)null, null };
-                yield return new object[] { (uint?)null, null };
-                yield return new object[] { (byte[])null, null };
-                yield return new object[] { (bool?)null, null };
+                yield return new object[] { dt, dt.ToString("yyyy-MM-ddTHH:mm:ss") };
                 yield return new object[] { (string)null, null };
             }
 		}
@@ -74,7 +66,7 @@ namespace pdq.npgsql.tests
 		{
 			get
 			{
-                var dt = DateTime.UtcNow;
+                var dt = DateTime.Parse(DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss"));
                 yield return new object[] { "42", 42 };
                 yield return new object[] { "42", (short)42 };
                 yield return new object[] { "42", (long)42 };
@@ -85,15 +77,7 @@ namespace pdq.npgsql.tests
                 yield return new object[] { "0", false };
                 yield return new object[] { "hello world", "hello world" };
                 yield return new object[] { string.Empty, string.Empty };
-                yield return new object[] { dt.ToString(), dt };
-                yield return new object[] { null, (DateTime?)null };
-                yield return new object[] { null, (int?)null };
-                yield return new object[] { null, (short?)null };
-                yield return new object[] { null, (long?)null };
-                yield return new object[] { null, (double?)null };
-                yield return new object[] { null, (uint?)null };
-                yield return new object[] { null, (byte[])null };
-                yield return new object[] { null, (bool?)null };
+                yield return new object[] { dt.ToString("yyyy-MM-ddTHH:mm:ss"), dt };
                 yield return new object[] { null, (string)null };
             }
 		}

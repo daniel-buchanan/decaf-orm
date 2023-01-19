@@ -33,23 +33,19 @@ namespace pdq.state.ValueSources.Insert
 
 		public static StaticValuesSource Create(IEnumerable<object[]> values)
         {
-            var previousWidth = 0;
-			foreach(var val in values)
-            {
-                var currentWidth = val?.Length ?? 0;
-                if (currentWidth == 0) throw new ArgumentOutOfRangeException(
-					 nameof(values),
-					 "At least one of the tuples provided is NULL, ensure that all value tuples are NOT null.");
+			var maxWidth = values.Max(v => v.Length);
+			var anyDifferentWidths = values.Sum(v => v.Length) / values.Count() == maxWidth;
+			var anyNulls = values.Any(v => v == null) || values.Any(v => v?.All(vv => vv != null) == false);
 
-				if (previousWidth == 0) continue;
-				if (previousWidth != currentWidth) throw new ArgumentOutOfRangeException(
-					 nameof(values),
-					 "At least one of the tuples provided has a different number of values than the others, ensure ALL tuples have the same number of values.");
+			if(anyNulls) throw new ArgumentOutOfRangeException(
+                nameof(values),
+                "At least one of the tuples provided is NULL, ensure that all value tuples are NOT null.");
 
-				 previousWidth = currentWidth;
-            }
+			if(anyDifferentWidths) throw new ArgumentOutOfRangeException(
+                nameof(values),
+                "At least one of the tuples provided has a different number of values than the others, ensure ALL tuples have the same number of values.");
 
-			return new StaticValuesSource(previousWidth, values);
+			return new StaticValuesSource(maxWidth, values);
         }
 	}
 }

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using pdq.db.common;
+using pdq.npgsql.Builders;
 using pdq.state.Utilities;
 
 namespace pdq.npgsql
@@ -69,8 +70,7 @@ namespace pdq.npgsql
             if (underlyingType == typeof(string))
             {
                 var s = Convert.ToString(value);
-                if (s == null)
-                    return default(T);
+                if (string.IsNullOrWhiteSpace(s)) return default(T);
 
                 foreach (Tuple<string, string> r in this.replacements)
                 {
@@ -80,8 +80,7 @@ namespace pdq.npgsql
                 return ChangeType<T>(s);
             }
 
-            if (value == null)
-                return default(T);
+            if (string.IsNullOrWhiteSpace(value)) return default(T);
 
             return ChangeType<T>(Convert.ToString(value));
         }
@@ -98,7 +97,7 @@ namespace pdq.npgsql
             var str = ToString(value, type);
 
             if (ValueNeedsQuoting(type))
-                return $"'{str}'";
+                return string.Format("{0}{1}{0}", Constants.ValueQuote, str);
             return str;
         }
 
@@ -185,37 +184,17 @@ namespace pdq.npgsql
         {
             var underlyingType = this.reflectionHelper.GetUnderlyingType(type);
 
-            if (underlyingType == typeof(bool))
-            {
-                return true;
-            }
-            else if (underlyingType == typeof(byte[]))
-            {
-                return true;
-            }
-            else if (underlyingType == typeof(DateTime))
-            {
-                return true;
-            }
-            else if (underlyingType == typeof(int))
-            {
-                return false;
-            }
+            if (underlyingType == typeof(bool)) return true;
+            else if (underlyingType == typeof(byte[])) return true;
+            else if (underlyingType == typeof(DateTime)) return true;
+            else if (underlyingType == typeof(int)) return false;
             else if (underlyingType == typeof(double) ||
                         underlyingType == typeof(Single) ||
                         underlyingType == typeof(float) ||
                         underlyingType == typeof(decimal))
-            {
                 return true;
-            }
-            else if (underlyingType == typeof(string))
-            {
-                return true;
-            }
-            else
-            {
-                return true;
-            }
+            else if (underlyingType == typeof(string)) return true;
+            else return true;
         }
     }
 }

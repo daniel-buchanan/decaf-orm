@@ -1,0 +1,115 @@
+﻿using System;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using pdq.common;
+using pdq.core_tests.Models;
+using Xunit;
+
+namespace pdq.npgsql.tests
+{
+	public class DeleteBuilderTypedTests
+	{
+		private readonly IQuery query;
+
+		public DeleteBuilderTypedTests()
+		{
+			var services = new ServiceCollection();
+			services.AddPdq(o =>
+			{
+				o.EnableTransientTracking();
+				o.OverrideDefaultLogLevel(LogLevel.Debug);
+				o.DisableSqlHeaderComments();
+				o.UseNpgsql(options =>
+				{
+
+				});
+			});
+			services.AddScoped<IConnectionDetails>(s => new NpgsqlConnectionDetails());
+
+            var provider = services.BuildServiceProvider();
+            var uow = provider.GetService<IUnitOfWork>();
+            var transient = uow.Begin();
+            this.query = transient.Query() as IQuery;
+        }
+
+        [Fact]
+        public void SimpleDeleteSucceeds()
+        {
+            // Arrange
+            var expected = "delete from\\r\\n  User as u\\r\\nwhere\\r\\n(u.Subject = '@p1')\\r\\nreturning\\r\\n  deleted.Id\\r\\n";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
+            var subValue = Guid.NewGuid();
+
+            // Act
+            var q = this.query.Delete()
+                .From<User>(u => u)
+                .Where(u => u.Subject == subValue)
+                .Output(u => u.Id);
+
+            var sql = q.GetSql();
+
+            // Assert
+            sql.Should().Be(expected);
+        }
+
+        [Fact]
+        public void SimpleDeleteReturnsCorrectParameters()
+        {
+            // Arrange
+            var subValue = Guid.NewGuid();
+
+            // Act
+            var q = this.query.Delete()
+                .From<User>(u => u)
+                .Where(u => u.Subject == subValue);
+
+            var parameters = q.GetSqlParameters();
+
+            // Assert
+            parameters.Should().Satisfy(
+                p => p.Key == "p1" && ((Guid)p.Value) == subValue);
+        }
+
+        [Fact]
+        public void DeleteWithLikeSucceeds()
+        {
+            // Arrange
+            var expected = "delete from\\r\\n  User as u\\r\\nwhere\\r\\n(u.FirstName like '%@p1%')\\r\\nreturning\\r\\n  deleted.Id\\r\\n";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
+            var subValue = Guid.NewGuid();
+
+            // Act
+            var q = this.query.Delete()
+                .From<User>(u => u)
+                .Where(u => u.FirstName.Contains("bob"))
+                .Output(u => u.Id);
+
+            var sql = q.GetSql();
+
+            // Assert
+            sql.Should().Be(expected);
+        }
+
+        [Fact]
+        public void DeleteWithMultipleConditionsSucceeds()
+        {
+            // Arrange
+            var expected = "delete from\\r\\n  User as u0\\r\\nwhere\\r\\n(\\r\\n  (u0.FirstName like '@p1%')\\r\\n  and\\r\\n  (u0.Email like '%@p2')\\r\\n)\\r\\nreturning\\r\\n  deleted.Id,\\r\\n  deleted.Subject\\r\\n";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
+            var subValue = Guid.NewGuid();
+
+            // Act
+            var q = this.query.Delete()
+                .From<User>()
+                .Where(u => u.FirstName.StartsWith("bob") && u.Email.EndsWith(".com"))
+                .Output(u => u.Id)
+                .Output(u => u.Subject);
+
+            var sql = q.GetSql();
+
+            // Assert
+            sql.Should().Be(expected);
+        }
+    }
+}
+

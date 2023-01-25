@@ -16,10 +16,12 @@ namespace pdq.npgsql
 
         public NpgsqlSqlFactory(
             IBuilder<ISelectQueryContext> selectBuilder,
-            IBuilder<IDeleteQueryContext> deleteBuilder)
+            IBuilder<IDeleteQueryContext> deleteBuilder,
+            IBuilder<IInsertQueryContext> insertBuilder)
         {
             this.selectBuilder = selectBuilder;
             this.deleteBuilder = deleteBuilder;
+            this.insertBuilder = insertBuilder;
         }
 
         protected override Dictionary<string, object> ParseDeleteParameters(IQueryContext context)

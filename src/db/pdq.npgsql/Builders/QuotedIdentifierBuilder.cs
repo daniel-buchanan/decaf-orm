@@ -54,6 +54,11 @@ namespace pdq.npgsql.Builders
             sqlBuilder.Append(format, this.quote, tableTarget.Schema, tableTarget.Name, tableTarget.Alias);
         }
 
+        public void AddFromTable(string table, ISqlBuilder sqlBuilder)
+        {
+            sqlBuilder.Append("{0}{1}{0}", this.quote, table);
+        }
+
         public void AddClosingFromQuery(string alias, ISqlBuilder sqlBuilder)
         {
             sqlBuilder.PrependIndent();

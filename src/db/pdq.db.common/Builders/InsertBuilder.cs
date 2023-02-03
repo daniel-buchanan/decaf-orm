@@ -29,6 +29,7 @@ namespace pdq.db.common.Builders
             AddTable(context, sqlBuilder, parameterManager);
             AddColumns(context, sqlBuilder, parameterManager);
             AddValues(context, sqlBuilder, parameterManager);
+            AddOutput(context, sqlBuilder, parameterManager);
         }
 
         protected override void GetParameters(IInsertQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)

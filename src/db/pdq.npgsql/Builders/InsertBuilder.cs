@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using pdq.common.Templates;
 using pdq.common.Utilities;
 using pdq.db.common;
@@ -140,9 +139,7 @@ namespace pdq.npgsql.Builders
         }
 
         private void AddValuesFromQuery(IInsertQueryValuesSource source, ISqlBuilder sqlBuilder)
-        {
-            selectBuilder.Build(source.Query, sqlBuilder);
-        }
+            => selectBuilder.Build(source.Query, sqlBuilder);
     }
 }
 

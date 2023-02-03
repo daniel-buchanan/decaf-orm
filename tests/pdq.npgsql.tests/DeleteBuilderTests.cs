@@ -35,7 +35,7 @@ namespace pdq.npgsql.tests
 		public void SimpleDeleteSucceeds()
 		{
 			// Arrange
-			var expected = "delete from\\r\\n  users as u\\r\\nwhere\\r\\n(u.sub = '@p1')\\r\\nreturning\\r\\n  deleted.id\\r\\n";
+			var expected = "delete from\\r\\n  users as u\\r\\nwhere\\r\\n(u.sub = '@p1')\\r\\nreturning\\r\\n  id\\r\\n";
 			expected = expected.Replace("\\r\\n", Environment.NewLine);
 			var subValue = Guid.NewGuid();
 
@@ -73,7 +73,7 @@ namespace pdq.npgsql.tests
         public void DeleteWithLikeSucceeds()
         {
             // Arrange
-            var expected = "delete from\\r\\n  users as u\\r\\nwhere\\r\\n(u.sub like '%@p1%')\\r\\nreturning\\r\\n  deleted.id\\r\\n";
+            var expected = "delete from\\r\\n  users as u\\r\\nwhere\\r\\n(u.sub like '%@p1%')\\r\\nreturning\\r\\n  id\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -93,7 +93,7 @@ namespace pdq.npgsql.tests
         public void DeleteWithStartsWithSucceeds()
         {
             // Arrange
-            var expected = "delete from\\r\\n  users as u\\r\\nwhere\\r\\n(u.sub like '@p1%')\\r\\nreturning\\r\\n  deleted.id\\r\\n";
+            var expected = "delete from\\r\\n  users as u\\r\\nwhere\\r\\n(u.sub like '@p1%')\\r\\nreturning\\r\\n  id\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -113,7 +113,7 @@ namespace pdq.npgsql.tests
         public void DeleteWithEndsWithSucceeds()
         {
             // Arrange
-            var expected = "delete from\\r\\n  users as u\\r\\nwhere\\r\\n(u.sub like '%@p1')\\r\\nreturning\\r\\n  deleted.id\\r\\n";
+            var expected = "delete from\\r\\n  users as u\\r\\nwhere\\r\\n(u.sub like '%@p1')\\r\\nreturning\\r\\n  id\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -133,7 +133,7 @@ namespace pdq.npgsql.tests
         public void DeleteWithMultipleConditionsSucceeds()
         {
             // Arrange
-            var expected = "delete from\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  (u.sub = '@p1')\\r\\n  and\\r\\n  (u.email like '%@p2')\\r\\n)\\r\\nreturning\\r\\n  deleted.id,\\r\\n  deleted.sub\\r\\n";
+            var expected = "delete from\\r\\n  users as u\\r\\nwhere\\r\\n(\\r\\n  (u.sub = '@p1')\\r\\n  and\\r\\n  (u.email like '%@p2')\\r\\n)\\r\\nreturning\\r\\n  id,\\r\\n  sub\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 

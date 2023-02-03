@@ -62,6 +62,37 @@ namespace pdq.npgsql.tests
         }
 
         [Fact]
+        public void InsertWithOutputSucceeds()
+        {
+            // Arrange
+            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n('bob','smith')\\r\\nreturning\\r\\n  id\\r\\n";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
+
+            // Act
+            var q = this.query.Insert()
+                .Into("users")
+                .Columns(c => new
+                {
+                    first_name = c.Is<string>(),
+                    last_name = c.Is<string>()
+                })
+                .Values(new[]
+                {
+                    new
+                    {
+                        first_name = "bob",
+                        last_name = "smith"
+                    }
+                })
+                .Output("id");
+
+            var sql = q.GetSql();
+
+            // Assert
+            sql.Should().Be(expected);
+        }
+
+        [Fact]
         public void InsertMultipleValuesSucceeds()
         {
             // Arrange

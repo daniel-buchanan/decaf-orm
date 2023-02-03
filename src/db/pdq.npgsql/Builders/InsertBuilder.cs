@@ -107,39 +107,33 @@ namespace pdq.npgsql.Builders
         {
             var source = context.Source as IInsertStaticValuesSource;
             var columns = context.Columns.ToArray();
-            var sourceWidth = columns.Count();
 
             sqlBuilder.AppendLine(Constants.Values);
             var values = source.Values?.ToArray();
-            var valuesCount = values.Length;
+
             for(var i = 0; i < values.Length; i++)
             {
-                var valueNumber = i + 1;
-                var valuesDelimiter = string.Empty;
-                if (valueNumber < values.Length)
-                    valuesDelimiter = Constants.Seperator;
-
                 sqlBuilder.PrependIndent();
                 sqlBuilder.Append(Constants.OpeningParen);
                 
                 for(var j = 0; j < values[i].Length; j++)
                 {
                     var itemNumber = j + 1;
-                    var itemDelimiter = string.Empty;
-                    if (itemNumber < values[i].Length)
-                        itemDelimiter = Constants.Seperator;
+                    var quoteCharacter = valueParser.ValueNeedsQuoting(columns[j]) ?
+                        Constants.ValueQuote :
+                        string.Empty;
 
-                    var quoteCharacter = valueParser.ValueNeedsQuoting(columns[j]) ? Constants.ValueQuote : string.Empty;
                     sqlBuilder.Append("{0}{1}{0}", quoteCharacter, valueParser.ToString(values[i][j]));
 
-                    if (itemDelimiter.Length > 0)
-                        sqlBuilder.Append(itemDelimiter);
+                    if (itemNumber < values[i].Length)
+                        sqlBuilder.Append(Constants.Seperator);
                 }
 
                 sqlBuilder.Append(Constants.ClosingParen);
 
-                if (valuesDelimiter.Length > 0)
-                    sqlBuilder.Append(valuesDelimiter);
+                var valueNumber = i + 1;
+                if (valueNumber < values.Length)
+                    sqlBuilder.Append(Constants.Seperator);
 
                 sqlBuilder.AppendLine();
             }

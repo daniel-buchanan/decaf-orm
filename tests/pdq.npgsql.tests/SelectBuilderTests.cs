@@ -85,6 +85,31 @@ namespace pdq.npgsql.tests
         }
 
         [Fact]
+        public void SimpleSelectWithBetweenSucceeds()
+        {
+            // Arrange
+            var expected = "select\\r\\n  u.email,\\r\\n  u.sub as id\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(u.id between @p1 and @p2)\\r\\n";
+
+            // Act
+            var q = this.query.Select()
+                .From("users", "u")
+                .Where(b =>
+                {
+                    b.Column("id", "u").Is().Between(1, 4);
+                })
+                .Select(c => new
+                {
+                    email = c.Is("email", "u"),
+                    id = c.Is("sub", "u")
+                });
+
+            var sql = q.GetSql();
+
+            // Assert
+            sql.Should().Be(expected);
+        }
+
+        [Fact]
         public void SimpleSelectWithOrderBySucceeds()
         {
             // Arrange

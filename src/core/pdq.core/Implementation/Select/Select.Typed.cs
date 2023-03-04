@@ -10,7 +10,7 @@ namespace pdq.Implementation
 	{
         protected SelectTyped(
             ISelectQueryContext context,
-            IQueryInternal query)
+            IQueryContainerInternal query)
             : base(context, query)
         {
         }

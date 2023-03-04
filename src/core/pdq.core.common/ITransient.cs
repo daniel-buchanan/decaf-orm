@@ -21,7 +21,7 @@ namespace pdq.common
         /// </summary>
         /// <returns>(FluentApi) The ability to begin, write and execute a query.</returns>
         /// <example>t.Query()</example>
-		IQuery Query();
+		IQueryContainer Query();
 	}
 
     internal interface ITransientInternal : ITransient

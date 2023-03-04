@@ -9,7 +9,7 @@ namespace pdq.Implementation
 {
     internal abstract class InsertBase : Execute<IInsertQueryContext>
     {
-        protected InsertBase(IQueryInternal query, IInsertQueryContext context)
+        protected InsertBase(IQueryContainerInternal query, IInsertQueryContext context)
             : base(query, context)
         {
             this.query.SetContext(this.context);
@@ -18,7 +18,7 @@ namespace pdq.Implementation
         protected void FromQuery(Action<ISelect> queryBuilder)
         {
             var context = SelectQueryContext.Create(this.query.AliasManager, this.query.HashProvider);
-            var query = this.query.Transient.Query() as IQueryInternal;
+            var query = this.query.Transient.Query() as IQueryContainerInternal;
             var select = Select.Create(context, query);
 
             queryBuilder(select);

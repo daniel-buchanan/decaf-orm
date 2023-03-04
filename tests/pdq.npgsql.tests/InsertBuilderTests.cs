@@ -8,7 +8,7 @@ namespace pdq.npgsql.tests
 {
 	public class InsertBuilderTests
 	{
-		private readonly IQuery query;
+		private readonly IQueryContainer query;
 
 		public InsertBuilderTests()
 		{
@@ -28,7 +28,7 @@ namespace pdq.npgsql.tests
             var provider = services.BuildServiceProvider();
             var uow = provider.GetService<IUnitOfWork>();
             var transient = uow.Begin();
-            this.query = transient.Query() as IQuery;
+            this.query = transient.Query() as IQueryContainer;
         }
 
 		[Fact]

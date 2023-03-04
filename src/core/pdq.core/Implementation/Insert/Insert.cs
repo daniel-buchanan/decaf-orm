@@ -12,10 +12,10 @@ namespace pdq.Implementation
         IInsertInto,
         IInsertValues
     {
-        private Insert(IQueryInternal query, IInsertQueryContext context)
+        private Insert(IQueryContainerInternal query, IInsertQueryContext context)
             : base(query, context) { }
 
-        public static Insert Create(IInsertQueryContext context, IQueryInternal query)
+        public static Insert Create(IInsertQueryContext context, IQueryContainerInternal query)
             => new Insert(query, context);
 
         /// <inheritdoc/>

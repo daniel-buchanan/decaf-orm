@@ -13,7 +13,7 @@ namespace pdq.Implementation
 	{
         private Delete(
             IDeleteQueryContext context,
-            IQueryInternal query)
+            IQueryContainerInternal query)
             : base(query, context)
         {
             this.context = context;
@@ -22,7 +22,7 @@ namespace pdq.Implementation
 
         public static Delete Create(
             IDeleteQueryContext context,
-            IQueryInternal query)
+            IQueryContainerInternal query)
             => new Delete(context, query);
 
         /// <inheritdoc />

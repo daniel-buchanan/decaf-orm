@@ -4,7 +4,7 @@ using pdq.common.Utilities;
 
 namespace pdq.common
 {
-	public class Query : IQueryInternal
+	public class QueryFramework : IQueryContainerInternal
 	{
 		private readonly ILoggerProxy logger;
 		private readonly ITransientInternal transient;
@@ -13,7 +13,7 @@ namespace pdq.common
 		private readonly IHashProvider hashProvider;
 		private IQueryContext context;
 
-		private Query(
+		private QueryFramework(
 			PdqOptions options,
 			ILoggerProxy logger,
 			ITransient transient,
@@ -38,19 +38,19 @@ namespace pdq.common
 		public QueryStatus Status { get; private set; }
 
 		/// <inheritdoc/>
-		IAliasManager IQueryInternal.AliasManager => this.aliasManager;
+		IAliasManager IQueryContainerInternal.AliasManager => this.aliasManager;
 
 		/// <inheritdoc/>
-		ITransient IQueryInternal.Transient => this.transient;
+		ITransient IQueryContainerInternal.Transient => this.transient;
 
 		/// <inheritdoc/>
-		IQueryContext IQueryInternal.Context => this.context;
+		IQueryContext IQueryContainerInternal.Context => this.context;
 
         /// <inheritdoc/>
-        IHashProvider IQueryInternal.HashProvider => this.hashProvider;
+        IHashProvider IQueryContainerInternal.HashProvider => this.hashProvider;
 
         /// <inheritdoc/>
-        PdqOptions IQueryInternal.Options => this.options;
+        PdqOptions IQueryContainerInternal.Options => this.options;
 
 		/// <inheritdoc/>
 		public ISqlFactory SqlFactory => this.transient.SqlFactory;
@@ -59,7 +59,7 @@ namespace pdq.common
         public ILoggerProxy Logger => this.logger;
 
         /// <inheritdoc/>
-        string IQueryInternal.GetHash() => this.context.GetHash();
+        string IQueryContainerInternal.GetHash() => this.context.GetHash();
 
 		/// <summary>
         /// 
@@ -68,15 +68,15 @@ namespace pdq.common
         /// <param name="logger"></param>
         /// <param name="transient"></param>
         /// <returns></returns>
-		public static IQuery Create(
+		public static IQueryContainer Create(
 			PdqOptions options,
 			ILoggerProxy logger,
 			ITransient transient,
 			IHashProvider hashProvider)
-			=> new Query(options, logger, transient, hashProvider);
+			=> new QueryFramework(options, logger, transient, hashProvider);
 
 		/// <inheritdoc/>
-		void IQueryInternal.SetContext(IQueryContext context) => this.context = context;
+		void IQueryContainerInternal.SetContext(IQueryContext context) => this.context = context;
 
 		/// <inheritdoc/>
 		public void Dispose()

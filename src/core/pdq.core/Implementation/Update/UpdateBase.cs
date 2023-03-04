@@ -10,7 +10,7 @@ namespace pdq.Implementation
 {
     internal abstract class UpdateBase : Execute<IUpdateQueryContext>
     {
-        protected UpdateBase(IQueryInternal query, IUpdateQueryContext context)
+        protected UpdateBase(IQueryContainerInternal query, IUpdateQueryContext context)
             : base(query, context)
         {
             this.query.SetContext(this.context);
@@ -19,7 +19,7 @@ namespace pdq.Implementation
         protected void FromQuery(Action<ISelectWithAlias> queryBuilder)
         {
             var context = SelectQueryContext.Create(this.query.AliasManager, this.query.HashProvider);
-            var query = this.query.Transient.Query() as IQueryInternal;
+            var query = this.query.Transient.Query() as IQueryContainerInternal;
             var select = Select.Create(context, query) as ISelectWithAlias;
 
             queryBuilder(select);

@@ -12,8 +12,8 @@ namespace pdq
         /// <param name="query">The query instance that will become a "delete" query.</param>
         /// <returns>(FluentApi) The ability to specify the table, view or other schema item to delete from.</returns>
         /// <example>q.Delete().From("users", "u").Where(b => b.Column("name").Is().StartsWith("bob");</example>
-		public static IDelete Delete(this IQuery query)
-            => Implementation.Delete.Create(query.CreateContext<IDeleteQueryContext>(), query as IQueryInternal);
+		public static IDelete Delete(this IQueryContainer query)
+            => Implementation.Delete.Create(query.CreateContext<IDeleteQueryContext>(), query as IQueryContainerInternal);
 
         /// <summary>
         /// Begin a select query, this will allow you to retrieve records from one or more
@@ -22,8 +22,8 @@ namespace pdq
         /// <param name="query">The query instance that will become a "select" query.</param>
         /// <returns>(FluentApi) The ability to specify the base table, view or other schema item to select from.</returns>
         /// <example>q.Select().From("users", "u").Where(b => b.Column("name").Is().EndssWith("bob");</example>
-        public static ISelect Select(this IQuery query)
-            => Implementation.Select.Create(query.CreateContext<ISelectQueryContext>(), query as IQueryInternal);
+        public static ISelect Select(this IQueryContainer query)
+            => Implementation.Select.Create(query.CreateContext<ISelectQueryContext>(), query as IQueryContainerInternal);
 
         /// <summary>
         /// Begin an insert query, this will allow you to insert records into a single table.<br/>
@@ -33,8 +33,8 @@ namespace pdq
         /// <param name="query">The query instance that will become an "insert" query.</param>
         /// <returns>(FluentApi) The ability to specify the base table, view to insert into.</returns>
         /// <example>q.Insert().Into("users", "u"),Value(new { first_name = "Bob", last_name = "Smith" });</example>
-        public static IInsert Insert(this IQuery query)
-            => Implementation.Insert.Create(query.CreateContext<IInsertQueryContext>(), query as IQueryInternal);
+        public static IInsert Insert(this IQueryContainer query)
+            => Implementation.Insert.Create(query.CreateContext<IInsertQueryContext>(), query as IQueryContainerInternal);
 
         /// <summary>
         /// Begin an update query, this will allow you to update records into a single table.<br/>
@@ -44,8 +44,8 @@ namespace pdq
         /// <param name="query">The query instance that will become an "update" query.</param>
         /// <returns>(FluentApi) The ability to specify the base table, view to update values in.</returns>
         /// <example>q.Update().Table("users", "u"),Set(new { first_name = "Bob", last_name = "Smith" }).Where(b => b.Column("id").Is().EqualTo(42);</example>
-        public static IUpdate Update(this IQuery query)
-            => Implementation.Update.Create(query.CreateContext<IUpdateQueryContext>(), query as IQueryInternal);
+        public static IUpdate Update(this IQueryContainer query)
+            => Implementation.Update.Create(query.CreateContext<IUpdateQueryContext>(), query as IQueryContainerInternal);
     }
 }
 

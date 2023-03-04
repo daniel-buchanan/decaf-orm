@@ -9,7 +9,7 @@ using static pdq.Attributes.IgnoreColumnFor;
 namespace pdq.services
 {
     internal class Command<TEntity> :
-        ServiceBase,
+        Service,
         ICommand<TEntity>
         where TEntity : class, IEntity, new()
     {
@@ -91,7 +91,7 @@ namespace pdq.services
             ExecuteQuery(q =>
             {
                 var updateQ = q.Update();
-                var internalQuery = q as IQueryInternal;
+                var internalQuery = q as IQueryContainerInternal;
                 var internalContext = internalQuery.Context as IQueryContextInternal;
                 var alias = internalContext.Helpers().GetTableAlias(expression);
                 var whereClause = internalContext.Helpers().ParseWhere(expression);
@@ -105,7 +105,7 @@ namespace pdq.services
             });
         }
 
-        protected void DeleteByKeys<TKey>(IEnumerable<TKey> keys, Action<IEnumerable<TKey>, IQuery, IWhereBuilder> action)
+        protected void DeleteByKeys<TKey>(IEnumerable<TKey> keys, Action<IEnumerable<TKey>, IQueryContainer, IWhereBuilder> action)
         {
             var numKeys = keys?.Count() ?? 0;
             if (numKeys == 0) return;

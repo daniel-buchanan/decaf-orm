@@ -9,12 +9,12 @@ namespace pdq.Implementation
         UpdateBase,
         IUpdateSetFromQuery<TDestination, TSource>
     {
-        private UpdateSetFromQueryTyped(IQueryInternal query, IUpdateQueryContext context)
+        private UpdateSetFromQueryTyped(IQueryContainerInternal query, IUpdateQueryContext context)
             : base(query, context)
         {
         }
 
-        public static IUpdateSetFromQuery<TDestination, TSource> Create(IQueryInternal query, IUpdateQueryContext context)
+        public static IUpdateSetFromQuery<TDestination, TSource> Create(IQueryContainerInternal query, IUpdateQueryContext context)
             => new UpdateSetFromQueryTyped<TDestination, TSource>(query, context);
 
         /// <inheritdoc/>

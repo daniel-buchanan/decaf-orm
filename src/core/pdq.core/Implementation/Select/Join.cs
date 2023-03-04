@@ -11,7 +11,7 @@ namespace pdq.Implementation
         private readonly ISelectFrom selectFrom;
         private readonly IQueryContextInternal context;
         private readonly PdqOptions options;
-        private readonly IQueryInternal query;
+        private readonly IQueryContainerInternal query;
         private readonly JoinType joinType;
 
         private IQueryTarget left;
@@ -21,7 +21,7 @@ namespace pdq.Implementation
             ISelectFrom selectFrom,
             IQueryContext context,
             PdqOptions options,
-            IQueryInternal query,
+            IQueryContainerInternal query,
             JoinType joinType)
         {
             this.selectFrom = selectFrom;
@@ -35,7 +35,7 @@ namespace pdq.Implementation
             ISelectFrom selectFrom,
             IQueryContext context,
             PdqOptions options,
-            IQueryInternal query,
+            IQueryContainerInternal query,
             JoinType joinType) => new Join(selectFrom, context, options, query, joinType);
 
         /// <inheritdoc/>
@@ -86,7 +86,7 @@ namespace pdq.Implementation
         public IJoinConditions To(Action<ISelectWithAlias> query)
         {
             var selectContext = SelectQueryContext.Create(this.context.AliasManager, this.query.HashProvider);
-            var selectQuery = Query.Create(this.query.Options, this.query.Logger, this.query.Transient, this.query.HashProvider) as IQueryInternal;
+            var selectQuery = QueryFramework.Create(this.query.Options, this.query.Logger, this.query.Transient, this.query.HashProvider) as IQueryContainerInternal;
             var select = Select.Create(selectContext, selectQuery);
             query(select);
             

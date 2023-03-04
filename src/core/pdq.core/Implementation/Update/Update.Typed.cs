@@ -12,14 +12,14 @@ namespace pdq.Implementation
     {
         private UpdateTyped(
             IUpdateQueryContext context,
-            IQueryInternal query)
+            IQueryContainerInternal query)
             : base(query, context)
         {
         }
 
         public static UpdateTyped<T> Create(
             IUpdateQueryContext context,
-            IQueryInternal query)
+            IQueryContainerInternal query)
             => new UpdateTyped<T>(context, query);
 
         /// <inheritdoc/>

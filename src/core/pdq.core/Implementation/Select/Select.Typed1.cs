@@ -14,14 +14,14 @@ namespace pdq.Implementation
 	{
         private SelectTyped(
             ISelectQueryContext context,
-            IQueryInternal query)
+            IQueryContainerInternal query)
             : base(context, query)
         {
         }
 
         public static SelectTyped<T> Create(
             ISelectQueryContext context,
-            IQueryInternal query)
+            IQueryContainerInternal query)
             => new SelectTyped<T>(context, query);
 
         /// <inheritdoc/>

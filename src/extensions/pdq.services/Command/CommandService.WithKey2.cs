@@ -108,7 +108,7 @@ namespace pdq.services
         {
             ExecuteQuery(q =>
             {
-                var internalQuery = q as IQueryInternal;
+                var internalQuery = q as IQueryContainerInternal;
                 var query = q.Update();
                 var internalContext = internalQuery.Context as IQueryContextInternal;
                 var table = GetTableInfo<TEntity>(q);

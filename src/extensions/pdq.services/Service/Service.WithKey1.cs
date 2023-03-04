@@ -5,45 +5,29 @@ using pdq.common;
 
 namespace pdq.services
 {
-    public class Service<TEntity, TKey> :
+    internal class Service<TEntity, TKey> :
+        ExecutionNotifiable,
         IService<TEntity, TKey>
         where TEntity : class, IEntity<TKey>, new()
     {
-        private readonly IQuery<TEntity, TKey> query;
-        private readonly ICommand<TEntity, TKey> command;
+        private IQuery<TEntity, TKey> query
+            => GetQuery<IQuery<TEntity, TKey>>();
+
+        private ICommand<TEntity, TKey> command
+            => GetCommand<ICommand<TEntity, TKey>>();
 
         public Service(
             IQuery<TEntity, TKey> query,
             ICommand<TEntity, TKey> command)
-        {
-            this.query = query;
-            this.command = command;
-        }
+            : base(query, command) { }
 
         private Service(ITransient transient)
-        {
-            this.query = Query<TEntity, TKey>.Create(transient);
-            this.command = Command<TEntity, TKey>.Create(transient);
-        }
+            : base(transient,
+                   t => Query<TEntity, TKey>.Create(t),
+                   t => Command<TEntity, TKey>.Create(t)) { }
 
         public static IService<TEntity, TKey> Create(ITransient transient)
             => new Service<TEntity, TKey>(transient);
-
-        /// <inheritdoc/>
-        public event EventHandler<PreExecutionEventArgs> PreExecution
-        {
-            add
-            {
-                this.query.PreExecution += value;
-                this.command.PreExecution += value;
-            }
-
-            remove
-            {
-                this.query.PreExecution -= value;
-                this.command.PreExecution -= value;
-            }
-        }
 
         /// <inheritdoc/>
         public TEntity Add(TEntity toAdd)

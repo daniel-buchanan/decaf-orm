@@ -26,30 +26,6 @@ namespace pdq.state.ValueSources.Insert
 			this.values.Add(value);
         }
 
-		public static StaticValuesSource Create(int width)
-        {
-			return new StaticValuesSource(width);
-        }
-
-		public static StaticValuesSource Create(IEnumerable<object[]> values)
-        {
-            var previousWidth = 0;
-			foreach(var val in values)
-            {
-                var currentWidth = val?.Length ?? 0;
-                if (currentWidth == 0) throw new ArgumentOutOfRangeException(
-					 nameof(values),
-					 "At least one of the tuples provided is NULL, ensure that all value tuples are NOT null.");
-
-				if (previousWidth == 0) continue;
-				if (previousWidth != currentWidth) throw new ArgumentOutOfRangeException(
-					 nameof(values),
-					 "At least one of the tuples provided has a different number of values than the others, ensure ALL tuples have the same number of values.");
-
-				 previousWidth = currentWidth;
-            }
-
-			return new StaticValuesSource(previousWidth, values);
-        }
+        public static StaticValuesSource Create(int width) => new StaticValuesSource(width);
 	}
 }

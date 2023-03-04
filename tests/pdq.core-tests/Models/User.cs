@@ -13,6 +13,8 @@ namespace pdq.core_tests.Models
 
         public int PersonId { get; set; }
 
+        public Guid Subject { get; set; }
+
         public DateTime CreatedAt { get; set; }
     }
 }

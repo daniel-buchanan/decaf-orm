@@ -42,21 +42,5 @@ namespace pdq.db.common
         /// <param name="value">The value to check for quoting</param>
         /// <returns>True if the value needs quoting, False if not.</returns>
         bool ValueNeedsQuoting<T>(T value);
-
-        /// <summary>
-        /// Returns the value quoted if necessary.
-        /// </summary>
-        /// <typeparam name="T">The type of the value.</typeparam>
-        /// <param name="value">The value to quote.</param>
-        /// <returns>The value as a string, quoted if necessary.</returns>
-        string QuoteValue<T>(T value);
-
-        /// <summary>
-        /// Returns the value quoted if necessary.
-        /// </summary>
-        /// <param name="value">The value to quote.</param>
-        /// <param name="type">The type of the value.</param>
-        /// <returns>The value as a string, quoted if necessary.</returns>
-        string QuoteValue(object value, Type type);
     }
 }

@@ -183,14 +183,14 @@ namespace pdq.npgsql.Builders
 
         private void AddBetween(IBetween between, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            var betweenStartParameter = parameterManager.Add(ParameterWrapper.Create(between, "start"), between.Start);
-            var betweenEndParameter = parameterManager.Add(ParameterWrapper.Create(between, "end"), between.End);
+            var startParam = parameterManager.Add(ParameterWrapper.Create(between, "start"), between.Start);
+            var endParam = parameterManager.Add(ParameterWrapper.Create(between, "end"), between.End);
 
             this.quotedIdentifierBuilder.AddColumn(between.Column, sqlBuilder);
 
-            var start = this.valueParser.QuoteValue(betweenStartParameter.Name, between.ValueType);
-            var end = this.valueParser.QuoteValue(betweenEndParameter.Name, between.ValueType);
-            sqlBuilder.Append(" between {0} and {1}", start, end);
+            var needsQuoting = this.valueParser.ValueNeedsQuoting(between.ValueType);
+            var quoteValue = needsQuoting ? Constants.ValueQuote : string.Empty;
+            sqlBuilder.Append(" between {0}{1}{0} and {0}{2}{0}", quoteValue, startParam.Name, endParam.Name);
         }
 
         private void AddInValues(IInValues inValues, ISqlBuilder sqlBuilder, IParameterManager parameterManager)

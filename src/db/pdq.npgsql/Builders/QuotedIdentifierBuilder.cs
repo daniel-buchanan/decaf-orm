@@ -1,8 +1,5 @@
-﻿using System;
-using pdq.common;
-using pdq.db.common.Builders;
+﻿using pdq.db.common.Builders;
 using pdq.state;
-using pdq.state.QueryTargets;
 
 namespace pdq.npgsql.Builders
 {
@@ -36,10 +33,7 @@ namespace pdq.npgsql.Builders
         }
 
         public void AddOutput(Output output, ISqlBuilder sqlBuilder)
-        {
-            string prefix = output.Source.ToString().ToLower();
-            sqlBuilder.Append("{1}.{0}{2}{0}", this.quote, prefix, output.Name);
-        }
+            => sqlBuilder.Append("{0}{1}{0}", this.quote, output.Name);
 
         public void AddFromTable(ITableTarget tableTarget, ISqlBuilder sqlBuilder)
         {
@@ -52,6 +46,11 @@ namespace pdq.npgsql.Builders
                 format = format + "{0}{2}{0} as {0}{3}{0}";
 
             sqlBuilder.Append(format, this.quote, tableTarget.Schema, tableTarget.Name, tableTarget.Alias);
+        }
+
+        public void AddFromTable(string table, ISqlBuilder sqlBuilder)
+        {
+            sqlBuilder.Append("{0}{1}{0}", this.quote, table);
         }
 
         public void AddClosingFromQuery(string alias, ISqlBuilder sqlBuilder)

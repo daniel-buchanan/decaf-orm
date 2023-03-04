@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using pdq.db.common;
+using pdq.npgsql.Builders;
 using pdq.state.Utilities;
 
 namespace pdq.npgsql
@@ -69,8 +70,7 @@ namespace pdq.npgsql
             if (underlyingType == typeof(string))
             {
                 var s = Convert.ToString(value);
-                if (s == null)
-                    return default(T);
+                if (string.IsNullOrWhiteSpace(s)) return default(T);
 
                 foreach (Tuple<string, string> r in this.replacements)
                 {
@@ -80,27 +80,13 @@ namespace pdq.npgsql
                 return ChangeType<T>(s);
             }
 
-            if (value == null)
-                return default(T);
+            if (string.IsNullOrWhiteSpace(value)) return default(T);
 
             return ChangeType<T>(Convert.ToString(value));
         }
 
         private T ChangeType<T>(object input)
             => (T)Convert.ChangeType(input, typeof(T));
-
-        /// <inheritdoc/>
-        public string QuoteValue<T>(T value) => QuoteValue(value, typeof(T));
-
-        /// <inheritdoc/>
-        public string QuoteValue(object value, Type type)
-        {
-            var str = ToString(value, type);
-
-            if (ValueNeedsQuoting(type))
-                return $"'{str}'";
-            return str;
-        }
 
         /// <inheritdoc/>
         public string ToString<T>(T value) => ToString(value, value?.GetType() ?? typeof(T));
@@ -185,37 +171,17 @@ namespace pdq.npgsql
         {
             var underlyingType = this.reflectionHelper.GetUnderlyingType(type);
 
-            if (underlyingType == typeof(bool))
-            {
-                return true;
-            }
-            else if (underlyingType == typeof(byte[]))
-            {
-                return true;
-            }
-            else if (underlyingType == typeof(DateTime))
-            {
-                return true;
-            }
-            else if (underlyingType == typeof(int))
-            {
-                return false;
-            }
+            if (underlyingType == typeof(bool)) return true;
+            else if (underlyingType == typeof(byte[])) return true;
+            else if (underlyingType == typeof(DateTime)) return true;
+            else if (underlyingType == typeof(int)) return false;
             else if (underlyingType == typeof(double) ||
                         underlyingType == typeof(Single) ||
                         underlyingType == typeof(float) ||
                         underlyingType == typeof(decimal))
-            {
                 return true;
-            }
-            else if (underlyingType == typeof(string))
-            {
-                return true;
-            }
-            else
-            {
-                return true;
-            }
+            else if (underlyingType == typeof(string)) return true;
+            else return true;
         }
     }
 }

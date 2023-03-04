@@ -32,7 +32,6 @@ namespace pdq.npgsql.Builders
             sqlBuilder.AppendLine(Constants.Returning);
             sqlBuilder.IncreaseIndent();
 
-
             var index = 0;
             var noOutputs = context.Outputs.Count - 1;
             foreach (var o in context.Outputs)

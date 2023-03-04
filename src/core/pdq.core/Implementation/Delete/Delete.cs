@@ -40,7 +40,7 @@ namespace pdq.Implementation
             var table = this.context.Helpers().GetTableName(aliasExpression);
             var alias = this.context.Helpers().GetTableAlias(aliasExpression);
 
-            var managedTable = this.query.AliasManager.GetAssociation(alias) ?? alias;
+            var managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
             var managedAlias = this.query.AliasManager.Add(alias, table);
 
             this.context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));

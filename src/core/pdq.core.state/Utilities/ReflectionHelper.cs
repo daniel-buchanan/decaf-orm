@@ -167,9 +167,6 @@ namespace pdq.state.Utilities
             else
                 tList.AddRange(GetMemberDetails((Type)toUse.GetType(), cmdType));
 
-            // enforce order of members
-            tList.Sort();
-
             // return list of members
             return tList;
         }

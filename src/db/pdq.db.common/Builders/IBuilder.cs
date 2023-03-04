@@ -9,6 +9,9 @@ namespace pdq.db.common.Builders
 		where T: IQueryContext
 	{
 		SqlTemplate Build(T context);
+
+		SqlTemplate Build(T context, ISqlBuilder sqlBuilder);
+
 		Dictionary<string, object> GetParameters(T context);
 	}
 }

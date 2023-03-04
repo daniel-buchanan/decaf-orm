@@ -89,6 +89,7 @@ namespace pdq.npgsql.tests
         {
             // Arrange
             var expected = "select\\r\\n  u.email,\\r\\n  u.sub as id\\r\\nfrom\\r\\n  users as u\\r\\nwhere\\r\\n(u.id between @p1 and @p2)\\r\\n";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act
             var q = this.query.Select()

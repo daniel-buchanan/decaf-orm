@@ -9,12 +9,12 @@ namespace pdq.Implementation
         where TContext: IQueryContext
 	{
 		protected Execute(
-            IQueryInternal query,
+            IQueryContainerInternal query,
             TContext context)
             : base(query, context) { }
 
         public static IExecute<TResult> Create(
-            IQueryInternal query,
+            IQueryContainerInternal query,
             TContext context)
             => new Execute<TResult, TContext>(query, context);
 

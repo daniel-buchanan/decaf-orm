@@ -3,7 +3,7 @@
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq")]
 namespace pdq.state
 {
-	internal static class QueryExtensions
+	internal static class QueryFrameworkExtensions
 	{
 		/// <summary>
         /// Create an <see cref="IQueryContext"/> from an <see cref="IQuery"/>.
@@ -11,9 +11,9 @@ namespace pdq.state
         /// <typeparam name="T">The type of <see cref="IQueryContext"/> to create.</typeparam>
         /// <param name="query">Self.</param>
         /// <returns>A newly created <see cref="IQueryContext"/>.</returns>
-		public static T CreateContext<T>(this IQuery query) where T: IQueryContext
+		public static T CreateContext<T>(this IQueryContainer query) where T: IQueryContext
         {
-			var internalQuery = query as IQueryInternal;
+			var internalQuery = query as IQueryContainerInternal;
 			var queryContextType = typeof(T);
 
 			if (internalQuery == null) return default(T);

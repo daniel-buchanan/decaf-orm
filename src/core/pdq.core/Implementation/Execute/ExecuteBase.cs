@@ -11,16 +11,16 @@ namespace pdq.Implementation
         IGetSql
         where TContext: IQueryContext
 	{
-        internal IQueryInternal query;
+        internal IQueryContainerInternal query;
         internal TContext context;
         protected ISqlFactory sqlFactory;
 
 		protected ExecuteBase(
-            IQuery query,
+            IQueryContainer query,
             TContext context,
             ISqlFactory sqlFactory)
 		{
-            this.query = query as IQueryInternal;
+            this.query = query as IQueryContainerInternal;
             this.context = context;
             this.sqlFactory = sqlFactory;
 		}

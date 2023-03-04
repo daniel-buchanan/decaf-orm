@@ -16,7 +16,7 @@ namespace pdq.common
         private readonly ILoggerProxy logger;
         private readonly PdqOptions options;
         private readonly IHashProvider hashProvider;
-        private readonly List<IQuery> queries;
+        private readonly List<IQueryContainer> queries;
 
 		private Transient(
             ITransientFactory factory,
@@ -33,7 +33,7 @@ namespace pdq.common
             this.logger = logger;
             this.options = options;
             this.hashProvider = hashProvider;
-            this.queries = new List<IQuery>();
+            this.queries = new List<IQueryContainer>();
 
             Id = Guid.NewGuid();
             this.logger.Debug($"Transient({Id}) :: Created");
@@ -107,9 +107,9 @@ namespace pdq.common
         }
 
         /// <inheritdoc />
-        public IQuery Query()
+        public IQueryContainer Query()
         {
-            var query = common.Query.Create(this.options, this.logger, this, this.hashProvider);
+            var query = QueryFramework.Create(this.options, this.logger, this, this.hashProvider);
             this.logger.Debug($"Transient({Id}) :: Creating new Query");
             this.queries.Add(query);
             return query;

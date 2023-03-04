@@ -5,7 +5,7 @@ using pdq.common.Utilities;
 [assembly:System.Runtime.CompilerServices.InternalsVisibleTo("pdq")]
 namespace pdq.common
 {
-	internal interface IQueryInternal : IQuery
+	internal interface IQueryContainerInternal : IQueryContainer
 	{
 		/// <summary>
         /// Get the hash that represents this query.

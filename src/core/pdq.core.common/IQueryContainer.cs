@@ -10,7 +10,7 @@ namespace pdq.common
     /// - Update<br/>
     /// - Insert
     /// </summary>
-	public interface IQuery : IDisposable
+	public interface IQueryContainer : IDisposable
 	{
         /// <summary>
         /// The Id of the query, this is uniquely generated for each query and

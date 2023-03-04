@@ -5,25 +5,27 @@ using pdq.common;
 
 namespace pdq.services
 {
-    public class Service<TEntity> :
-        IService<TEntity>
-        where TEntity : class, IEntity, new()
+    internal class ExecutionNotifiable :
+        IExecutionNotifiable
     {
-        private readonly IQuery<TEntity> query;
-        private readonly ICommand<TEntity> command;
+        private readonly IExecutionNotifiable query;
+        private readonly IExecutionNotifiable command;
 
-        public Service(
-            IQuery<TEntity> query,
-            ICommand<TEntity> command)
+        public ExecutionNotifiable(
+            IExecutionNotifiable query,
+            IExecutionNotifiable command)
         {
             this.query = query;
             this.command = command;
         }
 
-        private Service(ITransient transient)
+        protected ExecutionNotifiable(
+            ITransient transient,
+            Func<ITransient, IExecutionNotifiable> createQuery,
+            Func<ITransient, IExecutionNotifiable> createCommand)
         {
-            this.query = Query<TEntity>.Create(transient);
-            this.command = Command<TEntity>.Create(transient);
+            this.query = createQuery(transient);
+            this.command = createCommand(transient);
         }
 
         /// <inheritdoc/>
@@ -42,40 +44,9 @@ namespace pdq.services
             }
         }
 
-        public static IService<TEntity> Create(ITransient transient)
-            => new Service<TEntity>(transient);
+        protected T GetQuery<T>() where T : IQuery => (T)this.query;
 
-        /// <inheritdoc/>
-        public TEntity Add(TEntity toAdd)
-            => this.command.Add(toAdd);
-
-        /// <inheritdoc/>
-        public IEnumerable<TEntity> Add(params TEntity[] toAdd)
-            => this.command.Add(toAdd);
-
-        /// <inheritdoc/>
-        public IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
-            => this.command.Add(toAdd);
-
-        /// <inheritdoc/>
-        public IEnumerable<TEntity> All()
-            => this.query.All();
-
-        /// <inheritdoc/>
-        public void Delete(Expression<Func<TEntity, bool>> expression)
-            => this.command.Delete(expression);
-
-        /// <inheritdoc/>
-        public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> query)
-            => this.query.Get(query);
-
-        /// <inheritdoc/>
-        public void Update(TEntity toUpdate, Expression<Func<TEntity, bool>> expression)
-            => this.command.Update(toUpdate, expression);
-
-        /// <inheritdoc/>
-        public void Update(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
-            => this.command.Update(toUpdate, expression);
+        protected T GetCommand<T>() where T : ICommand => (T)this.command;
     }
 }
 

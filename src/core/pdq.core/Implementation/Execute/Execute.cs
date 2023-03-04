@@ -13,7 +13,7 @@ namespace pdq.Implementation
         where TContext: IQueryContext
 	{
 		protected Execute(
-            IQueryInternal query,
+            IQueryContainerInternal query,
             TContext context)
             : base(query, context, query.SqlFactory) { }
 

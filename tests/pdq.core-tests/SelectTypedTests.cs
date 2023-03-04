@@ -13,7 +13,7 @@ namespace pdq.core_tests
 {
     public class SelectTypedTests
     {
-        private IQueryInternal query;
+        private IQueryContainerInternal query;
 
         public SelectTypedTests()
         {
@@ -29,7 +29,7 @@ namespace pdq.core_tests
             var provider = services.BuildServiceProvider();
             var uow = provider.GetService<IUnitOfWork>();
             var transient = uow.Begin();
-            this.query = transient.Query() as IQueryInternal;
+            this.query = transient.Query() as IQueryContainerInternal;
         }
 
         [Fact]

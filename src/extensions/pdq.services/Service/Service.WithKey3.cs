@@ -5,45 +5,29 @@ using pdq.common;
 
 namespace pdq.services
 {
-    public class Service<TEntity, TKey1, TKey2, TKey3> :
+    internal class Service<TEntity, TKey1, TKey2, TKey3> :
+        ExecutionNotifiable,
         IService<TEntity, TKey1, TKey2, TKey3>
         where TEntity : class, IEntity<TKey1, TKey2, TKey3>, new()
     {
-        private readonly IQuery<TEntity, TKey1, TKey2, TKey3> query;
-        private readonly ICommand<TEntity, TKey1, TKey2, TKey3> command;
+        private IQuery<TEntity, TKey1, TKey2, TKey3> query
+            => GetQuery<IQuery<TEntity, TKey1, TKey2, TKey3>>();
+
+        private ICommand<TEntity, TKey1, TKey2, TKey3> command
+            => GetCommand<ICommand<TEntity, TKey1, TKey2, TKey3>>();
 
         public Service(
             IQuery<TEntity, TKey1, TKey2, TKey3> query,
             ICommand<TEntity, TKey1, TKey2, TKey3> command)
-        {
-            this.query = query;
-            this.command = command;
-        }
+            : base(query, command) { }
 
         private Service(ITransient transient)
-        {
-            this.query = Query<TEntity, TKey1, TKey2, TKey3>.Create(transient);
-            this.command = Command<TEntity, TKey1, TKey2, TKey3>.Create(transient);
-        }
+            : base(transient,
+                   t => Query<TEntity, TKey1, TKey2, TKey3>.Create(t),
+                   t => Command<TEntity, TKey1, TKey2, TKey3>.Create(t)) { }
 
         public static IService<TEntity, TKey1, TKey2, TKey3> Create(ITransient transient)
             => new Service<TEntity, TKey1, TKey2, TKey3>(transient);
-
-        /// <inheritdoc/>
-        public event EventHandler<PreExecutionEventArgs> PreExecution
-        {
-            add
-            {
-                this.query.PreExecution += value;
-                this.command.PreExecution += value;
-            }
-
-            remove
-            {
-                this.query.PreExecution -= value;
-                this.command.PreExecution -= value;
-            }
-        }
 
         /// <inheritdoc/>
         public TEntity Add(TEntity toAdd)

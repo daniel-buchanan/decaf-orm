@@ -18,10 +18,10 @@ namespace pdq.Implementation
 
         protected SelectCommon(
             ISelectQueryContext context,
-            IQuery query)
-            : base((IQueryInternal)query, context)
+            IQueryContainer query)
+            : base((IQueryContainerInternal)query, context)
         {
-            this.options = (query as IQueryInternal).Options;
+            this.options = (query as IQueryContainerInternal).Options;
             this.context = context;
             this.query.SetContext(this.context);
         }

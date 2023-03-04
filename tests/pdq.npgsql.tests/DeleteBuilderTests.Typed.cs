@@ -9,7 +9,7 @@ namespace pdq.npgsql.tests
 {
 	public class DeleteBuilderTypedTests
 	{
-		private readonly IQuery query;
+		private readonly IQueryContainer query;
 
 		public DeleteBuilderTypedTests()
 		{
@@ -29,7 +29,7 @@ namespace pdq.npgsql.tests
             var provider = services.BuildServiceProvider();
             var uow = provider.GetService<IUnitOfWork>();
             var transient = uow.Begin();
-            this.query = transient.Query() as IQuery;
+            this.query = transient.Query() as IQueryContainer;
         }
 
         [Fact]

@@ -6,7 +6,7 @@ using pdq.state.Utilities;
 
 namespace pdq.services
 {
-    internal abstract class ServiceBase
+    internal abstract class Service
     {
         private readonly ITransientInternal transient;
         private readonly IUnitOfWork unitOfWork;
@@ -16,20 +16,20 @@ namespace pdq.services
         protected readonly IExpressionHelper expressionHelper;
         protected readonly IDynamicExpressionHelper dynamicExpressionHelper;
 
-        protected ServiceBase()
+        protected Service()
         {
             reflectionHelper = new ReflectionHelper();
             expressionHelper = new ExpressionHelper(reflectionHelper);
             dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, new CallExpressionHelper(expressionHelper));
         }
 
-        protected ServiceBase(ITransient transient) : this()
+        protected Service(ITransient transient) : this()
         {
             this.transient = transient as ITransientInternal;
             this.disposeOnExit = false;
         }
 
-        protected ServiceBase(IUnitOfWork unitOfWork) : this()
+        protected Service(IUnitOfWork unitOfWork) : this()
         {
             this.unitOfWork = unitOfWork;
             this.disposeOnExit = true;
@@ -53,7 +53,7 @@ namespace pdq.services
         /// Ensuring that everything is disposed properly.
         /// </summary>
         /// <param name="method">The <see cref="Action{IQuery}"/> defining the query.</param>
-        protected void ExecuteQuery(Action<IQuery> method)
+        protected void ExecuteQuery(Action<IQueryContainer> method)
         {
             var t = this.GetTransient();
             using(var q = t.Query())
@@ -69,7 +69,7 @@ namespace pdq.services
         /// Ensuring that everything is disposed properly and the results of the query are returned.
         /// </summary>
         /// <param name="method">The <see cref="Action{IQuery, T}"/> defining the query.</param>
-        protected T ExecuteQuery<T>(Func<IQuery, T> method)
+        protected T ExecuteQuery<T>(Func<IQueryContainer, T> method)
         {
             T result;
             var t = this.GetTransient();
@@ -88,9 +88,9 @@ namespace pdq.services
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="query">The <see cref="IQuery"/> containing the context to send.</param>
-        protected void NotifyPreExecution(object sender, IQuery query)
+        protected void NotifyPreExecution(object sender, IQueryContainer query)
         {
-            var internalQuery = query as IQueryInternal;
+            var internalQuery = query as IQueryContainerInternal;
             var args = new PreExecutionEventArgs(internalQuery.Context);
             this.preExecution?.Invoke(sender, args);
         }
@@ -101,10 +101,10 @@ namespace pdq.services
         /// <typeparam name="TEntity">The type of Entity to work with.</typeparam>
         /// <param name="q">The <see cref="IQuery"/> to use.</param>
         /// <returns>The name of the table for this <see cref="IQueryContext"/>.</returns>
-        protected string GetTableInfo<TEntity>(IQuery q)
+        protected string GetTableInfo<TEntity>(IQueryContainer q)
             where TEntity : new()
         {
-            var internalQuery = q as IQueryInternal;
+            var internalQuery = q as IQueryContainerInternal;
             var internalContext = internalQuery?.Context as IQueryContextInternal;
             return internalContext?.Helpers().GetTableName<TEntity>();
         }
@@ -116,9 +116,9 @@ namespace pdq.services
         /// <param name="q">The <see cref="IQuery"/> instance to use.</param>
         /// <param name="name">The name of the property.</param>
         /// <returns>The SQL name of the Column.</returns>
-        protected static string GetKeyColumnName<TEntity>(IQuery q, string name)
+        protected static string GetKeyColumnName<TEntity>(IQueryContainer q, string name)
         {
-            var internalQuery = q as IQueryInternal;
+            var internalQuery = q as IQueryContainerInternal;
             var internalContext = internalQuery?.Context as IQueryContextInternal;
             var prop = typeof(TEntity).GetProperty(name);
             return internalContext.ReflectionHelper.GetFieldName(prop);
@@ -131,7 +131,7 @@ namespace pdq.services
         /// <param name="q">The <see cref="IQuery"/> instance to use.</param>
         /// <param name="key">The key metadata</param>
         /// <returns>The SQL name of the Column.</returns>
-        protected static string GetKeyColumnName<TEntity>(IQuery q, IKeyMetadata key)
+        protected static string GetKeyColumnName<TEntity>(IQueryContainer q, IKeyMetadata key)
             => GetKeyColumnName<TEntity>(q, key.Name);
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace pdq.services
         /// <typeparam name="TKey">The type of the key.</typeparam>
         /// <param name="q">The <see cref="IQuery"/> instance to work with.</param>
         /// <param name="keyName">The name of the Key.</param>
-        protected void GetKeyColumnNames<TEntity, TKey>(IQuery q, out string keyName)
+        protected void GetKeyColumnNames<TEntity, TKey>(IQueryContainer q, out string keyName)
             where TEntity : IEntity<TKey>, new()
         {
             var tmp = new TEntity();
@@ -159,7 +159,7 @@ namespace pdq.services
         /// <param name="q">The <see cref="IQuery"/> instance to work with.</param>
         /// <param name="key1Name">The name of the first Key comoponent.</param>
         /// <param name="key2Name">The name of the second Key compononent.</param>
-        protected void GetKeyColumnNames<TEntity, TKey1, TKey2>(IQuery q, out string key1Name, out string key2Name)
+        protected void GetKeyColumnNames<TEntity, TKey1, TKey2>(IQueryContainer q, out string key1Name, out string key2Name)
             where TEntity : IEntity<TKey1, TKey2>, new()
         {
             var tmp = new TEntity();
@@ -179,7 +179,7 @@ namespace pdq.services
         /// <param name="key1Name">The name of the first Key comoponent.</param>
         /// <param name="key2Name">The name of the second Key compononent.</param>
         /// <param name="key3Name">The name of the third Key compononent.</param>
-        protected void GetKeyColumnNames<TEntity, TKey1, TKey2, TKey3>(IQuery q, out string key1Name, out string key2Name, out string key3Name)
+        protected void GetKeyColumnNames<TEntity, TKey1, TKey2, TKey3>(IQueryContainer q, out string key1Name, out string key2Name, out string key3Name)
             where TEntity : IEntity<TKey1, TKey2, TKey3>, new()
         {
             var tmp = new TEntity();

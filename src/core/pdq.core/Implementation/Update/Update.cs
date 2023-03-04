@@ -18,7 +18,7 @@ namespace pdq.Implementation
     {
         private Update(
             IUpdateQueryContext context,
-            IQueryInternal query)
+            IQueryContainerInternal query)
             : base(query, context)
         {
             this.context = context;
@@ -27,7 +27,7 @@ namespace pdq.Implementation
 
         public static Update Create(
             IUpdateQueryContext context,
-            IQueryInternal query)
+            IQueryContainerInternal query)
             => new Update(context, query);
 
         /// <inheritdoc/>

@@ -22,12 +22,12 @@ namespace pdq.Implementation
 	{
         private Select(
             ISelectQueryContext context,
-            IQueryInternal query)
+            IQueryContainerInternal query)
             : base(context, query) { }
 
         public static Select Create(
             ISelectQueryContext context,
-            IQueryInternal query)
+            IQueryContainerInternal query)
             => new Select(context, query);
 
         /// <inheritdoc/>
@@ -113,7 +113,7 @@ namespace pdq.Implementation
         public ISelectFromTyped<T> From<T>(Action<ISelectWithAlias> query, string alias)
         {
             var selectContext = SelectQueryContext.Create(AliasManager.Create(), this.query.HashProvider);
-            var selectQuery = Query.Create(this.query.Options, this.query.Logger, this.query.Transient, this.query.HashProvider) as IQueryInternal;
+            var selectQuery = QueryFramework.Create(this.query.Options, this.query.Logger, this.query.Transient, this.query.HashProvider) as IQueryContainerInternal;
             var select = Create(selectContext, selectQuery);
             query(select);
 

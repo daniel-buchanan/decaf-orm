@@ -4,11 +4,16 @@ using System.Linq.Expressions;
 
 namespace pdq.services
 {
+    public interface ICommand { }
+
     /// <summary>
     /// A Service for making modifications to a given <see cref="TEntity"/>. 
     /// </summary>
     /// <typeparam name="TEntity">The type of <see cref="IEntity"/> to work with.</typeparam>
-	public interface ICommand<TEntity> where TEntity : IEntity, new()
+	public interface ICommand<TEntity> :
+        ICommand,
+        IExecutionNotifiable
+        where TEntity : IEntity, new()
 	{
 		/// <summary>
         /// Add an item to the database.
@@ -50,11 +55,6 @@ namespace pdq.services
         /// </summary>
         /// <param name="expression">An expression specifying which item(s) should be deleted.</param>
 		void Delete(Expression<Func<TEntity, bool>> expression);
-
-        /// <summary>
-        /// Event fired before the query is executed.
-        /// </summary>
-        event EventHandler<PreExecutionEventArgs> PreExecution;
     }
 }
 

@@ -7,10 +7,12 @@ using pdq.common;
 namespace pdq.services
 {
     internal class Query<TEntity> :
-        ServiceBase,
+        Service,
         IQuery<TEntity>
         where TEntity : class, IEntity, new()
     {
+        const string TableAlias = "t";
+
         public event EventHandler<PreExecutionEventArgs> PreExecution
         {
             add => base.preExecution += value;
@@ -50,7 +52,9 @@ namespace pdq.services
             });
         }
 
-        protected IEnumerable<TEntity> GetByKeys<TKey>(IEnumerable<TKey> keys, Action<IEnumerable<TKey>, IQuery, IWhereBuilder> action)
+        protected IEnumerable<TEntity> GetByKeys<TKey>(
+            IEnumerable<TKey> keys,
+            Action<IEnumerable<TKey>, IQueryContainer, IWhereBuilder> filter)
         {
             var numKeys = keys?.Count() ?? 0;
             if (numKeys == 0) return Enumerable.Empty<TEntity>();
@@ -68,13 +72,14 @@ namespace pdq.services
 
                 using (var q = t.Query())
                 {
-                    var sel = q.Select()
-                        .From(table, "t")
-                        .Where(b => action(keyBatch, q, b))
-                        .SelectAll<TEntity>("t");
-                    NotifyPreExecution(this, q);
+                    var select = q.Select()
+                        .From(table, TableAlias)
+                        .Where(b => filter(keyBatch, q, b))
+                        .SelectAll<TEntity>(TableAlias);
 
-                    var batchResults = sel.AsEnumerable();
+                    NotifyPreExecution(this, q);
+                    var batchResults = select.AsEnumerable();
+
                     results.AddRange(batchResults);
                 }
 

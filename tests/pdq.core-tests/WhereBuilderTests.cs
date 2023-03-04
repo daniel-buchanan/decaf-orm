@@ -36,7 +36,7 @@ namespace pdq.core_tests
             var connectionDetails = new MockConnectionDetails();
             var transient = transientFactory.Create(connectionDetails);
 
-            var query = Query.Create(this.options, loggerProxy, transient, hashProvider) as IQueryInternal;
+            var query = QueryFramework.Create(this.options, loggerProxy, transient, hashProvider) as IQueryContainerInternal;
             this.select = Select.Create(this.context, query);
         }
 

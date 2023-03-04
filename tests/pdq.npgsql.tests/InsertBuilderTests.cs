@@ -35,7 +35,7 @@ namespace pdq.npgsql.tests
 		public void InsertSucceeds()
 		{
             // Arrange
-            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n('bob','smith')\\r\\n";
+            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  ('bob','smith')\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act
@@ -65,7 +65,7 @@ namespace pdq.npgsql.tests
         public void InsertWithOutputSucceeds()
         {
             // Arrange
-            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n('bob','smith')\\r\\nreturning\\r\\n  id\\r\\n";
+            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  ('bob','smith')\\r\\nreturning\\r\\n  id\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act
@@ -96,7 +96,7 @@ namespace pdq.npgsql.tests
         public void InsertMultipleValuesSucceeds()
         {
             // Arrange
-            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n('bob','smith'),\\r\\n('james','smith')\\r\\n";
+            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  ('bob','smith'),\\r\\n  ('james','smith')\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act

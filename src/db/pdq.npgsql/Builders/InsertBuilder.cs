@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using pdq.common.Templates;
 using pdq.common.Utilities;
 using pdq.db.common;
@@ -30,6 +31,20 @@ namespace pdq.npgsql.Builders
 
         protected override string CommentCharacter => Constants.Comment;
 
+        private void AppendItems<T>(ISqlBuilder sqlBuilder, T[] items, Action<ISqlBuilder, T> processMethod, bool appendNewLine = false)
+        {
+            var lastItemIndex = items.Length - 1;
+            for (var i = 0; i < items.Length; i++)
+            {
+                var delimiter = string.Empty;
+                if (i < lastItemIndex) delimiter = Constants.Seperator;
+                processMethod(sqlBuilder, items[i]);
+                sqlBuilder.Append(delimiter);
+
+                if(appendNewLine) sqlBuilder.AppendLine();
+            }
+        }
+
         protected override void AddColumns(IInsertQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             sqlBuilder.IncreaseIndent();
@@ -37,14 +52,8 @@ namespace pdq.npgsql.Builders
 
             sqlBuilder.PrependIndent();
             sqlBuilder.Append(Constants.OpeningParen);
-            var lastColumnIndex = columns.Length - 1;
-            for (var i = 0; i < columns.Length; i++)
-            {
-                var delimiter = string.Empty;
-                if (i < lastColumnIndex) delimiter = Constants.Seperator;
-                this.quotedIdentifierBuilder.AddSelect(columns[i], sqlBuilder);
-                sqlBuilder.Append(delimiter);
-            }
+
+            AppendItems(sqlBuilder, columns, (b, i) => this.quotedIdentifierBuilder.AddSelect(i, b));
 
             sqlBuilder.Append(Constants.ClosingParen);
             sqlBuilder.DecreaseIndent();
@@ -58,27 +67,16 @@ namespace pdq.npgsql.Builders
 
             sqlBuilder.AppendLine(Constants.Returning);
             sqlBuilder.IncreaseIndent();
+            var outputs = context.Outputs.ToArray();
 
-            var index = 0;
-            var noOutputs = context.Outputs.Count - 1;
-            foreach (var o in context.Outputs)
+            AppendItems(sqlBuilder, outputs, (b, o) =>
             {
-                var delimiter = string.Empty;
-                if (index < noOutputs)
-                    delimiter = Constants.Seperator;
-
                 sqlBuilder.PrependIndent();
                 this.quotedIdentifierBuilder.AddOutput(o, sqlBuilder);
-
-                if (delimiter.Length > 0)
-                    sqlBuilder.Append(delimiter);
-
-                sqlBuilder.AppendLine();
-
-                index += 1;
-            }
+            });
 
             sqlBuilder.DecreaseIndent();
+            sqlBuilder.AppendLine();
         }
 
         protected override void AddTable(IInsertQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
@@ -110,6 +108,8 @@ namespace pdq.npgsql.Builders
             sqlBuilder.AppendLine(Constants.Values);
             var values = source.Values?.ToArray();
 
+            sqlBuilder.IncreaseIndent();
+
             for(var i = 0; i < values.Length; i++)
             {
                 sqlBuilder.PrependIndent();
@@ -136,6 +136,8 @@ namespace pdq.npgsql.Builders
 
                 sqlBuilder.AppendLine();
             }
+
+            sqlBuilder.DecreaseIndent();
         }
 
         private void AddValuesFromQuery(IInsertQueryValuesSource source, ISqlBuilder sqlBuilder)

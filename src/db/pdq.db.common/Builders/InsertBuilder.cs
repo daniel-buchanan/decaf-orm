@@ -33,9 +33,7 @@ namespace pdq.db.common.Builders
         }
 
         protected override void GetParameters(IInsertQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
-        {
-            AddValues(context, sqlBuilder, parameterManager);
-        }
+            => AddValues(context, sqlBuilder, parameterManager);
     }
 }
 

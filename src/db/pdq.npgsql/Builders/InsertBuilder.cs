@@ -93,14 +93,14 @@ namespace pdq.npgsql.Builders
         protected override void AddValues(IInsertQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             if (context.Source is IInsertStaticValuesSource)
-                AddValuesFromStatic(context, sqlBuilder);
+                AddValuesFromStatic(context, sqlBuilder, parameterManager);
             else if (context.Source is IInsertQueryValuesSource queryValuesSource)
                 AddValuesFromQuery(queryValuesSource, sqlBuilder);
             else
                 throw new ShouldNeverOccurException($"Insert Values should be one of {nameof(IInsertStaticValuesSource)} or {nameof(IInsertQueryValuesSource)}");
         }
 
-        private void AddValuesFromStatic(IInsertQueryContext context, ISqlBuilder sqlBuilder)
+        private void AddValuesFromStatic(IInsertQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             var source = context.Source as IInsertStaticValuesSource;
             var columns = context.Columns.ToArray();
@@ -122,7 +122,8 @@ namespace pdq.npgsql.Builders
                         Constants.ValueQuote :
                         string.Empty;
 
-                    sqlBuilder.Append("{0}{1}{0}", quoteCharacter, valueParser.ToString(values[i][j]));
+                    var parameter = parameterManager.Add(columns[j], values[i][j]);
+                    sqlBuilder.Append("{0}{1}{0}", quoteCharacter, parameter.Name);
 
                     if (itemNumber < values[i].Length)
                         sqlBuilder.Append(Constants.Seperator);

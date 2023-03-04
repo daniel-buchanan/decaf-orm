@@ -77,9 +77,7 @@ namespace pdq.state.Utilities
         }
 
         public int CompareTo(DynamicColumnInfo other)
-        {
-			return IsEquivalentTo(other) ? 1 : 0;
-        }
+			=> IsEquivalentTo(other) ? 1 : 0;
 
         public override bool Equals(object obj)
         {
@@ -98,6 +96,9 @@ namespace pdq.state.Utilities
             return hashCode;
         }
 
+        private static int Compare(DynamicColumnInfo left, DynamicColumnInfo right)
+			=> left.CompareTo(right);
+
         public static bool operator ==(DynamicColumnInfo left, DynamicColumnInfo right)
         {
             if (object.ReferenceEquals(left, null))
@@ -108,9 +109,13 @@ namespace pdq.state.Utilities
         }
 
         public static bool operator !=(DynamicColumnInfo left, DynamicColumnInfo right)
-        {
-            return !(left == right);
-        }
+			=> !(left == right);
+
+        public static bool operator >(DynamicColumnInfo left, DynamicColumnInfo right)
+			=> Compare(left, right) > 0;
+
+        public static bool operator <(DynamicColumnInfo left, DynamicColumnInfo right)
+			=> Compare(left, right) < 0;
     }
 }
 

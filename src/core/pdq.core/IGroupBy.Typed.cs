@@ -34,8 +34,7 @@ namespace pdq
     }
 
     public interface IGroupByThenTyped<T> :
-        IOrderByTyped<T>,
-        ISelectColumnTyped<T>
+        IOrderByTyped<T>
     {
 		IGroupByThenTyped<T> ThenBy(Expression<Func<T, object>> builder);
 	}

@@ -98,7 +98,7 @@ namespace pdq.npgsql
             var underlyingType = this.reflectionHelper.GetUnderlyingType(type);
 
             // check for null and return
-            if (value == null) return null;
+            if (value == null) return string.Empty;
 
             // check for byte array
             if (underlyingType == typeof(byte[]))

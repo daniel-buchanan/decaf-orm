@@ -89,19 +89,6 @@ namespace pdq.npgsql
             => (T)Convert.ChangeType(input, typeof(T));
 
         /// <inheritdoc/>
-        public string QuoteValue<T>(T value) => QuoteValue(value, typeof(T));
-
-        /// <inheritdoc/>
-        public string QuoteValue(object value, Type type)
-        {
-            var str = ToString(value, type);
-
-            if (ValueNeedsQuoting(type))
-                return string.Format("{0}{1}{0}", Constants.ValueQuote, str);
-            return str;
-        }
-
-        /// <inheritdoc/>
         public string ToString<T>(T value) => ToString(value, value?.GetType() ?? typeof(T));
 
         /// <inheritdoc/>

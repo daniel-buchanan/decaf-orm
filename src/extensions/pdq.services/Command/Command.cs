@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
+using pdq.common.Connections;
 using pdq.state;
-using static pdq.Attributes.IgnoreColumnFor;
 
 namespace pdq.services
 {
@@ -56,8 +56,8 @@ namespace pdq.services
             {
                 var first = toAdd.First();
                 var query = q.Insert()
-                    .Into<TEntity>()
-                    .Columns(e => first)
+                    .Into<TEntity>(t => t)
+                    .Columns(t => first)
                     .Values(toAdd);
                 NotifyPreExecution(this, q);
                 query.Execute();

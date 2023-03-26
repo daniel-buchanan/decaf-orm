@@ -6,7 +6,7 @@ using pdq.common.Connections;
 using pdq.common.Logging;
 using pdq.common.Utilities;
 
-namespace pdq.common
+namespace pdq.common.Connections
 {
 	public sealed class TransientFactory : ITransientFactoryInternal
 	{

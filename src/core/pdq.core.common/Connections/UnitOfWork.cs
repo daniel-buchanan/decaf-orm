@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using pdq.common.Logging;
 
-namespace pdq.common
+namespace pdq.common.Connections
 {
 	public class UnitOfWork : IUnitOfWork
 	{

@@ -8,6 +8,7 @@ using pdq.services;
 using pdq.core_tests.Mocks;
 using Xunit;
 using pdq.core_tests.Models;
+using pdq.common.Connections;
 
 namespace pdq.core_tests
 {

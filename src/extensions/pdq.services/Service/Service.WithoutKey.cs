@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using pdq.common;
+using pdq.common.Connections;
 
 namespace pdq.services
 {

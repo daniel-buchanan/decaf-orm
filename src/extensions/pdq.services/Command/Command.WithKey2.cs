@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection.Emit;
 using pdq.common;
+using pdq.common.Connections;
 using pdq.state;
 
 namespace pdq.services

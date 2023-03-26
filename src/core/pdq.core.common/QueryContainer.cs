@@ -1,10 +1,11 @@
 ﻿using System;
+using pdq.common.Connections;
 using pdq.common.Logging;
 using pdq.common.Utilities;
 
 namespace pdq.common
 {
-	public class QueryFramework : IQueryContainerInternal
+    public class QueryFramework : IQueryContainerInternal
 	{
 		private readonly ILoggerProxy logger;
 		private readonly ITransientInternal transient;

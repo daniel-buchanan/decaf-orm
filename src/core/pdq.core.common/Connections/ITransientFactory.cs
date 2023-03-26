@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace pdq.common
+namespace pdq.common.Connections
 {
 	public interface ITransientFactory : IDisposable
 	{

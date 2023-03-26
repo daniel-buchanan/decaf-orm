@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using pdq.common;
+using pdq.common.Utilities;
 using pdq.state.Utilities;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.services")]

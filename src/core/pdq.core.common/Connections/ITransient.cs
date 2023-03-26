@@ -2,7 +2,7 @@
 using pdq.common.Connections;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.services")]
-namespace pdq.common
+namespace pdq.common.Connections
 {
 	/// <summary>
     /// 

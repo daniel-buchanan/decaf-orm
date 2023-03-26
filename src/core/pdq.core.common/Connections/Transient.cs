@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using pdq.common.Connections;
 using pdq.common.Logging;
 using pdq.common.Utilities;
 
-namespace pdq.common
+namespace pdq.common.Connections
 {
 	public class Transient : ITransientInternal
 	{

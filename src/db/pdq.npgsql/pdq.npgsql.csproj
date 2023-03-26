@@ -10,7 +10,7 @@
     <None Remove="Connections\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Npgsql" Version="7.0.1" />
+    <PackageReference Include="Npgsql" Version="7.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\pdq.core\pdq.csproj" />

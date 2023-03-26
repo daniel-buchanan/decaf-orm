@@ -19,10 +19,14 @@
     <None Remove="Utilities\Parsers\" />
     <None Remove="Utilities\Dynamic\" />
     <None Remove="Newtonsoft.Json" />
+    <None Remove="Components\" />
+    <None Remove="Query\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utilities\" />
     <Folder Include="Utilities\Parsers\" />
     <Folder Include="Utilities\Dynamic\" />
+    <Folder Include="Components\" />
+    <Folder Include="Query\" />
   </ItemGroup>
 </Project>

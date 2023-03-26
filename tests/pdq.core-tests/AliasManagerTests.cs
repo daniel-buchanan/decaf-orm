@@ -7,7 +7,7 @@ using Xunit;
 
 namespace pdq.core_tests
 {
-	public class AliasManagerTests
+    public class AliasManagerTests
 	{
 		private readonly IAliasManager aliasManager;
 

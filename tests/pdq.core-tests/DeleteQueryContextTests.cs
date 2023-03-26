@@ -10,7 +10,7 @@ using Xunit;
 
 namespace pdq.core_tests
 {
-	public class DeleteQueryContextTests
+    public class DeleteQueryContextTests
 	{
 		private readonly IDeleteQueryContext context;
 

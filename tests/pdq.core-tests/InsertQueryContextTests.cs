@@ -11,7 +11,7 @@ using Xunit;
 
 namespace pdq.core_tests
 {
-	public class InsertQueryContextTests
+    public class InsertQueryContextTests
 	{
 		private readonly IInsertQueryContext context;
 

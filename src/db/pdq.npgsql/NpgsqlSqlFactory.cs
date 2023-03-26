@@ -9,44 +9,43 @@ namespace pdq.npgsql
 {
     public class NpgsqlSqlFactory : SqlFactory
     {
-        private readonly IBuilder<ISelectQueryContext> selectBuilder;
-        private readonly IBuilder<IInsertQueryContext> insertBuilder;
-        private readonly IBuilder<IUpdateQueryContext> updateBuilder;
-        private readonly IBuilder<IDeleteQueryContext> deleteBuilder;
+        private readonly IBuilderPipeline<ISelectQueryContext> selectBuilder;
+        private readonly IBuilderPipeline<IInsertQueryContext> insertBuilder;
+        private readonly IBuilderPipeline<IDeleteQueryContext> deleteBuilder;
 
         public NpgsqlSqlFactory(
-            IBuilder<ISelectQueryContext> selectBuilder,
-            IBuilder<IDeleteQueryContext> deleteBuilder,
-            IBuilder<IInsertQueryContext> insertBuilder)
+            IBuilderPipeline<ISelectQueryContext> selectBuilder,
+            IBuilderPipeline<IDeleteQueryContext> deleteBuilder,
+            IBuilderPipeline<IInsertQueryContext> insertBuilder)
         {
             this.selectBuilder = selectBuilder;
             this.deleteBuilder = deleteBuilder;
             this.insertBuilder = insertBuilder;
         }
 
-        protected override Dictionary<string, object> ParseDeleteParameters(IQueryContext context)
-            => this.deleteBuilder.GetParameters(context as IDeleteQueryContext);
+        protected override IDictionary<string, object> ParseDeleteParameters(IQueryContext context)
+            => this.deleteBuilder.GetParameterValues(context as IDeleteQueryContext);
 
         protected override SqlTemplate ParseDeleteQuery(IQueryContext context)
-            => this.deleteBuilder.Build(context as IDeleteQueryContext);
+            => this.deleteBuilder.Execute(context as IDeleteQueryContext);
 
-        protected override Dictionary<string, object> ParseInsertParameters(IQueryContext context)
-            => this.insertBuilder.GetParameters(context as IInsertQueryContext);
+        protected override IDictionary<string, object> ParseInsertParameters(IQueryContext context)
+            => this.insertBuilder.GetParameterValues(context as IInsertQueryContext);
 
         protected override SqlTemplate ParseInsertQuery(IQueryContext context)
-            => this.insertBuilder.Build(context as IInsertQueryContext);
+            => this.insertBuilder.Execute(context as IInsertQueryContext);
 
-        protected override Dictionary<string, object> ParseSelectParameters(IQueryContext context)
-            => this.selectBuilder.GetParameters(context as ISelectQueryContext);
+        protected override IDictionary<string, object> ParseSelectParameters(IQueryContext context)
+            => this.selectBuilder.GetParameterValues(context as ISelectQueryContext);
 
         protected override SqlTemplate ParseSelectQuery(IQueryContext context)
-            => this.selectBuilder.Build(context as ISelectQueryContext);
+            => this.selectBuilder.Execute(context as ISelectQueryContext);
 
-        protected override Dictionary<string, object> ParseUpdateParameters(IQueryContext context)
-            => this.updateBuilder.GetParameters(context as IUpdateQueryContext);
+        protected override IDictionary<string, object> ParseUpdateParameters(IQueryContext context)
+            => throw new NotImplementedException("Update is not yet implemented");
 
         protected override SqlTemplate ParseUpdateQuery(IQueryContext context)
-            => this.updateBuilder.Build(context as IUpdateQueryContext);
+            => throw new NotImplementedException("Update is not yet implemented");
     }
 }
 

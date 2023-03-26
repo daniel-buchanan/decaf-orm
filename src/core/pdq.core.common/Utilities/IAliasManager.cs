@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.state")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.core-tests")]
-namespace pdq.common
+namespace pdq.common.Utilities
 {
     internal interface IAliasManager : IDisposable
     {

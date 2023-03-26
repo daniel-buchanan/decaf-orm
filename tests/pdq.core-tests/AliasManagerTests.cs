@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using pdq.common;
+using pdq.common.Utilities;
 using Xunit;
 
 namespace pdq.core_tests

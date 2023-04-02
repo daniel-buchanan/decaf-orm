@@ -180,7 +180,7 @@ namespace pdq.npgsql.tests
         public void SelectWithMultipleConditionsSucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(\\r\\n  (u.Email like '%@p1')\\r\\n  and\\r\\n  (u.FirstName = '@p2')\\r\\n)\\r\\n";
+            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(\\r\\n  (u.Email like '%@p1')\\r\\n  and\\r\\n  (u.FirstName = @p2)\\r\\n)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 

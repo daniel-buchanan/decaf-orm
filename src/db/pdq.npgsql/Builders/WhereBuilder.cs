@@ -133,10 +133,7 @@ namespace pdq.npgsql.Builders
             var op = column.EqualityOperator.ToOperatorString();
             this.quotedIdentifierBuilder.AddColumn(column.Details, sqlBuilder);
             sqlBuilder.Append(" {0} ", op);
-
-            var parameterNeedsQuoting = valueParser.ValueNeedsQuoting(column.ValueType);
-            var quoteChar = parameterNeedsQuoting ? Constants.ValueQuote : string.Empty;
-            sqlBuilder.Append("{0}{1}{0}", quoteChar, parameter.Name);
+            sqlBuilder.Append(parameter.Name);
         }
 
         private void AddLike(IColumn column, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
@@ -187,10 +184,7 @@ namespace pdq.npgsql.Builders
             var endParam = parameterManager.Add(ParameterWrapper.Create(between, "end"), between.End);
 
             this.quotedIdentifierBuilder.AddColumn(between.Column, sqlBuilder);
-
-            var needsQuoting = this.valueParser.ValueNeedsQuoting(between.ValueType);
-            var quoteValue = needsQuoting ? Constants.ValueQuote : string.Empty;
-            sqlBuilder.Append(" between {0}{1}{0} and {0}{2}{0}", quoteValue, startParam.Name, endParam.Name);
+            sqlBuilder.Append(" between {0} and {1}", startParam.Name, endParam.Name);
         }
 
         private void AddInValues(IInValues inValues, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
@@ -206,8 +200,7 @@ namespace pdq.npgsql.Builders
             {
                 var parameter = parameterManager.Add(ParameterWrapper.Create(inValues, i), values[i]);
                 var seperator = i <= lastValueIndex ? "," : string.Empty;
-                var quoteChar = parameterNeedsQuoting ? Constants.ValueQuote : string.Empty;
-                sqlBuilder.AppendLine("{0}{1}{0}{2}", quoteChar, parameter.Name, seperator);
+                sqlBuilder.AppendLine("{0}{1}", parameter.Name, seperator);
             }
 
             sqlBuilder.DecreaseIndent();

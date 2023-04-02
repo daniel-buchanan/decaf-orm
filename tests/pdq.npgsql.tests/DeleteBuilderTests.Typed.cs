@@ -36,7 +36,7 @@ namespace pdq.npgsql.tests
         public void SimpleDeleteSucceeds()
         {
             // Arrange
-            var expected = "delete from\\r\\n  User as u\\r\\nwhere\\r\\n(u.Subject = '@p1')\\r\\nreturning\\r\\n  Id\\r\\n";
+            var expected = "delete from\\r\\n  User as u\\r\\nwhere\\r\\n(u.Subject = @p1)\\r\\nreturning\\r\\n  Id\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 

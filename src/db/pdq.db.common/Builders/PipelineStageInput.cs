@@ -39,11 +39,11 @@ namespace pdq.db.common.Builders
 
         public TContext Context { get; }
 
-        public static IPipelineStageInput<TContext> Create(IHashProvider hashProvider, TContext context)
-            => PipelineStageInput<TContext>.Create(hashProvider, SqlBuilder.Create(), context);
-
         public static IPipelineStageInput<TContext> CreateNoOp(IHashProvider hashProvider, TContext context)
             => PipelineStageInput<TContext>.Create(hashProvider, SqlBuilder.CreateNoOp(), context);
+
+        public static IPipelineStageInput<TContext> Create(IHashProvider hashProvider, TContext context)
+            => PipelineStageInput<TContext>.Create(hashProvider, SqlBuilder.Create(), context);
 
         public static IPipelineStageInput<TContext> Create(IHashProvider hashProvider, ISqlBuilder builder, TContext context)
             => new PipelineStageInput<TContext>(ParameterManager.Create(hashProvider), builder, context);

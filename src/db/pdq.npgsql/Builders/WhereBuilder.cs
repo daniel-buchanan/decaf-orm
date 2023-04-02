@@ -192,7 +192,6 @@ namespace pdq.npgsql.Builders
             this.quotedIdentifierBuilder.AddColumn(inValues.Column, sqlBuilder);
             sqlBuilder.AppendLine(" in {0}", Constants.OpeningParen);
             sqlBuilder.IncreaseIndent();
-            var parameterNeedsQuoting = valueParser.ValueNeedsQuoting(inValues.ValueType);
 
             var values = inValues.GetValues().ToArray();
             var lastValueIndex = values.Length;

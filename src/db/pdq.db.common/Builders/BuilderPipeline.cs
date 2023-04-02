@@ -15,7 +15,7 @@ namespace pdq.db.common.Builders
         private readonly IHashProvider hashProvider;
         private readonly List<PipelineStage<T>> stages;
 
-		public BuilderPipeline(
+		protected BuilderPipeline(
             PdqOptions options,
             IDatabaseOptions dbOptions,
             IHashProvider hashProvider)
@@ -59,17 +59,17 @@ namespace pdq.db.common.Builders
         public IDictionary<string, object> GetParameterValues(T context)
         {
             var input = PipelineStageInput<T>.CreateNoOp(this.hashProvider, context);
-            var stages = this.stages.Where(s => s.ProvidesParameters);
+            var filteredStages = this.stages.Where(s => s.ProvidesParameters);
 
-            foreach (var stage in stages)
+            foreach (var s in filteredStages)
             {
-                stage.Delegate.Invoke(input);
+                s.Delegate.Invoke(input);
             }
 
             return input.Parameters.GetParameterValues();
         }
 
-        private class PipelineStage<TContext>
+        private sealed class PipelineStage<TContext>
             where TContext : IQueryContext
         {
             private PipelineStage(

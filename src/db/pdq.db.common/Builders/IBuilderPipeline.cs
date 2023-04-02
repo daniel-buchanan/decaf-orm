@@ -12,7 +12,7 @@ namespace pdq.db.common.Builders
         ISqlBuilder Builder { get; }
     }
 
-	public interface IPipelineStageInput<T>
+	public interface IPipelineStageInput<out T>
 		: IPipelineStageInput
 		where T : IQueryContext
 	{

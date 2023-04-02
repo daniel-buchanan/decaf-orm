@@ -26,36 +26,36 @@ namespace pdq.npgsql
         }
 
         /// <inheritdoc/>
-        protected override IDictionary<string, object> ParseParameters(IDeleteQueryContext context)
-            => this.deleteBuilder.GetParameterValues(context);
-
-        /// <inheritdoc/>
-        protected override SqlTemplate ParseQuery(IDeleteQueryContext context)
-            => this.deleteBuilder.Execute(context);
-
-        /// <inheritdoc/>
         protected override IDictionary<string, object> ParseParameters(IInsertQueryContext context)
             => this.insertBuilder.GetParameterValues(context);
 
         /// <inheritdoc/>
-        protected override SqlTemplate ParseQuery(IInsertQueryContext context)
-            => this.insertBuilder.Execute(context);
-
-        /// <inheritdoc/>
-        protected override IDictionary<string, object> ParseParameters(ISelectQueryContext context)
-            => this.selectBuilder.GetParameterValues(context);
-
-        /// <inheritdoc/>
-        protected override SqlTemplate ParseQuery(ISelectQueryContext context)
-            => this.selectBuilder.Execute(context);
+        protected override IDictionary<string, object> ParseParameters(IDeleteQueryContext context)
+            => this.deleteBuilder.GetParameterValues(context);
 
         /// <inheritdoc/>
         protected override IDictionary<string, object> ParseParameters(IUpdateQueryContext context)
             => this.updateBuilder.GetParameterValues(context);
 
         /// <inheritdoc/>
+        protected override IDictionary<string, object> ParseParameters(ISelectQueryContext context)
+            => this.selectBuilder.GetParameterValues(context);
+
+        /// <inheritdoc/>
+        protected override SqlTemplate ParseQuery(IInsertQueryContext context)
+            => this.insertBuilder.Execute(context);
+
+        /// <inheritdoc/>
+        protected override SqlTemplate ParseQuery(IDeleteQueryContext context)
+            => this.deleteBuilder.Execute(context);
+
+        /// <inheritdoc/>
         protected override SqlTemplate ParseQuery(IUpdateQueryContext context)
             => this.updateBuilder.Execute(context);
+
+        /// <inheritdoc/>
+        protected override SqlTemplate ParseQuery(ISelectQueryContext context)
+            => this.selectBuilder.Execute(context);
     }
 }
 

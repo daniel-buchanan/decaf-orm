@@ -11,15 +11,18 @@ namespace pdq.npgsql
         private readonly IBuilderPipeline<ISelectQueryContext> selectBuilder;
         private readonly IBuilderPipeline<IInsertQueryContext> insertBuilder;
         private readonly IBuilderPipeline<IDeleteQueryContext> deleteBuilder;
+        private readonly IBuilderPipeline<IUpdateQueryContext> updateBuilder;
 
         public NpgsqlSqlFactory(
             IBuilderPipeline<ISelectQueryContext> selectBuilder,
             IBuilderPipeline<IDeleteQueryContext> deleteBuilder,
-            IBuilderPipeline<IInsertQueryContext> insertBuilder)
+            IBuilderPipeline<IInsertQueryContext> insertBuilder,
+            IBuilderPipeline<IUpdateQueryContext> updateBuilder)
         {
             this.selectBuilder = selectBuilder;
             this.deleteBuilder = deleteBuilder;
             this.insertBuilder = insertBuilder;
+            this.updateBuilder = updateBuilder;
         }
 
         /// <inheritdoc/>
@@ -48,11 +51,11 @@ namespace pdq.npgsql
 
         /// <inheritdoc/>
         protected override IDictionary<string, object> ParseParameters(IUpdateQueryContext context)
-            => throw new NotImplementedException("Update is not yet implemented");
+            => this.updateBuilder.GetParameterValues(context);
 
         /// <inheritdoc/>
         protected override SqlTemplate ParseQuery(IUpdateQueryContext context)
-            => throw new NotImplementedException("Update is not yet implemented");
+            => this.updateBuilder.Execute(context);
     }
 }
 

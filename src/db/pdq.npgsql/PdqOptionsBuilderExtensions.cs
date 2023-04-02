@@ -50,6 +50,7 @@ namespace pdq.npgsql
             builder.Services.AddTransient<IBuilderPipeline<ISelectQueryContext>, Builders.SelectBuilderPipeline>();
             builder.Services.AddTransient<IBuilderPipeline<IDeleteQueryContext>, Builders.DeleteBuilderPipeline>();
             builder.Services.AddTransient<IBuilderPipeline<IInsertQueryContext>, Builders.InsertBuilderPipeline>();
+            builder.Services.AddTransient<IBuilderPipeline<IUpdateQueryContext>, Builders.UpdateBuilderPipeline>();
         }
     }
 }

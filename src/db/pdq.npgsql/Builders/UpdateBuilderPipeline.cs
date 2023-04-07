@@ -33,7 +33,11 @@ namespace pdq.npgsql.Builders
             this.selectBuilder = selectBuilder;
         }
 
-        private void AppendItems<T>(ISqlBuilder sqlBuilder, T[] items, Action<ISqlBuilder, T> processMethod, bool appendNewLine = false)
+        private void AppendItems<T>(
+            ISqlBuilder sqlBuilder,
+            T[] items,
+            Action<ISqlBuilder, T> processMethod,
+            bool appendNewLine = false)
         {
             var lastItemIndex = items.Length - 1;
             for (var i = 0; i < items.Length; i++)
@@ -81,23 +85,42 @@ namespace pdq.npgsql.Builders
         {
             input.Builder.AppendLine("set");
 
+            var first = input.Context.Updates?.FirstOrDefault();
+
+            if (first == null || input.Context.Updates?.Any() == false)
+                return;
+
             input.Builder.IncreaseIndent();
-            foreach(var u in input.Context.Updates)
+            if(first is StaticValueSource)
             {
-                if(u is QueryValueSource qs)
-                {
-                    input.Builder.PrependIndent();
-                    input.Builder.Append("{0} = ", qs.SourceColumn.Name);
-                    quotedIdentifierBuilder.AddColumn(qs.DestinationColumn, input.Builder);
-                    input.Builder.AppendLine();
-                }
-                else if(u is StaticValueSource ss)
-                {
-                    var p = input.Parameters.Add(ss.Column, ss.Value);
-                    input.Builder.AppendLine("{0} = {1}", ss.Column.Name, p.Name);
-                }
+                var items = input.Context.Updates.Select(i => i as StaticValueSource).ToArray();
+                AppendItems(input.Builder, items, (b, i) => {
+                    var p = input.Parameters.Add(i.Column, i.Value);
+                    b.PrependIndent();
+                    b.Append("{0} = {1}", i.Column.Name, p.Name);
+                }, true);
+            }
+            else if (first is QueryValueSource)
+            {
+                var items = input.Context.Updates.Select(i => i as QueryValueSource).ToArray();
+                AppendItems(input.Builder, items, (b, i) => {
+                    b.PrependIndent();
+                    quotedIdentifierBuilder.AddColumn(i.DestinationColumn, b);
+                    b.Append(" = x.");
+                    quotedIdentifierBuilder.AddColumn(i.SourceColumn, b);
+                }, true);
             }
             input.Builder.DecreaseIndent();
+
+            if (first is QueryValueSource)
+            {
+                input.Builder.AppendLine(Constants.From);
+                input.Builder.AppendLine(Constants.OpeningParen);
+                input.Builder.IncreaseIndent();
+                AddValuesFromQuery(input.Context.Source as ISelectQueryTarget, input);
+                input.Builder.DecreaseIndent();
+                input.Builder.AppendLine("{0} as x", Constants.ClosingParen);
+            }
         }
 
         private void AddValuesFromStatic(IUpdateQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)

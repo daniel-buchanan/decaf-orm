@@ -86,7 +86,6 @@ namespace pdq.npgsql.Builders
             input.Builder.AppendLine("set");
 
             var first = input.Context.Updates?.FirstOrDefault();
-
             if (first == null || input.Context.Updates?.Any() == false)
                 return;
 
@@ -121,48 +120,6 @@ namespace pdq.npgsql.Builders
                 input.Builder.DecreaseIndent();
                 input.Builder.AppendLine("{0} as x", Constants.ClosingParen);
             }
-        }
-
-        private void AddValuesFromStatic(IUpdateQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
-        {
-            throw new NotImplementedException();
-            /*var source = context.Source as IInsertStaticValuesSource;
-            var columns = context.Columns.ToArray();
-
-            sqlBuilder.AppendLine(Constants.Values);
-            var values = source.Values?.ToArray();
-
-            sqlBuilder.IncreaseIndent();
-
-            for(var i = 0; i < values.Length; i++)
-            {
-                sqlBuilder.PrependIndent();
-                sqlBuilder.Append(Constants.OpeningParen);
-                
-                for(var j = 0; j < values[i].Length; j++)
-                {
-                    var itemNumber = j + 1;
-                    var quoteCharacter = valueParser.ValueNeedsQuoting(columns[j]) ?
-                        Constants.ValueQuote :
-                        string.Empty;
-
-                    var parameter = parameterManager.Add(columns[j], values[i][j]);
-                    sqlBuilder.Append("{0}{1}{0}", quoteCharacter, parameter.Name);
-
-                    if (itemNumber < values[i].Length)
-                        sqlBuilder.Append(Constants.Seperator);
-                }
-
-                sqlBuilder.Append(Constants.ClosingParen);
-
-                var valueNumber = i + 1;
-                if (valueNumber < values.Length)
-                    sqlBuilder.Append(Constants.Seperator);
-
-                sqlBuilder.AppendLine();
-            }
-
-            sqlBuilder.DecreaseIndent();*/
         }
 
         private void AddValuesFromQuery(ISelectQueryTarget source, IPipelineStageInput<IUpdateQueryContext> input)

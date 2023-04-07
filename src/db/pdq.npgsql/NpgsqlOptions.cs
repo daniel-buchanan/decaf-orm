@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Data;
+using pdq.db.common;
 
 namespace pdq.npgsql
 {
-	public class NpgsqlOptions
+	public class NpgsqlOptions : IDatabaseOptions
 	{
 		public NpgsqlOptions()
 		{
@@ -19,6 +20,9 @@ namespace pdq.npgsql
 		/// 
 		/// </summary>
 		public bool QuotedIdentifiers { get; private set; }
-	}
+
+		/// <inheritdoc/>
+		public string CommentCharacter => Builders.Constants.Comment;
+    }
 }
 

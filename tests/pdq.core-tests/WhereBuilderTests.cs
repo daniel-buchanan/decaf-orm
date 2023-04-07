@@ -13,6 +13,7 @@ using pdq.state.Conditionals;
 using Xunit;
 using pdq.services;
 using pdq.common.Utilities;
+using pdq.common.Connections;
 
 namespace pdq.core_tests
 {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using pdq.common;
 using System.Linq;
+using pdq.common.Connections;
 
 namespace pdq.services
 {

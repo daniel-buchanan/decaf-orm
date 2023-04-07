@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
+using pdq.common.Connections;
 using pdq.state;
-using static pdq.Attributes.IgnoreColumnFor;
 
 namespace pdq.services
 {
@@ -41,6 +41,34 @@ namespace pdq.services
             });
         }
 
+        protected IEnumerable<TEntity> Add(IEnumerable<TEntity> items, IEnumerable<string> outputs)
+        {
+            var first = items.First();
+            return ExecuteQuery(q =>
+            {
+                var query = q.Insert();
+                var table = GetTableInfo<TEntity>(q);
+                var exec = query.Into(table)
+                    .Columns((t) => first)
+                    .Values(items);
+                foreach (var o in outputs)
+                    exec.Output(o);
+                NotifyPreExecution(this, q);
+
+                var results = exec.ToList<TEntity>();
+
+                var inputItems = items.ToArray();
+                var i = 0;
+                foreach (var item in results)
+                {
+                    var r = inputItems[i];
+                    foreach (var o in outputs) r.SetPropertyValueFrom(o, item);
+                    i += 1;
+                }
+                return inputItems;
+            });
+        }
+
         /// <inheritdoc/>
         public virtual IEnumerable<TEntity> Add(params TEntity[] toAdd)
             => Add(toAdd?.ToList());
@@ -56,8 +84,8 @@ namespace pdq.services
             {
                 var first = toAdd.First();
                 var query = q.Insert()
-                    .Into<TEntity>()
-                    .Columns(e => first)
+                    .Into<TEntity>(t => t)
+                    .Columns(t => first)
                     .Values(toAdd);
                 NotifyPreExecution(this, q);
                 query.Execute();

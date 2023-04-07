@@ -12,7 +12,7 @@ using static Dapper.SqlMapper;
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.core-tests")]
 namespace pdq.Implementation
 {
-	internal class Select :
+    internal class Select :
         SelectCommon,
         ISelectWithAlias,
         ISelectFrom,

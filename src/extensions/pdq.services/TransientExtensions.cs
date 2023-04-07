@@ -1,4 +1,4 @@
-﻿using pdq.common;
+﻿using pdq.common.Connections;
 
 namespace pdq.services
 {

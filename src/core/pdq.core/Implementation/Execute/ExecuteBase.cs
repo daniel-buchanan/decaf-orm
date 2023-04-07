@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using pdq.common;
+using pdq.common.Connections;
 using pdq.common.Utilities;
 
 namespace pdq.Implementation

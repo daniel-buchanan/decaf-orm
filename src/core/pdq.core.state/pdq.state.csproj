@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,10 +19,14 @@
     <None Remove="Utilities\Parsers\" />
     <None Remove="Utilities\Dynamic\" />
     <None Remove="Newtonsoft.Json" />
+    <None Remove="Components\" />
+    <None Remove="Query\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Utilities\" />
     <Folder Include="Utilities\Parsers\" />
     <Folder Include="Utilities\Dynamic\" />
+    <Folder Include="Components\" />
+    <Folder Include="Query\" />
   </ItemGroup>
 </Project>

@@ -9,27 +9,26 @@ using pdq.state;
 
 namespace pdq.npgsql.Builders
 {
-	public class InsertBuilder : db.common.Builders.InsertBuilder
+	public class InsertBuilderPipeline : db.common.Builders.InsertBuilderPipeline
 	{
         private readonly QuotedIdentifierBuilder quotedIdentifierBuilder;
         private readonly IValueParser valueParser;
-        private readonly IBuilder<ISelectQueryContext> selectBuilder;
+        private readonly IBuilderPipeline<ISelectQueryContext> selectBuilder;
 
-        public InsertBuilder(
-            db.common.Builders.IWhereBuilder whereBuilder,
+        public InsertBuilderPipeline(
+            PdqOptions options,
+            NpgsqlOptions dbOptions,
             IHashProvider hashProvider,
+            db.common.Builders.IWhereBuilder whereBuilder,
             QuotedIdentifierBuilder quotedIdentifierBuilder,
             IValueParser valueParser,
-            IBuilder<ISelectQueryContext> selectBuilder,
-            PdqOptions pdqOptions)
-            : base(whereBuilder, hashProvider, pdqOptions)
+            IBuilderPipeline<ISelectQueryContext> selectBuilder)
+            : base(options, dbOptions, hashProvider)
         {
             this.quotedIdentifierBuilder = quotedIdentifierBuilder;
             this.valueParser = valueParser;
             this.selectBuilder = selectBuilder;
         }
-
-        protected override string CommentCharacter => Constants.Comment;
 
         private void AppendItems<T>(ISqlBuilder sqlBuilder, T[] items, Action<ISqlBuilder, T> processMethod, bool appendNewLine = false)
         {
@@ -45,57 +44,57 @@ namespace pdq.npgsql.Builders
             }
         }
 
-        protected override void AddColumns(IInsertQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        protected override void AddColumns(IPipelineStageInput<IInsertQueryContext> input)
         {
-            sqlBuilder.IncreaseIndent();
-            var columns = context.Columns.ToArray();
+            input.Builder.IncreaseIndent();
+            var columns = input.Context.Columns.ToArray();
 
-            sqlBuilder.PrependIndent();
-            sqlBuilder.Append(Constants.OpeningParen);
+            input.Builder.PrependIndent();
+            input.Builder.Append(Constants.OpeningParen);
 
-            AppendItems(sqlBuilder, columns, (b, i) => this.quotedIdentifierBuilder.AddSelect(i, b));
+            AppendItems(input.Builder, columns, (b, i) => this.quotedIdentifierBuilder.AddSelect(i, b));
 
-            sqlBuilder.Append(Constants.ClosingParen);
-            sqlBuilder.DecreaseIndent();
-            sqlBuilder.AppendLine();
+            input.Builder.Append(Constants.ClosingParen);
+            input.Builder.DecreaseIndent();
+            input.Builder.AppendLine();
         }
 
-        protected override void AddOutput(IInsertQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        protected override void AddOutput(IPipelineStageInput<IInsertQueryContext> input)
         {
-            if (!context.Outputs.Any())
+            if (!input.Context.Outputs.Any())
                 return;
 
-            sqlBuilder.AppendLine(Constants.Returning);
-            sqlBuilder.IncreaseIndent();
-            var outputs = context.Outputs.ToArray();
+            input.Builder.AppendLine(Constants.Returning);
+            input.Builder.IncreaseIndent();
+            var outputs = input.Context.Outputs.ToArray();
 
-            AppendItems(sqlBuilder, outputs, (b, o) =>
+            AppendItems(input.Builder, outputs, (b, o) =>
             {
-                sqlBuilder.PrependIndent();
-                this.quotedIdentifierBuilder.AddOutput(o, sqlBuilder);
+                input.Builder.PrependIndent();
+                this.quotedIdentifierBuilder.AddOutput(o, input.Builder);
             });
 
-            sqlBuilder.DecreaseIndent();
-            sqlBuilder.AppendLine();
+            input.Builder.DecreaseIndent();
+            input.Builder.AppendLine();
         }
 
-        protected override void AddTable(IInsertQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        protected override void AddTable(IPipelineStageInput<IInsertQueryContext> input)
         {
-            sqlBuilder.IncreaseIndent();
+            input.Builder.IncreaseIndent();
 
-            sqlBuilder.PrependIndent();
-            this.quotedIdentifierBuilder.AddFromTable(context.Target.Name, sqlBuilder);
-            sqlBuilder.AppendLine();
+            input.Builder.PrependIndent();
+            this.quotedIdentifierBuilder.AddFromTable(input.Context.Target.Name, input.Builder);
+            input.Builder.AppendLine();
 
-            sqlBuilder.DecreaseIndent();
+            input.Builder.DecreaseIndent();
         }
 
-        protected override void AddValues(IInsertQueryContext context, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        protected override void AddValues(IPipelineStageInput<IInsertQueryContext> input)
         {
-            if (context.Source is IInsertStaticValuesSource)
-                AddValuesFromStatic(context, sqlBuilder, parameterManager);
-            else if (context.Source is IInsertQueryValuesSource queryValuesSource)
-                AddValuesFromQuery(queryValuesSource, sqlBuilder);
+            if (input.Context.Source is IInsertStaticValuesSource)
+                AddValuesFromStatic(input.Context, input.Builder, input.Parameters);
+            else if (input.Context.Source is IInsertQueryValuesSource queryValuesSource)
+                AddValuesFromQuery(queryValuesSource, input);
             else
                 throw new ShouldNeverOccurException($"Insert Values should be one of {nameof(IInsertStaticValuesSource)} or {nameof(IInsertQueryValuesSource)}");
         }
@@ -141,8 +140,8 @@ namespace pdq.npgsql.Builders
             sqlBuilder.DecreaseIndent();
         }
 
-        private void AddValuesFromQuery(IInsertQueryValuesSource source, ISqlBuilder sqlBuilder)
-            => selectBuilder.Build(source.Query, sqlBuilder);
+        private void AddValuesFromQuery(IInsertQueryValuesSource source, IPipelineStageInput<IInsertQueryContext> input)
+            => selectBuilder.Execute(source.Query, input);
     }
 }
 

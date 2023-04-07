@@ -10,7 +10,7 @@ using Xunit;
 
 namespace pdq.core_tests
 {
-	public class SelectQueryContextTests
+    public class SelectQueryContextTests
 	{
 		private readonly ISelectQueryContext context;
 

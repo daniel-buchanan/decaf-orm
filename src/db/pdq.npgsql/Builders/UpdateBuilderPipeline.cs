@@ -14,7 +14,6 @@ namespace pdq.npgsql.Builders
 	{
         private readonly db.common.Builders.IWhereBuilder whereBuilder;
         private readonly QuotedIdentifierBuilder quotedIdentifierBuilder;
-        private readonly IValueParser valueParser;
         private readonly IBuilderPipeline<ISelectQueryContext> selectBuilder;
 
         public UpdateBuilderPipeline(
@@ -23,13 +22,11 @@ namespace pdq.npgsql.Builders
             IHashProvider hashProvider,
             db.common.Builders.IWhereBuilder whereBuilder,
             QuotedIdentifierBuilder quotedIdentifierBuilder,
-            IValueParser valueParser,
             IBuilderPipeline<ISelectQueryContext> selectBuilder)
             : base(options, dbOptions, hashProvider)
         {
             this.whereBuilder = whereBuilder;
             this.quotedIdentifierBuilder = quotedIdentifierBuilder;
-            this.valueParser = valueParser;
             this.selectBuilder = selectBuilder;
         }
 

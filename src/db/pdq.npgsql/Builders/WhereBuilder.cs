@@ -14,15 +14,10 @@ namespace pdq.npgsql.Builders
 {
     public class WhereBuilder : db.common.Builders.IWhereBuilder
     {
-        private readonly IValueParser valueParser;
-
         private readonly QuotedIdentifierBuilder quotedIdentifierBuilder;
 
-        public WhereBuilder(
-            IValueParser valueParser,
-            QuotedIdentifierBuilder quotedIdentifierBuilder)
+        public WhereBuilder(QuotedIdentifierBuilder quotedIdentifierBuilder)
         {
-            this.valueParser = valueParser;
             this.quotedIdentifierBuilder = quotedIdentifierBuilder;
         }
 

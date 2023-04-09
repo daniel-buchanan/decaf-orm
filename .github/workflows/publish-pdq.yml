@@ -1,6 +1,8 @@
 name: Publish
 on:
   workflow_call:
+env:
+  PACKAGE_VERSION: ${{ format('0.1.{0}+{1}', github.run_number, github.sha) }}
 jobs:
   pack:
     runs-on: ubuntu-latest
@@ -11,9 +13,7 @@ jobs:
       - name: Build
         run: dotnet build --no-restore
       - name: Pack
-        env:
-          PACKAGE_VERSION: ${{ format('0.1.{0}+{1}', github.run_number, github.sha) }}
-        run: dotnet pack src/core/pdq.core/pdq.csproj -c Release -p:Version=$PACKAGE_VERSION -o ./output
+        run: dotnet pack src/core/pdq.core/pdq.csproj -c Release -p:Version=${PACKAGE_VERSION} -o ./output
       - name: Upload Package
         uses: actions/upload-artifact@v2.2.4
         with:
@@ -33,17 +33,11 @@ jobs:
     - name: Upload to NuGet
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        PACKAGE_NAME: ${{ format('pdq.0.1.{0}.nupkg', github.run_number) }}
+        PACKAGE_NAME: ${{ format('pdq.{0}.nupkg', env.PACKAGE_VERSION) }}
       run: |
-        dotnet nuget push ./output/$PACKAGE_NAME \
-          -k $NUGET_API_KEY \
+        dotnet nuget push ./output/${PACKAGE_NAME} \
+          -k ${NUGET_API_KEY} \
           -s https://api.nuget.org/v3/index.json
-    - name: Persist Latest Version
-      env:
-        PACKAGE_VERSION: ${{ format('0.1.{0}+{1}', github.run_number, github.sha) }}
-      uses: UnlyEd/github-action-store-variable@v3.0.12
-      with:
-        # Write variable: `VAR=VALUE` | Read variable: `VAR`
-        variables: LATEST_PDQ=${PACKAGE_VERSION}
-        failIfNotFound: true
-
+    - name: Persist Version
+      run: |
+       gh variable set LATEST_PDQ --body=${PACKAGE_VERSION}

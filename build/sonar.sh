@@ -1,4 +1,4 @@
-#!bin/bash
+#!/usr/bin/bash
 
 ./.sonar/scanner/dotnet-sonarscanner begin \
     /k:"daniel-buchanan_pdq" \

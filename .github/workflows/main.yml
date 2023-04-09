@@ -28,7 +28,7 @@ jobs:
         with:
           filters: |
             core:
-              - 'src/db/pdq.npgsql/**'
+              - 'src/core/**'
             db:
               - 'src/db/pdq.db.common/**'
             npgsql:

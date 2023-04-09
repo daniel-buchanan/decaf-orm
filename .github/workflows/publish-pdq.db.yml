@@ -44,5 +44,5 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
-        gh variable set LATEST_DB --body=${PACKAGE_VERSION}
+        gh variable set LATEST_DB --body=${PACKAGE_VERSION} -R daniel-buchanan/pdq
 

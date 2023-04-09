@@ -23,7 +23,7 @@ jobs:
 
   check-paths:
     runs-on: ubuntu-latest
-    needs: [sonar, tests, codeql]
+    needs: [sonar, tests]
     name: Check Changes
     steps:
       - uses: actions/checkout@v2

@@ -5,7 +5,6 @@ jobs:
   pack:
     runs-on: ubuntu-latest
     name: Pack
-    needs: [sonar, tests]
     steps:
       - uses: actions/checkout@v2
       - name: Restore

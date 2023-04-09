@@ -15,8 +15,8 @@ namespace pdq.Implementation
         private Insert(IQueryContainerInternal query, IInsertQueryContext context)
             : base(query, context) { }
 
-        public static Insert Create(IInsertQueryContext context, IQueryContainerInternal query)
-            => new Insert(query, context);
+        public static Insert Create(IInsertQueryContext context, IQueryContainer query)
+            => new Insert(query as IQueryContainerInternal, context);
 
         /// <inheritdoc/>
         public IInsertValues Columns(Expression<Func<IInsertColumnBuilder, dynamic>> columns)

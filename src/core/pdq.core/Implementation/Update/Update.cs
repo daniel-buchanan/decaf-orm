@@ -27,8 +27,8 @@ namespace pdq.Implementation
 
         public static Update Create(
             IUpdateQueryContext context,
-            IQueryContainerInternal query)
-            => new Update(context, query);
+            IQueryContainer query)
+            => new Update(context, query as IQueryContainerInternal);
 
         /// <inheritdoc/>
         public IUpdateSetFromQuery From(Action<ISelectWithAlias> query)

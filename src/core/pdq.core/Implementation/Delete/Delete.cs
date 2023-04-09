@@ -22,8 +22,8 @@ namespace pdq.Implementation
 
         public static Delete Create(
             IDeleteQueryContext context,
-            IQueryContainerInternal query)
-            => new Delete(context, query);
+            IQueryContainer query)
+            => new Delete(context, query as IQueryContainerInternal);
 
         /// <inheritdoc />
         public IDeleteFrom From(string name, string alias = null, string schema = null)

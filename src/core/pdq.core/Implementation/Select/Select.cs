@@ -27,8 +27,8 @@ namespace pdq.Implementation
 
         public static Select Create(
             ISelectQueryContext context,
-            IQueryContainerInternal query)
-            => new Select(context, query);
+            IQueryContainer query)
+            => new Select(context, query as IQueryContainerInternal);
 
         /// <inheritdoc/>
         internal ISelectQueryContext GetContext() => this.context;

@@ -20,3 +20,9 @@ jobs:
     name: CodeQL Analysis
     uses: daniel-buchanan/pdq/.github/workflows/codeql-analysis.yml@main
     secrets: inherit
+
+  pack:
+    name: Pack
+    needs: [sonar, tests, codeql]
+    uses: daniel-buchanan/pdq/.github/workflows/publish.yml@main
+    secrets: inherit

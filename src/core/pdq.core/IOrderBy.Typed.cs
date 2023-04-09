@@ -61,6 +61,12 @@ namespace pdq
         IExecute,
         ISelectColumnTyped<T>
     {
+        /// <summary>
+        /// Order by a given property
+        /// </summary>
+        /// <param name="builder">The expression specifying the property to order by.</param>
+        /// <param name="order">The order to apply for this property.</param>
+        /// <returns>(FluentAPI) The ability to continue ordering or other actions.</returns>
         IOrderByThenTyped<T> ThenBy(Expression<Func<T, object>> builder, SortOrder order = SortOrder.Ascending);
     }
 

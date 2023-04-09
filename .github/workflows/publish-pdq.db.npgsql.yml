@@ -2,7 +2,8 @@ name: Publish
 on:
   workflow_call:
 env:
-  PACKAGE_VERSION: ${{ format('0.1.{0}+{1}', github.run_number, github.sha) }}
+  FULL_PACKAGE_VERSION: ${{ format('0.1.{0}+{1}', github.run_number, github.sha) }}
+  PACKAGE_VERSION: ${{ format('0.1.{0}', github.run_number) }}
 jobs:
   pack:
     runs-on: ubuntu-latest
@@ -15,7 +16,7 @@ jobs:
           dotnet add ${CSPROJ} package pdq.${{ vars.LATEST_PDQ }}
           dotnet add ${CSPROJ} package pdq.db.${{ vars.LATEST_DB }}
           dotnet build ${CSPROJ} -C Release
-          dotnet pack ${CSPROJ} -c Release -p:Version=$PACKAGE_VERSION -o ./output
+          dotnet pack ${CSPROJ} -c Release -p:Version=${FULL_PACKAGE_VERSION} -o ./output
       - name: Save Archive
         uses: actions/upload-artifact@v2.2.4
         with:

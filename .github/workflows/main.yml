@@ -51,14 +51,14 @@ jobs:
 
   pub-pdqdb:
     name: Pub pdq.db
-    needs: [check-paths, pub-pdq]
+    needs: [check-paths]
     if: needs.check-paths.outputs.run-db == 'true'
     uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.db.yml@main
     secrets: inherit
 
   pub-pdqnpgsql:
     name: Pub pdq.npgsql
-    needs: [check-paths, pub-pdq]
+    needs: [check-paths]
     if: needs.check-paths.outputs.run-npgsql == 'true'
     uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.db.npgsql.yml@main
     secrets: inherit

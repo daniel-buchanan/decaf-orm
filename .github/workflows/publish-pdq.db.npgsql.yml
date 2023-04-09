@@ -42,5 +42,7 @@ jobs:
           -k ${NUGET_API_KEY} \
           -s https://api.nuget.org/v3/index.json
     - name: Persist Version
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         gh variable set LATEST_NPGSQL --body=${PACKAGE_VERSION}

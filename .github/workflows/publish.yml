@@ -1,0 +1,24 @@
+name: Publish
+on:
+  workflow_call:
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    name: Pack
+    needs: [sonar, tests]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Restore
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Pack
+        env:
+          PACKAGE_VERSION: ${{ format('0.2.{0}+{1}', github.run_number, github.sha) }}
+        run: dotnet pack src/core/pdq.core/pdq.csproj -c Release -p:Version=$PACKAGE_VERSION -o ./output
+      - name: Upload Package
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: package
+          path: ./output
+          retention-days: 0

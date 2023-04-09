@@ -22,7 +22,12 @@ jobs:
     secrets: inherit
 
   pack:
-    name: Pack
+    name: Pack & Publish
     needs: [sonar, tests, codeql]
-    uses: daniel-buchanan/pdq/.github/workflows/publish.yml@main
+    uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.yml@main
+    with:
+      package-name: pdq
+      project-path: src/pdq.core/pdq.csproj
+      latest-variable-name: LATEST_PDQ
+      paths-to-check: src/core/**
     secrets: inherit

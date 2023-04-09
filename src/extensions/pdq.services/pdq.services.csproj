@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\core\pdq.core.common\pdq.common.csproj" />
+    <ProjectReference Include="..\..\core\pdq.core.state\pdq.state.csproj" />
     <ProjectReference Include="..\..\core\pdq.core\pdq.csproj" />
   </ItemGroup>
   <ItemGroup>

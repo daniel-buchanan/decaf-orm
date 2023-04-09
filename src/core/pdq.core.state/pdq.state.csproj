@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\pdq.core.common\pdq.common.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\pdq.core.common\pdq.common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Utilities\" />
@@ -28,11 +28,5 @@
     <Folder Include="Utilities\Dynamic\" />
     <Folder Include="Components\" />
     <Folder Include="Query\" />
-  </ItemGroup>
-  <ItemGroup>
-    <_PackageFiles Include="$(OutputPath)\pdq.state.dll">
-      <BuildAction>None</BuildAction>
-      <PackagePath>lib\netstandard2.0</PackagePath>
-    </_PackageFiles>
   </ItemGroup>
 </Project>

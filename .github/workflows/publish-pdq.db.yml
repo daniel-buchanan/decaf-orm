@@ -44,6 +44,6 @@ jobs:
       uses: UnlyEd/github-action-store-variable@v3.0.12
       with:
         # Write variable: `VAR=VALUE` | Read variable: `VAR`
-        variables: LATEST_DB=PACKAGE_VERSION
-        failIfNotFound: false
+        variables: LATEST_DB=${PACKAGE_VERSION}
+        failIfNotFound: true
 

@@ -19,6 +19,7 @@ jobs:
   check-paths:
     runs-on: ubuntu-latest
     needs: [sonar, tests]
+    if: ${{ github.event_name != 'pull_request' }}
     name: Check Changes
     steps:
       - uses: actions/checkout@v2

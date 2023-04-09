@@ -1,0 +1,22 @@
+name: Main
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  sonar:
+    name: Sonar Analysis
+    uses: daniel-buchanan/pdq/.github/workflows/sonar.yml@main
+    secrets: inherit
+  
+  tests:
+    name: Run Tests
+    uses: daniel-buchanan/pdq/.github/workflows/tests.yml@main
+    secrets: inherit
+
+  codeql:
+    name: CodeQL Analysis
+    uses: daniel-buchanan/pdq/.github/workflows/codeql-analysis.yml@main
+    secrets: inherit

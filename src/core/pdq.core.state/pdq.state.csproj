@@ -29,4 +29,10 @@
     <Folder Include="Components\" />
     <Folder Include="Query\" />
   </ItemGroup>
+  <ItemGroup>
+    <_PackageFiles Include="$(OutputPath)\pdq.state.dll">
+      <BuildAction>None</BuildAction>
+      <PackagePath>lib\netstandard2.0</PackagePath>
+    </_PackageFiles>
+  </ItemGroup>
 </Project>

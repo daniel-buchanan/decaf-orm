@@ -17,12 +17,8 @@
     <PackageReference Include="Dapper" Version="2.0.123" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\pdq.core.common\pdq.common.csproj">
-      <IncludeAssets>all</IncludeAssets>
-    </ProjectReference>
-    <ProjectReference Include="..\pdq.core.state\pdq.state.csproj">
-      <IncludeAssets>all</IncludeAssets>
-    </ProjectReference>
+    <ProjectReference Include="..\pdq.core.common\pdq.common.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\pdq.core.state\pdq.state.csproj" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Dapper" />

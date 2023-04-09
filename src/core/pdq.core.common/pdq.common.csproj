@@ -23,4 +23,10 @@
   <ItemGroup>
     <Folder Include="Templates\" />
   </ItemGroup>
+  <ItemGroup>
+    <_PackageFiles Include="$(OutputPath)\pdq.common.dll">
+      <BuildAction>None</BuildAction>
+      <PackagePath>lib\netstandard2.0</PackagePath>
+    </_PackageFiles>
+  </ItemGroup>
 </Project>

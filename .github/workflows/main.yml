@@ -21,13 +21,44 @@ jobs:
     uses: daniel-buchanan/pdq/.github/workflows/codeql-analysis.yml@main
     secrets: inherit
 
-  pack:
-    name: Pack & Publish
+  check-paths:
+    runs-on: ubuntu-latest
     needs: [sonar, tests, codeql]
-    uses: daniel-buchanan/pdq/.github/workflows/publish.yml@main
-    with:
-      package-name: pdq
-      project-path: src/pdq.core/pdq.csproj
-      latest-variable-name: LATEST_PDQ
-      paths-to-check: src/core/**
+    name: Check Changes
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            core:
+              - 'src/db/pdq.npgsql/**'
+            db:
+              - 'src/db/pdq.db.common/**'
+            npgsql:
+              - 'src/db/pdq.npgsql/**'
+    outputs:
+      run-core: ${{ steps.changes.outputs.core }}
+      run-db: ${{ steps.changes.outputs.db }}
+      run-npgsql: ${{ steps.changes.outputs.npgsql }}
+
+  pub-pdq:
+    name: Pub pdq
+    needs: [check-paths]
+    if: needs.check-paths.outputs.run-core == 'true'
+    uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.yml@main
+    secrets: inherit
+
+  pub-pdqdb:
+    name: Pub pdq.db
+    needs: [check-paths, pub-pdq]
+    if: needs.check-paths.outputs.run-db == 'true'
+    uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.db.yml@main
+    secrets: inherit
+
+  pub-pdqnpgsql:
+    name: Pub pdq.npgsql
+    needs: [check-paths, pub-pdq]
+    if: needs.check-paths.outputs.run-npgsql == 'true'
+    uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.db.npgsql.yml@main
     secrets: inherit

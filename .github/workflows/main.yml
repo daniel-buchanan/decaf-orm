@@ -41,20 +41,20 @@ jobs:
   pub-pdq:
     name: pdq
     needs: [check-paths]
-    if: needs.check-paths.outputs.run-core == 'true'
+    if: ${{ needs.check-paths.outputs.run-core == 'true' }}
     uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.yml@main
     secrets: inherit
 
   pub-pdqdb:
     name: pdq.db
     needs: [check-paths]
-    if: needs.check-paths.outputs.run-db == 'true'
+    if: ${{ needs.check-paths.outputs.run-db == 'true' }}
     uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.db.yml@main
     secrets: inherit
 
   pub-pdqnpgsql:
     name: pdq.npgsql
     needs: [check-paths]
-    if: needs.check-paths.outputs.run-npgsql == 'true'
+    if: ${{ needs.check-paths.outputs.run-npgsql == 'true' }}
     uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.db.npgsql.yml@main
     secrets: inherit

@@ -11,9 +11,9 @@ namespace pdq
         /// <summary>
         /// Order by a given property
         /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="order"></param>
-        /// <returns></returns>
+        /// <param name="builder">The expression specifying the property to order by.</param>
+        /// <param name="order">The order to apply for this property.</param>
+        /// <returns>(FluentAPI) The ability to continue ordering or other actions.</returns>
         IOrderByThenTyped<T> OrderBy(Expression<Func<T, object>> builder, SortOrder order = SortOrder.Ascending);
     }
 

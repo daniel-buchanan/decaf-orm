@@ -38,21 +38,21 @@ jobs:
       run-npgsql: ${{ steps.changes.outputs.npgsql }}
 
   pub-pdq:
-    name: Pub pdq
+    name: pdq
     needs: [check-paths]
     if: needs.check-paths.outputs.run-core == 'true'
     uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.yml@main
     secrets: inherit
 
   pub-pdqdb:
-    name: Pub pdq.db
+    name: pdq.db
     needs: [check-paths]
     if: needs.check-paths.outputs.run-db == 'true'
     uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.db.yml@main
     secrets: inherit
 
   pub-pdqnpgsql:
-    name: Pub pdq.npgsql
+    name: pdq.npgsql
     needs: [check-paths]
     if: needs.check-paths.outputs.run-npgsql == 'true'
     uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.db.npgsql.yml@main

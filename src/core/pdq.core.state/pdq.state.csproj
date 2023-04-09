@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\pdq.core.common\pdq.common.csproj" />
+    <ProjectReference Include="..\pdq.core.common\pdq.common.csproj" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Utilities\" />

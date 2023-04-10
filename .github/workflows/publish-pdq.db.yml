@@ -8,7 +8,7 @@ jobs:
   pack:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Pack
         env:
           CSPROJ: src/db/pdq.db.common/pdq.db.common-nuget.csproj

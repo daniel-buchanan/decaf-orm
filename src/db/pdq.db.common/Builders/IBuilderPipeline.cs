@@ -22,6 +22,9 @@ namespace pdq.db.common.Builders
 		: IPipelineStageInput
 		where T : IQueryContext
 	{
+		/// <summary>
+		/// The <see cref="T"/> context for the pipeline stage.
+		/// </summary>
 		T Context { get; }
 	}
 

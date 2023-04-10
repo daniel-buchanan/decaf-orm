@@ -15,7 +15,7 @@ jobs:
         run: |
           dotnet add ${CSPROJ} package pdq --version ${{ vars.LATEST_PDQ }}
           dotnet add ${CSPROJ} package pdq.db --version ${{ vars.LATEST_DB }}
-          dotnet build ${CSPROJ} -C Release
+          dotnet build ${CSPROJ} -c Release
           dotnet pack ${CSPROJ} -c Release -p:Version=${FULL_PACKAGE_VERSION} -o ./output
       - name: Save Archive
         uses: actions/upload-artifact@v2.2.4

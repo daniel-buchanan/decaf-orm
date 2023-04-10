@@ -12,6 +12,9 @@ namespace pdq.db.common.Builders
 		/// </summary>
         IParameterManager Parameters { get; }
 
+		/// <summary>
+		/// The <see cref="ISqlBuilder"/> used to build the query.
+		/// </summary>
         ISqlBuilder Builder { get; }
     }
 

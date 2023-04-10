@@ -1,12 +1,10 @@
-﻿using System;
-using System.Data;
-using pdq.common;
+﻿using System.Data;
 using pdq.common.Connections;
 using pdq.db.common;
 
 namespace pdq.npgsql
 {
-	public class NpgsqlOptions : IDatabaseOptions
+    public class NpgsqlOptions : IDatabaseOptions
 	{
 		public NpgsqlOptions()
 		{

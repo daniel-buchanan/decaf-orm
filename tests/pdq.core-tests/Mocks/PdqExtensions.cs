@@ -9,10 +9,11 @@ namespace pdq.core_tests.Mocks
 {
 	public static class PdqExtensions
 	{
-		public static void UseMockDatabase(this IPdqOptionsBuilder builder)
+		public static IPdqOptionsBuilder UseMockDatabase(this IPdqOptionsBuilder builder)
         {
 			builder.ConfigureDbImplementation<MockSqlFactory, MockConnectionFactory, MockTransactionFactory>();
 			builder.Services.AddScoped<IConnectionDetails, MockConnectionDetails>();
+			return builder;
         }
 	}
 }

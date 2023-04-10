@@ -11,9 +11,9 @@ using pdq.core_tests.Models;
 var services = new ServiceCollection();
 services.AddPdq(o =>
 {
-    o.EnableTransientTracking();
-    o.OverrideDefaultLogLevel(LogLevel.Debug);
-    o.UseMockDatabase();
+    o.EnableTransientTracking()
+        .OverrideDefaultLogLevel(LogLevel.Debug)
+        .UseMockDatabase();
 });
 services.AddScoped<IConnectionDetails, MockConnectionDetails>();
 
@@ -63,6 +63,19 @@ using (var t = uow.Begin())
                 id = 42,
                 name = "smith"
             });
+
+        q.Update()
+            .Table<Person>()
+            .From<Person>(b =>
+            {
+                b.KnownAs("x");
+                b.From<Person>(p => p)
+                    .Where(p => p.CreatedAt < DateTime.Now)
+                    ;
+            })
+            .Set(x => x.Email, y => y.Email)
+            .Where((x, y) => x.Id == y.Id)
+            .Output(x => x.Id);
 
     }
     

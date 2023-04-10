@@ -13,8 +13,8 @@ jobs:
         env:
           CSPROJ: src/db/pdq.npgsql/pdq.npgsql-nuget.csproj
         run: |
-          dotnet add ${CSPROJ} package pdq.${{ vars.LATEST_PDQ }}
-          dotnet add ${CSPROJ} package pdq.db.${{ vars.LATEST_DB }}
+          dotnet add ${CSPROJ} package pdq --version ${{ vars.LATEST_PDQ }}
+          dotnet add ${CSPROJ} package pdq.db --version ${{ vars.LATEST_DB }}
           dotnet build ${CSPROJ} -C Release
           dotnet pack ${CSPROJ} -c Release -p:Version=${FULL_PACKAGE_VERSION} -o ./output
       - name: Save Archive

@@ -13,7 +13,7 @@ jobs:
         env:
           CSPROJ: src/db/pdq.db.common/pdq.db.common-nuget.csproj
         run: |
-          dotnet add ${CSPROJ} package pdq.${{ vars.LATEST_PDQ }}
+          dotnet add ${CSPROJ} package pdq --version ${{ vars.LATEST_PDQ }}
           dotnet build ${CSPROJ} -C Release
           dotnet pack ${CSPROJ} -c Release -p:Version=${FULL_PACKAGE_VERSION} -o ./output
       - name: Save Archive

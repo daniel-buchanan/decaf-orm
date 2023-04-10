@@ -7,6 +7,9 @@ namespace pdq.db.common.Builders
 {
 	public interface IPipelineStageInput
 	{
+		/// <summary>
+		/// The <see cref="IParameterManager"/> used for building a query.
+		/// </summary>
         IParameterManager Parameters { get; }
 
         ISqlBuilder Builder { get; }

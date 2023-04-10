@@ -17,7 +17,8 @@ namespace pdq.common.Options
         /// although "<see cref="LogLevel.Information"/>" may also
         /// be useful.
         /// </param>
-        void OverrideDefaultLogLevel(LogLevel level);
+        /// <returns>(Fluent API) The ability to continnue further setup actions.</returns>
+        IPdqOptionsBuilder OverrideDefaultLogLevel(LogLevel level);
 
         /// <summary>
         /// Override the default where clause handling behaviour (<see cref="ClauseHandling.And"/>), and
@@ -26,7 +27,8 @@ namespace pdq.common.Options
         /// <param name="handling">
         /// The default where clause handling you want to use.
         /// </param>
-        void OverrideDefaultClauseHandling(ClauseHandling handling);
+        /// <returns>(Fluent API) The ability to continnue further setup actions.</returns>
+        IPdqOptionsBuilder OverrideDefaultClauseHandling(ClauseHandling handling);
 
         /// <summary>
         /// Enable tracking of Transients throughout their lifetime, by default
@@ -35,7 +37,8 @@ namespace pdq.common.Options
         /// tracking they are tracked by the Unit of Work allowing for debugging and
         /// discovery of issues.
         /// </summary>
-        void EnableTransientTracking();
+        /// <returns>(Fluent API) The ability to continnue further setup actions.</returns>
+        IPdqOptionsBuilder EnableTransientTracking();
 
         /// <summary>
         /// Close database connections after a commit or rollback. This will mean
@@ -43,14 +46,16 @@ namespace pdq.common.Options
         /// a new connection to the database. If not enabled (default) then
         /// connections will be re-used for multiple queries across a transaction.
         /// </summary>
-        void CloseConnectionsOnCommitOrRollback();
+        /// <returns>(Fluent API) The ability to continnue further setup actions.</returns>
+        IPdqOptionsBuilder CloseConnectionsOnCommitOrRollback();
 
         /// <summary>
         /// Disables header comments for queries generated.
         /// This means primarily that the query hash and timestamp will not
         /// be included as comments at the beginning of the query.
         /// </summary>
-        void DisableSqlHeaderComments();
+        /// <returns>(Fluent API) The ability to continnue further setup actions.</returns>
+        IPdqOptionsBuilder DisableSqlHeaderComments();
 
         /// <summary>
         /// The Services Collection.
@@ -63,7 +68,8 @@ namespace pdq.common.Options
         /// <typeparam name="TSqlFactory">The type of the SQL Factory for this DB Implementation.</typeparam>
         /// <typeparam name="TConnectionFactory">The type of the Connection Factory for this DB Implementation.</typeparam>
         /// <typeparam name="TTransactionFactory">The type of the Transaction Factory for this DB Implementation.</typeparam>
-        void ConfigureDbImplementation<TSqlFactory, TConnectionFactory, TTransactionFactory>()
+        /// <returns>(Fluent API) The ability to continnue further setup actions.</returns>
+        IPdqOptionsBuilder ConfigureDbImplementation<TSqlFactory, TConnectionFactory, TTransactionFactory>()
             where TSqlFactory: ISqlFactory
             where TConnectionFactory: IConnectionFactory
             where TTransactionFactory: ITransactionFactory;

@@ -31,10 +31,26 @@ namespace pdq.db.common.Builders
 	public interface IBuilderPipeline<T>
 		where T : IQueryContext
 	{
+		/// <summary>
+		/// Generate a SQL template based on the provided context.
+		/// </summary>
+		/// <param name="context">The context to parse.</param>
+		/// <returns>A SQL Template, one is created if it doesn't already exist.</returns>
 		SqlTemplate Execute(T context);
 
+        /// <summary>
+        /// Generate a SQL template based on the provided context and <see cref="IPipelineStageInput"/> input.
+        /// </summary>
+        /// <param name="context">The context to parse.</param>
+        /// <param name="input">The <see cref="IPipelineStageInput"/> to use.</param>
+        /// <returns>A SQL Template, one is created if it doesn't already exist.</returns>
         SqlTemplate Execute(T context, IPipelineStageInput input);
 
+		/// <summary>
+		/// Get the Parameter values from the context as a dictionary.
+		/// </summary>
+		/// <param name="context">The context to parse.</param>
+		/// <returns>The parameters from the context, as an <see cref="IDictionary{string, object}"/></returns>
         IDictionary<string, object> GetParameterValues(T context);
 	}
 }

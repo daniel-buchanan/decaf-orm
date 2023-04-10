@@ -15,30 +15,20 @@ using Xunit;
 
 namespace pdq.npgsql.tests
 {
-	public class NpgsqlSqlFactoryTests
+	public class NpgsqlSqlFactoryTests : NpgsqlTest
 	{
         private readonly ISqlFactory sqlFactory;
         private readonly IService<Person> personService;
 
-		public NpgsqlSqlFactoryTests()
+		public NpgsqlSqlFactoryTests() : base()
 		{
-            var services = new ServiceCollection();
-            services.AddPdq(o =>
-            {
-                o.EnableTransientTracking();
-                o.OverrideDefaultLogLevel(LogLevel.Debug);
-                o.DisableSqlHeaderComments();
-                o.UseNpgsql(options =>
-                {
-
-                });
-            });
             services.Replace<IConnectionFactory, MockConnectionFactory>();
             services.Replace<ITransactionFactory, MockTransactionFactory>();
             services.AddScoped<IConnectionDetails>(s => new MockConnectionDetails());
             services.AddPdqService<Person>().AsScoped();
 
-            var provider = services.BuildServiceProvider();
+            BuildServiceProvider();
+
             this.sqlFactory = provider.GetService<ISqlFactory>();
             this.personService = provider.GetService<IService<Person>>();
         }

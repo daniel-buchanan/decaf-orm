@@ -7,24 +7,12 @@ using pdq.common;
 
 namespace pdq.npgsql.tests
 {
-	public class OptionsBuilderTests
+	public class OptionsBuilderTests : NpgsqlTest
 	{
-		private readonly IServiceProvider provider;
-
-		public OptionsBuilderTests()
-		{
-			var services = new ServiceCollection();
-			services.AddPdq(options =>
-			{
-				options.EnableTransientTracking();
-				options.UseNpgsql(npOptions =>
-				{
-					npOptions.UseQuotedIdentifiers();
-				});
-			});
-
-			this.provider = services.BuildServiceProvider();
-		}
+        public OptionsBuilderTests() : base()
+        {
+            BuildServiceProvider();
+        }
 
 		[Fact]
 		public void TransactionFactorySet()

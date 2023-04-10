@@ -1,4 +1,6 @@
 ﻿using System;
+using pdq.common;
+
 namespace pdq.db.common
 {
 	public interface IDatabaseOptions
@@ -7,6 +9,11 @@ namespace pdq.db.common
 		/// The comment character for this database, e.g. --
 		/// </summary>
 		string CommentCharacter { get; }
+
+		/// <summary>
+		/// The SQL connection details to use.
+		/// </summary>
+		IConnectionDetails ConnectionDetails { get; }
 	}
 }
 

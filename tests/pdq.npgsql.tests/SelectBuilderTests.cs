@@ -6,26 +6,14 @@ using Xunit;
 
 namespace pdq.npgsql.tests
 {
-	public class SelectBuilderTests
+	public class SelectBuilderTests : NpgsqlTest
 	{
 		private readonly IQueryContainer query;
 
-		public SelectBuilderTests()
+		public SelectBuilderTests() : base()
 		{
-			var services = new ServiceCollection();
-			services.AddPdq(o =>
-			{
-				o.EnableTransientTracking();
-				o.OverrideDefaultLogLevel(LogLevel.Debug);
-				o.DisableSqlHeaderComments();
-				o.UseNpgsql(options =>
-				{
+            BuildServiceProvider();
 
-				});
-			});
-			services.AddScoped<IConnectionDetails>(s => new NpgsqlConnectionDetails());
-
-            var provider = services.BuildServiceProvider();
             var uow = provider.GetService<IUnitOfWork>();
             var transient = uow.Begin();
             this.query = transient.Query() as IQueryContainer;

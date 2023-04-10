@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
+using pdq.common.Options;
 using pdq.db.common;
 using pdq.db.common.Builders;
 using pdq.state;
@@ -33,16 +34,14 @@ namespace pdq.npgsql
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="optionsBuilder"></param>
+        /// <param name="builder"></param>
         /// <param name="options"></param>
         public static void UseNpgsql(
-            this IPdqOptionsBuilder optionsBuilder,
+            this IPdqOptionsBuilder builder,
             NpgsqlOptions options)
         {
-            var builder = optionsBuilder as IPdqOptionsBuilderInternal;
-            builder.SetConnectionFactory<NpgsqlConnectionFactory>();
-            builder.SetTransactionFactory<NpgsqlTransactionFactory>();
-            builder.SetSqlFactory<NpgsqlSqlFactory>();
+            builder.ConfigureDbImplementation<NpgsqlSqlFactory, NpgsqlConnectionFactory, NpgsqlTransactionFactory>();
+            builder.Services.AddSingleton(options.ConnectionDetails);
             builder.Services.AddSingleton(options);
             builder.Services.AddSingleton<IValueParser, NpgsqlValueParser>();
             builder.Services.AddSingleton<Builders.QuotedIdentifierBuilder>();

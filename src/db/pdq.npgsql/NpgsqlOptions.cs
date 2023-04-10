@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using pdq.common;
+using pdq.common.Connections;
 using pdq.db.common;
 
 namespace pdq.npgsql

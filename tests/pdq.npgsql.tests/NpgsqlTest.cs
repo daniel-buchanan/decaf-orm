@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using pdq.common.Connections;
 
 namespace pdq.npgsql.tests
 {
@@ -13,13 +14,17 @@ namespace pdq.npgsql.tests
             services = new ServiceCollection();
             services.AddPdq(o =>
             {
-                o.EnableTransientTracking();
-                o.OverrideDefaultLogLevel(LogLevel.Debug);
+                o.EnableTransientTracking()
+                    .OverrideDefaultLogLevel(LogLevel.Debug)
+                    .UseNpgsql(options =>
+                    {
+                        options.WithConnectionDetails(new NpgsqlConnectionDetails()
+                        {
+                            Authentication = new UsernamePasswordAuthentication("bob", "password")
+                        });
+                    });
+
                 if(disableHeaderComments) o.DisableSqlHeaderComments();
-                o.UseNpgsql(options =>
-                {
-                    options.WithConnectionDetails(new NpgsqlConnectionDetails());
-                });
             });
         }
 

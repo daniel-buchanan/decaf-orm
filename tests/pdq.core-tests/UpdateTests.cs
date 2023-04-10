@@ -25,7 +25,6 @@ namespace pdq.core_tests
                 o.OverrideDefaultLogLevel(LogLevel.Debug);
                 o.UseMockDatabase();
             });
-            services.AddScoped<IConnectionDetails, MockConnectionDetails>();
 
             var provider = services.BuildServiceProvider();
             var uow = provider.GetService<IUnitOfWork>();

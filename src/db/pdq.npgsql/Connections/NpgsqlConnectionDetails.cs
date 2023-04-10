@@ -4,53 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using pdq.common.Connections;
+using pdq.db.common.Exceptions;
 
 namespace pdq.npgsql
 {
     public class NpgsqlConnectionDetails :
-        ConnectionDetails, INpgsqlConnectionDetails
+        ConnectionDetails,
+        INpgsqlConnectionDetails
     {
         private readonly List<string> schemasToSearch;
-        private string username;
-        private string password;
 
         public NpgsqlConnectionDetails() : base()
         {
             this.schemasToSearch = new List<string>();
         }
 
+        /// <inheritdoc/>
         public IReadOnlyCollection<string> SchemasToSearch
             => this.schemasToSearch.AsReadOnly();
 
         /// <inheritdoc/>
-        public string Username
-        {
-            get => this.username ?? String.Empty;
-            protected set
-            {
-                if (!string.IsNullOrWhiteSpace(this.username))
-                {
-                    throw new ConnectionModificationException($"{nameof(Username)} cannot be modified once ConnectionDetails instance created");
-                }
-
-                this.username = value;
-            }
-        }
-
-        /// <inheritdoc/>
-        public string Password
-        {
-            get => this.password ?? String.Empty;
-            protected set
-            {
-                if (!string.IsNullOrWhiteSpace(this.password))
-                {
-                    throw new ConnectionModificationException($"{nameof(Password)} cannot be modified once ConnectionDetails instance created");
-                }
-
-                this.password = value;
-            }
-        }
+        protected override int DefaultPort => 5432;
 
         /// <inheritdoc/>
         public void AddSearchSchema(string schema)
@@ -64,14 +38,32 @@ namespace pdq.npgsql
             this.schemasToSearch.Add(schema);
         }
 
-        protected override Task<string> ConstructConnectionString()
+        /// <inheritdoc/>
+        protected override async Task<string> ConstructConnectionStringAsync()
         {
+            string username, password;
+            var auth = Authentication;
+
+            // check for delayed fetch
+            if(auth is DelayedFetchAuthentication delayedFetch)
+                auth = await delayedFetch.FetchAsync();
+
+            if(auth is UsernamePasswordAuthentication creds)
+            {
+                username = creds.Username;
+                password = creds.Password;
+            }
+            else
+            {
+                throw new ConnectionStringConstructException("Provided Credentials are not username an password.");
+            }
+
             var sb = new StringBuilder();
             sb.AppendFormat("Host={0};", this.Hostname);
             sb.AppendFormat("Port={0};", this.Port);
             sb.AppendFormat("Database={0};", this.DatabaseName);
-            sb.AppendFormat("Username={0};", this.Username);
-            sb.AppendFormat("Password={0};", this.Password);
+            sb.AppendFormat("Username={0};", username);
+            sb.AppendFormat("Password={0};", password);
 
             if (this.schemasToSearch.Any())
             {
@@ -79,7 +71,7 @@ namespace pdq.npgsql
                 sb.AppendFormat("Search Path={0};", schemas);
             }
             
-            return Task.FromResult(sb.ToString());
+            return sb.ToString();
         }
     }
 }

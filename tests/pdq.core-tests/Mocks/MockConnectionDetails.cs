@@ -6,7 +6,9 @@ namespace pdq.core_tests.Mocks
 {
 	public class MockConnectionDetails : ConnectionDetails
 	{
-        protected override Task<string> ConstructConnectionString()
+        protected override int DefaultPort => 0;
+
+        protected override Task<string> ConstructConnectionStringAsync()
         {
             var connStr = $"{Hostname}:{Port},{DatabaseName}";
             return Task.FromResult(connStr);

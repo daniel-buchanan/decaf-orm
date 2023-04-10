@@ -1,12 +1,13 @@
 ﻿using System.Data;
 using pdq.common;
+using pdq.common.Connections;
 using pdq.common.Options;
 using pdq.db.common;
 
 namespace pdq.npgsql
 {
-	public class NpgsqlOptionsBuilder
-		: OptionsBuilder<NpgsqlOptions>,
+	public class NpgsqlOptionsBuilder :
+        OptionsBuilder<NpgsqlOptions>,
 		INpgsqlOptionsBuilder
 	{
         /// <inheritdoc/>
@@ -21,6 +22,7 @@ namespace pdq.npgsql
         public INpgsqlOptionsBuilder WithConnectionDetails(IConnectionDetails connectionDetails)
             => ConfigureProperty(nameof(NpgsqlOptions.ConnectionDetails), connectionDetails);
 
+        /// <inheritdoc/>
         private new INpgsqlOptionsBuilder ConfigureProperty<TValue>(string name, TValue value)
         {
             base.ConfigureProperty(name, value);

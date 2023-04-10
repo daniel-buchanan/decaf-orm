@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
+using pdq.common.Connections;
 using pdq.core_tests.Mocks;
 using pdq.core_tests.Models;
 using pdq.Implementation;

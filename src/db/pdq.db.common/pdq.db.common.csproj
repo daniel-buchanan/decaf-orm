@@ -6,9 +6,11 @@
 
   <ItemGroup>
     <None Remove="Builders\" />
+    <None Remove="Exceptions\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Builders\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\core\pdq.core.state\pdq.state.csproj" />

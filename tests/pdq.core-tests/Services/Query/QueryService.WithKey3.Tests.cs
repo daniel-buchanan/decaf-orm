@@ -25,7 +25,6 @@ namespace pdq.core_tests.Services.Query
                 o.UseMockDatabase();
             });
             services.AddPdqService<AddressNote, int, int, int>().AsScoped();
-            services.AddScoped<IConnectionDetails, MockConnectionDetails>();
 
             var provider = services.BuildServiceProvider();
             this.addressService = provider.GetService<IService<AddressNote, int, int, int>>();

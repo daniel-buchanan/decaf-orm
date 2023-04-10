@@ -1,5 +1,6 @@
 ﻿using System;
 using pdq.common;
+using pdq.common.Connections;
 
 namespace pdq.db.common
 {

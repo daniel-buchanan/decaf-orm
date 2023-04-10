@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using pdq.common;
+using pdq.common.Connections;
 using Xunit;
 
 namespace pdq.core_tests.Connections

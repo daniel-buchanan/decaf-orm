@@ -10,6 +10,7 @@ namespace pdq.common.Connections
         private string hostname;
         private int? port;
         private string databaseName;
+        private IConnectionAuthentication authentication;
 
 		protected ConnectionDetails()
 		{
@@ -20,7 +21,7 @@ namespace pdq.common.Connections
         public string Hostname
         {
             get => this.hostname ?? String.Empty;
-            protected set
+            set
             {
                 if(!string.IsNullOrWhiteSpace(this.hostname))
                 {
@@ -31,11 +32,16 @@ namespace pdq.common.Connections
             }
         }
 
+        /// <summary>
+        /// The default port for this database system.
+        /// </summary>
+        protected abstract int DefaultPort { get; }
+
         /// <inheritdoc/>
         public int Port
         {
-            get => this.port ?? 0;
-            protected set
+            get => this.port ?? DefaultPort;
+            set
             {
                 if (port != null && port != 0)
                 {
@@ -50,7 +56,7 @@ namespace pdq.common.Connections
         public string DatabaseName
         {
             get => this.databaseName ?? String.Empty;
-            protected set
+            set
             {
                 if (!string.IsNullOrWhiteSpace(this.databaseName))
                 {
@@ -58,6 +64,21 @@ namespace pdq.common.Connections
                 }
 
                 this.databaseName = value;
+            }
+        }
+
+        /// <inheritdoc/>
+        public IConnectionAuthentication Authentication
+        {
+            get => this.authentication;
+            set
+            {
+                if (this.authentication != null)
+                {
+                    throw new ConnectionModificationException($"{nameof(Authentication)} cannot be modified once ConnectionDetails instance created");
+                }
+
+                this.authentication = value;
             }
         }
 
@@ -83,16 +104,20 @@ namespace pdq.common.Connections
         /// <inheritdoc/>
         public async Task<string> GetConnectionStringAsync()
         {
-            if(this.connectionString != null)
+            if(!string.IsNullOrWhiteSpace(this.connectionString))
             {
                 return this.connectionString;
             }
 
-            this.connectionString = await ConstructConnectionString();
+            this.connectionString = await ConstructConnectionStringAsync();
             return this.connectionString;
         }
 
-        protected abstract Task<string> ConstructConnectionString();
+        /// <summary>
+        /// Construct the connections string.
+        /// </summary>
+        /// <returns>The connection string.</returns>
+        protected abstract Task<string> ConstructConnectionStringAsync();
 
         /// <inheritdoc/>
         string IConnectionDetailsInternal.GetHash() => GetConnectionString().ToBase64String();

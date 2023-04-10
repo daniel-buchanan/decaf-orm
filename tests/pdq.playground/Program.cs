@@ -4,6 +4,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using pdq;
 using pdq.common;
+using pdq.common.Connections;
 using pdq.core_tests.Mocks;
 using pdq.core_tests.Models;
 

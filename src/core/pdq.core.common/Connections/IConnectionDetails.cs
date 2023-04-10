@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace pdq.common
+namespace pdq.common.Connections
 {
     internal interface IConnectionDetailsInternal : IConnectionDetails
     {
@@ -17,17 +17,22 @@ namespace pdq.common
 		/// <summary>
         /// The hostname of the database server.
         /// </summary>
-		string Hostname { get; }
+		string Hostname { get; set; }
 
 		/// <summary>
         /// The port the database runs on.
         /// </summary>
-		int Port { get; }
+		int Port { get; set; }
 
 		/// <summary>
         /// The name  of the database.
         /// </summary>
-		string DatabaseName { get; }
+		string DatabaseName { get; set; }
+
+        /// <summary>
+        /// The authentication for the connection.
+        /// </summary>
+        IConnectionAuthentication Authentication { get; set; }
 
 		/// <summary>
         /// Gets the connection string to use to connect to the database.

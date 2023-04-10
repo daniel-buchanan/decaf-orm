@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
+using pdq.common.Connections;
 using pdq.core_tests.Mocks;
 using pdq.core_tests.Models;
 using Xunit;
@@ -21,7 +22,6 @@ namespace pdq.core_tests
                 o.OverrideDefaultLogLevel(LogLevel.Debug);
                 o.UseMockDatabase();
             });
-            services.AddScoped<IConnectionDetails, MockConnectionDetails>();
 
             var provider = services.BuildServiceProvider();
             var uow = provider.GetService<IUnitOfWork>();

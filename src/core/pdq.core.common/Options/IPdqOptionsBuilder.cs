@@ -3,10 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using pdq.common.Connections;
 using pdq.common.Logging;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.npgsql")]
-namespace pdq.common
+namespace pdq.common.Options
 {
-    public interface IPdqOptionsBuilder
+    public interface IPdqOptionsBuilder : IOptionsBuilder<PdqOptions>
     {
         /// <summary>
         /// Override the default log level (<see cref="LogLevel.Error"/>), and set
@@ -52,21 +51,22 @@ namespace pdq.common
         /// be included as comments at the beginning of the query.
         /// </summary>
         void DisableSqlHeaderComments();
-    }
 
-    internal interface IPdqOptionsBuilderInternal : IPdqOptionsBuilder
-    {
-        void SetLoggerProxy<T>() where T: ILoggerProxy;
-
-        void SetSqlFactory<T>() where T : ISqlFactory;
-
-        void SetConnectionFactory<T>() where T : IConnectionFactory;
-
-        void SetTransactionFactory<T>() where T : ITransactionFactory;
-
+        /// <summary>
+        /// The Services Collection.
+        /// </summary>
         IServiceCollection Services { get; }
 
-        PdqOptions Build();
+        /// <summary>
+        /// Configure a specific Database implementation with its factories.
+        /// </summary>
+        /// <typeparam name="TSqlFactory">The type of the SQL Factory for this DB Implementation.</typeparam>
+        /// <typeparam name="TConnectionFactory">The type of the Connection Factory for this DB Implementation.</typeparam>
+        /// <typeparam name="TTransactionFactory">The type of the Transaction Factory for this DB Implementation.</typeparam>
+        void ConfigureDbImplementation<TSqlFactory, TConnectionFactory, TTransactionFactory>()
+            where TSqlFactory: ISqlFactory
+            where TConnectionFactory: IConnectionFactory
+            where TTransactionFactory: ITransactionFactory;
     }
 }
 

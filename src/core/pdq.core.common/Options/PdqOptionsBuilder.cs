@@ -4,34 +4,17 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common.Connections;
 using pdq.common.Logging;
+using pdq.common.Options;
 
 namespace pdq.common
 {
-    public class PdqOptionsBuilder : IPdqOptionsBuilderInternal
+    public class PdqOptionsBuilder :
+        OptionsBuilder<PdqOptions>,
+        IPdqOptionsBuilder
     {
-        private readonly Dictionary<string, object> values = new Dictionary<string, object>();
-
         public PdqOptionsBuilder(IServiceCollection services)
         {
             Services = services;
-        }
-
-        /// <inheritdoc/>
-        public PdqOptions Build()
-        {
-            var options = new PdqOptions();
-            var optionsType = typeof(PdqOptions);
-            var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-            var properties = optionsType.GetProperties(flags);
-
-            foreach(var p in values)
-            {
-                var prop = properties.FirstOrDefault(op => op.Name == p.Key);
-                if (prop == null) continue;
-                prop.SetValue(options, p.Value);
-            }
-
-            return options;
         }
 
         /// <inheritdoc/>
@@ -58,24 +41,31 @@ namespace pdq.common
             => ConfigureProperty(nameof(PdqOptions.IncludeHeaderCommentsInSql), false);
 
         /// <inheritdoc/>
-        public void SetConnectionFactory<T>() where T : IConnectionFactory
+        protected void SetConnectionFactory<T>() where T : IConnectionFactory
             => ConfigureProperty(nameof(PdqOptions.ConnectionFactoryType), typeof(T));
 
         /// <inheritdoc/>
-        public void SetLoggerProxy<T>() where T : ILoggerProxy
+        protected void SetLoggerProxy<T>() where T : ILoggerProxy
             => ConfigureProperty(nameof(PdqOptions.LoggerProxyType), typeof(T));
 
         /// <inheritdoc/>
-        public void SetSqlFactory<T>() where T : ISqlFactory
+        protected void SetSqlFactory<T>() where T : ISqlFactory
             => ConfigureProperty(nameof(PdqOptions.SqlFactoryType), typeof(T));
 
         /// <inheritdoc/>
-        public void SetTransactionFactory<T>() where T : ITransactionFactory
+        protected void SetTransactionFactory<T>() where T : ITransactionFactory
             => ConfigureProperty(nameof(PdqOptions.TransactionFactoryType), typeof(T));
 
         /// <inheritdoc/>
-        private void ConfigureProperty<T>(string property, T value)
-            => this.values.Add(property, value);
+        public void ConfigureDbImplementation<TSqlFactory, TConnectionFactory, TTransactionFactory>()
+            where TSqlFactory : ISqlFactory
+            where TConnectionFactory : IConnectionFactory
+            where TTransactionFactory : ITransactionFactory
+        {
+            ConfigureProperty(nameof(PdqOptions.SqlFactoryType), typeof(TSqlFactory));
+            ConfigureProperty(nameof(PdqOptions.ConnectionFactoryType), typeof(TConnectionFactory));
+            ConfigureProperty(nameof(PdqOptions.TransactionFactoryType), typeof(TTransactionFactory));
+        }
     }
 }
 

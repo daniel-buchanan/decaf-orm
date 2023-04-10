@@ -6,6 +6,7 @@ using pdq.state.Utilities;
 using pdq.common.Connections;
 using pdq.common.Exceptions;
 using pdq.common.Utilities;
+using pdq.common.Options;
 
 namespace pdq
 {
@@ -33,7 +34,7 @@ namespace pdq
             this IServiceCollection services,
             Action<IPdqOptionsBuilder> options)
         {
-			var b = new PdqOptionsBuilder(services) as IPdqOptionsBuilderInternal;
+			var b = new PdqOptionsBuilder(services);
 			options(b);
 			return AddPdq(services, b.Build());
         }

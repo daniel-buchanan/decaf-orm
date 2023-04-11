@@ -40,7 +40,13 @@ namespace pdq.common.Connections
         {
             this.logger.Debug("TransientFactory :: Getting Transaction");
             var transaction = await this.transactionFactory.GetAsync(connectionDetails);
-            var transient = Transient.Create(this, transaction, this.sqlFactory, this.logger, this.hashProvider, this.options);
+            var transient = Transient.Create(
+                transaction,
+                this.sqlFactory,
+                this.logger,
+                this.hashProvider,
+                this.options,
+                NotifyTransientDisposed);
             this.logger.Debug($"TransientFactory :: Transient ({transient.Id}) Tracked");
 
             if(this.options.TrackTransients) this.tracker.Add(transient);
@@ -57,8 +63,7 @@ namespace pdq.common.Connections
             tracker.Clear();
         }
 
-        /// <inheritdoc/>
-        void ITransientFactoryInternal.NotifyTransientDisposed(Guid id)
+        private void NotifyTransientDisposed(Guid id)
         {
             if (!this.options.TrackTransients) return;
 
@@ -72,5 +77,9 @@ namespace pdq.common.Connections
             this.logger.Debug($"TransientFactory :: Notified Transient({id}) disposed, tracking removed");
             this.tracker.Remove(transient);
         }
+
+        /// <inheritdoc/>
+        void ITransientFactoryInternal.NotifyTransientDisposed(Guid id)
+            => this.NotifyTransientDisposed(id);
     }
 }

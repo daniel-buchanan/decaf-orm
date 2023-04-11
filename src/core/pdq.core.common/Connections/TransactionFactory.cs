@@ -24,6 +24,7 @@ namespace pdq.common.Connections
             this.options = options;
         }
 
+        /// <inheritdoc/>
         public ITransaction Get(IConnectionDetails connectionDetails)
             => GetAsync(connectionDetails).WaitFor();
 

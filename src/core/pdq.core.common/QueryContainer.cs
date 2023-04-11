@@ -5,7 +5,7 @@ using pdq.common.Utilities;
 
 namespace pdq.common
 {
-    public class QueryFramework : IQueryContainerInternal
+    public class QueryContainer : IQueryContainerInternal
 	{
 		private readonly ILoggerProxy logger;
 		private readonly ITransientInternal transient;
@@ -14,11 +14,11 @@ namespace pdq.common
 		private readonly IHashProvider hashProvider;
 		private IQueryContext context;
 
-		private QueryFramework(
-			PdqOptions options,
-			ILoggerProxy logger,
+		private QueryContainer(
 			ITransient transient,
-			IHashProvider hashProvider)
+			ILoggerProxy logger,
+			IHashProvider hashProvider,
+			PdqOptions options)
 		{
 			this.logger = logger;
 			this.transient = transient as ITransientInternal;
@@ -70,11 +70,19 @@ namespace pdq.common
         /// <param name="transient"></param>
         /// <returns></returns>
 		public static IQueryContainer Create(
-			PdqOptions options,
-			ILoggerProxy logger,
 			ITransient transient,
-			IHashProvider hashProvider)
-			=> new QueryFramework(options, logger, transient, hashProvider);
+			ILoggerProxy logger,
+			IHashProvider hashProvider,
+			PdqOptions options)
+			=> new QueryContainer(transient, logger, hashProvider, options);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="existing"></param>
+		/// <returns></returns>
+		internal static IQueryContainer Create(IQueryContainerInternal existing)
+			=> new QueryContainer(existing.Transient, existing.Logger, existing.HashProvider, existing.Options);
 
 		/// <inheritdoc/>
 		void IQueryContainerInternal.SetContext(IQueryContext context) => this.context = context;

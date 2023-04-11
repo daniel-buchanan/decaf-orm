@@ -113,7 +113,7 @@ namespace pdq.Implementation
         public ISelectFromTyped<T> From<T>(Action<ISelectWithAlias> query, string alias)
         {
             var selectContext = SelectQueryContext.Create(AliasManager.Create(), this.query.HashProvider);
-            var selectQuery = QueryFramework.Create(this.query.Options, this.query.Logger, this.query.Transient, this.query.HashProvider) as IQueryContainerInternal;
+            var selectQuery = QueryContainer.Create(this.query) as IQueryContainerInternal;
             var select = Create(selectContext, selectQuery);
             query(select);
 

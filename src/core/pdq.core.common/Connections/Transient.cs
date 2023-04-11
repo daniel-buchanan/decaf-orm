@@ -10,7 +10,7 @@ namespace pdq.common.Connections
 	{
         private readonly IConnection connection;
         private readonly ITransactionInternal transaction;
-        private readonly ITransientFactoryInternal factory;
+        private readonly Action<Guid> notifyDisposed;
         private readonly ISqlFactory sqlFactory;
         private readonly ILoggerProxy logger;
         private readonly PdqOptions options;
@@ -18,20 +18,20 @@ namespace pdq.common.Connections
         private readonly List<IQueryContainer> queries;
 
 		private Transient(
-            ITransientFactory factory,
             ITransaction transaction,
             ISqlFactory sqlFactory,
             ILoggerProxy logger,
             IHashProvider hashProvider,
-            PdqOptions options)
+            PdqOptions options,
+            Action<Guid> notifyDisposed)
 		{
-            this.factory = factory as ITransientFactoryInternal;
             this.connection = transaction.Connection;
             this.transaction = transaction as ITransactionInternal;
             this.sqlFactory = sqlFactory;
             this.logger = logger;
             this.options = options;
             this.hashProvider = hashProvider;
+            this.notifyDisposed = notifyDisposed;
             this.queries = new List<IQueryContainer>();
 
             Id = Guid.NewGuid();
@@ -51,13 +51,13 @@ namespace pdq.common.Connections
         ISqlFactory ITransientInternal.SqlFactory => this.sqlFactory;
 
         public static ITransient Create(
-            ITransientFactory factory,
             ITransaction transaction,
             ISqlFactory sqlFactory,
             ILoggerProxy logger,
             IHashProvider hashProvider,
-            PdqOptions options)
-            => new Transient(factory, transaction, sqlFactory, logger, hashProvider, options);
+            PdqOptions options,
+            Action<Guid> notifyDisposed)
+            => new Transient(transaction, sqlFactory, logger, hashProvider, options, notifyDisposed);
 
         /// <inheritdoc />
         public void Dispose()
@@ -102,13 +102,13 @@ namespace pdq.common.Connections
             }
 
             this.logger.Debug($"Transient({Id}) :: Disposed");
-            this.factory.NotifyTransientDisposed(this.Id);
+            this.notifyDisposed(this.Id);
         }
 
         /// <inheritdoc />
         public IQueryContainer Query()
         {
-            var query = QueryFramework.Create(this.options, this.logger, this, this.hashProvider);
+            var query = QueryContainer.Create(this, this.logger, this.hashProvider, this.options);
             this.logger.Debug($"Transient({Id}) :: Creating new Query");
             this.queries.Add(query);
             return query;

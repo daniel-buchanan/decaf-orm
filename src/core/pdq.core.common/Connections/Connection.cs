@@ -79,9 +79,7 @@ namespace pdq.common.Connections
         /// <inheritdoc/>
         public TConnection GetUnderlyingConnectionAs<TConnection>()
             where TConnection : IDbConnection
-        {
-            return (TConnection)GetUnderlyingConnection();
-        }
+            => (TConnection)GetUnderlyingConnection();
     }
 }
 

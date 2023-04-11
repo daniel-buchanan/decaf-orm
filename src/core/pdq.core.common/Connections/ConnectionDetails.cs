@@ -105,9 +105,7 @@ namespace pdq.common.Connections
         public async Task<string> GetConnectionStringAsync()
         {
             if(!string.IsNullOrWhiteSpace(this.connectionString))
-            {
                 return this.connectionString;
-            }
 
             this.connectionString = await ConstructConnectionStringAsync();
             return this.connectionString;

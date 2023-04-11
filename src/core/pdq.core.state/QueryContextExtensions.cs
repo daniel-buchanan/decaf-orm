@@ -31,6 +31,9 @@ namespace pdq.state
         public static string GetTableName<T>(this IHelperExtensions self)
             => self.Context.ReflectionHelper.GetTableName<T>();
 
+        public static string GetFieldName(this IHelperExtensions self, PropertyInfo prop)
+            => self.Context.ReflectionHelper.GetFieldName(prop);
+
         public static string GetTableAlias(
             this IHelperExtensions self,
             Expression expression)

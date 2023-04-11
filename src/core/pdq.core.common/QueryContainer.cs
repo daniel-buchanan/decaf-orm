@@ -45,7 +45,7 @@ namespace pdq.common
 		ITransient IQueryContainerInternal.Transient => this.transient;
 
 		/// <inheritdoc/>
-		IQueryContext IQueryContainerInternal.Context => this.context;
+		public IQueryContext Context => this.context;
 
         /// <inheritdoc/>
         IHashProvider IQueryContainerInternal.HashProvider => this.hashProvider;

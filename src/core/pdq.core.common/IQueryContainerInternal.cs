@@ -24,11 +24,6 @@ namespace pdq.common
         /// </summary>
 		ITransient Transient { get; }
 
-		/// <summary>
-        /// Gets the <see cref="IQueryContext"/> for this query.
-        /// </summary>
-		IQueryContext Context { get; }
-
         /// <summary>
         /// Gets the <see cref="ISqlFactory"/> for this query.
         /// </summary>

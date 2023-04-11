@@ -22,6 +22,11 @@ namespace pdq.common
         /// The status of the query, this will change as it is built and/or executed.
         /// </summary>
 		QueryStatus Status { get; }
-	}
+
+        /// <summary>
+        /// Gets the <see cref="IQueryContext"/> for this query.
+        /// </summary>
+		IQueryContext Context { get; }
+    }
 }
 

@@ -33,6 +33,17 @@ public class Person : Entity<int>
 
 Note that the key name is passed into the base constructor to provide the key metadata.
 
+To add a `Query`, `Command` or `Service` to your DI container, use the following as a template:
+```csharp
+services.AddPdqService<Person>().AsScoped();
+```
+
+You can also use `AsSingleton()` or `AsTransient()` depending on your requirements.
+The above method registers the following:
+- `IQuery<Person>`
+- `ICommand<Person>`
+- `IService<Person>`
+
 ### Status:
 **Build**  
 [![Build](https://github.com/daniel-buchanan/pdq/actions/workflows/sonar.yml/badge.svg)](https://github.com/daniel-buchanan/pdq/actions/workflows/sonar.yml)

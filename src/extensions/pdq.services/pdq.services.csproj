@@ -12,19 +12,6 @@
     <ProjectReference Include="..\..\core\pdq.core\pdq.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Microsoft.Extensions.DependencyInjection.Abstractions" />
-    <None Remove="Dapper.Contrib" />
-    <None Remove="Command\" />
-    <None Remove="Query\" />
-    <None Remove="Service\" />
-    <None Remove="Command\CommandServiceBase.WithKey" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Command\" />
-    <Folder Include="Query\" />
-    <Folder Include="Service\" />
   </ItemGroup>
 </Project>

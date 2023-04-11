@@ -13,16 +13,4 @@
     <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
   </ItemGroup>
-  <ItemGroup>
-    <None Remove="Newtonsoft.Json" />
-    <None Remove="Microsoft.CSharp" />
-    <None Remove="System.Dynamic.Runtime" />
-    <None Remove="System.Runtime" />
-    <None Remove="Templates\" />
-    <None Remove="Options\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Templates\" />
-    <Folder Include="Options\" />
-  </ItemGroup>
 </Project>

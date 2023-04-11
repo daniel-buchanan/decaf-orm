@@ -3,15 +3,6 @@ using System.Threading.Tasks;
 
 namespace pdq.common.Connections
 {
-    internal interface IConnectionDetailsInternal : IConnectionDetails
-    {
-        /// <summary>
-        /// Gets the unique hash for this connection.
-        /// </summary>
-        /// <returns>The unique hash for the connection details.</returns>
-        string GetHash();
-    }
-
 	public interface IConnectionDetails : IDisposable
 	{
 		/// <summary>
@@ -45,6 +36,12 @@ namespace pdq.common.Connections
         /// </summary>
         /// <returns>A task which returns the connection string.</returns>
 		Task<string> GetConnectionStringAsync();
-	}
+
+        /// <summary>
+        /// Gets the unique hash for this connection.
+        /// </summary>
+        /// <returns>The unique hash for the connection details.</returns>
+        string GetHash();
+    }
 }
 

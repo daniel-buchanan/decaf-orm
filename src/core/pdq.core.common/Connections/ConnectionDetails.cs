@@ -4,7 +4,7 @@ using pdq.common.Utilities;
 
 namespace pdq.common.Connections
 {
-	public abstract class ConnectionDetails : IConnectionDetailsInternal
+	public abstract class ConnectionDetails : IConnectionDetails
 	{
         private string connectionString;
         private string hostname;
@@ -120,7 +120,7 @@ namespace pdq.common.Connections
         protected abstract Task<string> ConstructConnectionStringAsync();
 
         /// <inheritdoc/>
-        string IConnectionDetailsInternal.GetHash() => GetConnectionString().ToBase64String();
+        public string GetHash() => GetConnectionString().ToBase64String();
     }
 }
 

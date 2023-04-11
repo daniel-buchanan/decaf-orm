@@ -71,10 +71,7 @@ namespace pdq.common.Connections
 
         /// <inheritdoc/>
         string IConnectionInternal.GetHash()
-        {
-            var internalConnectionDetails = this.connectionDetails as IConnectionDetailsInternal;
-            return internalConnectionDetails.GetHash();
-        }
+            => this.connectionDetails.GetHash();
 
         /// <inheritdoc/>
         public abstract IDbConnection GetUnderlyingConnection();

@@ -49,8 +49,7 @@ namespace pdq.common.Connections
 
             try
             {
-                var internalConnectionDetails = connectionDetails as IConnectionDetailsInternal;
-                hash = internalConnectionDetails.GetHash();
+                hash = connectionDetails.GetHash();
             }
             catch (Exception e)
             {

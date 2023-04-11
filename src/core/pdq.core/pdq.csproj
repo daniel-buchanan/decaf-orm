@@ -25,9 +25,6 @@
     <ProjectReference Include="..\pdq.core.common\pdq.common.csproj" PrivateAssets="all" />
     <ProjectReference Include="..\pdq.core.state\pdq.state.csproj" PrivateAssets="all" />
   </ItemGroup>
-  <ItemGroup>
-    <None Remove="Dapper" />
-  </ItemGroup>
   
   <PropertyGroup>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>

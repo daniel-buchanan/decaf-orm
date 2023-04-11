@@ -66,5 +66,5 @@ jobs:
     name: pdq.services
     needs: [check-paths]
     if: ${{ needs.check-paths.outputs.run-services == 'true' }}
-    uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.db.services.yml@main
+    uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.services.yml@main
     secrets: inherit

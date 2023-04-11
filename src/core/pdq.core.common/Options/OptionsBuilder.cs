@@ -10,10 +10,6 @@ namespace pdq.common.Options
 	{
         private readonly Dictionary<string, object> values = new Dictionary<string, object>();
 
-        public OptionsBuilder()
-		{
-		}
-
         /// <inheritdoc/>
         public T Build()
         {

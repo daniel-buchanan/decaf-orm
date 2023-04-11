@@ -74,27 +74,6 @@ namespace pdq.services
 
             Update(toUpdate, lambdaExpression);
         }
-
-        /// <inheritdoc/>
-        public new void Update(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
-        {
-            ExecuteQuery(q =>
-            {
-                var internalQuery = q as IQueryContainerInternal;
-                var query = q.Update();
-                var internalContext = internalQuery.Context as IQueryContextInternal;
-                var table = GetTableInfo<TEntity>(q);
-                
-                IUpdateSet partial = query.Table(table)
-                    .Set(toUpdate);
-
-                var clause = internalContext.Parsers.Where.Parse(expression, internalContext);
-                (internalContext as IUpdateQueryContext).Where(clause);
-
-                NotifyPreExecution(this, q);
-                partial.Execute();
-            });
-        }
     }
 }
 

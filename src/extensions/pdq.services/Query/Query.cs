@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
 using pdq.common.Connections;
+using pdq.state;
 
 namespace pdq.services
 {
@@ -65,21 +66,21 @@ namespace pdq.services
             var skip = 0;
             var results = new List<TEntity>();
 
-            var table = base.reflectionHelper.GetTableName<TEntity>();
-
             do
             {
                 var keyBatch = keys.Skip(skip).Take(take);
 
                 using (var q = t.Query())
                 {
-                    var select = q.Select()
-                        .From(table, TableAlias)
+                    var select = q.Select();
+                    var table = q.Context.Helpers().GetTableName<TEntity>();
+
+                    var selected = select.From(table, TableAlias)
                         .Where(b => filter(keyBatch, q, b))
                         .SelectAll<TEntity>(TableAlias);
 
                     NotifyPreExecution(this, q);
-                    var batchResults = select.AsEnumerable();
+                    var batchResults = selected.AsEnumerable();
 
                     results.AddRange(batchResults);
                 }

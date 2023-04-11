@@ -8,28 +8,17 @@ namespace pdq.services
 {
     internal abstract class Service
     {
-        private readonly ITransientInternal transient;
+        private readonly ITransient transient;
         private readonly IUnitOfWork unitOfWork;
         protected readonly bool disposeOnExit;
 
-        protected readonly IReflectionHelper reflectionHelper;
-        protected readonly IExpressionHelper expressionHelper;
-        protected readonly IDynamicExpressionHelper dynamicExpressionHelper;
-
-        protected Service()
+        protected Service(ITransient transient)
         {
-            reflectionHelper = new ReflectionHelper();
-            expressionHelper = new ExpressionHelper(reflectionHelper);
-            dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, new CallExpressionHelper(expressionHelper));
-        }
-
-        protected Service(ITransient transient) : this()
-        {
-            this.transient = transient as ITransientInternal;
+            this.transient = transient;
             this.disposeOnExit = false;
         }
 
-        protected Service(IUnitOfWork unitOfWork) : this()
+        protected Service(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
             this.disposeOnExit = true;
@@ -40,12 +29,12 @@ namespace pdq.services
         /// <summary>
         /// Get the Transient required to begin a query.
         /// </summary>
-        /// <returns>Retunds a <see cref="ITransientInternal"/>.</returns>
-        internal ITransientInternal GetTransient()
+        /// <returns>Retunds a <see cref="ITransient"/>.</returns>
+        internal ITransient GetTransient()
         {
             if (this.transient != null) return this.transient;
 
-            return this.unitOfWork.Begin() as ITransientInternal;
+            return this.unitOfWork.Begin();
         }
 
         /// <summary>
@@ -90,8 +79,7 @@ namespace pdq.services
         /// <param name="query">The <see cref="IQuery"/> containing the context to send.</param>
         protected void NotifyPreExecution(object sender, IQueryContainer query)
         {
-            var internalQuery = query as IQueryContainerInternal;
-            var args = new PreExecutionEventArgs(internalQuery.Context);
+            var args = new PreExecutionEventArgs(query.Context);
             this.preExecution?.Invoke(sender, args);
         }
 
@@ -103,11 +91,7 @@ namespace pdq.services
         /// <returns>The name of the table for this <see cref="IQueryContext"/>.</returns>
         protected string GetTableInfo<TEntity>(IQueryContainer q)
             where TEntity : new()
-        {
-            var internalQuery = q as IQueryContainerInternal;
-            var internalContext = internalQuery?.Context as IQueryContextInternal;
-            return internalContext?.Helpers().GetTableName<TEntity>();
-        }
+            => q.Context.Helpers().GetTableName<TEntity>();
 
         /// <summary>
         /// Get an individual key column name.
@@ -118,10 +102,8 @@ namespace pdq.services
         /// <returns>The SQL name of the Column.</returns>
         protected static string GetKeyColumnName<TEntity>(IQueryContainer q, string name)
         {
-            var internalQuery = q as IQueryContainerInternal;
-            var internalContext = internalQuery?.Context as IQueryContextInternal;
             var prop = typeof(TEntity).GetProperty(name);
-            return internalContext.ReflectionHelper.GetFieldName(prop);
+            return q.Context.Helpers().GetFieldName(prop);
         }
 
         /// <summary>

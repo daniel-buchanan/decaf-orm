@@ -119,10 +119,8 @@ namespace pdq.services
             ExecuteQuery(q =>
             {
                 var updateQ = q.Update();
-                var internalQuery = q as IQueryContainerInternal;
-                var internalContext = internalQuery.Context as IQueryContextInternal;
-                var alias = internalContext.Helpers().GetTableAlias(expression);
-                var whereClause = internalContext.Helpers().ParseWhere(expression);
+                var alias = q.Context.Helpers().GetTableAlias(expression);
+                var whereClause = q.Context.Helpers().ParseWhere(expression);
 
                 IUpdateSet<TEntity> executeQ = updateQ.Table<TEntity>(alias)
                     .Set(toUpdate);

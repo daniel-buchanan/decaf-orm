@@ -7,6 +7,7 @@ using pdq.common.Connections;
 using pdq.common.Exceptions;
 using pdq.common.Utilities;
 using pdq.common.Options;
+using pdq.common.Utilities.Reflection;
 
 namespace pdq
 {

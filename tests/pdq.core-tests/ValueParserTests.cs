@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using pdq.common;
 using pdq.common.Utilities;
+using pdq.common.Utilities.Reflection;
 using pdq.core_tests.Models;
 using pdq.state;
 using pdq.state.Conditionals;

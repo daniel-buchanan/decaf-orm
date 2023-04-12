@@ -4,6 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
 using pdq.common.Utilities;
+using pdq.common.Utilities.Reflection;
+using pdq.common.Utilities.Reflection.Dynamic;
 using pdq.state.Utilities;
 using pdq.state.Utilities.Parsers;
 
@@ -29,9 +31,10 @@ namespace pdq.state
 			this.queryTargets = new List<IQueryTarget>();
 			this.reflectionHelper = new ReflectionHelper();
 			this.expressionHelper = new ExpressionHelper(this.reflectionHelper);
-            var callExpressionHelper = new CallExpressionHelper(expressionHelper);
-            this.dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, callExpressionHelper);
+            var valueFunctionHelper = new ValueFunctionHelper(this.expressionHelper);
+            this.dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, valueFunctionHelper);
             this.aliasManager = aliasManager;
+            var callExpressionHelper = new CallExpressionHelper(this.expressionHelper);
             this.parserHolder = new ParserHolder(expressionHelper, reflectionHelper, callExpressionHelper);
             this.hashProvider = hashProvider;
 		}

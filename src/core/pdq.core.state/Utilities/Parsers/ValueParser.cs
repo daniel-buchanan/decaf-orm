@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using pdq.common;
+using pdq.common.Utilities.Reflection;
 using pdq.state.Conditionals;
 
 namespace pdq.state.Utilities.Parsers
@@ -19,7 +20,7 @@ namespace pdq.state.Utilities.Parsers
             this.callExpressionHelper = callExpressionHelper;
         }
 
-        public override state.IWhere Parse(Expression expression, IQueryContextInternal context)
+        public override IWhere Parse(Expression expression, IQueryContextInternal context)
         {
             var earlyResult = callExpressionHelper.ParseExpression(expression, context);
             if (earlyResult != null) return earlyResult;
@@ -51,9 +52,9 @@ namespace pdq.state.Utilities.Parsers
             else instance = Activator.CreateInstance(constructedType, parameters);
 
             if (isNotEquals)
-                return Not.This((state.IWhere)instance);
+                return Not.This((IWhere)instance);
 
-            return (state.IWhere)instance;
+            return (IWhere)instance;
         }
 
         private object GetConvertedValue(object val, Type valType)

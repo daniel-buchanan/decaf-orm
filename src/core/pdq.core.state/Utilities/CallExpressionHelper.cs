@@ -4,8 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using pdq.common;
+using pdq.common.Utilities.Reflection;
+using pdq.common.ValueFunctions;
 using pdq.state.Conditionals;
-using pdq.state.Conditionals.ValueFunctions;
 
 namespace pdq.state.Utilities
 {
@@ -19,7 +20,7 @@ namespace pdq.state.Utilities
             this.expressionHelper = expressionHelper;
         }
 
-        public state.IWhere ParseExpression(Expression expression, IQueryContextInternal context)
+        public IWhere ParseExpression(Expression expression, IQueryContextInternal context)
         {
             Expression expressionToParse;
             if (expression is LambdaExpression)
@@ -76,7 +77,7 @@ namespace pdq.state.Utilities
             return ParseBinaryExpression(expressionToParse, context);
         }
 
-        public IValueFunction ParseFunction(Expression expression)
+        private IValueFunction ParseFunction(Expression expression)
         {
             var callExpression = expression as MethodCallExpression;
             if (callExpression == null) return null;
@@ -156,7 +157,7 @@ namespace pdq.state.Utilities
                    firstArgument.NodeType == ExpressionType.Constant;
         }
 
-        private state.IWhere ParseBinaryExpression(
+        private IWhere ParseBinaryExpression(
             Expression expression,
             IQueryContextInternal context)
         {
@@ -199,7 +200,7 @@ namespace pdq.state.Utilities
                 var implementedType = functionType.MakeGenericType(genericType);
                 var parameters = new object[] { col, op, valueFunction, value };
                 var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-                result = (state.IWhere)Activator.CreateInstance(
+                result = (IWhere)Activator.CreateInstance(
                     implementedType,
                     bindingFlags,
                     null,
@@ -290,7 +291,7 @@ namespace pdq.state.Utilities
             var arguments = expression.Arguments;
             var datePartExpression = arguments[1];
             var dp = (common.DatePart)this.expressionHelper.GetValue(datePartExpression);
-            return Conditionals.ValueFunctions.DatePart.Create(dp);
+            return common.ValueFunctions.DatePart.Create(dp);
         }
 
         private IValueFunction ParseSubString(MethodCallExpression expression)
@@ -310,7 +311,7 @@ namespace pdq.state.Utilities
             return Substring.Create(startValue);
         }
 
-        private state.IWhere ParseMethodAccessCall(Expression expression, IQueryContextInternal context)
+        private IWhere ParseMethodAccessCall(Expression expression, IQueryContextInternal context)
         {
             var callExpression = expression as MethodCallExpression;
             if (callExpression == null) return null;
@@ -326,7 +327,7 @@ namespace pdq.state.Utilities
             return result;
         }
 
-        private state.IWhere ParseVariableContainsAsValuesIn(MethodCallExpression call, IQueryContextInternal context)
+        private IWhere ParseVariableContainsAsValuesIn(MethodCallExpression call, IQueryContextInternal context)
         {
             var arg = call.Arguments[0];
             if (arg.NodeType != ExpressionType.MemberAccess) return null;
@@ -381,7 +382,7 @@ namespace pdq.state.Utilities
             if (ctor == null) return null;
 
             // return instance
-            return (state.IWhere)ctor.Invoke(parameters);
+            return (IWhere)ctor.Invoke(parameters);
         }
 
         public static class SupportedMethods

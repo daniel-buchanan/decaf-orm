@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Linq.Expressions;
+using pdq.common;
+using pdq.common.Utilities;
+using pdq.common.Utilities.Reflection;
 using pdq.state.Conditionals;
 
 namespace pdq.state.Utilities.Parsers
@@ -23,7 +26,7 @@ namespace pdq.state.Utilities.Parsers
             this.valueParser = valueParser;
         }
 
-        public override state.IWhere Parse(Expression expression, IQueryContextInternal context)
+        public override IWhere Parse(Expression expression, IQueryContextInternal context)
         {
             ExpressionType nodeType;
             BinaryExpression binaryExpr;

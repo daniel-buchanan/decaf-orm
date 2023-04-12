@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
+using pdq.common.Utilities.Reflection;
+using pdq.common.Utilities.Reflection.Dynamic;
 using pdq.state;
 using pdq.state.Utilities;
 

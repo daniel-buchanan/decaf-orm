@@ -2,11 +2,11 @@
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
+using pdq.common.ValueFunctions;
 using pdq.core_tests.Mocks;
 using pdq.core_tests.Models;
 using pdq.state;
 using pdq.state.Conditionals;
-using pdq.state.Conditionals.ValueFunctions;
 using Xunit;
 
 namespace pdq.core_tests

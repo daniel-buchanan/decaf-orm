@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
+using pdq.common.Utilities.Reflection;
 using pdq.state.Conditionals;
 
 namespace pdq.state.Utilities.Parsers

@@ -65,6 +65,25 @@ namespace pdq.common.Utilities.Reflection
         /// <returns>The name of the type or table</returns>
         string GetTypeName<TObject>();
 
+        /// <summary>
+        /// Get the Value from an expression.
+        /// </summary>
+        /// <param name="expression">The expression to get the value from.</param>
+        /// <returns>The value of the expression</returns>
         object GetValue(Expression expression);
+
+        /// <summary>
+        /// Checks if the provided expression is a method call on a property.
+        /// </summary>
+        /// <param name="expression">The expression to check.</param>
+        /// <returns></returns>
+        bool IsMethodCallOnProperty(Expression expression);
+
+        /// <summary>
+        /// Checks if the provided expression is a method call on a constant, or access to a member property.
+        /// </summary>
+        /// <param name="expression">The expression to check.</param>
+        /// <returns></returns>
+        bool IsMethodCallOnConstantOrMemberAccess(Expression expression);
     }
 }

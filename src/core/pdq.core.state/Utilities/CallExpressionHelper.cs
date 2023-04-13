@@ -44,7 +44,7 @@ namespace pdq.state.Utilities
                 expressionToParse = expression;
             }
 
-            if(IsMethodCallOnProperty(expressionToParse))
+            if(expressionHelper.IsMethodCallOnProperty(expressionToParse))
             {
                 var binaryExpression = expressionToParse as BinaryExpression;
                 if(binaryExpression == null)
@@ -55,7 +55,7 @@ namespace pdq.state.Utilities
                 return ParseBinaryExpression(binaryExpression, context);
             }
 
-            if(IsMethodCallOnConstantOrMemberAccess(expressionToParse))
+            if(expressionHelper.IsMethodCallOnConstantOrMemberAccess(expressionToParse))
             {
                 var binaryExpression = expressionToParse as BinaryExpression;
                 if (binaryExpression == null)
@@ -78,58 +78,6 @@ namespace pdq.state.Utilities
             }
 
             return ParseBinaryExpression(expressionToParse, context);
-        }
-
-        private bool IsMethodCallOnProperty(Expression expression)
-        {
-            var methodCallExpression = expression as MethodCallExpression;
-            var binaryExpression = expression as BinaryExpression;
-            if(binaryExpression != null)
-            {
-                var call = binaryExpression.Left as MethodCallExpression ??
-                           binaryExpression.Right as MethodCallExpression;
-                var constant = binaryExpression.Left as ConstantExpression ??
-                               binaryExpression.Right as ConstantExpression;
-
-                if (call is null || constant is null) return false;
-                methodCallExpression = call;
-            }
-
-            if (methodCallExpression == null) return false;
-            if (methodCallExpression.Arguments.Count == 0) return false;
-
-            if (methodCallExpression.Object is MemberExpression &&
-                methodCallExpression.Arguments.All(a => a.NodeType == ExpressionType.Constant) ||
-                methodCallExpression.Arguments.All(a => a.NodeType == ExpressionType.MemberAccess))
-            {
-                var memberExpression = methodCallExpression.Object as MemberExpression ??
-                    methodCallExpression.Arguments[0] as MemberExpression;
-                var innerExpression = memberExpression?.Expression as ConstantExpression;
-                return innerExpression is null;
-            }
-
-            var lastArgument = methodCallExpression.Arguments.Last();
-            return lastArgument.NodeType == ExpressionType.MemberAccess ||
-                   lastArgument.NodeType == ExpressionType.Constant;
-        }
-
-        private bool IsMethodCallOnConstantOrMemberAccess(Expression expression)
-        {
-            var methodCallExpression = expression as MethodCallExpression;
-            if (methodCallExpression == null)
-            {
-                var binaryExpression = expression as BinaryExpression;
-                methodCallExpression = binaryExpression.Left as MethodCallExpression ??
-                                       binaryExpression.Right as MethodCallExpression;
-
-                if (methodCallExpression is null) return false;
-            }
-
-            if (methodCallExpression.Arguments.Count == 0) return false;
-
-            var firstArgument = methodCallExpression.Arguments.First();
-            return firstArgument.NodeType == ExpressionType.MemberAccess ||
-                   firstArgument.NodeType == ExpressionType.Constant;
         }
 
         private IWhere ParseBinaryExpression(

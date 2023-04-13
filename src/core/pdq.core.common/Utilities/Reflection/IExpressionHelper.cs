@@ -7,7 +7,7 @@ using pdq.common;
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.services")]
 namespace pdq.common.Utilities.Reflection
 {
-    internal interface IExpressionHelper
+    public interface IExpressionHelper
     {
         /// <summary>
         /// 

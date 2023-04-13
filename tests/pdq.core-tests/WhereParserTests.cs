@@ -27,7 +27,8 @@ namespace pdq.core_tests
             var expressionHelper = new ExpressionHelper(reflectionHelper);
             this.aliasManager = AliasManager.Create();
             this.hashProvider = new HashProvider();
-            var callExpressionHelper = new CallExpressionHelper(expressionHelper);
+            var valueFunctionHelper = new ValueFunctionHelper(expressionHelper);
+            var callExpressionHelper = new CallExpressionHelper(expressionHelper, valueFunctionHelper);
             var valueParser = new ValueParser(expressionHelper, callExpressionHelper, reflectionHelper);
             var joinParser = new JoinParser(expressionHelper, reflectionHelper);
             this.parser = new WhereParser(expressionHelper, reflectionHelper, callExpressionHelper, joinParser, valueParser);

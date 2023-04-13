@@ -34,7 +34,7 @@ namespace pdq.state
             var valueFunctionHelper = new ValueFunctionHelper(this.expressionHelper);
             this.dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, valueFunctionHelper);
             this.aliasManager = aliasManager;
-            var callExpressionHelper = new CallExpressionHelper(this.expressionHelper);
+            var callExpressionHelper = new CallExpressionHelper(this.expressionHelper, valueFunctionHelper);
             this.parserHolder = new ParserHolder(expressionHelper, reflectionHelper, callExpressionHelper);
             this.hashProvider = hashProvider;
 		}

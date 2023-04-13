@@ -8,7 +8,12 @@ using pdq.common.ValueFunctions;
 
 namespace pdq.common.Utilities.Reflection
 {
-    class ValueFunctionHelper
+    public interface IValueFunctionHelper
+    {
+        IValueFunction ParseFunction(Expression expression);
+    }
+
+    public class ValueFunctionHelper : IValueFunctionHelper
     {
         private readonly IExpressionHelper expressionHelper;
 
@@ -23,7 +28,7 @@ namespace pdq.common.Utilities.Reflection
             var callExpression = expression as MethodCallExpression;
             if (callExpression == null) return null;
 
-            switch(callExpression.Method.Name)
+            switch (callExpression.Method.Name)
             {
                 case SupportedMethods.ToLower:
                     return ToLower.Create();
@@ -50,7 +55,7 @@ namespace pdq.common.Utilities.Reflection
         {
             var methodCallExpression = expression as MethodCallExpression;
             var binaryExpression = expression as BinaryExpression;
-            if(binaryExpression != null)
+            if (binaryExpression != null)
             {
                 var call = binaryExpression.Left as MethodCallExpression ??
                            binaryExpression.Right as MethodCallExpression;

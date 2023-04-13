@@ -27,7 +27,8 @@ namespace pdq.core_tests
             var expressionHelper = new ExpressionHelper(reflectionHelper);
             this.aliasManager = AliasManager.Create();
             this.hashProvider = new HashProvider();
-            this.helper = new CallExpressionHelper(expressionHelper);
+            var valueFunctionHelper = new ValueFunctionHelper(expressionHelper);
+            this.helper = new CallExpressionHelper(expressionHelper, valueFunctionHelper);
         }
 
         [Fact]

@@ -240,7 +240,7 @@ namespace pdq.common.Utilities.Reflection.Dynamic
             if (memberExpression == null)
                 memberExpression = expression as MemberExpression;
 
-            GetFunction(methodCallExpression, context, out var tempMemberExpression, out var function);
+            GetFunction(methodCallExpression, out var tempMemberExpression, out var function);
             memberExpression = tempMemberExpression ?? memberExpression;
 
             if (memberExpression == null) return false;
@@ -256,7 +256,6 @@ namespace pdq.common.Utilities.Reflection.Dynamic
 
         private void GetFunction(
             MethodCallExpression methodCallExpression,
-            IQueryContextInternal context,
             out MemberExpression memberExpression,
             out IValueFunction function)
         {
@@ -276,7 +275,6 @@ namespace pdq.common.Utilities.Reflection.Dynamic
             memberExpression = argument as MemberExpression;
 
             var defaultValue = DefaultValueHelper.Get(methodCallExpression.Method.ReturnType);
-            var tempExpression = Expression.Equal(methodCallExpression, Expression.Constant(defaultValue));
             var parsed = this.callExpressionHelper.ParseFunction(methodCallExpression);
 
             if (parsed == null) return;

@@ -1,7 +1,7 @@
 ﻿using System;
 namespace pdq.common.Options
 {
-	public interface IOptionsBuilder<T>
+	public interface IOptionsBuilder<out T>
 		where T: class, new()
 	{
         /// <summary>

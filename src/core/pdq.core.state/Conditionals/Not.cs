@@ -1,4 +1,6 @@
 ﻿using System;
+using pdq.common;
+
 namespace pdq.state.Conditionals
 {
 	public class Not : Where

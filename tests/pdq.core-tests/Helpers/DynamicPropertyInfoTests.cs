@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using FluentAssertions;
+using pdq.common;
+using pdq.common.Utilities.Reflection.Dynamic;
+using pdq.common.ValueFunctions;
 using pdq.core_tests.Models;
 using pdq.state;
-using pdq.state.Conditionals.ValueFunctions;
 using pdq.state.Utilities;
 using Xunit;
 
@@ -97,6 +99,95 @@ namespace pdq.core_tests.Helpers
 
             // Assert
             info.Function.Should().Be(function);
+        }
+
+        [Theory]
+        [MemberData(nameof(EqualColumns))]
+        public void ColumnsAreEqual(DynamicColumnInfo a, DynamicColumnInfo b)
+        {
+            // Act
+            var eq = a == b;
+
+            // Assert
+            eq.Should().Be(true);
+        }
+
+        [Theory]
+        [MemberData(nameof(EqualColumns))]
+        public void ColumnsAreEqual_CompareTo(DynamicColumnInfo a, DynamicColumnInfo b)
+        {
+            // Act
+            var eq = a.CompareTo(b);
+
+            // Assert
+            eq.Should().Be(1);
+        }
+
+        [Theory]
+        [MemberData(nameof(NotEqualColumns))]
+        public void ColumnsAreNotEqual_CompareTo(DynamicColumnInfo a, DynamicColumnInfo b)
+        {
+            // Arrange
+            var left = a;
+            var right = b;
+            if (left == null)
+            {
+                left = b;
+                right = a;
+            }
+
+            // Act
+            var eq = left.CompareTo(right);
+
+            // Assert
+            eq.Should().Be(0);
+        }
+
+        [Theory]
+        [MemberData(nameof(NotEqualColumns))]
+        public void ColumnsAreNotEqual(DynamicColumnInfo a, DynamicColumnInfo b)
+        {
+            // Act
+            var eq = a != b;
+
+            // Assert
+            eq.Should().Be(true);
+        }
+
+        [Theory]
+        [MemberData(nameof(EqualColumns))]
+        public void HashCodesAreSame(DynamicColumnInfo a, DynamicColumnInfo b)
+        {
+            // Act
+            var hashCodeA = a.GetHashCode();
+            var hashCodeB = b.GetHashCode();
+            var eq = hashCodeA == hashCodeB;
+
+            // Assert
+            eq.Should().Be(true);
+        }
+
+        public static IEnumerable<object[]> EqualColumns
+        {
+            get
+            {
+                yield return new object[] { DynamicColumnInfo.Create(), DynamicColumnInfo.Create() };
+                yield return new object[] { DynamicColumnInfo.Create(name: "Bob"), DynamicColumnInfo.Create(name: "Bob") };
+                yield return new object[] { DynamicColumnInfo.Create(name: "Bob", newName: "Andy"), DynamicColumnInfo.Create(name: "Bob", newName: "Andy") };
+                yield return new object[] { DynamicColumnInfo.Create(name: "Bob", newName: "Andy", value: 42), DynamicColumnInfo.Create(name: "Bob", newName: "Andy", value: 42) };
+            }
+        }
+
+        public static IEnumerable<object[]> NotEqualColumns
+        {
+            get
+            {
+                yield return new object[] { DynamicColumnInfo.Create(), null };
+                yield return new object[] { null, DynamicColumnInfo.Create() };
+                yield return new object[] { DynamicColumnInfo.Create(name: "Bob"), DynamicColumnInfo.Create(name: "James") };
+                yield return new object[] { DynamicColumnInfo.Create(name: "Bob", newName: "Andy"), DynamicColumnInfo.Create(name: "James", newName: "Andy") };
+                yield return new object[] { DynamicColumnInfo.Create(name: "Bob", newName: "Andy", value: 42), DynamicColumnInfo.Create(name: "Bob", newName: "James", value: 42) };
+            }
         }
 
         public static IEnumerable<object[]> ValidValues

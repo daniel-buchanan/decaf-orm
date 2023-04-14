@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using pdq.common.Utilities.Reflection;
 using pdq.db.common;
 using pdq.npgsql.Builders;
 using pdq.state.Utilities;

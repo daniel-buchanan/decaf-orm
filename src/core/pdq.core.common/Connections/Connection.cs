@@ -5,7 +5,7 @@ using pdq.common.Logging;
 
 namespace pdq.common.Connections
 {
-	public abstract class Connection : IConnectionInternal
+	public abstract class Connection : IConnection
 	{
         protected IDbConnection dbConnection;
         protected readonly ILoggerProxy logger;
@@ -70,7 +70,7 @@ namespace pdq.common.Connections
         }
 
         /// <inheritdoc/>
-        string IConnectionInternal.GetHash()
+        public string GetHash()
             => this.connectionDetails.GetHash();
 
         /// <inheritdoc/>

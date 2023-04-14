@@ -111,9 +111,9 @@ namespace pdq.npgsql.Builders
 
         private void AddColumn(IColumn column, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            if(column.ValueFunction is state.Conditionals.ValueFunctions.StringContains ||
-               column.ValueFunction is state.Conditionals.ValueFunctions.StringStartsWith ||
-               column.ValueFunction is state.Conditionals.ValueFunctions.StringEndsWith)
+            if(column.ValueFunction is common.ValueFunctions.StringContains ||
+               column.ValueFunction is common.ValueFunctions.StringStartsWith ||
+               column.ValueFunction is common.ValueFunctions.StringEndsWith)
             {
                 AddLike(column, sqlBuilder, parameterManager);
                 return;
@@ -130,17 +130,17 @@ namespace pdq.npgsql.Builders
         {
             string value, format;
 
-            if (column.ValueFunction is state.Conditionals.ValueFunctions.StringContains contains)
+            if (column.ValueFunction is common.ValueFunctions.StringContains contains)
             {
                 format = "%{0}%";
                 value = contains.Value;
             }
-            else if (column.ValueFunction is state.Conditionals.ValueFunctions.StringStartsWith startsWith)
+            else if (column.ValueFunction is common.ValueFunctions.StringStartsWith startsWith)
             {
                 format = "{0}%";
                 value = startsWith.Value;
             }
-            else if (column.ValueFunction is state.Conditionals.ValueFunctions.StringEndsWith endsWith)
+            else if (column.ValueFunction is common.ValueFunctions.StringEndsWith endsWith)
             {
                 format = "%{0}";
                 value = endsWith.Value;

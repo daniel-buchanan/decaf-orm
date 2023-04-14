@@ -1,14 +1,9 @@
-﻿using System;
-using System.Data.Common;
-using System.Linq;
-using System.Reflection.Emit;
+﻿using System.Linq;
 using pdq.common;
 using pdq.common.Templates;
-using pdq.db.common;
 using pdq.db.common.Builders;
 using pdq.state;
 using pdq.state.Conditionals;
-using static Npgsql.Replication.PgOutput.Messages.RelationMessage;
 
 namespace pdq.npgsql.Builders
 {

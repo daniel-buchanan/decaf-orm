@@ -268,9 +268,7 @@ namespace pdq.common.Utilities.Reflection.Dynamic
 
             memberExpression = argument as MemberExpression;
 
-            var defaultValue = DefaultValueHelper.Get(methodCallExpression.Method.ReturnType);
             var parsed = this.callExpressionHelper.ParseFunction(methodCallExpression);
-
             if (parsed == null) return;
 
             function = parsed;

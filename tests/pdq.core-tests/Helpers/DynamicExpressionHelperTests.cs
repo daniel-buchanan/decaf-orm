@@ -4,6 +4,8 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using pdq.common;
 using pdq.common.Utilities;
+using pdq.common.Utilities.Reflection;
+using pdq.common.Utilities.Reflection.Dynamic;
 using pdq.core_tests.Models;
 using pdq.state;
 using pdq.state.Utilities;
@@ -22,8 +24,8 @@ namespace pdq.core_tests.Helpers
             var hashProvider = new HashProvider();
             var reflectionHelper = new ReflectionHelper();
             var expressionHelper = new ExpressionHelper(reflectionHelper);
-            var callExpressionHelper = new CallExpressionHelper(expressionHelper);
-            this.dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, callExpressionHelper);
+            var valueFunctionHelper = new ValueFunctionHelper(expressionHelper);
+            this.dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, valueFunctionHelper);
             this.queryContext = SelectQueryContext.Create(aliasManager, hashProvider) as IQueryContextInternal;
         }
 
@@ -163,7 +165,7 @@ namespace pdq.core_tests.Helpers
                         DynamicColumnInfo.Create(name: nameof(Person.FirstName), newName: null, alias: "p", type: typeof(Person)),
                         DynamicColumnInfo.Create(name: nameof(Person.Email), newName: null, alias: "p", type: typeof(Person)),
                         DynamicColumnInfo.Create(name: nameof(Person.AddressId), newName: "Region", alias: "p", type: typeof(Person)),
-                        DynamicColumnInfo.Create(name: nameof(Person.CreatedAt), newName: "Timestamp", alias: "p", type: typeof(Person), function: state.Conditionals.ValueFunctions.DatePart.Create(DatePart.Epoch))
+                        DynamicColumnInfo.Create(name: nameof(Person.CreatedAt), newName: "Timestamp", alias: "p", type: typeof(Person), function: common.ValueFunctions.DatePart.Create(DatePart.Epoch))
                     }
                 };
             }

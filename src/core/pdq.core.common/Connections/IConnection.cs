@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Data;
 
-
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.services")]
 namespace pdq.common.Connections
 {
 	public interface IConnection : IDisposable
@@ -35,10 +33,11 @@ namespace pdq.common.Connections
         /// Get the connection state.
         /// </summary>
 		ConnectionState State { get; }
-	}
 
-	internal interface IConnectionInternal : IConnection
-    {
+		/// <summary>
+		/// Get the hash for this connection.
+		/// </summary>
+		/// <returns>The hash as a Base 64 encoded string.</returns>
 		string GetHash();
 	}
 }

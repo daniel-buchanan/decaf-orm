@@ -17,9 +17,9 @@ namespace pdq
 
 	internal interface IWhereBuilderInternal : IWhereBuilder
     {
-		void AddClause(state.IWhere item);
+		void AddClause(IWhere item);
 
-		IEnumerable<state.IWhere> GetClauses();
+		IEnumerable<IWhere> GetClauses();
 
 		ClauseHandling DefaultClauseHandling { get; }
 	}

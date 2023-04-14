@@ -14,6 +14,7 @@ using Xunit;
 using pdq.services;
 using pdq.common.Utilities;
 using pdq.common.Connections;
+using pdq.common.Utilities.Reflection;
 
 namespace pdq.core_tests
 {

@@ -9,7 +9,7 @@ namespace pdq.Implementation
 {
     public class WhereBuilder : IWhereBuilderInternal
 	{
-        private readonly List<state.IWhere> clauses;
+        private readonly List<IWhere> clauses;
         private readonly IQueryContext queryContext;
         private readonly IClauseHandlingBehaviour clauseHandlingBehaviour;
         private ClauseHandling defaultClauseHandling;
@@ -19,7 +19,7 @@ namespace pdq.Implementation
             this.clauseHandlingBehaviour = ClauseHandlingBehaviour.CreateClauseHandler(this);
             this.defaultClauseHandling = clauseHandling;
             this.queryContext = queryContext;
-            this.clauses = new List<state.IWhere>();
+            this.clauses = new List<IWhere>();
 		}
 
         internal static IWhereBuilder Create(PdqOptions options, IQueryContext queryContext)
@@ -66,10 +66,10 @@ namespace pdq.Implementation
         }
 
         /// <inheritdoc />
-        void IWhereBuilderInternal.AddClause(state.IWhere item) => this.clauses.Add(item);
+        void IWhereBuilderInternal.AddClause(IWhere item) => this.clauses.Add(item);
 
         /// <inheritdoc />
-        IEnumerable<state.IWhere> IWhereBuilderInternal.GetClauses()
+        IEnumerable<IWhere> IWhereBuilderInternal.GetClauses()
         {
             if (this.defaultClauseHandling == common.ClauseHandling.And)
                 return new[] { state.Conditionals.And.Where(this.clauses) };

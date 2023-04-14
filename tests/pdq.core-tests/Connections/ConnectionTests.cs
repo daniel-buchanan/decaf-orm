@@ -9,7 +9,7 @@ namespace pdq.core_tests.Connections
 {
     public class ConnectionTests
     {
-        private readonly IConnectionInternal connection;
+        private readonly IConnection connection;
 
 
         public ConnectionTests()

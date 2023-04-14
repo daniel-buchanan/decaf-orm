@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using pdq.common;
+using pdq.common.ValueFunctions;
 using pdq.state;
 using pdq.state.Conditionals;
-using pdq.state.Conditionals.ValueFunctions;
 
 namespace pdq.Implementation
 {

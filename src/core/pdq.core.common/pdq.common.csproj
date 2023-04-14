@@ -13,4 +13,14 @@
     <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Utilities\Reflection\" />
+    <None Remove="Utilities\Reflection\Dynamic\" />
+    <None Remove="ValueFunctions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utilities\Reflection\" />
+    <Folder Include="Utilities\Reflection\Dynamic\" />
+    <Folder Include="ValueFunctions\" />
+  </ItemGroup>
 </Project>

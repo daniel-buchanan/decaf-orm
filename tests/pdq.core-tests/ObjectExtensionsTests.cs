@@ -3,6 +3,7 @@ using Xunit;
 using pdq.state;
 using pdq.core_tests.Models;
 using FluentAssertions;
+using pdq.common.Utilities.Reflection;
 
 namespace pdq.core_tests
 {

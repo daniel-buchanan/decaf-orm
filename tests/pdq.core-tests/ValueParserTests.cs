@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using pdq.common;
 using pdq.common.Utilities;
+using pdq.common.Utilities.Reflection;
 using pdq.core_tests.Models;
 using pdq.state;
 using pdq.state.Conditionals;
@@ -25,7 +26,8 @@ namespace pdq.core_tests
             var expressionHelper = new ExpressionHelper(reflectionHelper);
             this.aliasManager = AliasManager.Create();
             this.hashProvider = new HashProvider();
-            var callExpressionHelper = new CallExpressionHelper(expressionHelper);
+            var valueFunctionHelper = new ValueFunctionHelper(expressionHelper);
+            var callExpressionHelper = new CallExpressionHelper(expressionHelper, valueFunctionHelper);
             this.parser = new ValueParser(expressionHelper, callExpressionHelper, reflectionHelper);
         }
 

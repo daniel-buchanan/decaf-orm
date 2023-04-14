@@ -2,7 +2,6 @@
 using pdq.common;
 using pdq.common.Templates;
 using pdq.db.common.Builders;
-using pdq.state;
 using pdq.state.Conditionals;
 
 namespace pdq.npgsql.Builders

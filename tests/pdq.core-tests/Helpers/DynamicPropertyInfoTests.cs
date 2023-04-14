@@ -101,6 +101,67 @@ namespace pdq.core_tests.Helpers
             info.Function.Should().Be(function);
         }
 
+        [Theory]
+        [MemberData(nameof(EqualColumns))]
+        public void ColumnsAreEqual(DynamicColumnInfo a, DynamicColumnInfo b)
+        {
+            // Arrange
+
+            // Act
+            var eq = a == b;
+
+            // Assert
+            eq.Should().Be(true);
+        }
+
+        [Theory]
+        [MemberData(nameof(NotEqualColumns))]
+        public void ColumnsAreNotEqual(DynamicColumnInfo a, DynamicColumnInfo b)
+        {
+            // Arrange
+
+            // Act
+            var eq = a != b;
+
+            // Assert
+            eq.Should().Be(true);
+        }
+
+        [Theory]
+        [MemberData(nameof(EqualColumns))]
+        public void HashCodesAreSame(DynamicColumnInfo a, DynamicColumnInfo b)
+        {
+            // Act
+            var hashCodeA = a.GetHashCode();
+            var hashCodeB = b.GetHashCode();
+            var eq = hashCodeA == hashCodeB;
+
+            // Assert
+            eq.Should().Be(true);
+        }
+
+        public static IEnumerable<object[]> EqualColumns
+        {
+            get
+            {
+                yield return new object[] { DynamicColumnInfo.Create(), DynamicColumnInfo.Create() };
+                yield return new object[] { DynamicColumnInfo.Create(name: "Bob"), DynamicColumnInfo.Create(name: "Bob") };
+                yield return new object[] { DynamicColumnInfo.Create(name: "Bob", newName: "Andy"), DynamicColumnInfo.Create(name: "Bob", newName: "Andy") };
+                yield return new object[] { DynamicColumnInfo.Create(name: "Bob", newName: "Andy", value: 42), DynamicColumnInfo.Create(name: "Bob", newName: "Andy", value: 42) };
+            }
+        }
+
+        public static IEnumerable<object[]> NotEqualColumns
+        {
+            get
+            {
+                yield return new object[] { DynamicColumnInfo.Create(), null };
+                yield return new object[] { DynamicColumnInfo.Create(name: "Bob"), DynamicColumnInfo.Create(name: "James") };
+                yield return new object[] { DynamicColumnInfo.Create(name: "Bob", newName: "Andy"), DynamicColumnInfo.Create(name: "James", newName: "Andy") };
+                yield return new object[] { DynamicColumnInfo.Create(name: "Bob", newName: "Andy", value: 42), DynamicColumnInfo.Create(name: "Bob", newName: "James", value: 42) };
+            }
+        }
+
         public static IEnumerable<object[]> ValidValues
         {
             get

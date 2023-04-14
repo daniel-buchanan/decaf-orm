@@ -27,17 +27,15 @@ namespace pdq.common.Utilities.Reflection.Dynamic
             var expression = (LambdaExpression)expr;
 
             if (expression.Body is MemberInitExpression)
-                return GetPropertiesForMemberInit(expression, context);
+                return GetPropertiesForMemberInit(expression);
 
             if (expression.Body is ConstantExpression)
                 return GetPropertiesForConstant(expression, context);
 
-            return GetPropertiesForNew(expression, context);
+            return GetPropertiesForNew(expression);
         }
 
-        private List<DynamicColumnInfo> GetPropertiesForMemberInit(
-            LambdaExpression expression,
-            IQueryContextInternal context)
+        private List<DynamicColumnInfo> GetPropertiesForMemberInit(LambdaExpression expression)
         {
             var initExpr = (MemberInitExpression)expression.Body;
 
@@ -48,7 +46,7 @@ namespace pdq.common.Utilities.Reflection.Dynamic
             foreach (var b in initExpr.Bindings)
             {
                 var memberBinding = b as MemberAssignment;
-                if (!TryGetColumnDetails(memberBinding.Expression, context, out var info))
+                if (!TryGetColumnDetails(memberBinding.Expression, out var info))
                     continue;
 
                 var newName = memberBinding.Member.Name;
@@ -98,9 +96,7 @@ namespace pdq.common.Utilities.Reflection.Dynamic
             return results;
         }
 
-        private List<DynamicColumnInfo> GetPropertiesForNew(
-            LambdaExpression expression,
-            IQueryContextInternal context)
+        private List<DynamicColumnInfo> GetPropertiesForNew(LambdaExpression expression)
         {
             var body = expression.Body as NewExpression;
             if (body == null) return new List<DynamicColumnInfo>();
@@ -111,7 +107,7 @@ namespace pdq.common.Utilities.Reflection.Dynamic
             for (var i = 0; i < countArguments; i += 1)
             {
                 var a = body.Arguments[i];
-                if (!TryGetColumnDetails(a, context, out var info))
+                if (!TryGetColumnDetails(a, out var info))
                 {
                     info = DynamicColumnInfo.Empty();
                     var val = this.expressionHelper.GetValue(a);
@@ -139,13 +135,12 @@ namespace pdq.common.Utilities.Reflection.Dynamic
 
         private bool TryGetColumnDetails(
             Expression expression,
-            IQueryContextInternal context,
             out DynamicColumnInfo info)
         {
             if (TryGetColumnDetailsDynamic(expression, out info))
                 return true;
 
-            return TryGetColumnDetailsConcrete(expression, context, out info);
+            return TryGetColumnDetailsConcrete(expression, out info);
         }
 
         private bool TryGetColumnDetailsDynamic(
@@ -218,7 +213,6 @@ namespace pdq.common.Utilities.Reflection.Dynamic
 
         private bool TryGetColumnDetailsConcrete(
             Expression expression,
-            IQueryContextInternal context,
             out DynamicColumnInfo info)
         {
             info = null;

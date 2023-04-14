@@ -105,8 +105,6 @@ namespace pdq.core_tests.Helpers
         [MemberData(nameof(EqualColumns))]
         public void ColumnsAreEqual(DynamicColumnInfo a, DynamicColumnInfo b)
         {
-            // Arrange
-
             // Act
             var eq = a == b;
 
@@ -115,11 +113,40 @@ namespace pdq.core_tests.Helpers
         }
 
         [Theory]
+        [MemberData(nameof(EqualColumns))]
+        public void ColumnsAreEqual_CompareTo(DynamicColumnInfo a, DynamicColumnInfo b)
+        {
+            // Act
+            var eq = a.CompareTo(b);
+
+            // Assert
+            eq.Should().Be(1);
+        }
+
+        [Theory]
+        [MemberData(nameof(NotEqualColumns))]
+        public void ColumnsAreNotEqual_CompareTo(DynamicColumnInfo a, DynamicColumnInfo b)
+        {
+            // Arrange
+            var left = a;
+            var right = b;
+            if (left == null)
+            {
+                left = b;
+                right = a;
+            }
+
+            // Act
+            var eq = left.CompareTo(right);
+
+            // Assert
+            eq.Should().Be(0);
+        }
+
+        [Theory]
         [MemberData(nameof(NotEqualColumns))]
         public void ColumnsAreNotEqual(DynamicColumnInfo a, DynamicColumnInfo b)
         {
-            // Arrange
-
             // Act
             var eq = a != b;
 
@@ -156,6 +183,7 @@ namespace pdq.core_tests.Helpers
             get
             {
                 yield return new object[] { DynamicColumnInfo.Create(), null };
+                yield return new object[] { null, DynamicColumnInfo.Create() };
                 yield return new object[] { DynamicColumnInfo.Create(name: "Bob"), DynamicColumnInfo.Create(name: "James") };
                 yield return new object[] { DynamicColumnInfo.Create(name: "Bob", newName: "Andy"), DynamicColumnInfo.Create(name: "James", newName: "Andy") };
                 yield return new object[] { DynamicColumnInfo.Create(name: "Bob", newName: "Andy", value: 42), DynamicColumnInfo.Create(name: "Bob", newName: "James", value: 42) };

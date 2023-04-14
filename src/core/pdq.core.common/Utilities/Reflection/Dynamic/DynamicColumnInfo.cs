@@ -65,15 +65,14 @@ namespace pdq.common.Utilities.Reflection.Dynamic
 
 		public void SetFunction(IValueFunction function) => Function = function;
 
-		public bool IsEquivalentTo(DynamicColumnInfo propertyInfo)
+		public bool IsEquivalentTo(DynamicColumnInfo columnInfo)
         {
-			var equal = Name == propertyInfo.Name &&
-				NewName == propertyInfo.NewName &&
-				Alias == propertyInfo.Alias;
+			if (columnInfo == null) return false;
 
-			if (equal) return true;
-
-			return Type == propertyInfo.Type;
+			return Name == columnInfo.Name &&
+				NewName == columnInfo.NewName &&
+				Alias == columnInfo.Alias &&
+				Type == columnInfo.Type;
         }
 
         public int CompareTo(DynamicColumnInfo other)

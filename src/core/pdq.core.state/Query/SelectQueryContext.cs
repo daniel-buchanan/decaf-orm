@@ -14,7 +14,7 @@ namespace pdq.state
         private IWhere where;
         private readonly List<OrderBy> orderByClauses;
         private readonly List<GroupBy> groupByClauses;
-
+        private int? limit;
 
 		private SelectQueryContext(
             IAliasManager aliasManager,
@@ -44,6 +44,9 @@ namespace pdq.state
 
         /// <inheritdoc/>
         public IReadOnlyCollection<GroupBy> GroupByClauses => this.groupByClauses.AsReadOnly();
+
+        /// <inheritdoc/>
+        public int? RowLimit => this.limit;
 
         protected override void Dispose(bool disposing)
         {
@@ -105,6 +108,10 @@ namespace pdq.state
 
         /// <inheritdoc/>
         public void Where(IWhere where) => this.where = where;
+
+        /// <inheritdoc/>
+        public void Limit(int limit)
+            => this.limit = limit;
     }
 }
 

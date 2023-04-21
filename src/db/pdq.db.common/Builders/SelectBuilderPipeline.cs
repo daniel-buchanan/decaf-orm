@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using pdq.common.Templates;
-using pdq.common.Utilities;
+﻿using pdq.common.Utilities;
 using pdq.state;
 
 namespace pdq.db.common.Builders
 {
-	public abstract class SelectBuilderPipeline : BuilderPipeline<ISelectQueryContext>
+    public abstract class SelectBuilderPipeline : BuilderPipeline<ISelectQueryContext>
 	{
         private readonly IWhereBuilder whereBuilder;
 
@@ -20,13 +17,17 @@ namespace pdq.db.common.Builders
             this.whereBuilder = whereBuilder;
 
             Add(AddSelect, providesParameters: false);
+            if (!LimitBeforeGroupBy) Add(AddLimit, providesParameters: true);
             Add(AddColumns, providesParameters: false);
             Add(AddTables, providesParameters: false);
             Add(AddJoins, providesParameters: true);
             Add(AddWhere, providesParameters: true);
             Add(AddOrderBy, providesParameters: false);
             Add(AddGroupBy, providesParameters: false);
+            if (LimitBeforeGroupBy) Add(AddLimit, providesParameters: true);
         }
+
+        protected abstract bool LimitBeforeGroupBy { get; }
 
         private void AddSelect(IPipelineStageInput<ISelectQueryContext> input)
             => input.Builder.AppendLine(Constants.Select);
@@ -41,8 +42,11 @@ namespace pdq.db.common.Builders
 
 		protected abstract void AddGroupBy(IPipelineStageInput<ISelectQueryContext> input);
 
+        protected abstract void AddLimit(IPipelineStageInput<ISelectQueryContext> input);
+
         private void AddWhere(IPipelineStageInput<ISelectQueryContext> input)
             => this.whereBuilder.AddWhere(input.Context.WhereClause, input.Builder, input.Parameters);
+
     }
 }
 

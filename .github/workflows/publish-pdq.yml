@@ -9,10 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Restore
-        run: dotnet restore
-      - name: Build
-        run: dotnet build --no-restore
       - name: Pack
         run: dotnet pack src/core/pdq.core/pdq.csproj -c Release -p:Version=${FULL_PACKAGE_VERSION} -o ./output
       - name: Upload Package

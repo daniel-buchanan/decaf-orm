@@ -2,16 +2,65 @@ name: Run Tests
 on:
   workflow_call:
 jobs:
-  build:
-    name: Run
+  check-paths:
     runs-on: ubuntu-latest
+    name: Check Changes
     steps:
       - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2.11.1
+        id: changes
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Build and Run
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: bash
-        run: ${{ github.workspace }}/build/tests.sh
+          filters: |
+            core:
+              - 'src/core/**'
+            db:
+              - 'src/db/pdq.db.common/**'
+            npgsql:
+              - 'src/db/pdq.npgsql/**'
+            services:
+              - 'src/extensions/pdq.services/**'
+    outputs:
+      run-core: ${{ steps.changes.outputs.core }}
+      run-db: ${{ steps.changes.outputs.db }}
+      run-services: ${{ steps.changes.outputs.services }}
+      run-npgsql: ${{ steps.changes.outputs.npgsql }}
+
+  test-pdq:
+    needs: [check-paths]
+    name: test-pdq
+    if: ${{ needs.check-paths.outputs.run-core == 'true' }}
+    uses: ./.github/workflows/test-run.yml
+    secrets: inherit
+    with:
+      job-name: pdq.core
+      test-project: tests/pdq.core-tests/pdq.core-tests.csproj
+
+  test-pdqdb:
+    needs: [check-paths]
+    name: test-pdqdb
+    if: ${{ needs.check-paths.outputs.run-db == 'true' }}
+    uses: ./.github/workflows/test-run.yml
+    secrets: inherit
+    with:
+      job-name: pdq.db.common
+      test-project: tests/pdq.db.common.tests/pdq.db.common.tests.csproj
+  
+  test-pdqservices:
+    needs: [check-paths]
+    name: test-pdqservices
+    if: ${{ needs.check-paths.outputs.run-services == 'true' }}
+    uses: ./.github/workflows/test-run.yml
+    secrets: inherit
+    with:
+      job-name: pdq.services
+      test-project: tests/pdq.services.tests/pdq.services.tests.csproj
+
+  test-pdqnpgsql:
+    needs: [check-paths]
+    name: test-pdqnpgsql
+    if: ${{ needs.check-paths.outputs.run-npgsql == 'true' }}
+    uses: ./.github/workflows/test-run.yml
+    secrets: inherit
+    with:
+      job-name: pdq.npgsql
+      test-project: tests/pdq.npgsql.tests/pdq.npgsql.tests.csproj

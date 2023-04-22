@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <RootNamespace>pdq.core_tests</RootNamespace>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
@@ -18,7 +18,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="6.10.0" />
+    <PackageReference Include="FluentAssertions" Version="6.11.0" />
     <PackageReference Include="Moq" Version="4.18.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
   </ItemGroup>
@@ -27,28 +27,19 @@
     <ProjectReference Include="..\..\src\core\pdq.core.state\pdq.state.csproj" />
     <ProjectReference Include="..\..\src\core\pdq.core\pdq.csproj" />
     <ProjectReference Include="..\..\src\extensions\pdq.services\pdq.services.csproj" />
+    <ProjectReference Include="..\pdq.tests.common\pdq.tests.common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Microsoft.NET.Test.Sdk" />
     <None Remove="coverlet.collector" />
     <None Remove="FluentAssertions" />
     <None Remove="Helpers\" />
-    <None Remove="Models\" />
     <None Remove="Moq" />
-    <None Remove="Mocks\" />
     <None Remove="Microsoft.Extensions.DependencyInjection" />
     <None Remove="Connections\" />
-    <None Remove="Services\" />
-    <None Remove="Services\Query\" />
-    <None Remove="Services\Command\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />
-    <Folder Include="Models\" />
-    <Folder Include="Mocks\" />
     <Folder Include="Connections\" />
-    <Folder Include="Services\" />
-    <Folder Include="Services\Query\" />
-    <Folder Include="Services\Command\" />
   </ItemGroup>
 </Project>

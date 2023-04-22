@@ -1,7 +1,7 @@
 ﻿using System;
 using Xunit;
 using pdq.state;
-using pdq.core_tests.Models;
+using pdq.tests.common.Models;
 using FluentAssertions;
 using pdq.common.Utilities.Reflection;
 

@@ -5,7 +5,7 @@ using FluentAssertions;
 using Moq;
 using pdq.common;
 using pdq.common.Logging;
-using pdq.core_tests.Mocks;
+using pdq.tests.common.Mocks;
 using pdq.Exceptions;
 using pdq.Implementation;
 using pdq.state;

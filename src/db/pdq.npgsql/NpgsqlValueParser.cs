@@ -12,8 +12,6 @@ namespace pdq.npgsql
 {
     public class NpgsqlValueParser : ValueParser
     {
-        private readonly List<Tuple<string, string>> replacements;
-
         public NpgsqlValueParser(IReflectionHelper reflectionHelper)
             : base(reflectionHelper)
         {
@@ -54,7 +52,7 @@ namespace pdq.npgsql
         protected override byte[] BytesFromString(string input)
         {
             if (!(input.StartsWith(@"\x") || input.StartsWith(@"\\x")))
-                return default(byte[]);
+                return new byte[0];
 
             if (input.StartsWith(@"\\x")) input = input.Substring(3);
             else if (input.StartsWith(@"\x")) input = input.Substring(2);

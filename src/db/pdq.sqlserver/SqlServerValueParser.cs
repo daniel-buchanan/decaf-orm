@@ -27,15 +27,15 @@ namespace pdq.sqlserver
         {
             var underlyingType = this.reflectionHelper.GetUnderlyingType(type);
 
-            if (underlyingType == typeof(bool)) return true;
-            else if (underlyingType == typeof(byte[])) return true;
+            if (underlyingType == typeof(bool)) return false;
+            else if (underlyingType == typeof(byte[])) return false;
             else if (underlyingType == typeof(DateTime)) return true;
             else if (underlyingType == typeof(int)) return false;
             else if (underlyingType == typeof(double) ||
                         underlyingType == typeof(Single) ||
                         underlyingType == typeof(float) ||
                         underlyingType == typeof(decimal))
-                return true;
+                return false;
             else if (underlyingType == typeof(string)) return true;
             else return true;
         }
@@ -48,7 +48,7 @@ namespace pdq.sqlserver
 
         protected override byte[] BytesFromString(string input)
         {
-            if (!input.StartsWith("0x")) return default(byte[]);
+            if (!input.StartsWith("0x")) return new byte[0];
 
             input = input.Substring(2);
 

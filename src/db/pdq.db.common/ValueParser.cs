@@ -10,7 +10,7 @@ namespace pdq.db.common
 	{
         protected readonly IReflectionHelper reflectionHelper;
 
-        public ValueParser(IReflectionHelper reflectionHelper)
+        protected ValueParser(IReflectionHelper reflectionHelper)
 		{
             this.reflectionHelper = reflectionHelper;
 		}
@@ -48,7 +48,6 @@ namespace pdq.db.common
                 var s = Convert.ToString(value);
                 if (string.IsNullOrWhiteSpace(s)) return default(T);
                 Replacements.ForEach(t => s = s.Replace(t.Item1, t.Item2));
-
                 return ChangeType<T>(s);
             }
 
@@ -68,62 +67,38 @@ namespace pdq.db.common
         /// <inheritdoc/>
         public string ToString(object value, Type type)
         {
-            // get underlying type
             var underlyingType = this.reflectionHelper.GetUnderlyingType(type);
 
-            // check for null and return
             if (value == null) return string.Empty;
 
-            // check for byte array
             if (underlyingType == typeof(byte[]))
                 return BytesToString(value as byte[]);
 
-            // check for boolean
             if (underlyingType == typeof(bool))
-            {
-                var val = Convert.ToBoolean(value);
-                return BooleanToString(val);
-            }
+                return BooleanToString(Convert.ToBoolean(value));
 
-            // check for date time
             if (underlyingType == typeof(DateTime))
-            {
-                // convert to db format
                 return Convert.ToDateTime(value).ToString("yyyy-MM-ddTHH:mm:ss");
-            }
 
-            // check for integer
             if (underlyingType == typeof(int))
-            {
-                // convert to integer
                 return Convert.ToInt32(value).ToString();
-            }
 
-            // check for double and float
-            if (underlyingType == typeof(double) || underlyingType == typeof(float) || underlyingType == typeof(decimal))
-            {
-                // convert to decimal
+            if (underlyingType == typeof(double) ||
+                underlyingType == typeof(float) ||
+                underlyingType == typeof(Single) ||
+                underlyingType == typeof(decimal))
                 return Convert.ToDecimal(value).ToString();
-            }
 
-            // check for string
             if (underlyingType == typeof(string))
             {
-                // convert to string
                 var s = Convert.ToString(value);
-
-                // replace any necessary fragments
-                return Replacements.Aggregate(s, (current, r) => current.Replace(r.Item1, r.Item2));
+                if (string.IsNullOrWhiteSpace(s)) return default(string);
+                Replacements.ForEach(t => s = s.Replace(t.Item1, t.Item2));
             }
 
-            // if type is enum
             if (underlyingType.IsEnum)
-            {
-                // return value as string
                 return value.ToString();
-            }
 
-            // default to string
             return Convert.ToString(value);
         }
 

@@ -8,12 +8,12 @@ on:
 jobs:
   sonar:
     name: Sonar Analysis
-    uses: daniel-buchanan/pdq/.github/workflows/sonar.yml
+    uses: ./.github/workflows/sonar.yml
     secrets: inherit
   
   tests:
     name: Run Tests
-    uses: daniel-buchanan/pdq/.github/workflows/tests.yml
+    uses: ./.github/workflows/tests.yml
     secrets: inherit
 
   check-paths:
@@ -45,26 +45,26 @@ jobs:
     name: pdq
     needs: [check-paths]
     if: ${{ needs.check-paths.outputs.run-core == 'true' }}
-    uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.yml
+    uses: ./.github/workflows/publish-pdq.yml
     secrets: inherit
 
   pub-pdqdb:
     name: pdq.db
     needs: [check-paths]
     if: ${{ needs.check-paths.outputs.run-db == 'true' }}
-    uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.db.yml
+    uses: ./.github/workflows/publish-pdq.db.yml
     secrets: inherit
 
   pub-pdqnpgsql:
     name: pdq.npgsql
     needs: [check-paths]
     if: ${{ needs.check-paths.outputs.run-npgsql == 'true' }}
-    uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.db.npgsql.yml
+    uses: ./.github/workflows/publish-pdq.db.npgsql.yml
     secrets: inherit
 
   pub-pdqservices:
     name: pdq.services
     needs: [check-paths]
     if: ${{ needs.check-paths.outputs.run-services == 'true' }}
-    uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.services.yml
+    uses: ./.github/workflows/publish-pdq.services.yml
     secrets: inherit

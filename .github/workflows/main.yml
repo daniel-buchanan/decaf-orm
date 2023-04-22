@@ -68,7 +68,7 @@ jobs:
     name: pdq.sqlserver
     needs: [check-paths]
     if: ${{ needs.check-paths.outputs.run-sqlserver == 'true' }}
-    uses: daniel-buchanan/pdq/.github/workflows/publish-pdq.db.sqlserver.yml@main
+    uses: ./.github/workflows/publish-pdq.db.sqlserver.yml
     secrets: inherit
 
   pub-pdqservices:

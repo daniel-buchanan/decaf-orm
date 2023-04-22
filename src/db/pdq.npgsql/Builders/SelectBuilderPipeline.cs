@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using pdq.common;
-using pdq.common.Templates;
 using pdq.common.Utilities;
-using pdq.db.common;
 using pdq.db.common.Builders;
 using pdq.state;
-using pdq.state.QueryTargets;
 
 namespace pdq.npgsql.Builders
 {
@@ -15,6 +10,8 @@ namespace pdq.npgsql.Builders
     {
         private readonly QuotedIdentifierBuilder quotedIdentifierBuilder;
         private readonly db.common.Builders.IWhereBuilder whereBuilder;
+
+        protected override bool LimitBeforeGroupBy => false;
 
         public SelectBuilderPipeline(
             PdqOptions options,
@@ -34,7 +31,7 @@ namespace pdq.npgsql.Builders
             var columns = input.Context.Columns.ToArray();
 
             var lastColumnIndex = columns.Length - 1;
-            for(var i = 0; i < columns.Length; i++)
+            for (var i = 0; i < columns.Length; i++)
             {
                 input.Builder.PrependIndent();
                 var delimiter = string.Empty;
@@ -71,7 +68,7 @@ namespace pdq.npgsql.Builders
                     input.Builder.Append(delimiter);
 
                 input.Builder.AppendLine();
-                
+
                 index += 1;
             }
 
@@ -124,7 +121,7 @@ namespace pdq.npgsql.Builders
             input.Builder.IncreaseIndent();
 
             var lastClauseIndex = clauses.Length - 1;
-            for(var i = 0; i < clauses.Length; i++)
+            for (var i = 0; i < clauses.Length; i++)
             {
                 var delimiter = string.Empty;
                 if (i < lastClauseIndex)
@@ -148,7 +145,7 @@ namespace pdq.npgsql.Builders
             input.Builder.IncreaseIndent();
 
             var lastClauseIndex = clauses.Length - 1;
-            for(var i = 0; i < clauses.Length; i++)
+            for (var i = 0; i < clauses.Length; i++)
             {
                 var delimiter = string.Empty;
                 if (i < lastClauseIndex)
@@ -160,6 +157,11 @@ namespace pdq.npgsql.Builders
 
             input.Builder.DecreaseIndent();
         }
+
+        protected override void AddLimit(IPipelineStageInput<ISelectQueryContext> input)
+        {
+            if (input.Context.RowLimit == null) return;
+            input.Builder.AppendLine("{0} {1}", Constants.Limit, input.Context.RowLimit);
+        }
     }
 }
-

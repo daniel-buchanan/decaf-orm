@@ -10,6 +10,8 @@ namespace pdq.sqlserver.Builders
         private readonly QuotedIdentifierBuilder quotedIdentifierBuilder;
         private readonly db.common.Builders.IWhereBuilder whereBuilder;
 
+        protected override bool LimitBeforeGroupBy => true;
+
         public SelectBuilderPipeline(
             PdqOptions options,
             SqlServerOptions dbOptions,
@@ -153,6 +155,12 @@ namespace pdq.sqlserver.Builders
             }
 
             input.Builder.DecreaseIndent();
+        }
+
+        protected override void AddLimit(IPipelineStageInput<ISelectQueryContext> input)
+        {
+            if (input.Context.RowLimit == null) return;
+            input.Builder.AppendLine("{0} {1}", Constants.Top, input.Context.RowLimit);
         }
     }
 }

@@ -24,6 +24,7 @@ namespace pdq.sqlserver.Builders
 		public const string Where = "where";
 		public const string Returning = "returning";
 		public const string Values = "values";
+		public const string Top = "top";
 	}
 }
 

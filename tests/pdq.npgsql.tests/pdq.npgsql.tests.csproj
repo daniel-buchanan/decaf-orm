@@ -35,10 +35,5 @@
     <None Remove="FluentAssertions" />
     <None Remove="Moq" />
     <None Remove="Microsoft.Extensions.DependencyInjection" />
-    <None Remove="Mocks\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mocks\" />
-    <Folder Include="Mocks\" />
   </ItemGroup>
 </Project>

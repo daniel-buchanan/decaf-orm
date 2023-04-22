@@ -2,9 +2,35 @@ name: Run Tests
 on:
   workflow_call:
 jobs:
-  build:
-    name: Run
+  check-paths:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' }}
+    name: Check Changes
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2.11.1
+        id: changes
+        with:
+          filters: |
+            core:
+              - 'src/core/**'
+            db:
+              - 'src/db/pdq.db.common/**'
+            npgsql:
+              - 'src/db/pdq.npgsql/**'
+            services:
+              - 'src/extensions/pdq.services/**'
+    outputs:
+      run-core: ${{ steps.changes.outputs.core }}
+      run-db: ${{ steps.changes.outputs.db }}
+      run-npgsql: ${{ steps.changes.outputs.npgsql }}
+      run-services: ${{ steps.changes.outputs.services }}
+
+  test-pdq:
+    runs-on: ubuntu-latest
+    needs: [check-paths]
+    name: test-pdq
+    if: ${{ needs.check-paths.outputs.run-core == 'true' }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -12,6 +38,35 @@ jobs:
       - name: Build and Run
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: bash
-        run: ${{ github.workspace }}/build/tests.sh
+        run: ${{ github.workspace }}/build/tests.sh ${{ github.workspace }}/tests/pdq.core-tests/pdq.core-tests.csproj
+
+  test-pdqdb:
+    runs-on: ubuntu-latest
+    needs: [check-paths]
+    name: test-pdqdb
+    if: ${{ needs.check-paths.outputs.run-db == 'true' }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Build and Run
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+        shell: bash
+        run: ${{ github.workspace }}/build/tests.sh ${{ github.workspace }}/tests/pdq.db.common.tests/pdq.db.common.tests.csproj
+
+  test-pdqnpgsql:
+    runs-on: ubuntu-latest
+    needs: [check-paths]
+    name: test-pdqnpgsql
+    if: ${{ needs.check-paths.outputs.run-npgsql == 'true' }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Build and Run
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+        shell: bash
+        run: ${{ github.workspace }}/build/tests.sh ${{ github.workspace }}/tests/pdq.npgsql.tests/pdq.npgsql.csproj

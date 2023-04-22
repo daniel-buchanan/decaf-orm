@@ -28,10 +28,7 @@ namespace pdq.db.common.Builders
 
         protected void Add(Action<IPipelineStageInput<T>> delegateMethod, bool providesParameters, bool? condition = null)
         {
-            if(condition != null)
-            {
-                if (condition == false) return;
-            }
+            if (condition != null && condition == false) return;
 
             this.stages.Add(PipelineStage<T>.Create(delegateMethod, providesParameters));
         }

@@ -13,4 +13,4 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build and Run
         shell: bash
-        run: ${{ github.workspace }}/build/tests.sh ${{ inputs.test-project }}
+        run: ${{ github.workspace }}/build/tests.sh ${{ github.workspace }}/${{ inputs.test-project }}

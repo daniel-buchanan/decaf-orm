@@ -32,7 +32,7 @@ jobs:
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
-      test-project: ${{ github.workspace }}/tests/pdq.core-tests/pdq.core-tests.csproj
+      test-project: tests/pdq.core-tests/pdq.core-tests.csproj
 
   test-pdqdb:
     needs: [check-paths]
@@ -41,7 +41,7 @@ jobs:
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
-      test-project: ${{ github.workspace }}/tests/pdq.db.common.tests/pdq.db.common.tests.csproj
+      test-project: tests/pdq.db.common.tests/pdq.db.common.tests.csproj
   
   test-pdqservices:
     needs: [check-paths]
@@ -50,7 +50,7 @@ jobs:
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
-      test-project: ${{ github.workspace }}/tests/pdq.services.tests/pdq.services.tests.csproj
+      test-project: tests/pdq.services.tests/pdq.services.tests.csproj
 
   test-pdqnpgsql:
     needs: [check-paths]
@@ -59,4 +59,4 @@ jobs:
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
-      test-project: ${{ github.workspace }}/tests/pdq.npgsql.tests/pdq.npgsql.tests.csproj
+      test-project: tests/pdq.npgsql.tests/pdq.npgsql.tests.csproj

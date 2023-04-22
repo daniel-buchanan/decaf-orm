@@ -24,6 +24,7 @@ namespace pdq.npgsql.Builders
 		public const string Where = "where";
 		public const string Returning = "returning";
 		public const string Values = "values";
+		public const string Limit = "limit";
 	}
 }
 

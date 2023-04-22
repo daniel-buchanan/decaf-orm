@@ -106,6 +106,8 @@ namespace pdq.sqlserver.Builders
             sqlBuilder.AppendLine(Constants.Values);
             var values = source.Values?.ToArray();
 
+            if (values == null) return;
+
             sqlBuilder.IncreaseIndent();
 
             for(var i = 0; i < values.Length; i++)

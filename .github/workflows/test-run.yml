@@ -5,10 +5,13 @@ on:
       test-project:
         type: string
         required: true
+      job-name:
+        type: string
+        required: true
 jobs:
   run-test:
     runs-on: ubuntu-latest
-    name: run-test
+    name: ${{ inputs.job-name }}
     steps:
       - uses: actions/checkout@v2
       - name: Build and Run

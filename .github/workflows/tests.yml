@@ -32,6 +32,7 @@ jobs:
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
+      job-name: pdq.core
       test-project: tests/pdq.core-tests/pdq.core-tests.csproj
 
   test-pdqdb:
@@ -41,6 +42,7 @@ jobs:
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
+      job-name: pdq.db.common
       test-project: tests/pdq.db.common.tests/pdq.db.common.tests.csproj
   
   test-pdqservices:
@@ -50,6 +52,7 @@ jobs:
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
+      job-name: pdq.services
       test-project: tests/pdq.services.tests/pdq.services.tests.csproj
 
   test-pdqnpgsql:
@@ -59,4 +62,5 @@ jobs:
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
+      job-name: pdq.npgsql
       test-project: tests/pdq.npgsql.tests/pdq.npgsql.tests.csproj

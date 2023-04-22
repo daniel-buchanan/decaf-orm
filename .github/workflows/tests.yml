@@ -22,14 +22,15 @@ jobs:
     outputs:
       run-core: ${{ steps.changes.outputs.core }}
       run-db: ${{ steps.changes.outputs.db }}
-      run-npgsql: ${{ steps.changes.outputs.npgsql }}
       run-services: ${{ steps.changes.outputs.services }}
+      run-npgsql: ${{ steps.changes.outputs.npgsql }}
 
   test-pdq:
     needs: [check-paths]
     name: test-pdq
     if: ${{ needs.check-paths.outputs.run-core == 'true' }}
     uses: ./.github/workflows/test-run.yml
+    secrets: inherit
     with:
       test-project: ${{ github.workspace }}/tests/pdq.core-tests/pdq.core-tests.csproj
 
@@ -38,6 +39,7 @@ jobs:
     name: test-pdqdb
     if: ${{ needs.check-paths.outputs.run-db == 'true' }}
     uses: ./.github/workflows/test-run.yml
+    secrets: inherit
     with:
       test-project: ${{ github.workspace }}/tests/pdq.db.common.tests/pdq.db.common.tests.csproj
   
@@ -46,6 +48,7 @@ jobs:
     name: test-pdqservices
     if: ${{ needs.check-paths.outputs.run-services == 'true' }}
     uses: ./.github/workflows/test-run.yml
+    secrets: inherit
     with:
       test-project: ${{ github.workspace }}/tests/pdq.services.tests/pdq.services.tests.csproj
 
@@ -54,5 +57,6 @@ jobs:
     name: test-pdqnpgsql
     if: ${{ needs.check-paths.outputs.run-npgsql == 'true' }}
     uses: ./.github/workflows/test-run.yml
+    secrets: inherit
     with:
       test-project: ${{ github.workspace }}/tests/pdq.npgsql.tests/pdq.npgsql.tests.csproj

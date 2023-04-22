@@ -26,6 +26,7 @@ jobs:
       run-db: ${{ steps.changes.outputs.db }}
       run-services: ${{ steps.changes.outputs.services }}
       run-npgsql: ${{ steps.changes.outputs.npgsql }}
+      run-sqlserver: ${{ steps.changes.outputs.sqlserver }}
 
   test-pdq:
     needs: [check-paths]

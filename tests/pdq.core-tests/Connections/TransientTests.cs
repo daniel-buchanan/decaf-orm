@@ -3,7 +3,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
 using pdq.common.Connections;
-using pdq.core_tests.Mocks;
+using pdq.tests.common.Mocks;
 using Xunit;
 
 namespace pdq.core_tests.Connections

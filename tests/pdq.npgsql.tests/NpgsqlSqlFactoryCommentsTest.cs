@@ -8,8 +8,8 @@ using pdq.common;
 using pdq.common.Connections;
 using pdq.common.Utilities;
 using pdq.core_tests.Helpers;
-using pdq.core_tests.Mocks;
-using pdq.core_tests.Models;
+using pdq.tests.common.Mocks;
+using pdq.tests.common.Models;
 using pdq.services;
 using Xunit;
 

@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
-using pdq.core_tests.Models;
+using pdq.tests.common.Models;
 using Xunit;
 
 namespace pdq.npgsql.tests

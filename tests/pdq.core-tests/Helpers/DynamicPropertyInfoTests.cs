@@ -4,7 +4,7 @@ using FluentAssertions;
 using pdq.common;
 using pdq.common.Utilities.Reflection.Dynamic;
 using pdq.common.ValueFunctions;
-using pdq.core_tests.Models;
+using pdq.tests.common.Models;
 using pdq.state;
 using pdq.state.Utilities;
 using Xunit;

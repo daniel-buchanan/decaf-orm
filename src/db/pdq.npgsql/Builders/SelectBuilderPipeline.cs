@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using pdq.common;
-using pdq.common.Templates;
 using pdq.common.Utilities;
-using pdq.db.common;
 using pdq.db.common.Builders;
 using pdq.state;
-using pdq.state.QueryTargets;
 
 namespace pdq.npgsql.Builders
 {
@@ -15,6 +10,8 @@ namespace pdq.npgsql.Builders
     {
         private readonly QuotedIdentifierBuilder quotedIdentifierBuilder;
         private readonly db.common.Builders.IWhereBuilder whereBuilder;
+
+        protected override bool LimitBeforeGroupBy => false;
 
         public SelectBuilderPipeline(
             PdqOptions options,
@@ -159,6 +156,12 @@ namespace pdq.npgsql.Builders
             }
 
             input.Builder.DecreaseIndent();
+        }
+
+        protected override void AddLimit(IPipelineStageInput<ISelectQueryContext> input)
+        {
+            if (input.Context.RowLimit == null) return;
+            input.Builder.AppendLine("{0} {1}", Constants.Limit, input.Context.RowLimit);
         }
     }
 }

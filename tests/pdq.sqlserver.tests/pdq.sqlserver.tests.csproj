@@ -28,5 +28,6 @@
     <ProjectReference Include="..\..\src\extensions\pdq.services\pdq.services.csproj" />
     <ProjectReference Include="..\..\src\db\pdq.npgsql\pdq.npgsql.csproj" />
     <ProjectReference Include="..\pdq.core-tests\pdq.core-tests.csproj" />
+    <ProjectReference Include="..\..\src\db\pdq.sqlserver\pdq.sqlserver.csproj" />
   </ItemGroup>
 </Project>

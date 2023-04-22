@@ -26,8 +26,12 @@ namespace pdq.db.common.Builders
             this.stages = new List<PipelineStage<T>>();
 		}
 
-        protected void Add(Action<IPipelineStageInput<T>> delegateMethod, bool providesParameters)
-            => this.stages.Add(PipelineStage<T>.Create(delegateMethod, providesParameters));
+        protected void Add(Action<IPipelineStageInput<T>> delegateMethod, bool providesParameters, bool? condition = null)
+        {
+            if (condition != null && condition == false) return;
+
+            this.stages.Add(PipelineStage<T>.Create(delegateMethod, providesParameters));
+        }
 
         public SqlTemplate Execute(T context, IPipelineStageInput input)
         {

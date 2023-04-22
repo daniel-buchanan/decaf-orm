@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using pdq.common;
 using pdq.common.Connections;
+using pdq.tests.common.Mocks;
 using Xunit;
 
 namespace pdq.core_tests.Connections
@@ -13,7 +14,7 @@ namespace pdq.core_tests.Connections
 
         public ConnectionDetailsTests()
         {
-            this.connectionDetails = new Mocks.MockConnectionDetails();
+            this.connectionDetails = new MockConnectionDetails();
         }
 
         [Fact]

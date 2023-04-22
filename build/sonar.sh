@@ -9,20 +9,27 @@
 
 dotnet build --no-incremental pdq.sln 
 
-./.coverlet/coverlet ./tests/pdq.db.common.tests/bin/Debug/net6.0/pdq.db.common.tests.dll \
+./.coverlet/coverlet ./tests/pdq.db.common.tests/bin/Debug/net7.0/pdq.db.common.tests.dll \
     --target "dotnet" \
     --targetargs "test --no-build" \
     -f=json \
     -o="db-common.json"
 
-./.coverlet/coverlet ./tests/pdq.npgsql.tests/bin/Debug/net6.0/pdq.npgsql.tests.dll \
+./.coverlet/coverlet ./tests/pdq.services.tests/bin/Debug/net7.0/pdq.services.tests.dll \
     --target "dotnet" \
     --targetargs "test --no-build" \
     --merge-with "db-common.json" \
     -f=json \
+    -o="services-merged.json"
+
+./.coverlet/coverlet ./tests/pdq.npgsql.tests/bin/Debug/net7.0/pdq.npgsql.tests.dll \
+    --target "dotnet" \
+    --targetargs "test --no-build" \
+    --merge-with "services-merged.json" \
+    -f=json \
     -o="npgsql-merged.json"
 
-./.coverlet/coverlet ./tests/pdq.core-tests/bin/Debug/net6.0/pdq.core-tests.dll \
+./.coverlet/coverlet ./tests/pdq.core-tests/bin/Debug/net7.0/pdq.core-tests.dll \
     --target "dotnet" \
     --targetargs "test --no-build" \
     --merge-with "npgsql-merged.json" \

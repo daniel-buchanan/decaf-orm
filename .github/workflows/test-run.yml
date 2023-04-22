@@ -1,0 +1,19 @@
+name: Run Tests
+on:
+  workflow_call:
+    inputs:
+      test-project:
+        type: string
+        required: true
+      job-name:
+        type: string
+        required: true
+jobs:
+  run-test:
+    runs-on: ubuntu-latest
+    name: ${{ inputs.job-name }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build and Run
+        shell: bash
+        run: ${{ github.workspace }}/build/tests.sh ${{ github.workspace }}/${{ inputs.test-project }}

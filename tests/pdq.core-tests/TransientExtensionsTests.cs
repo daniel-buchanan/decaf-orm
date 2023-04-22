@@ -5,9 +5,9 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
 using pdq.services;
-using pdq.core_tests.Mocks;
+using pdq.tests.common.Mocks;
 using Xunit;
-using pdq.core_tests.Models;
+using pdq.tests.common.Models;
 using pdq.common.Connections;
 
 namespace pdq.core_tests

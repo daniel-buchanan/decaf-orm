@@ -15,7 +15,9 @@ namespace pdq.common.Options
         {
             var options = new T();
             var optionsType = typeof(T);
-            var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            var flags = BindingFlags.Instance |
+                BindingFlags.Public |
+                BindingFlags.NonPublic;
             var properties = optionsType.GetProperties(flags);
 
             foreach (var p in values)

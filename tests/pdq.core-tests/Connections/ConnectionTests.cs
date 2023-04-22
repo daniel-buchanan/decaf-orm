@@ -3,6 +3,7 @@ using System.Data;
 using FluentAssertions;
 using pdq.common.Connections;
 using pdq.common.Logging;
+using pdq.tests.common.Mocks;
 using Xunit;
 
 namespace pdq.core_tests.Connections
@@ -15,8 +16,8 @@ namespace pdq.core_tests.Connections
         public ConnectionTests()
         {
             var logger = new DefaultLogger(new PdqOptions());
-            var connectionDetails = new Mocks.MockConnectionDetails();
-            this.connection = new Mocks.MockConnection(logger, connectionDetails);
+            var connectionDetails = new MockConnectionDetails();
+            this.connection = new MockConnection(logger, connectionDetails);
         }
 
         [Fact]

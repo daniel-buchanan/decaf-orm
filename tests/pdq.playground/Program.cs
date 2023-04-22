@@ -5,8 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using pdq;
 using pdq.common;
 using pdq.common.Connections;
-using pdq.core_tests.Mocks;
-using pdq.core_tests.Models;
+using pdq.tests.common.Mocks;
+using pdq.tests.common.Models;
 
 var services = new ServiceCollection();
 services.AddPdq(o =>

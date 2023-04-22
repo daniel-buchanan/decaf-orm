@@ -31,6 +31,11 @@ namespace pdq.state
 		IReadOnlyCollection<GroupBy> GroupByClauses { get; }
 
         /// <summary>
+        /// The number of rows to return.
+        /// </summary>
+        int? RowLimit { get; }
+
+        /// <summary>
         /// The <see cref="IQueryTarget"/> to select from.
         /// </summary>
         /// <param name="table">The <see cref="IQueryTarget"/> to use.</param>
@@ -65,6 +70,12 @@ namespace pdq.state
         /// </summary>
         /// <param name="where">The <see cref="IWhere"/> to add.</param>
 		void Where(IWhere where);
+
+        /// <summary>
+        /// Add a row limit on the results.
+        /// </summary>
+        /// <param name="limit">The number of rows to return.</param>
+        void Limit(int limit);
 	}
 }
 

@@ -15,6 +15,7 @@ jobs:
         run: |
           dotnet add ${CSPROJ} package pdq --version ${{ vars.LATEST_PDQ }} --no-restore
           dotnet add ${CSPROJ} package pdq.db --version ${{ vars.LATEST_DB }} --no-restore
+          dotnet nuget locals all --clear
           dotnet restore ${CSPROJ}
           dotnet build ${CSPROJ} -c Release
           dotnet pack ${CSPROJ} -p:Version=${FULL_PACKAGE_VERSION} -o ./output

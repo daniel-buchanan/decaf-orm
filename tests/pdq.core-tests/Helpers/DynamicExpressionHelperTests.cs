@@ -6,7 +6,7 @@ using pdq.common;
 using pdq.common.Utilities;
 using pdq.common.Utilities.Reflection;
 using pdq.common.Utilities.Reflection.Dynamic;
-using pdq.core_tests.Models;
+using pdq.tests.common.Models;
 using pdq.state;
 using pdq.state.Utilities;
 using Xunit;

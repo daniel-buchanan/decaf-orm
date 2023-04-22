@@ -17,14 +17,14 @@ namespace pdq.db.common.Builders
             this.whereBuilder = whereBuilder;
 
             Add(AddSelect, providesParameters: false);
-            if (!LimitBeforeGroupBy) Add(AddLimit, providesParameters: true);
+            Add(AddLimit, providesParameters: true, condition: LimitBeforeGroupBy);
             Add(AddColumns, providesParameters: false);
             Add(AddTables, providesParameters: false);
             Add(AddJoins, providesParameters: true);
             Add(AddWhere, providesParameters: true);
             Add(AddOrderBy, providesParameters: false);
             Add(AddGroupBy, providesParameters: false);
-            if (LimitBeforeGroupBy) Add(AddLimit, providesParameters: true);
+            Add(AddLimit, providesParameters: true, condition: LimitBeforeGroupBy);
         }
 
         protected abstract bool LimitBeforeGroupBy { get; }

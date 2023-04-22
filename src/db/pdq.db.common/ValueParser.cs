@@ -47,7 +47,7 @@ namespace pdq.db.common
             {
                 var s = Convert.ToString(value);
                 if (string.IsNullOrWhiteSpace(s)) return default(T);
-                Replacements.ForEach(t => s = s.Replace(t.Item1, t.Item2));
+                foreach (var r in Replacements) s = s.Replace(r.Item1, r.Item2);
                 return ChangeType<T>(s);
             }
 
@@ -93,7 +93,8 @@ namespace pdq.db.common
             {
                 var s = Convert.ToString(value);
                 if (string.IsNullOrWhiteSpace(s)) return default(string);
-                Replacements.ForEach(t => s = s.Replace(t.Item1, t.Item2));
+                foreach (var r in Replacements) s = s.Replace(r.Item1, r.Item2);
+                return s;
             }
 
             if (underlyingType.IsEnum)

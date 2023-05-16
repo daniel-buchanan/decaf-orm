@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace pdq.Exceptions
+namespace pdq.common.Exceptions
 {
     [Serializable]
     public class ShouldNeverOccurException : Exception

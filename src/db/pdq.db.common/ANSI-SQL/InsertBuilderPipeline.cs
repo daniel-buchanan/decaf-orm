@@ -12,12 +12,12 @@ namespace pdq.db.common.ANSISQL
 {
 	public abstract class InsertBuilderPipeline : db.common.Builders.InsertBuilderPipeline
 	{
-        private readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
-        private readonly IValueParser valueParser;
-        private readonly IBuilderPipeline<ISelectQueryContext> selectBuilder;
-        private readonly IConstants constants;
+        protected readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
+        protected readonly IValueParser valueParser;
+        protected readonly IBuilderPipeline<ISelectQueryContext> selectBuilder;
+        protected readonly IConstants constants;
 
-        public InsertBuilderPipeline(
+        protected InsertBuilderPipeline(
             PdqOptions options,
             IHashProvider hashProvider,
             db.common.Builders.IWhereBuilder whereBuilder,

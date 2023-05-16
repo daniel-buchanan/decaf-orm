@@ -14,7 +14,7 @@ namespace pdq.db.common.ANSISQL
         protected readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
         protected readonly IConstants constants;
 
-        public DeleteBuilderPipeline(
+        protected DeleteBuilderPipeline(
             PdqOptions options,
             IHashProvider hashProvider,
             db.common.Builders.IWhereBuilder whereBuilder,

@@ -12,12 +12,12 @@ namespace pdq.db.common.ANSISQL
 {
 	public class UpdateBuilderPipeline : db.common.Builders.UpdateBuilderPipeline
 	{
-        private readonly db.common.Builders.IWhereBuilder whereBuilder;
-        private readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
-        private readonly IBuilderPipeline<ISelectQueryContext> selectBuilder;
-        private readonly IConstants constants;
+        protected readonly db.common.Builders.IWhereBuilder whereBuilder;
+        protected readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
+        protected readonly IBuilderPipeline<ISelectQueryContext> selectBuilder;
+        protected readonly IConstants constants;
 
-        public UpdateBuilderPipeline(
+        protected UpdateBuilderPipeline(
             PdqOptions options,
             IHashProvider hashProvider,
             db.common.Builders.IWhereBuilder whereBuilder,

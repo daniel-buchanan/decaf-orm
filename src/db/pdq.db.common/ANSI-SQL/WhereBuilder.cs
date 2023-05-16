@@ -9,10 +9,10 @@ namespace pdq.db.common.ANSISQL
 {
     public abstract class WhereBuilder : db.common.Builders.IWhereBuilder
     {
-        private readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
-        private readonly IConstants constants;
+        protected readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
+        protected readonly IConstants constants;
 
-        public WhereBuilder(
+        protected WhereBuilder(
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
             IConstants constants)
         {

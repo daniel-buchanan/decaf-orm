@@ -8,13 +8,13 @@ namespace pdq.db.common.ANSISQL
 {
     public class SelectBuilderPipeline : db.common.Builders.SelectBuilderPipeline
     {
-        private readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
-        private readonly db.common.Builders.IWhereBuilder whereBuilder;
-        private readonly IConstants constants;
+        protected readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
+        protected readonly db.common.Builders.IWhereBuilder whereBuilder;
+        protected readonly IConstants constants;
 
         protected override bool LimitBeforeGroupBy => false;
 
-        public SelectBuilderPipeline(
+        protected SelectBuilderPipeline(
             PdqOptions options,
             IHashProvider hashProvider,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,

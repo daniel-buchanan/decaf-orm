@@ -10,6 +10,7 @@ namespace pdq.sqlserver
         ISqlServerConnectionDetails
     {
         private bool isTrustedConnection;
+        private bool isMarsEnabled;
 
         public SqlServerConnectionDetails() : base()
         {
@@ -21,6 +22,10 @@ namespace pdq.sqlserver
             => 1433;
 
         /// <inheritdoc/>
+        public void EnableMars()
+            => this.isMarsEnabled = true;
+
+        /// <inheritdoc/>
         public void IsTrustedConnection()
             => this.isTrustedConnection = true;
 
@@ -28,6 +33,7 @@ namespace pdq.sqlserver
         protected override async Task<string> ConstructConnectionStringAsync()
         {
             string username, password;
+            username = password = null;
             var auth = Authentication;
 
             // check for delayed fetch
@@ -39,20 +45,21 @@ namespace pdq.sqlserver
                 username = creds.Username;
                 password = creds.Password;
             }
-            else
-            {
-                throw new ConnectionStringConstructException("Provided Credentials are not username an password.");
-            }
 
             var sb = new StringBuilder();
-            sb.AppendFormat("Host={0};", this.Hostname);
-            sb.AppendFormat("Port={0};", this.Port);
+            sb.AppendFormat("Server={0},{1};", this.Hostname, this.Port);
             sb.AppendFormat("Database={0};", this.DatabaseName);
-            sb.AppendFormat("Username={0};", username);
-            sb.AppendFormat("Password={0};", password);
 
             if (this.isTrustedConnection)
-                sb.Append("Trusted Connection=True;");
+                sb.Append("Trusted_Connection=Yes;");
+            else
+            {
+                sb.AppendFormat("User ID={0};", username);
+                sb.AppendFormat("Password={0};", password);
+            }
+
+            if (this.isMarsEnabled)
+                sb.Append("MultipleActiveResultSets=True;");
             
             return sb.ToString();
         }

@@ -3,14 +3,18 @@ using pdq.state;
 
 namespace pdq.sqlserver.Builders
 {
-	public class QuotedIdentifierBuilder
+	public class QuotedIdentifierBuilder : IQuotedIdentifierBuilder
 	{
         private readonly string quote = string.Empty;
+        private readonly IConstants constants;
 
-        public QuotedIdentifierBuilder(SqlServerOptions options)
+        public QuotedIdentifierBuilder(
+            SqlServerOptions options,
+            IConstants constants)
 		{
+            this.constants = constants;
             if (options.QuotedIdentifiers)
-                this.quote = Constants.ColumnQuote;
+                this.quote = constants.ColumnQuote;
         }
 
         public void AddSelect(Column column, ISqlBuilder sqlBuilder)
@@ -56,14 +60,14 @@ namespace pdq.sqlserver.Builders
         public void AddClosingFromQuery(string alias, ISqlBuilder sqlBuilder)
         {
             sqlBuilder.PrependIndent();
-            sqlBuilder.Append("{0} as {1}{2}{1}", Constants.ClosingParen, this.quote, alias);
+            sqlBuilder.Append("{0} as {1}{2}{1}", constants.ClosingParen, this.quote, alias);
         }
 
         public void AddOrderBy(OrderBy orderBy, ISqlBuilder sqlBuilder)
         {
             var alias = string.Empty;
             var formatStr = "{0}{2}{0} {3}";
-            var order = orderBy.Order == common.SortOrder.Ascending ? Constants.Ascending : Constants.Descending;
+            var order = orderBy.Order == common.SortOrder.Ascending ? constants.Ascending : constants.Descending;
             if (!string.IsNullOrWhiteSpace(orderBy.Source.Alias))
             {
                 alias = orderBy.Source.Alias;

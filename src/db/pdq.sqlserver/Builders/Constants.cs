@@ -1,30 +1,12 @@
 ﻿using System;
 namespace pdq.sqlserver.Builders
 {
-	public static class Constants
+	public class Constants  : db.common.ANSISQL.Constants
 	{
-		public const string OpeningParen = "(";
-		public const string ClosingParen = ")";
-		public const string And = "and";
-		public const string Or = "or";
-		public const string Not = "not";
-		public const string Like = "like";
-		public const string iLike = "ilike";
-		public const string OrderBy = "order by";
-		public const string GroupBy = "group by";
-		public const string ValueQuote = "'";
-		public const string ColumnQuote = "\"";
-		public const string Seperator = ",";
-		public const string Ascending = "asc";
-		public const string Descending = "desc";
-		public const string Comment = "--";
-		public const string Join = "join";
-		public const string On = "on";
-		public const string From = "from";
-		public const string Where = "where";
-		public const string Returning = "returning";
-		public const string Values = "values";
-		public const string Top = "top";
+		public override string Ascending => "ascending";
+		public override string Descending => "descending";
+		public override string Returning => "output";
+		public override string Limit => "top";
 	}
 }
 

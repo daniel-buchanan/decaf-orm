@@ -40,7 +40,15 @@ namespace pdq.common.Connections
         /// <inheritdoc/>
         public int Port
         {
-            get => this.port ?? DefaultPort;
+            get
+            {
+                if(this.port == null)
+                {
+                    this.port = DefaultPort;
+                    return this.port.GetValueOrDefault();
+                }
+                return this.port.GetValueOrDefault();
+            }
             set
             {
                 if (port != null && port != 0)

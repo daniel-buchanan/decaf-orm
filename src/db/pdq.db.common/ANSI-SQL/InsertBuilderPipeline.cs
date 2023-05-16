@@ -19,14 +19,13 @@ namespace pdq.db.common.ANSISQL
 
         public InsertBuilderPipeline(
             PdqOptions options,
-            IDatabaseOptions dbOptions,
             IHashProvider hashProvider,
             db.common.Builders.IWhereBuilder whereBuilder,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
             IValueParser valueParser,
             IBuilderPipeline<ISelectQueryContext> selectBuilder,
             IConstants constants)
-            : base(options, dbOptions, hashProvider)
+            : base(options, constants, hashProvider)
         {
             this.quotedIdentifierBuilder = quotedIdentifierBuilder;
             this.valueParser = valueParser;

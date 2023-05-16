@@ -16,12 +16,11 @@ namespace pdq.db.common.ANSISQL
 
         public SelectBuilderPipeline(
             PdqOptions options,
-            IDatabaseOptions dbOptions,
             IHashProvider hashProvider,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
             db.common.Builders.IWhereBuilder whereBuilder,
             IConstants constants)
-            : base(options, dbOptions, hashProvider, whereBuilder)
+            : base(options, constants, hashProvider, whereBuilder)
         {
             this.whereBuilder = whereBuilder;
             this.quotedIdentifierBuilder = quotedIdentifierBuilder;

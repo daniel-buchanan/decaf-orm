@@ -14,13 +14,12 @@ namespace pdq.npgsql.Builders
 	{
         public UpdateBuilderPipeline(
             PdqOptions options,
-            NpgsqlOptions dbOptions,
             IHashProvider hashProvider,
             db.common.Builders.IWhereBuilder whereBuilder,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
             IBuilderPipeline<ISelectQueryContext> selectBuilder,
             IConstants constants)
-            : base(options, dbOptions, hashProvider, whereBuilder, quotedIdentifierBuilder, selectBuilder, constants)
+            : base(options, hashProvider, whereBuilder, quotedIdentifierBuilder, selectBuilder, constants)
         {
         }
     }

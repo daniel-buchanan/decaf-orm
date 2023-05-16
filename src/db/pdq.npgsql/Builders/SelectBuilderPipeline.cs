@@ -12,12 +12,11 @@ namespace pdq.npgsql.Builders
 
         public SelectBuilderPipeline(
             PdqOptions options,
-            NpgsqlOptions dbOptions,
             IHashProvider hashProvider,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
             db.common.Builders.IWhereBuilder whereBuilder,
             IConstants constants)
-            : base(options, dbOptions, hashProvider, quotedIdentifierBuilder, whereBuilder, constants)
+            : base(options, hashProvider, quotedIdentifierBuilder, whereBuilder, constants)
         {
         }
     }

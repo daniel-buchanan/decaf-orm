@@ -9,10 +9,10 @@ namespace pdq.db.common.Builders
 
         protected SelectBuilderPipeline(
             PdqOptions options,
-            IDatabaseOptions dbOptions,
+            IConstants constants,
             IHashProvider hashProvider,
             IWhereBuilder whereBuilder)
-            : base(options, dbOptions, hashProvider)
+            : base(options, constants, hashProvider)
         {
             this.whereBuilder = whereBuilder;
 

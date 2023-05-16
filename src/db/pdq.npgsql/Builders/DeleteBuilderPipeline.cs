@@ -13,12 +13,11 @@ namespace pdq.npgsql.Builders
     {
         public DeleteBuilderPipeline(
             PdqOptions options,
-            NpgsqlOptions dbOptions,
             IHashProvider hashProvider,
             db.common.Builders.IWhereBuilder whereBuilder,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
             IConstants constants)
-            : base(options, dbOptions, hashProvider, whereBuilder, quotedIdentifierBuilder, constants)
+            : base(options, hashProvider, whereBuilder, quotedIdentifierBuilder, constants)
         {
             
         }

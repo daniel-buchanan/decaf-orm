@@ -13,14 +13,13 @@ namespace pdq.npgsql.Builders
 	{
         public InsertBuilderPipeline(
             PdqOptions options,
-            NpgsqlOptions dbOptions,
             IHashProvider hashProvider,
             db.common.Builders.IWhereBuilder whereBuilder,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
             IValueParser valueParser,
             IBuilderPipeline<ISelectQueryContext> selectBuilder,
             IConstants constants)
-            : base(options, dbOptions, hashProvider, whereBuilder, quotedIdentifierBuilder, valueParser, selectBuilder, constants)
+            : base(options, hashProvider, whereBuilder, quotedIdentifierBuilder, valueParser, selectBuilder, constants)
         {
         }
     }

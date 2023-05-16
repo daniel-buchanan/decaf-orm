@@ -11,17 +11,16 @@ namespace pdq.db.common.ANSISQL
 {
     public abstract class DeleteBuilderPipeline : db.common.Builders.DeleteBuilderPipeline
     {
-        private readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
-        private readonly IConstants constants;
+        protected readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
+        protected readonly IConstants constants;
 
         public DeleteBuilderPipeline(
             PdqOptions options,
-            IDatabaseOptions dbOptions,
             IHashProvider hashProvider,
             db.common.Builders.IWhereBuilder whereBuilder,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
             IConstants constants)
-            : base(options, dbOptions, hashProvider, whereBuilder)
+            : base(options, constants, hashProvider, whereBuilder)
         {
             this.quotedIdentifierBuilder = quotedIdentifierBuilder;
             this.constants = constants;

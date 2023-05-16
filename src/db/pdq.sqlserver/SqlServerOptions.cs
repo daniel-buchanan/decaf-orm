@@ -22,9 +22,6 @@ namespace pdq.sqlserver
 		/// </summary>
 		public bool QuotedIdentifiers { get; private set; }
 
-		/// <inheritdoc/>
-		public string CommentCharacter => Builders.Constants.Comment;
-
         /// <inheritdoc/>
         public IConnectionDetails ConnectionDetails { get; private set; }
     }

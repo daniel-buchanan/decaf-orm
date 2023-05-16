@@ -7,4 +7,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\core\pdq.core.state\pdq.state.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="ANSI-SQL\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ANSI-SQL\" />
+  </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@ using pdq.state;
 
 namespace pdq.npgsql.Builders
 {
-	public class QuotedIdentifierBuilder
+	public class QuotedIdentifierBuilder : db.common.Builders.IQuotedIdentifierBuilder
 	{
         private readonly string quote = string.Empty;
 

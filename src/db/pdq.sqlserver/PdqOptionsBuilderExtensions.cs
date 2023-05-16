@@ -42,9 +42,10 @@ namespace pdq.sqlserver
             builder.ConfigureDbImplementation<SqlServerSqlFactory, SqlServerConnectionFactory, SqlServerTransactionFactory>();
             builder.Services.AddSingleton(options.ConnectionDetails);
             builder.Services.AddSingleton(options);
+            builder.Services.AddSingleton<IDatabaseOptions>(options);
             builder.Services.AddSingleton<db.common.Builders.IConstants, Builders.Constants>();
             builder.Services.AddSingleton<IValueParser, SqlServerValueParser>();
-            builder.Services.AddSingleton<db.common.Builders.IQuotedIdentifierBuilder, Builders.QuotedIdentifierBuilder>();
+            builder.Services.AddSingleton<db.common.Builders.IQuotedIdentifierBuilder, db.common.ANSISQL.QuotedIdentifierBuilder>();
             builder.Services.AddTransient<db.common.Builders.IWhereBuilder, Builders.WhereBuilder>();
             builder.Services.AddTransient<IBuilderPipeline<ISelectQueryContext>, Builders.SelectBuilderPipeline>();
             builder.Services.AddTransient<IBuilderPipeline<IDeleteQueryContext>, Builders.DeleteBuilderPipeline>();

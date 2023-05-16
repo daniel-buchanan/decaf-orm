@@ -10,6 +10,11 @@ namespace pdq.db.common
 		/// The SQL connection details to use.
 		/// </summary>
 		IConnectionDetails ConnectionDetails { get; }
+
+		/// <summary>
+		/// Whether or not to quote identifiers.
+		/// </summary>
+		bool QuotedIdentifiers { get; }
 	}
 }
 

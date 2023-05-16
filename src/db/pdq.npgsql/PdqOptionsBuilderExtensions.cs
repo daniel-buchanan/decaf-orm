@@ -39,7 +39,7 @@ namespace pdq.npgsql
             this IPdqOptionsBuilder builder,
             NpgsqlOptions options)
         {
-            builder.ConfigureDbImplementation<NpgsqlSqlFactory, NpgsqlConnectionFactory, NpgsqlTransactionFactory>();
+            builder.ConfigureDbImplementation<db.common.SqlFactory, NpgsqlConnectionFactory, NpgsqlTransactionFactory>();
             builder.Services.AddSingleton(options.ConnectionDetails);
             builder.Services.AddSingleton(options);
             builder.Services.AddSingleton<IDatabaseOptions>(options);

@@ -4,16 +4,16 @@ using pdq.common.Templates;
 using pdq.db.common.Builders;
 using pdq.state;
 
-namespace pdq.sqlserver
+namespace pdq.db.common
 {
-    public class SqlServerSqlFactory : SqlFactory
-    {
+	public class SqlFactory : pdq.state.SqlFactory
+	{
         private readonly IBuilderPipeline<ISelectQueryContext> selectBuilder;
         private readonly IBuilderPipeline<IInsertQueryContext> insertBuilder;
         private readonly IBuilderPipeline<IDeleteQueryContext> deleteBuilder;
         private readonly IBuilderPipeline<IUpdateQueryContext> updateBuilder;
 
-        public SqlServerSqlFactory(
+        public SqlFactory(
             IBuilderPipeline<ISelectQueryContext> selectBuilder,
             IBuilderPipeline<IDeleteQueryContext> deleteBuilder,
             IBuilderPipeline<IInsertQueryContext> insertBuilder,

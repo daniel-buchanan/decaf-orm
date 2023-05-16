@@ -39,7 +39,7 @@ namespace pdq.sqlserver
             this IPdqOptionsBuilder builder,
             SqlServerOptions options)
         {
-            builder.ConfigureDbImplementation<SqlServerSqlFactory, SqlServerConnectionFactory, SqlServerTransactionFactory>();
+            builder.ConfigureDbImplementation<db.common.SqlFactory, SqlServerConnectionFactory, SqlServerTransactionFactory>();
             builder.Services.AddSingleton(options.ConnectionDetails);
             builder.Services.AddSingleton(options);
             builder.Services.AddSingleton<IDatabaseOptions>(options);

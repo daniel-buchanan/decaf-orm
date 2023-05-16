@@ -41,7 +41,7 @@ namespace pdq.npgsql.tests
             var sqlFactory = this.provider.GetService<ISqlFactory>();
 
             // Assert
-            sqlFactory.Should().BeOfType<NpgsqlSqlFactory>();
+            sqlFactory.Should().BeOfType<db.common.SqlFactory>();
         }
     }
 }

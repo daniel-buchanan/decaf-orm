@@ -75,5 +75,5 @@ jobs:
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
-      job-name: pdq.npgsql
+      job-name: pdq.sqlserver
       test-project: tests/pdq.sqlserver.tests/pdq.sqlserver.tests.csproj

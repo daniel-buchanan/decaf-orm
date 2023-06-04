@@ -6,7 +6,7 @@ namespace pdq.db.common.ANSISQL
 {
 	public class QuotedIdentifierBuilder : IQuotedIdentifierBuilder
 	{
-        private readonly string quote = string.Empty;
+        protected readonly string quote = string.Empty;
         protected readonly IConstants constants;
 
         public QuotedIdentifierBuilder(

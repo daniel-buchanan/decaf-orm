@@ -37,7 +37,7 @@ namespace pdq.sqlserver.tests
         public void TemplateParsingSucceeds()
         {
             // Arrange
-            var expected = "select\r\n  t.Id,\r\n  t.FirstName,\r\n  t.LastName,\r\n  t.Email,\r\n  t.AddressId,\r\n  t.CreatedAt\r\nfrom\r\n  Person as t\r\nwhere\r\n(t.Email = @p1)\r\n";
+            var expected = "select\r\n  t.Id,\r\n  t.FirstName,\r\n  t.LastName,\r\n  t.Email,\r\n  t.AddressId,\r\n  t.CreatedAt\r\nfrom\r\n  Person t\r\nwhere\r\n(t.Email = @p1)\r\n";
             expected = expected.Replace("\r\n", Environment.NewLine);
             IQueryContext context = null;
             this.personService.PreExecution += (sender, args) =>

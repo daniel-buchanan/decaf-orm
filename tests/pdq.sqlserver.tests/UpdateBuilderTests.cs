@@ -4,9 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
 using Xunit;
 
-namespace pdq.npgsql.tests
+namespace pdq.sqlserver.tests
 {
-	public class UpdateBuilderTests : NpgsqlTest
+	public class UpdateBuilderTests : SqlServerTest
 	{
 		private readonly IQueryContainer query;
 
@@ -70,7 +70,7 @@ namespace pdq.npgsql.tests
         {
             // Arrange
             var updatedDate = DateTime.UtcNow;
-            var expected = "update\\r\\n  users\\r\\nset\\r\\n  name = x.new_name\\r\\nfrom\\r\\n(\\r\\n  select\\r\\n    tu.new_name\\r\\n  from\\r\\n    temp_users as tu\\r\\n  where\\r\\n  (tu.id = id)\\r\\n) as x";
+            var expected = "update\\r\\n  users\\r\\nset\\r\\n  name = x.new_name\\r\\nfrom\\r\\n(\\r\\n  select\\r\\n    tu.new_name\\r\\n  from\\r\\n    temp_users tu\\r\\n  where\\r\\n  (tu.id = id)\\r\\n) x";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var idValue = Guid.NewGuid();
 

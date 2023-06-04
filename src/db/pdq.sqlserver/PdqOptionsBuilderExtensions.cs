@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using pdq.common.Options;
 using pdq.db.common;
 using pdq.db.common.Builders;
+using pdq.sqlserver.Builders;
 using pdq.state;
 
 namespace pdq.sqlserver
@@ -45,12 +46,13 @@ namespace pdq.sqlserver
             builder.Services.AddSingleton<IDatabaseOptions>(options);
             builder.Services.AddSingleton<db.common.Builders.IConstants, Builders.Constants>();
             builder.Services.AddSingleton<IValueParser, SqlServerValueParser>();
-            builder.Services.AddSingleton<db.common.Builders.IQuotedIdentifierBuilder, db.common.ANSISQL.QuotedIdentifierBuilder>();
+            builder.Services.AddSingleton<IQuotedIdentifierBuilder, QuotedIdentifierBuilder>();
             builder.Services.AddTransient<db.common.Builders.IWhereBuilder, Builders.WhereBuilder>();
             builder.Services.AddTransient<IBuilderPipeline<ISelectQueryContext>, Builders.SelectBuilderPipeline>();
             builder.Services.AddTransient<IBuilderPipeline<IDeleteQueryContext>, Builders.DeleteBuilderPipeline>();
             builder.Services.AddTransient<IBuilderPipeline<IInsertQueryContext>, Builders.InsertBuilderPipeline>();
             builder.Services.AddTransient<IBuilderPipeline<IUpdateQueryContext>, Builders.UpdateBuilderPipeline>();
+            
         }
     }
 }

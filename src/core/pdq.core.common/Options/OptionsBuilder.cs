@@ -20,11 +20,12 @@ namespace pdq.common.Options
                 BindingFlags.NonPublic;
             var properties = optionsType.GetProperties(flags);
 
-            foreach (var p in values)
+            foreach(var p in properties)
             {
-                var prop = properties.FirstOrDefault(op => op.Name == p.Key);
-                if (prop == null) continue;
-                prop.SetValue(options, p.Value);
+                if (!values.TryGetValue(p.Name, out var value))
+                    continue;
+
+                p.SetValue(options, value);
             }
 
             return options;

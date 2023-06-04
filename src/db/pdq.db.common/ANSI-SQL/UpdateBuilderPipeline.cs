@@ -117,7 +117,7 @@ namespace pdq.db.common.ANSISQL
                 input.Builder.IncreaseIndent();
                 AddValuesFromQuery(input.Context.Source as ISelectQueryTarget, input);
                 input.Builder.DecreaseIndent();
-                input.Builder.AppendLine("{0} as x", constants.ClosingParen);
+                this.quotedIdentifierBuilder.AddClosingFromQuery("x", input.Builder);
             }
         }
 

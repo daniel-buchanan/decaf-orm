@@ -5,7 +5,7 @@ using pdq.common.Options;
 
 namespace pdq.db.common
 {
-	public interface ISqlOptionsBuilder<TOptions, TSelf> :
+	public interface ISqlOptionsBuilder<out TOptions, TSelf> :
         IOptionsBuilder<TOptions>
 		where TOptions: class, IDatabaseOptions, new()
 	{

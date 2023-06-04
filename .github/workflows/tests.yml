@@ -17,6 +17,8 @@ jobs:
               - 'src/db/pdq.db.common/**'
             npgsql:
               - 'src/db/pdq.npgsql/**'
+            sqlserver:
+              - 'src/db/pdq.sqlserver/**'
             services:
               - 'src/extensions/pdq.services/**'
     outputs:
@@ -24,6 +26,7 @@ jobs:
       run-db: ${{ steps.changes.outputs.db }}
       run-services: ${{ steps.changes.outputs.services }}
       run-npgsql: ${{ steps.changes.outputs.npgsql }}
+      run-sqlserver: ${{ steps.changes.outputs.sqlserver }}
 
   test-pdq:
     needs: [check-paths]
@@ -64,3 +67,13 @@ jobs:
     with:
       job-name: pdq.npgsql
       test-project: tests/pdq.npgsql.tests/pdq.npgsql.tests.csproj
+
+  test-pdqsqlserver:
+    needs: [check-paths]
+    name: test-pdqsqlserver
+    if: ${{ needs.check-paths.outputs.run-sqlserver == 'true' }}
+    uses: ./.github/workflows/test-run.yml
+    secrets: inherit
+    with:
+      job-name: pdq.sqlserver
+      test-project: tests/pdq.sqlserver.tests/pdq.sqlserver.tests.csproj

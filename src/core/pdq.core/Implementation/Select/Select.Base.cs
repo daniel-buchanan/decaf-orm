@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using pdq.common;
+using pdq.common.Exceptions;
 using pdq.common.Utilities.Reflection.Dynamic;
 using pdq.Exceptions;
 using pdq.state;

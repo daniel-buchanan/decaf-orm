@@ -11,17 +11,17 @@ namespace pdq.db.common.Builders
 		where T : IQueryContext
 	{
         private readonly PdqOptions options;
-        private readonly IDatabaseOptions dbOptions;
+        private readonly IConstants constants;
         private readonly IHashProvider hashProvider;
         private readonly List<PipelineStage<T>> stages;
 
 		protected BuilderPipeline(
             PdqOptions options,
-            IDatabaseOptions dbOptions,
+            IConstants constants,
             IHashProvider hashProvider)
 		{
             this.options = options;
-            this.dbOptions = dbOptions;
+            this.constants = constants;
             this.hashProvider = hashProvider;
             this.stages = new List<PipelineStage<T>>();
 		}
@@ -39,8 +39,8 @@ namespace pdq.db.common.Builders
 
             if (this.options.IncludeHeaderCommentsInSql)
             {
-                input.Builder.AppendLine("{0} pdq :: query hash: {1}", this.dbOptions.CommentCharacter, context.GetHash());
-                input.Builder.AppendLine("{0} pdq :: generated at: {1}", this.dbOptions.CommentCharacter, DateTime.Now.ToString());
+                input.Builder.AppendLine("{0} pdq :: query hash: {1}", this.constants.Comment, context.GetHash());
+                input.Builder.AppendLine("{0} pdq :: generated at: {1}", this.constants.Comment, DateTime.Now.ToString());
             }
 
             foreach (var stage in this.stages)

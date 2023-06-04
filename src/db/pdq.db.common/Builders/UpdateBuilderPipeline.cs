@@ -7,9 +7,9 @@ namespace pdq.db.common.Builders
 	{
         protected UpdateBuilderPipeline(
             PdqOptions pdqOptions,
-            IDatabaseOptions dbOptions,
+            IConstants constants,
             IHashProvider hashProvider)
-            : base(pdqOptions, dbOptions, hashProvider)
+            : base(pdqOptions, constants, hashProvider)
         {
             Add(AddUpdate, providesParameters: false);
             Add(AddTable, providesParameters: false);

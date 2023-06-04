@@ -9,9 +9,9 @@ namespace pdq.db.common.Builders
 	{
         protected InsertBuilderPipeline(
             PdqOptions pdqOptions,
-            IDatabaseOptions dbOptions,
+            IConstants constants,
             IHashProvider hashProvider)
-            : base(pdqOptions, dbOptions, hashProvider)
+            : base(pdqOptions, constants, hashProvider)
         {
             Add(AddInsert, providesParameters: false);
             Add(AddTable, providesParameters: false);

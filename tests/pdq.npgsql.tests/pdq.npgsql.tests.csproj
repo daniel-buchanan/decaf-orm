@@ -12,8 +12,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageReference Include="coverlet.collector" Version="3.2.0">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.1" />
+    <PackageReference Include="coverlet.collector" Version="6.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -35,10 +35,5 @@
     <None Remove="FluentAssertions" />
     <None Remove="Moq" />
     <None Remove="Microsoft.Extensions.DependencyInjection" />
-    <None Remove="Mocks\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mocks\" />
-    <Folder Include="Mocks\" />
   </ItemGroup>
 </Project>

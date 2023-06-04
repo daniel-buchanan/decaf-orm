@@ -39,11 +39,13 @@ namespace pdq.npgsql
             this IPdqOptionsBuilder builder,
             NpgsqlOptions options)
         {
-            builder.ConfigureDbImplementation<NpgsqlSqlFactory, NpgsqlConnectionFactory, NpgsqlTransactionFactory>();
+            builder.ConfigureDbImplementation<db.common.SqlFactory, NpgsqlConnectionFactory, NpgsqlTransactionFactory>();
             builder.Services.AddSingleton(options.ConnectionDetails);
             builder.Services.AddSingleton(options);
+            builder.Services.AddSingleton<IDatabaseOptions>(options);
             builder.Services.AddSingleton<IValueParser, NpgsqlValueParser>();
-            builder.Services.AddSingleton<Builders.QuotedIdentifierBuilder>();
+            builder.Services.AddSingleton<db.common.Builders.IConstants, db.common.ANSISQL.Constants>();
+            builder.Services.AddSingleton<db.common.Builders.IQuotedIdentifierBuilder, db.common.ANSISQL.QuotedIdentifierBuilder>();
             builder.Services.AddTransient<db.common.Builders.IWhereBuilder, Builders.WhereBuilder>();
             builder.Services.AddTransient<IBuilderPipeline<ISelectQueryContext>, Builders.SelectBuilderPipeline>();
             builder.Services.AddTransient<IBuilderPipeline<IDeleteQueryContext>, Builders.DeleteBuilderPipeline>();

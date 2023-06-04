@@ -29,10 +29,17 @@ dotnet build --no-incremental pdq.sln
     -f=json \
     -o="npgsql-merged.json"
 
-./.coverlet/coverlet ./tests/pdq.core-tests/bin/Debug/net7.0/pdq.core-tests.dll \
+./.coverlet/coverlet ./tests/pdq.sqlserver.tests/bin/Debug/net7.0/pdq.sqlserver.tests.dll \
     --target "dotnet" \
     --targetargs "test --no-build" \
     --merge-with "npgsql-merged.json" \
+    -f=json \
+    -o="sqlserver-merged.json"
+
+./.coverlet/coverlet ./tests/pdq.core-tests/bin/Debug/net7.0/pdq.core-tests.dll \
+    --target "dotnet" \
+    --targetargs "test --no-build" \
+    --merge-with "sqlserver-merged.json" \
     -f=opencover \
     -o="coverage.xml"
 

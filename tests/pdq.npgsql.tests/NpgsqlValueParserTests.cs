@@ -57,7 +57,7 @@ namespace pdq.npgsql.tests
                 yield return new object[] { "hello %%world", "hello world" };
                 yield return new object[] { "--hello world", "hello world" };
                 yield return new object[] { "%%hello' --world", "hello'' world" };
-                yield return new object[] { string.Empty, string.Empty };
+                yield return new object[] { string.Empty, null};
                 yield return new object[] { dt, dt.ToString("yyyy-MM-ddTHH:mm:ss") };
                 yield return new object[] { (string)null, string.Empty };
             }

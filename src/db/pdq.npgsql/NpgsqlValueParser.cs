@@ -34,13 +34,14 @@ namespace pdq.npgsql
             else if (underlyingType == typeof(byte[])) return true;
             else if (underlyingType == typeof(DateTime)) return true;
             else if (underlyingType == typeof(int)) return false;
+            else if (underlyingType == typeof(uint)) return false;
             else if (underlyingType == typeof(double) ||
-                        underlyingType == typeof(Single) ||
                         underlyingType == typeof(float) ||
                         underlyingType == typeof(decimal))
                 return true;
             else if (underlyingType == typeof(string)) return true;
-            else return true;
+
+            return true;
         }
 
         protected override bool BooleanFromString(string input)

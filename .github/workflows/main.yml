@@ -41,6 +41,7 @@ jobs:
       run-core: ${{ steps.changes.outputs.core }}
       run-db: ${{ steps.changes.outputs.db }}
       run-npgsql: ${{ steps.changes.outputs.npgsql }}
+      run-sqlserver: ${{ steps.changes.outputs.sqlserver }}
       run-services: ${{ steps.changes.outputs.services }}
 
   pub-pdq:

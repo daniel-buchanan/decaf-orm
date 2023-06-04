@@ -17,10 +17,8 @@ namespace pdq.npgsql
 		/// </summary>
 		public IsolationLevel TransactionIsolationLevel { get; private set; }
 
-		/// <summary>
-		/// Determines whether or not to use quoted identifiers.
-		/// </summary>
-		public bool QuotedIdentifiers { get; private set; }
+        /// <inheritdoc/>
+        public bool QuotedIdentifiers { get; private set; }
 
         /// <inheritdoc/>
         public IConnectionDetails ConnectionDetails { get; private set; }

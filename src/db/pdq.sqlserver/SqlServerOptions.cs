@@ -17,9 +17,7 @@ namespace pdq.sqlserver
 		/// </summary>
 		public IsolationLevel TransactionIsolationLevel { get; private set; }
 
-		/// <summary>
-		/// Determines whether or not to use quoted identifiers.
-		/// </summary>
+		/// <inheritdoc/>
 		public bool QuotedIdentifiers { get; private set; }
 
         /// <inheritdoc/>

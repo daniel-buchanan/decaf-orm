@@ -12,10 +12,11 @@ namespace pdq.common.Connections
         private string databaseName;
         private IConnectionAuthentication authentication;
 
-		protected ConnectionDetails()
-		{
-            this.connectionString = null;
-		}
+        protected ConnectionDetails()
+            => this.connectionString = null;
+
+        protected ConnectionDetails(string connectionString)
+            => this.connectionString = connectionString;
 
         /// <inheritdoc/>
         public string Hostname

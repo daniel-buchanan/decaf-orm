@@ -1,7 +1,7 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using pdq.common.Connections;
-using pdq.db.common.Exceptions;
 
 namespace pdq.sqlserver
 {
@@ -9,6 +9,11 @@ namespace pdq.sqlserver
         ConnectionDetails,
         ISqlServerConnectionDetails
     {
+        private const string MarsEnabled = "MultipleActiveResultSets=True";
+        private const string TrustedConnection = "Trusted_Connection=Yes";
+        private const string HostPortRegex = @"Server=(.+),(\d+);";
+        private const string DatabaseRegex = @"Database=(.+);";
+
         private bool isTrustedConnection;
         private bool isMarsEnabled;
 
@@ -16,6 +21,34 @@ namespace pdq.sqlserver
         {
             this.isTrustedConnection = false;
         }
+
+        private SqlServerConnectionDetails(string connectionString)
+            : base(connectionString)
+        {
+            if (connectionString.Contains(MarsEnabled))
+                isMarsEnabled = true;
+
+            isTrustedConnection = connectionString.Contains(TrustedConnection);
+
+            var hostPortRegex = new Regex(HostPortRegex);
+            var match = hostPortRegex.Match(connectionString);
+            if(match.Success)
+            {
+                Hostname = match.Captures[0].Value;
+                if (int.TryParse(match.Captures[1].Value, out var port))
+                    Port = port;
+            }
+
+            var databaseRegex = new Regex(DatabaseRegex);
+            match = databaseRegex.Match(connectionString);
+            if (match.Success)
+            {
+                DatabaseName = match.Captures[0].Value;
+            }
+        }
+
+        public static ISqlServerConnectionDetails FromConnectionString(string connectionString)
+            => new SqlServerConnectionDetails(connectionString);
 
         /// <inheritdoc/>
         protected override int DefaultPort
@@ -51,7 +84,7 @@ namespace pdq.sqlserver
             sb.AppendFormat("Database={0};", this.DatabaseName);
 
             if (this.isTrustedConnection)
-                sb.Append("Trusted_Connection=Yes;");
+                sb.AppendFormat("{0};", TrustedConnection);
             else
             {
                 sb.AppendFormat("User ID={0};", username);
@@ -59,7 +92,7 @@ namespace pdq.sqlserver
             }
 
             if (this.isMarsEnabled)
-                sb.Append("MultipleActiveResultSets=True;");
+                sb.AppendFormat("{0};", MarsEnabled);
             
             return sb.ToString();
         }

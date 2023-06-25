@@ -26,8 +26,8 @@ namespace pdq.common.Connections
             if (match.Success)
             {
                 Hostname = match.Captures[0].Value;
-                if (int.TryParse(match.Captures[1].Value, out var port))
-                    Port = port;
+                if (int.TryParse(match.Captures[1].Value, out var matchedPort))
+                    Port = matchedPort;
             }
 
             var databaseRegex = new Regex(DatabaseRegex);

@@ -5,7 +5,7 @@ using pdq.db.common;
 namespace pdq.sqlserver
 {
 	public interface ISqlServerOptionsBuilder :
-        ISqlOptionsBuilder<SqlServerOptions, ISqlServerOptionsBuilder>
+        ISqlOptionsBuilder<SqlServerOptions, ISqlServerOptionsBuilder, ISqlServerConnectionDetails>
 	{
         /// <summary>
         /// Sets the transaction isolation level.<br/>

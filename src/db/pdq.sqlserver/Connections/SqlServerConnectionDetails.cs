@@ -11,16 +11,12 @@ namespace pdq.sqlserver
     {
         private const string MarsEnabled = "MultipleActiveResultSets=True";
         private const string TrustedConnection = "Trusted_Connection=Yes";
-        private const string HostPortRegex = @"Server=(.+),(\d+);";
-        private const string DatabaseRegex = @"Database=(.+);";
 
         private bool isTrustedConnection;
         private bool isMarsEnabled;
 
         public SqlServerConnectionDetails() : base()
-        {
-            this.isTrustedConnection = false;
-        }
+            => this.isTrustedConnection = false;
 
         private SqlServerConnectionDetails(string connectionString)
             : base(connectionString)
@@ -30,23 +26,20 @@ namespace pdq.sqlserver
 
             isTrustedConnection = connectionString.Contains(TrustedConnection);
 
-            var hostPortRegex = new Regex(HostPortRegex);
-            var match = hostPortRegex.Match(connectionString);
-            if(match.Success)
-            {
-                Hostname = match.Captures[0].Value;
-                if (int.TryParse(match.Captures[1].Value, out var port))
-                    Port = port;
-            }
-
-            var databaseRegex = new Regex(DatabaseRegex);
-            match = databaseRegex.Match(connectionString);
-            if (match.Success)
-            {
-                DatabaseName = match.Captures[0].Value;
-            }
+            ParseConnectionString(connectionString);
         }
 
+        /// <inheritdoc/>
+        protected override string HostPortRegex => @"Server=(.+),(\d+);";
+
+        /// <inheritdoc/>
+        protected override string DatabaseRegex => @"Database=(.+);";
+
+        /// <summary>
+        /// Create a new <see cref="ISqlServerConnectionDetails"/> from a provided connection string.
+        /// </summary>
+        /// <param name="connectionString">The connection string to use.</param>
+        /// <returns>A new <see cref="ISqlServerConnectionDetails"/> object.</returns>
         public static ISqlServerConnectionDetails FromConnectionString(string connectionString)
             => new SqlServerConnectionDetails(connectionString);
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using pdq.common.Utilities;
 
@@ -17,6 +18,35 @@ namespace pdq.common.Connections
 
         protected ConnectionDetails(string connectionString)
             => this.connectionString = connectionString;
+
+        protected virtual void ParseConnectionString(string connectionString)
+        {
+            var hostPortRegex = new Regex(HostPortRegex);
+            var match = hostPortRegex.Match(connectionString);
+            if (match.Success)
+            {
+                Hostname = match.Captures[0].Value;
+                if (int.TryParse(match.Captures[1].Value, out var port))
+                    Port = port;
+            }
+
+            var databaseRegex = new Regex(DatabaseRegex);
+            match = databaseRegex.Match(connectionString);
+            if (match.Success)
+            {
+                DatabaseName = match.Captures[0].Value;
+            }
+        }
+
+        /// <summary>
+        /// The Regex for obtaining the host and port of the server.
+        /// </summary>
+        protected abstract string HostPortRegex { get; }
+
+        /// <summary>
+        /// The Regex for obtaining the database name.
+        /// </summary>
+        protected abstract string DatabaseRegex { get; }
 
         /// <inheritdoc/>
         public string Hostname

@@ -13,37 +13,28 @@ namespace pdq.npgsql
         ConnectionDetails,
         INpgsqlConnectionDetails
     {
-        private const string HostPortRegex = @"Host=(.+);.+Port=(.+);";
-        private const string DatabaseRegex = @"Database=(.+);";
         private readonly List<string> schemasToSearch;
 
         public NpgsqlConnectionDetails() : base()
-        {
-            this.schemasToSearch = new List<string>();
-        }
+            => this.schemasToSearch = new List<string>();
 
         private NpgsqlConnectionDetails(string connectionString)
             : base(connectionString)
-        {
-            var hostPortRegex = new Regex(HostPortRegex);
-            var match = hostPortRegex.Match(connectionString);
-            if (match.Success)
-            {
-                Hostname = match.Captures[0].Value;
-                if (int.TryParse(match.Captures[1].Value, out var port))
-                    Port = port;
-            }
+            => ParseConnectionString(connectionString);
 
-            var databaseRegex = new Regex(DatabaseRegex);
-            match = databaseRegex.Match(connectionString);
-            if(match.Success)
-            {
-                DatabaseName = match.Captures[0].Value;
-            }
-        }
-
+        /// <summary>
+        /// Create an <see cref="INpgsqlConnectionDetails"/> from a provided connection string.
+        /// </summary>
+        /// <param name="connectionString">The connection string to use.</param>
+        /// <returns>A new <see cref="INpgsqlConnectionDetails"/> object.</returns>
         public static INpgsqlConnectionDetails FromConnectionString(string connectionString)
             => new NpgsqlConnectionDetails(connectionString);
+
+        /// <inheritdoc/>
+        protected override string HostPortRegex => @"Host=(.+);.+Port=(\d+);";
+
+        /// <inheritdoc/>
+        protected override string DatabaseRegex => @"Database=(.+);";
 
         /// <inheritdoc/>
         public IReadOnlyCollection<string> SchemasToSearch

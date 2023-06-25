@@ -1,5 +1,5 @@
 ﻿using System;
-using pdq.common;
+using Microsoft.Extensions.Configuration;
 using pdq.common.Connections;
 
 namespace pdq.db.common
@@ -16,5 +16,14 @@ namespace pdq.db.common
 		/// </summary>
 		bool QuotedIdentifiers { get; }
 	}
+
+	public interface IDatabaseOptionsExtensions : IDatabaseOptions
+	{
+		Func<IServiceProvider, IConnectionDetails> ConnectionDetailsServiceProviderFactory { get; }
+
+		Func<IConfiguration, IConnectionDetails> ConnectionDetailsConfigurationFactory { get; }
+
+        IConnectionDetails GetConnectionDetails(IServiceProvider provider);
+    }
 }
 

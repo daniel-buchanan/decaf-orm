@@ -8,6 +8,10 @@ namespace pdq.tests.common.Mocks
 	{
         protected override int DefaultPort => 0;
 
+        protected override string HostPortRegex => ".+";
+
+        protected override string DatabaseRegex => ".+";
+
         protected override Task<string> ConstructConnectionStringAsync()
         {
             var connStr = $"{Hostname}:{Port},{DatabaseName}";

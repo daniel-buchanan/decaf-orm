@@ -13,6 +13,9 @@ namespace pdq.npgsql
         ConnectionDetails,
         INpgsqlConnectionDetails
     {
+
+        private readonly string UsernameRegex = @"Username=(.+);";
+        private readonly string PasswordRegex = @"Password=(.+);";
         private readonly List<string> schemasToSearch;
 
         public NpgsqlConnectionDetails() : base()
@@ -43,10 +46,6 @@ namespace pdq.npgsql
 
         /// <inheritdoc/>
         protected override string DatabaseRegex => @"Database=(.+);";
-
-        private string UsernameRegex => @"Username=(.+);";
-
-        private string PasswordRegex = @"Password=(.+);";
 
         /// <inheritdoc/>
         public IReadOnlyCollection<string> SchemasToSearch

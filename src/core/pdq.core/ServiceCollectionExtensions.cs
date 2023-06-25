@@ -59,6 +59,8 @@ namespace pdq
             services.AddSingleton<IHashProvider, HashProvider>();
             services.AddScoped<ITransientFactory, TransientFactory>();
             services.AddSingleton<IReflectionHelper, ReflectionHelper>();
+            services.AddSingleton<IExpressionHelper, ExpressionHelper>();
+
 			return services;
 		}
 
@@ -67,12 +69,6 @@ namespace pdq
             if (options == null)
             {
                 throw new PdqOptionsInvalidException($"The provided {nameof(options)} is NULL.");
-            }
-
-            if(options.TransactionFactoryType == null ||
-               options.ConnectionFactoryType == null)
-            {
-                throw new PdqOptionsInvalidException($"An implementation must be provided for {nameof(ITransactionFactory)} and {nameof(IConnectionFactory)}");
             }
         }
 	}

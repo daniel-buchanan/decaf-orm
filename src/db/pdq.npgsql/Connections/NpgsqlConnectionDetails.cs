@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using pdq.common.Connections;
 using pdq.db.common.Exceptions;
@@ -12,12 +13,37 @@ namespace pdq.npgsql
         ConnectionDetails,
         INpgsqlConnectionDetails
     {
+        private const string HostPortRegex = @"Host=(.+);.+Port=(.+);";
+        private const string DatabaseRegex = @"Database=(.+);";
         private readonly List<string> schemasToSearch;
 
         public NpgsqlConnectionDetails() : base()
         {
             this.schemasToSearch = new List<string>();
         }
+
+        private NpgsqlConnectionDetails(string connectionString)
+            : base(connectionString)
+        {
+            var hostPortRegex = new Regex(HostPortRegex);
+            var match = hostPortRegex.Match(connectionString);
+            if (match.Success)
+            {
+                Hostname = match.Captures[0].Value;
+                if (int.TryParse(match.Captures[1].Value, out var port))
+                    Port = port;
+            }
+
+            var databaseRegex = new Regex(DatabaseRegex);
+            match = databaseRegex.Match(connectionString);
+            if(match.Success)
+            {
+                DatabaseName = match.Captures[0].Value;
+            }
+        }
+
+        public static INpgsqlConnectionDetails FromConnectionString(string connectionString)
+            => new NpgsqlConnectionDetails(connectionString);
 
         /// <inheritdoc/>
         public IReadOnlyCollection<string> SchemasToSearch

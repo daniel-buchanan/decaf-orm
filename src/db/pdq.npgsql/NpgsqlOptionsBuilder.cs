@@ -17,10 +17,6 @@ namespace pdq.npgsql
 			=> ConfigureProperty(nameof(NpgsqlOptions.QuotedIdentifiers), true);
 
         /// <inheritdoc/>
-        public INpgsqlOptionsBuilder WithConnectionDetails(IConnectionDetails connectionDetails)
-            => ConfigureProperty(nameof(NpgsqlOptions.ConnectionDetails), connectionDetails);
-
-        /// <inheritdoc/>
         public override INpgsqlOptionsBuilder WithConnectionString(string connectionString)
             => ConfigureProperty(
                 nameof(NpgsqlOptions.ConnectionDetails),

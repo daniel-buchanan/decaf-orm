@@ -6,7 +6,6 @@ namespace pdq.common
 {
     public class PdqOptionsBuilder :
         OptionsBuilder<PdqOptions>,
-        IPdqOptionsBuilder,
         IPdqOptionsBuilderExtensions
     {
         public PdqOptionsBuilder(IServiceCollection services)

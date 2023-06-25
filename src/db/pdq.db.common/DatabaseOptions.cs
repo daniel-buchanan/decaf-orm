@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common.Connections;
 using pdq.common.Exceptions;
+using pdq.db.common.Exceptions;
 
 namespace pdq.db.common
 {
@@ -28,14 +29,14 @@ namespace pdq.db.common
             if (ConnectionDetailsServiceProviderFactory != null &&
                 provider == null)
             {
-                throw new ArgumentNullException(nameof(provider));
+                throw new ServiceNotFoundException(nameof(IConnectionDetails));
             }
 
             var configuration = provider?.GetService<IConfiguration>();
             if (ConnectionDetailsConfigurationFactory != null &&
                 configuration == null)
             {
-                throw new ArgumentNullException(nameof(configuration));
+                throw new ServiceNotFoundException(nameof(IConfiguration));
             }
 
             if (ConnectionDetailsConfigurationFactory != null)

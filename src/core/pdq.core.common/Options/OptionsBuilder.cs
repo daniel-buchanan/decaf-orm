@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Reflection;
 
 namespace pdq.common.Options
 {
-	public class OptionsBuilder<T> : IOptionsBuilder<T>
+    public class OptionsBuilder<T> : IOptionsBuilder<T>
 		where T: class, new()
 	{
         private readonly Dictionary<string, object> values = new Dictionary<string, object>();

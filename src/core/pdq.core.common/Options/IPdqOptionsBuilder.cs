@@ -56,23 +56,14 @@ namespace pdq.common.Options
         /// </summary>
         /// <returns>(Fluent API) The ability to continnue further setup actions.</returns>
         IPdqOptionsBuilder DisableSqlHeaderComments();
+    }
 
+    public interface IPdqOptionsBuilderExtensions : IPdqOptionsBuilder
+    {
         /// <summary>
         /// The Services Collection.
         /// </summary>
         IServiceCollection Services { get; }
-
-        /// <summary>
-        /// Configure a specific Database implementation with its factories.
-        /// </summary>
-        /// <typeparam name="TSqlFactory">The type of the SQL Factory for this DB Implementation.</typeparam>
-        /// <typeparam name="TConnectionFactory">The type of the Connection Factory for this DB Implementation.</typeparam>
-        /// <typeparam name="TTransactionFactory">The type of the Transaction Factory for this DB Implementation.</typeparam>
-        /// <returns>(Fluent API) The ability to continnue further setup actions.</returns>
-        IPdqOptionsBuilder ConfigureDbImplementation<TSqlFactory, TConnectionFactory, TTransactionFactory>()
-            where TSqlFactory: ISqlFactory
-            where TConnectionFactory: IConnectionFactory
-            where TTransactionFactory: ITransactionFactory;
     }
 }
 

@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using pdq.common.Connections;
+using pdq.common.Exceptions;
 
 namespace pdq.sqlserver
 {
@@ -20,17 +20,19 @@ namespace pdq.sqlserver
 
         private SqlServerConnectionDetails(string connectionString)
             : base(connectionString)
-        {
-            if (connectionString.Contains(MarsEnabled))
-                isMarsEnabled = true;
+            => ParseConnectionString(connectionString, (c) =>
+            {
+                if (c.Contains(MarsEnabled))
+                    this.isMarsEnabled = true;
 
-            isTrustedConnection = connectionString.Contains(TrustedConnection);
-
-            ParseConnectionString(connectionString);
-        }
+                this.isTrustedConnection = c.Contains(TrustedConnection);
+            });
 
         /// <inheritdoc/>
-        protected override string HostPortRegex => @"Server=(.+),(\d+);";
+        protected override string HostRegex => @"Server=(.+),;";
+
+        /// <inheritdoc/>
+        protected override string PortRegex => @"Server=.+,(\d+);";
 
         /// <inheritdoc/>
         protected override string DatabaseRegex => @"Database=(.+);";
@@ -88,6 +90,17 @@ namespace pdq.sqlserver
                 sb.AppendFormat("{0};", MarsEnabled);
             
             return sb.ToString();
+        }
+
+        protected override ConnectionStringParsingException ValidateConnectionString(string connectionString)
+        {
+            if (connectionString?.Contains("Server") == false)
+                return new ConnectionStringParsingException("Connection String does not contain a \"Server\" parameter.");
+
+            if (connectionString?.Contains("Database") == false)
+                return new ConnectionStringParsingException("Connection String does not contain a \"Database\" parameter.");
+
+            return null;
         }
     }
 }

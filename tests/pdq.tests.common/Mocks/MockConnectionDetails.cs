@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using pdq.common.Connections;
+using pdq.common.Exceptions;
 
 namespace pdq.tests.common.Mocks
 {
@@ -7,7 +8,9 @@ namespace pdq.tests.common.Mocks
 	{
         protected override int DefaultPort => 0;
 
-        protected override string HostPortRegex => ".+";
+        protected override string HostRegex => ".+";
+
+        protected override string PortRegex => ".+";
 
         protected override string DatabaseRegex => ".+";
 
@@ -16,6 +19,9 @@ namespace pdq.tests.common.Mocks
             var connStr = $"{Hostname}:{Port},{DatabaseName}";
             return Task.FromResult(connStr);
         }
+
+        protected override ConnectionStringParsingException ValidateConnectionString(string connectionString)
+            => null;
     }
 }
 

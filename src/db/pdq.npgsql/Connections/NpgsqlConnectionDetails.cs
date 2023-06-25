@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using pdq.common.Connections;
+using pdq.common.Exceptions;
 using pdq.db.common.Exceptions;
 
 namespace pdq.npgsql
@@ -20,7 +20,12 @@ namespace pdq.npgsql
 
         private NpgsqlConnectionDetails(string connectionString)
             : base(connectionString)
-            => ParseConnectionString(connectionString);
+            => ParseConnectionString(connectionString, (c) =>
+            {
+                var username = MatchAndFetch(UsernameRegex, c, s => s);
+                var password = MatchAndFetch(PasswordRegex, c, s => s);
+                Authentication = new UsernamePasswordAuthentication(username, password);
+            });
 
         /// <summary>
         /// Create an <see cref="INpgsqlConnectionDetails"/> from a provided connection string.
@@ -31,10 +36,17 @@ namespace pdq.npgsql
             => new NpgsqlConnectionDetails(connectionString);
 
         /// <inheritdoc/>
-        protected override string HostPortRegex => @"Host=(.+);.+Port=(\d+);";
+        protected override string HostRegex => @"Host=(.+);";
+
+        /// <inheritdoc/>
+        protected override string PortRegex => @"Port=(.+);";
 
         /// <inheritdoc/>
         protected override string DatabaseRegex => @"Database=(.+);";
+
+        private string UsernameRegex => @"Username=(.+);";
+
+        private string PasswordRegex = @"Password=(.+);";
 
         /// <inheritdoc/>
         public IReadOnlyCollection<string> SchemasToSearch
@@ -89,6 +101,26 @@ namespace pdq.npgsql
             }
             
             return sb.ToString();
+        }
+
+        protected override ConnectionStringParsingException ValidateConnectionString(string connectionString)
+        {
+            if (connectionString?.Contains("Host") == false)
+                return new ConnectionStringParsingException("Connection String does not contain a \"Host\" parameter.");
+
+            if (connectionString?.Contains("Port") == false)
+                return new ConnectionStringParsingException("Connection String does not contain a \"Port\" parameter.");
+
+            if (connectionString?.Contains("Database") == false)
+                return new ConnectionStringParsingException("Connection String does not contain a \"Database\" parameter.");
+
+            if (connectionString?.Contains("Username") == false)
+                return new ConnectionStringParsingException("Connection String does not contain a \"Username\" parameter.");
+
+            if (connectionString?.Contains("Password") == false)
+                return new ConnectionStringParsingException("Connection String does not contain a \"Password\" parameter.");
+
+            return null;
         }
     }
 }

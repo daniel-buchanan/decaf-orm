@@ -11,5 +11,6 @@
     <ProjectReference Include="..\..\src\core\pdq.core.common\pdq.common.csproj" />
     <ProjectReference Include="..\..\src\extensions\pdq.services\pdq.services.csproj" />
     <ProjectReference Include="..\..\src\core\pdq.core.state\pdq.state.csproj" />
+    <ProjectReference Include="..\..\src\db\pdq.db.common\pdq.db.common.csproj" />
   </ItemGroup>
 </Project>

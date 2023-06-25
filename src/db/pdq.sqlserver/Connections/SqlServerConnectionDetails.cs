@@ -11,6 +11,9 @@ namespace pdq.sqlserver
     {
         private const string MarsEnabled = "MultipleActiveResultSets=True";
         private const string TrustedConnection = "Trusted_Connection=Yes";
+        private const string UsernameRegex = @"User ID=(.+);";
+        private const string PasswordRegex = @"Password=(.+);";
+        private const string UserID = "User ID";
 
         private bool isTrustedConnection;
         private bool isMarsEnabled;
@@ -26,10 +29,17 @@ namespace pdq.sqlserver
                     this.isMarsEnabled = true;
 
                 this.isTrustedConnection = c.Contains(TrustedConnection);
+
+                if(c.Contains(UserID))
+                {
+                    var username = MatchAndFetch(UsernameRegex, c, s => s);
+                    var password = MatchAndFetch(PasswordRegex, c, s => s);
+                    Authentication = new UsernamePasswordAuthentication(username, password);
+                }
             });
 
         /// <inheritdoc/>
-        protected override string HostRegex => @"Server=(.+),;";
+        protected override string HostRegex => @"Server=(.+),(\d+);";
 
         /// <inheritdoc/>
         protected override string PortRegex => @"Server=.+,(\d+);";
@@ -99,6 +109,13 @@ namespace pdq.sqlserver
 
             if (connectionString?.Contains("Database") == false)
                 return new ConnectionStringParsingException("Connection String does not contain a \"Database\" parameter.");
+
+            if (connectionString?.Contains(UserID) == true && connectionString?.Contains("Password") == false)
+                return new ConnectionStringParsingException("Connection String User credentials are missing a \"Password\".");
+
+            if (connectionString?.Contains(UserID) == false && connectionString?.Contains("Password") == true)
+                return new ConnectionStringParsingException("Connection String User credentials are missing a \"User ID\".");
+
 
             return null;
         }

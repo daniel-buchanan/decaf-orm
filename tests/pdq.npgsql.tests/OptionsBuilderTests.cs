@@ -4,6 +4,7 @@ using pdq.common.Connections;
 using Xunit;
 using FluentAssertions;
 using pdq.common;
+using System.Data;
 
 namespace pdq.npgsql.tests
 {
@@ -42,6 +43,40 @@ namespace pdq.npgsql.tests
 
             // Assert
             sqlFactory.Should().BeOfType<db.common.SqlFactory>();
+        }
+
+        [Theory]
+        [InlineData(IsolationLevel.Chaos)]
+        [InlineData(IsolationLevel.ReadCommitted)]
+        [InlineData(IsolationLevel.ReadUncommitted)]
+        [InlineData(IsolationLevel.RepeatableRead)]
+        [InlineData(IsolationLevel.Serializable)]
+        [InlineData(IsolationLevel.Snapshot)]
+        public void IsolationLevelSet(IsolationLevel level)
+        {
+            // Arrange
+            var builder = new NpgsqlOptionsBuilder();
+
+            // Act
+            builder.SetIsolationLevel(level);
+            var options = builder.Build();
+
+            // Assert
+            options.TransactionIsolationLevel.Should().Be(level);
+        }
+
+        [Fact]
+        public void UseQuotedIdentifiersSet()
+        {
+            // Arrange
+            var builder = new NpgsqlOptionsBuilder();
+
+            // Act
+            builder.UseQuotedIdentifiers();
+            var options = builder.Build();
+
+            // Assert
+            options.QuotedIdentifiers.Should().BeTrue();
         }
     }
 }

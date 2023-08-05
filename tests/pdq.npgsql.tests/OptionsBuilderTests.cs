@@ -5,6 +5,7 @@ using Xunit;
 using FluentAssertions;
 using pdq.common;
 using System.Data;
+using pdq.common.Exceptions;
 
 namespace pdq.npgsql.tests
 {
@@ -77,6 +78,45 @@ namespace pdq.npgsql.tests
 
             // Assert
             options.QuotedIdentifiers.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("Host=localhost;")]
+        [InlineData("Port=xyz;")]
+        [InlineData("Host=localhost;Port=5432;")]
+        [InlineData("Host=localhost;Port=5432;Database=db;")]
+        [InlineData("Host=localhost;Port=5432;Username=db;Password=db;")]
+        [InlineData("Host=localhost;Port=5432;Database=db;Password=db;")]
+        [InlineData("Host=localhost;Port=5432;Username=db;Database=db;")]
+        public void InvalidConnectionString(string connectionString)
+        {
+            // Arrange
+            var builder = new NpgsqlOptionsBuilder();
+
+            // Act
+            Action method = () => builder.WithConnectionString(connectionString);
+
+            // Assert
+            method.Should().Throw<ConnectionStringParsingException>();
+        }
+
+        [Fact]
+        public void ValidConnectionString()
+        {
+            // Arrange
+            var connString = "Host=xyz;Port=5432;Database=db;Username=postgres;Password=password;";
+            var builder = new NpgsqlOptionsBuilder();
+
+            // Act
+            builder.WithConnectionString(connString);
+            var options = builder.Build();
+
+            // Assert
+            options.ConnectionDetails.Hostname.Should().Be("xyz");
+            options.ConnectionDetails.Port.Should().Be(5432);
+            options.ConnectionDetails.DatabaseName.Should().Be("db");
+            options.ConnectionDetails.Authentication.Should().BeOfType<UsernamePasswordAuthentication>();
         }
     }
 }

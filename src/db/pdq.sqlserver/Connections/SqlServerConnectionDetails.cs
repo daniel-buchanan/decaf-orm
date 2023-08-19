@@ -116,6 +116,11 @@ namespace pdq.sqlserver
             if (connectionString?.Contains(UserID) == false && connectionString?.Contains("Password") == true)
                 return new ConnectionStringParsingException("Connection String User credentials are missing a \"User ID\".");
 
+            if (connectionString?.Contains(UserID) == false &&
+                connectionString?.Contains("Password") == false &&
+                connectionString?.Contains(TrustedConnection) == false)
+                return new ConnectionStringParsingException("Connection String does not have eitehr \"User ID\" and \"Password\" or \"Trusted Credentials\" set.");
+
 
             return null;
         }

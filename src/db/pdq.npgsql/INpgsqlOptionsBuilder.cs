@@ -5,7 +5,7 @@ using pdq.db.common;
 namespace pdq.npgsql
 {
 	public interface INpgsqlOptionsBuilder :
-        ISqlOptionsBuilder<NpgsqlOptions, INpgsqlOptionsBuilder>
+        ISqlOptionsBuilder<NpgsqlOptions, INpgsqlOptionsBuilder, INpgsqlConnectionDetails>
 	{
         /// <summary>
         /// Sets the transaction isolation level.<br/>
@@ -18,6 +18,6 @@ namespace pdq.npgsql
         /// Quote all identifiers when generating SQL.
         /// </summary>
         INpgsqlOptionsBuilder UseQuotedIdentifiers();
-	}
+    }
 }
 

@@ -52,21 +52,6 @@ namespace pdq
         /// The type of the logger proxy to use.
         /// </summary>
         internal Type LoggerProxyType { get; private set; }
-
-		/// <summary>
-        /// The type of the sql factory to use.
-        /// </summary>
-		internal Type SqlFactoryType { get; private set; }
-
-        /// <summary>
-        /// The type of connection factory to use.
-        /// </summary>
-        internal Type ConnectionFactoryType { get; private set; }
-
-        /// <summary>
-        /// The type of transaction factory to use.
-        /// </summary>
-        internal Type TransactionFactoryType { get; private set; }
 	}
 }
 

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using pdq.common.Exceptions;
 using pdq.common.Utilities;
 
 namespace pdq.common.Connections
@@ -12,10 +14,66 @@ namespace pdq.common.Connections
         private string databaseName;
         private IConnectionAuthentication authentication;
 
-		protected ConnectionDetails()
-		{
-            this.connectionString = null;
-		}
+        protected ConnectionDetails()
+            => this.connectionString = null;
+
+        protected ConnectionDetails(string connectionString)
+            => this.connectionString = connectionString;
+
+        protected virtual void ParseConnectionString(string connectionString, Action<string> additionalParsing = null)
+        {
+            try
+            {
+                if(string.IsNullOrWhiteSpace(connectionString))
+                    throw new ConnectionStringParsingException("No connection string has been provided");
+
+                var validationException = ValidateConnectionString(connectionString);
+                if (validationException != null) throw validationException;
+
+                Hostname = MatchAndFetch(HostRegex, connectionString, s => s);
+                Port = MatchAndFetch(PortRegex, connectionString, int.Parse);
+                DatabaseName = MatchAndFetch(DatabaseRegex, connectionString, s => s);
+
+                if (additionalParsing != null)
+                    additionalParsing(connectionString);
+            }
+            catch (Exception e)
+            {
+                throw new ConnectionStringParsingException(e, "Failed to parse connection string, see Inner Exception for more information.");
+            }
+        }
+
+        protected T MatchAndFetch<T>(string regex, string input, Func<string, T> parse)
+        {
+            var regExp = new Regex(regex);
+            var match = regExp.Match(input);
+            if (match.Success)
+            {
+                var matchedValue = match.Groups[1].Value;
+                var nextSeperator = matchedValue?.IndexOf(";") ?? 0;
+                if (nextSeperator <= 0) return parse(matchedValue);
+                var trimmed = matchedValue?.Substring(0, nextSeperator);
+                return parse(trimmed);
+            }
+            return default(T);
+        }
+
+        protected abstract ConnectionStringParsingException ValidateConnectionString(string connectionString);
+
+        /// <summary>
+        /// The Regex for obtaining the host of the server.
+        /// </summary>
+        protected abstract string HostRegex { get; }
+
+        /// <summary>
+        /// The Regex for obtaining the port of the server.
+        /// </summary>
+        protected abstract string PortRegex { get; }
+
+        /// <summary>
+        /// The Regex for obtaining the database name.
+        /// </summary>
+        protected abstract string DatabaseRegex { get; }
 
         /// <inheritdoc/>
         public string Hostname

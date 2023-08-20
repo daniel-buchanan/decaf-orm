@@ -7,9 +7,9 @@ using pdq.common;
 using System.Data;
 using pdq.common.Exceptions;
 
-namespace pdq.npgsql.tests
+namespace pdq.sqlserver.tests
 {
-	public class OptionsBuilderTests : NpgsqlTest
+	public class OptionsBuilderTests : SqlServerTest
 	{
         public OptionsBuilderTests() : base()
         {
@@ -23,7 +23,7 @@ namespace pdq.npgsql.tests
 			var transactionFactory = this.provider.GetService<ITransactionFactory>();
 
 			// Assert
-			transactionFactory.Should().BeOfType<NpgsqlTransactionFactory>();
+			transactionFactory.Should().BeOfType<SqlServerTransactionFactory>();
 		}
 
         [Fact]
@@ -33,7 +33,7 @@ namespace pdq.npgsql.tests
             var connectionFactory = this.provider.GetService<IConnectionFactory>();
 
             // Assert
-            connectionFactory.Should().BeOfType<NpgsqlConnectionFactory>();
+            connectionFactory.Should().BeOfType<SqlServerConnectionFactory>();
         }
 
         [Fact]
@@ -56,7 +56,7 @@ namespace pdq.npgsql.tests
         public void IsolationLevelSet(IsolationLevel level)
         {
             // Arrange
-            var builder = new NpgsqlOptionsBuilder();
+            var builder = new SqlServerOptionsBuilder();
 
             // Act
             builder.SetIsolationLevel(level);
@@ -70,7 +70,7 @@ namespace pdq.npgsql.tests
         public void UseQuotedIdentifiersSet()
         {
             // Arrange
-            var builder = new NpgsqlOptionsBuilder();
+            var builder = new SqlServerOptionsBuilder();
 
             // Act
             builder.UseQuotedIdentifiers();
@@ -82,17 +82,16 @@ namespace pdq.npgsql.tests
 
         [Theory]
         [InlineData("")]
-        [InlineData("Host=localhost;")]
-        [InlineData("Port=xyz;")]
-        [InlineData("Host=localhost;Port=5432;")]
-        [InlineData("Host=localhost;Port=5432;Database=db;")]
-        [InlineData("Host=localhost;Port=5432;Username=db;Password=db;")]
-        [InlineData("Host=localhost;Port=5432;Database=db;Password=db;")]
-        [InlineData("Host=localhost;Port=5432;Username=db;Database=db;")]
+        [InlineData("Server=localhost;")]
+        [InlineData("Server=localhost,5432;")]
+        [InlineData("Server=localhost,5432;Database=db;")]
+        [InlineData("Server=localhost,5432;User ID=db;Password=db;")]
+        [InlineData("Server=localhost,5432;Database=db;Password=db;")]
+        [InlineData("Server=localhost,5432;User ID=db;Database=db;")]
         public void InvalidConnectionString(string connectionString)
         {
             // Arrange
-            var builder = new NpgsqlOptionsBuilder();
+            var builder = new SqlServerOptionsBuilder();
 
             // Act
             Action method = () => builder.WithConnectionString(connectionString);
@@ -105,8 +104,8 @@ namespace pdq.npgsql.tests
         public void ValidConnectionString()
         {
             // Arrange
-            var connString = "Host=xyz;Port=5432;Database=db;Username=postgres;Password=password;";
-            var builder = new NpgsqlOptionsBuilder();
+            var connString = "Server=xyz,5432;Database=db;User ID=postgres;Password=password;";
+            var builder = new SqlServerOptionsBuilder();
 
             // Act
             builder.WithConnectionString(connString);

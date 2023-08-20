@@ -1,11 +1,10 @@
 ﻿using System.Data;
-using pdq.common.Connections;
-using pdq.common.Options;
+using pdq.db.common;
 
 namespace pdq.sqlserver
 {
     public class SqlServerOptionsBuilder :
-        OptionsBuilder<SqlServerOptions>,
+        SqlOptionsBuilder<SqlServerOptions, ISqlServerOptionsBuilder, ISqlServerConnectionDetails>,
 		ISqlServerOptionsBuilder
 	{
         /// <inheritdoc/>
@@ -17,8 +16,10 @@ namespace pdq.sqlserver
 			=> ConfigureProperty(nameof(SqlServerOptions.QuotedIdentifiers), true);
 
         /// <inheritdoc/>
-        public ISqlServerOptionsBuilder WithConnectionDetails(IConnectionDetails connectionDetails)
-            => ConfigureProperty(nameof(SqlServerOptions.ConnectionDetails), connectionDetails);
+        public override ISqlServerOptionsBuilder WithConnectionString(string connectionString)
+            => ConfigureProperty(
+                nameof(SqlServerOptions.ConnectionDetails),
+                SqlServerConnectionDetails.FromConnectionString(connectionString));
 
         /// <inheritdoc/>
         private new ISqlServerOptionsBuilder ConfigureProperty<TValue>(string name, TValue value)

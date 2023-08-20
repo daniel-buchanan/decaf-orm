@@ -1,26 +1,23 @@
 ﻿using System;
-using Microsoft.Extensions.DependencyInjection;
 using pdq.common.Options;
 using pdq.db.common;
-using pdq.db.common.Builders;
-using pdq.state;
 
 namespace pdq.npgsql
 {
-	public static class PdqOptionsBuilderExtensions
+    public static partial class PdqOptionsBuilderExtensions
 	{
         /// <summary>
-        /// 
+        /// Use PostgreSQL (Npgsql as the client) with the default configuration and options.
         /// </summary>
-        /// <param name="optionsBuilder"></param>
-        public static void UseNpgsql(this IPdqOptionsBuilder optionsBuilder)
-            => UseNpgsql(optionsBuilder, new NpgsqlOptions());
+        /// <param name="builder">The <see cref="IPdqOptionsBuilder"/> to use.</param>
+        public static void UseNpgsql(this IPdqOptionsBuilder builder)
+            => UseNpgsql(builder, new NpgsqlOptions());
 
         /// <summary>
-        /// 
+        /// Use PostgreSQL (Npgsql as the client) with a builder for the Postgres options.
         /// </summary>
-        /// <param name="optionsBuilder"></param>
-        /// <param name="builder"></param>
+        /// <param name="optionsBuilder">The <see cref="IPdqOptionsBuilder"/> to use.</param>
+        /// <param name="builder">An <see cref="Action{T}"/> to configure the <see cref="NpgsqlOptions"/>.</param>
         public static void UseNpgsql(
             this IPdqOptionsBuilder optionsBuilder,
             Action<INpgsqlOptionsBuilder> builder)
@@ -31,26 +28,16 @@ namespace pdq.npgsql
         }
 
         /// <summary>
-        /// 
+        /// Use PostgreSQL (Npgsql as the client) with a provided <see cref="NpgsqlOptions"/>.
         /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="options"></param>
+        /// <param name="builder">The <see cref="IPdqOptionsBuilder"/> to use.</param>
+        /// <param name="options">The <see cref="NpgsqlOptions"/> to use.</param>
         public static void UseNpgsql(
             this IPdqOptionsBuilder builder,
             NpgsqlOptions options)
         {
-            builder.ConfigureDbImplementation<db.common.SqlFactory, NpgsqlConnectionFactory, NpgsqlTransactionFactory>();
-            builder.Services.AddSingleton(options.ConnectionDetails);
-            builder.Services.AddSingleton(options);
-            builder.Services.AddSingleton<IDatabaseOptions>(options);
-            builder.Services.AddSingleton<IValueParser, NpgsqlValueParser>();
-            builder.Services.AddSingleton<db.common.Builders.IConstants, db.common.ANSISQL.Constants>();
-            builder.Services.AddSingleton<db.common.Builders.IQuotedIdentifierBuilder, db.common.ANSISQL.QuotedIdentifierBuilder>();
-            builder.Services.AddTransient<db.common.Builders.IWhereBuilder, Builders.WhereBuilder>();
-            builder.Services.AddTransient<IBuilderPipeline<ISelectQueryContext>, Builders.SelectBuilderPipeline>();
-            builder.Services.AddTransient<IBuilderPipeline<IDeleteQueryContext>, Builders.DeleteBuilderPipeline>();
-            builder.Services.AddTransient<IBuilderPipeline<IInsertQueryContext>, Builders.InsertBuilderPipeline>();
-            builder.Services.AddTransient<IBuilderPipeline<IUpdateQueryContext>, Builders.UpdateBuilderPipeline>();
+            var x = builder as IPdqOptionsBuilderExtensions;
+            x.UseDbImplementation<NpgsqlImplementationFactory>(options);
         }
     }
 }

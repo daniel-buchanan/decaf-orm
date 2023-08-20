@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using pdq.common.Connections;
+using pdq.common.Exceptions;
 using pdq.db.common.Exceptions;
 
 namespace pdq.npgsql
@@ -12,12 +13,39 @@ namespace pdq.npgsql
         ConnectionDetails,
         INpgsqlConnectionDetails
     {
+
+        private readonly string UsernameRegex = @"Username=(.+);";
+        private readonly string PasswordRegex = @"Password=(.+);";
         private readonly List<string> schemasToSearch;
 
         public NpgsqlConnectionDetails() : base()
-        {
-            this.schemasToSearch = new List<string>();
-        }
+            => this.schemasToSearch = new List<string>();
+
+        private NpgsqlConnectionDetails(string connectionString)
+            : base(connectionString)
+            => ParseConnectionString(connectionString, (c) =>
+            {
+                var username = MatchAndFetch(UsernameRegex, c, s => s);
+                var password = MatchAndFetch(PasswordRegex, c, s => s);
+                Authentication = new UsernamePasswordAuthentication(username, password);
+            });
+
+        /// <summary>
+        /// Create an <see cref="INpgsqlConnectionDetails"/> from a provided connection string.
+        /// </summary>
+        /// <param name="connectionString">The connection string to use.</param>
+        /// <returns>A new <see cref="INpgsqlConnectionDetails"/> object.</returns>
+        public static INpgsqlConnectionDetails FromConnectionString(string connectionString)
+            => new NpgsqlConnectionDetails(connectionString);
+
+        /// <inheritdoc/>
+        protected override string HostRegex => @"Host=(.+);";
+
+        /// <inheritdoc/>
+        protected override string PortRegex => @"Port=(.+);";
+
+        /// <inheritdoc/>
+        protected override string DatabaseRegex => @"Database=(.+);";
 
         /// <inheritdoc/>
         public IReadOnlyCollection<string> SchemasToSearch
@@ -72,6 +100,26 @@ namespace pdq.npgsql
             }
             
             return sb.ToString();
+        }
+
+        protected override ConnectionStringParsingException ValidateConnectionString(string connectionString)
+        {
+            if (connectionString?.Contains("Host") == false)
+                return new ConnectionStringParsingException("Connection String does not contain a \"Host\" parameter.");
+
+            if (connectionString?.Contains("Port") == false)
+                return new ConnectionStringParsingException("Connection String does not contain a \"Port\" parameter.");
+
+            if (connectionString?.Contains("Database") == false)
+                return new ConnectionStringParsingException("Connection String does not contain a \"Database\" parameter.");
+
+            if (connectionString?.Contains("Username") == false)
+                return new ConnectionStringParsingException("Connection String does not contain a \"Username\" parameter.");
+
+            if (connectionString?.Contains("Password") == false)
+                return new ConnectionStringParsingException("Connection String does not contain a \"Password\" parameter.");
+
+            return null;
         }
     }
 }

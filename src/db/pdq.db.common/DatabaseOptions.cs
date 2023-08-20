@@ -7,7 +7,7 @@ using pdq.db.common.Exceptions;
 
 namespace pdq.db.common
 {
-	public class DatabaseOptions : IDatabaseOptionsExtensions
+	public abstract class DatabaseOptions : IDatabaseOptionsExtensions
 	{
         /// <inheritdoc/>
         public Func<IServiceProvider, IConnectionDetails> ConnectionDetailsServiceProviderFactory { get; protected set; }

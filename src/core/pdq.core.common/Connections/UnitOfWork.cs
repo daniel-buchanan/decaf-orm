@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using pdq.common.Logging;
+using pdq.common.Utilities;
 
 namespace pdq.common.Connections
 {
@@ -27,10 +29,21 @@ namespace pdq.common.Connections
         }
 
         /// <inheritdoc />
-        public async Task<ITransient> BeginAsync()
+        public async Task<ITransient> BeginAsync(CancellationToken cancellationToken = default)
         {
             this.logger.Debug("Creating Transient (async)");
-            return await this.transientFactory.CreateAsync(this.connectionDetails);
+            return await this.transientFactory.CreateAsync(this.connectionDetails, cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public IQueryContainer BeginQuery()
+            => BeginQueryAsync(CancellationToken.None).WaitFor();
+
+        /// <inheritdoc />
+        public async Task<IQueryContainer> BeginQueryAsync(CancellationToken cancellationToken = default)
+        {
+            var transient = await BeginAsync(cancellationToken) as ITransientInternal;
+            return transient.Query(disposeTransientOnDispose: true);
         }
     }
 }

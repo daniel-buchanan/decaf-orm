@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace pdq.common.Connections
@@ -37,7 +38,7 @@ namespace pdq.common.Connections
 
     public class DelayedFetchAuthentication : ConnectionAuthentication
     {
-        public DelayedFetchAuthentication(Func<Task<IConnectionAuthentication>> fetchDelegate)
+        public DelayedFetchAuthentication(Func<CancellationToken, Task<IConnectionAuthentication>> fetchDelegate)
         {
             AuthenticationType = ConnectionAuthenticationType.DelayedFetch;
             FetchAsync = fetchDelegate;
@@ -46,7 +47,7 @@ namespace pdq.common.Connections
         /// <summary>
         /// Delegate method for fetching credentials asynchronously.
         /// </summary>
-        public Func<Task<IConnectionAuthentication>> FetchAsync { get; }
+        public Func<CancellationToken, Task<IConnectionAuthentication>> FetchAsync { get; }
     }
 
     public class NoAuthentication : ConnectionAuthentication

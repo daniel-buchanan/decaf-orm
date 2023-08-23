@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using pdq.common.Connections;
 
 namespace pdq.common
@@ -41,7 +42,11 @@ namespace pdq.common
         ///    ...
         /// }
         /// </example>
-        Task<ITransient> BeginAsync();
+        Task<ITransient> BeginAsync(CancellationToken cancellationToken = default);
+
+        IQueryContainer BeginQuery();
+
+        Task<IQueryContainer> BeginQueryAsync(CancellationToken cancellationToken = default);
 	}
 }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using pdq.common.Exceptions;
 using pdq.common.Utilities;
@@ -165,15 +166,16 @@ namespace pdq.common.Connections
         }
 
         /// <inheritdoc/>
-        public string GetConnectionString() => GetConnectionStringAsync().WaitFor();
+        public string GetConnectionString()
+            => GetConnectionStringAsync(CancellationToken.None).WaitFor();
 
         /// <inheritdoc/>
-        public async Task<string> GetConnectionStringAsync()
+        public async Task<string> GetConnectionStringAsync(CancellationToken cancellationToken = default)
         {
             if(!string.IsNullOrWhiteSpace(this.connectionString))
                 return this.connectionString;
 
-            this.connectionString = await ConstructConnectionStringAsync();
+            this.connectionString = await ConstructConnectionStringAsync(cancellationToken);
             return this.connectionString;
         }
 
@@ -181,7 +183,7 @@ namespace pdq.common.Connections
         /// Construct the connections string.
         /// </summary>
         /// <returns>The connection string.</returns>
-        protected abstract Task<string> ConstructConnectionStringAsync();
+        protected abstract Task<string> ConstructConnectionStringAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
         public string GetHash() => GetConnectionString().ToBase64String();

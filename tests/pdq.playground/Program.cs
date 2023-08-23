@@ -22,6 +22,7 @@ var provider = services.BuildServiceProvider();
 Console.WriteLine("Hello, World!");
 
 var uow = provider.GetService<IUnitOfWork>();
+
 using (var t = uow.Begin())
 {
     using (var q = t.Query())

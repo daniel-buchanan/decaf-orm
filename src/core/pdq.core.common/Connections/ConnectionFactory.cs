@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using pdq.common.Logging;
 using pdq.common.Utilities;
@@ -35,19 +36,19 @@ namespace pdq.common.Connections
         }
 
         /// <inheritdoc/>
-        public IConnection Get(IConnectionDetails connectionDetails)
-            => GetAsync(connectionDetails).WaitFor();
+        public IConnection GetConnection(IConnectionDetails connectionDetails)
+            => GetConnectionAsync(connectionDetails, CancellationToken.None).WaitFor();
 
         /// <inheritdoc/>
-        public Task<IConnection> GetAsync(IConnectionDetails connectionDetails)
+        public Task<IConnection> GetConnectionAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default)
         {
             if (connectionDetails == null)
                 throw new ArgumentNullException(nameof(connectionDetails), $"The {nameof(connectionDetails)} cannot be null, it MUST be provided when creating a connection.");
 
-            return GetInternalAsync(connectionDetails);
+            return GetInternalAsync(connectionDetails, cancellationToken);
         }
 
-        private async Task<IConnection> GetInternalAsync(IConnectionDetails connectionDetails)
+        private async Task<IConnection> GetInternalAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default)
         {
             if (this.connections == null)
                 this.connections = new Dictionary<string, IConnection>();
@@ -70,7 +71,7 @@ namespace pdq.common.Connections
 
             try
             {
-                var connection = await ConstructConnection(connectionDetails);
+                var connection = await ConstructConnectionAsync(connectionDetails, cancellationToken);
                 this.connections.Add(hash, connection);
 
                 return connection;
@@ -83,7 +84,7 @@ namespace pdq.common.Connections
         }
 
         /// <inheritdoc/>
-        protected abstract Task<IConnection> ConstructConnection(IConnectionDetails connectionDetails);
+        protected abstract Task<IConnection> ConstructConnectionAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default);
     }
 }
 

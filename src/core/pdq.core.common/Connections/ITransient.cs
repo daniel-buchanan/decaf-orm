@@ -40,5 +40,14 @@ namespace pdq.common.Connections
         /// Gets the SQL Factory for this query.
         /// </summary>
         ISqlFactory SqlFactory { get; }
+
+        /// <summary>
+        /// Begin a query on this "Transient", this will allow you to choose what
+        /// type of query you wish to write and then execute.
+        /// </summary>
+        /// <param name="disposeTransientOnDispose">Whether or not to dispose this transient when the query is disposed.</param>
+        /// <returns>(FluentApi) The ability to begin, write and execute a query.</returns>
+        /// <example>t.Query()</example>
+        IQueryContainer Query(bool disposeTransientOnDispose);
     }
 }

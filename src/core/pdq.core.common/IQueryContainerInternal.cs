@@ -49,5 +49,10 @@ namespace pdq.common
         /// Gets the <see cref="PdqOptions"/> to use for this query.
         /// </summary>
 		PdqOptions Options { get; }
+
+        /// <summary>
+        /// Whether or not to dispose the transient when the query is disposed.
+        /// </summary>
+        bool DisposeTransientOnDispose { get; }
     }
 }

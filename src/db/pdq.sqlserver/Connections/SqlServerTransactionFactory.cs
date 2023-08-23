@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using pdq.common.Connections;
 using pdq.common.Logging;
@@ -19,7 +20,7 @@ namespace pdq.sqlserver
             this.npgsqlOptions = npgsqlOptions;
         }
 
-        protected override Task<ITransaction> CreateTransaction(IConnection connection)
+        protected override Task<ITransaction> CreateTransactionAsync(IConnection connection, CancellationToken cancellationToken = default)
         {
             var transactionId = Guid.NewGuid();
             this.logger.Debug($"NpgsqlTransactionFactory :: Creating Transaction with Id: {transactionId}");

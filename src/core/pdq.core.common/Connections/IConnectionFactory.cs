@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace pdq.common.Connections
 {
 	public interface IConnectionFactory : IDisposable
 	{
-		IConnection Get(IConnectionDetails connectionDetails);
+		IConnection GetConnection(IConnectionDetails connectionDetails);
 
-		Task<IConnection> GetAsync(IConnectionDetails connectionDetails);
+		Task<IConnection> GetConnectionAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default);
 	}
 }
 

@@ -6,7 +6,7 @@ using pdq.common.Utilities;
 
 namespace pdq.common.Connections
 {
-	public class Transient : ITransientInternal
+    public class Transient : ITransientInternal
 	{
         private readonly IConnection connection;
         private readonly ITransactionInternal transaction;
@@ -106,9 +106,12 @@ namespace pdq.common.Connections
         }
 
         /// <inheritdoc />
-        public IQueryContainer Query()
+        public IQueryContainer Query() => Query(disposeTransientOnDispose: false);
+
+        /// <inheritdoc />
+        public IQueryContainer Query(bool disposeTransientOnDispose)
         {
-            var query = QueryContainer.Create(this, this.logger, this.hashProvider, this.options);
+            var query = QueryContainer.Create(this, this.logger, this.hashProvider, this.options, disposeTransientOnDispose);
             this.logger.Debug($"Transient({Id}) :: Creating new Query");
             this.queries.Add(query);
             return query;

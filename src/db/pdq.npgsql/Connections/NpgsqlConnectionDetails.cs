@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using pdq.common.Connections;
 using pdq.common.Exceptions;
@@ -67,14 +68,14 @@ namespace pdq.npgsql
         }
 
         /// <inheritdoc/>
-        protected override async Task<string> ConstructConnectionStringAsync()
+        protected override async Task<string> ConstructConnectionStringAsync(CancellationToken cancellationToken = default)
         {
             string username, password;
             var auth = Authentication;
 
             // check for delayed fetch
             if(auth is DelayedFetchAuthentication delayedFetch)
-                auth = await delayedFetch.FetchAsync();
+                auth = await delayedFetch.FetchAsync(cancellationToken);
 
             if(auth is UsernamePasswordAuthentication creds)
             {

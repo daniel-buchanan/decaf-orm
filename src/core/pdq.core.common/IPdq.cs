@@ -12,17 +12,17 @@ namespace pdq.common
         IQueryContainer BeginQuery();
 
         /// <summary>
-        /// Begin a Query, using injected connection details (async)
-        /// </summary>
-        /// <returns>An <see cref="IQueryContainer"/> ready to be used.</returns>
-        Task<IQueryContainer> BeginQueryAsync();
-
-		/// <summary>
 		/// Begin a Query, providing connection details
 		/// </summary>
 		/// <param name="connectionDetails">The <see cref="IConnectionDetails"/> to use.</param>
 		/// <returns>An <see cref="IQueryContainer"/> ready to be used.</returns>
 		IQueryContainer BeginQuery(IConnectionDetails connectionDetails);
+
+        /// <summary>
+        /// Begin a Query, using injected connection details (async)
+        /// </summary>
+        /// <returns>An <see cref="IQueryContainer"/> ready to be used.</returns>
+        Task<IQueryContainer> BeginQueryAsync();
 
         /// <summary>
         /// Begin a Query, providing connection details (async)

@@ -27,6 +27,10 @@ namespace pdq.npgsql
             {
                 var username = MatchAndFetch(UsernameRegex, c, s => s);
                 var password = MatchAndFetch(PasswordRegex, c, s => s);
+                if (string.IsNullOrWhiteSpace(username) ||
+                   string.IsNullOrWhiteSpace(password))
+                    return;
+
                 Authentication = new UsernamePasswordAuthentication(username, password);
             });
 
@@ -37,6 +41,21 @@ namespace pdq.npgsql
         /// <returns>A new <see cref="INpgsqlConnectionDetails"/> object.</returns>
         public static INpgsqlConnectionDetails FromConnectionString(string connectionString)
             => new NpgsqlConnectionDetails(connectionString);
+
+        /// <summary>
+        /// Create an <see cref="INpgsqlConnectionDetails"/> from a provided connection string, using seperately provided credentials
+        /// </summary>
+        /// <param name="connectionString">The connection string to use.</param>
+        /// <param name="authentication">The <see cref="IConnectionAuthentication"/> to use.</param>
+        /// <returns>A new <see cref="INpgsqlConnectionDetails"/> object.</returns>
+        public static INpgsqlConnectionDetails FromConnectionString(
+            string connectionString,
+            IConnectionAuthentication authentication)
+        {
+            var details = new NpgsqlConnectionDetails(connectionString);
+            details.Authentication = authentication;
+            return details;
+        }
 
         /// <inheritdoc/>
         protected override string HostRegex => @"Host=(.+);";

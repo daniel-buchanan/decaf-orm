@@ -55,6 +55,21 @@ namespace pdq.sqlserver
         public static ISqlServerConnectionDetails FromConnectionString(string connectionString)
             => new SqlServerConnectionDetails(connectionString);
 
+        /// <summary>
+        /// Create an <see cref="ISqlServerConnectionDetails"/> from a provided connection string, using seperately provided credentials
+        /// </summary>
+        /// <param name="connectionString">The connection string to use.</param>
+        /// <param name="authentication">The <see cref="IConnectionAuthentication"/> to use.</param>
+        /// <returns>A new <see cref="ISqlServerConnectionDetails"/> object.</returns>
+        public static ISqlServerConnectionDetails FromConnectionString(
+            string connectionString,
+            IConnectionAuthentication authentication)
+        {
+            var details = new SqlServerConnectionDetails(connectionString);
+            details.Authentication = authentication;
+            return details;
+        }
+
         /// <inheritdoc/>
         protected override int DefaultPort
             => 1433;

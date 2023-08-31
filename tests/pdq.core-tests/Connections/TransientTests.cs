@@ -10,7 +10,7 @@ namespace pdq.core_tests.Connections
 {
     public class TransientTests
     {
-        private readonly IUnitOfWork uow;
+        private readonly IPdq pdq;
 
         public TransientTests()
         {
@@ -21,14 +21,14 @@ namespace pdq.core_tests.Connections
             });
             services.AddScoped<IConnectionDetails, MockConnectionDetails>();
             var provider = services.BuildServiceProvider();
-            this.uow = provider.GetService<IUnitOfWork>();
+            this.pdq = provider.GetService<IPdq>();
         }
 
         [Fact]
         public void CanGetTransientSucceeds()
         {
             // Act
-            Action method = () => this.uow.Begin();
+            Action method = () => this.pdq.Begin();
 
             // Assert
             method.Should().NotThrow();
@@ -38,7 +38,7 @@ namespace pdq.core_tests.Connections
         public void NewTransientHasId()
         {
             // Act
-            var transient = this.uow.Begin();
+            var transient = this.pdq.Begin();
 
             // Assert
             transient.Should().NotBeNull();
@@ -49,7 +49,7 @@ namespace pdq.core_tests.Connections
         public void CanGetConnectionSucceeds()
         {
             // Arrange
-            var transient = this.uow.Begin() as ITransientInternal;
+            var transient = this.pdq.Begin() as ITransientInternal;
 
             // Act
             Func<IConnection> method = () => transient.Connection;
@@ -64,7 +64,7 @@ namespace pdq.core_tests.Connections
         public void CanGetTransactionSucceeds()
         {
             // Arrange
-            var transient = this.uow.Begin() as ITransientInternal;
+            var transient = this.pdq.Begin() as ITransientInternal;
 
             // Act
             Func<ITransaction> method = () => transient.Transaction;

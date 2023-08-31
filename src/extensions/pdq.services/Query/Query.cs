@@ -21,7 +21,7 @@ namespace pdq.services
             remove => base.preExecution -= value;
         }
 
-        public Query(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+        public Query(IPdq pdq) : base(pdq) { }
 
         protected Query(ITransient transient) : base(transient) { }
 

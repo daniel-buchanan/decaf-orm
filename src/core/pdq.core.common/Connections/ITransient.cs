@@ -40,5 +40,11 @@ namespace pdq.common.Connections
         /// Gets the SQL Factory for this query.
         /// </summary>
         ISqlFactory SqlFactory { get; }
+
+        /// <summary>
+        /// Notify the transient that a query has been disposed.
+        /// </summary>
+        /// <param name="id">The ID of the query that was disposed.</param>
+        void NotifyQueryDisposed(Guid id);
     }
 }

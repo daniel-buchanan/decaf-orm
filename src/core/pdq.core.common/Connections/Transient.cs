@@ -113,6 +113,22 @@ namespace pdq.common.Connections
             this.queries.Add(query);
             return query;
         }
+
+        public void NotifyQueryDisposed(Guid id)
+        {
+            var found = this.queries.FirstOrDefault(q => q.Id == id);
+            if(found == null)
+            {
+                this.logger.Debug($"Transient({Id}) :: Cound not find query with Id - {id}");
+                return;
+            }
+
+            this.queries.Remove(found);
+
+            if (this.queries.Count != 0) return;
+
+            this.Dispose();
+        }
     }
 }
 

@@ -2,7 +2,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
-using pdq.common.Connections;
 using pdq.tests.common.Mocks;
 using pdq.tests.common.Models;
 using Xunit;
@@ -24,8 +23,8 @@ namespace pdq.core_tests
             });
 
             var provider = services.BuildServiceProvider();
-            var uow = provider.GetService<IUnitOfWork>();
-            var transient = uow.Begin();
+            var pdq = provider.GetService<IPdq>();
+            var transient = pdq.Begin();
             this.query = transient.Query() as IQueryContainerInternal;
         }
 

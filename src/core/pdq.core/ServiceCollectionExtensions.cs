@@ -54,7 +54,7 @@ namespace pdq
             ValidateOptions(options);
 
 			services.AddSingleton(options);
-			services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IPdq, Pdq>();
 			services.AddScoped(typeof(ILoggerProxy), options.LoggerProxyType);
             services.AddSingleton<IHashProvider, HashProvider>();
             services.AddScoped<ITransientFactory, TransientFactory>();

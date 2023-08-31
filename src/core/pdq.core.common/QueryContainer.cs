@@ -100,6 +100,7 @@ namespace pdq.common
 			if (!disposing) return;
 			this.logger.Debug($"Query({Id} :: Disposing({disposing})");
             this.aliasManager.Dispose();
+			this.transient.NotifyQueryDisposed(Id);
         }
     }
 }

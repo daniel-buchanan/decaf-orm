@@ -11,39 +11,39 @@ using pdq.state.Utilities.Parsers;
 
 namespace pdq.state
 {
-	internal abstract class QueryContext : IQueryContextInternal
-	{
-		private readonly IExpressionHelper expressionHelper;
-		private readonly IReflectionHelper reflectionHelper;
+    internal abstract class QueryContext : IQueryContextInternal
+    {
+        private readonly IExpressionHelper expressionHelper;
+        private readonly IReflectionHelper reflectionHelper;
         private readonly IDynamicExpressionHelper dynamicExpressionHelper;
-		private readonly IAliasManager aliasManager;
-		private readonly IQueryParsers parserHolder;
-		private readonly List<IQueryTarget> queryTargets;
+        private readonly IAliasManager aliasManager;
+        private readonly IQueryParsers parserHolder;
+        private readonly List<IQueryTarget> queryTargets;
         private readonly IHashProvider hashProvider;
 
-		protected QueryContext(
-			IAliasManager aliasManager,
-			QueryTypes kind,
+        protected QueryContext(
+            IAliasManager aliasManager,
+            QueryTypes kind,
             IHashProvider hashProvider)
-		{
-			Id = Guid.NewGuid();
-			Kind = kind;
-			this.queryTargets = new List<IQueryTarget>();
-			this.reflectionHelper = new ReflectionHelper();
-			this.expressionHelper = new ExpressionHelper(this.reflectionHelper);
+        {
+            Id = Guid.NewGuid();
+            Kind = kind;
+            this.queryTargets = new List<IQueryTarget>();
+            this.reflectionHelper = new ReflectionHelper();
+            this.expressionHelper = new ExpressionHelper(this.reflectionHelper);
             var valueFunctionHelper = new ValueFunctionHelper(this.expressionHelper);
             this.dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, valueFunctionHelper);
             this.aliasManager = aliasManager;
             var callExpressionHelper = new CallExpressionHelper(this.expressionHelper, valueFunctionHelper);
             this.parserHolder = new ParserHolder(expressionHelper, reflectionHelper, callExpressionHelper);
             this.hashProvider = hashProvider;
-		}
+        }
 
-		/// <inheritdoc/>
+        /// <inheritdoc/>
         public Guid Id { get; private set; }
 
-		/// <inheritdoc/>
-		public QueryTypes Kind { get; private set; }
+        /// <inheritdoc/>
+        public QueryTypes Kind { get; private set; }
 
         /// <inheritdoc/>
         public string GetHash() => this.hashProvider.GetHash(this);
@@ -51,11 +51,11 @@ namespace pdq.state
         /// <inheritdoc/>
         public IReadOnlyCollection<IQueryTarget> QueryTargets => this.queryTargets;
 
-		/// <inheritdoc/>
-		IExpressionHelper IQueryContextInternal.ExpressionHelper => this.expressionHelper;
+        /// <inheritdoc/>
+        IExpressionHelper IQueryContextInternal.ExpressionHelper => this.expressionHelper;
 
-		/// <inheritdoc/>
-		IReflectionHelper IQueryContextInternal.ReflectionHelper => this.reflectionHelper;
+        /// <inheritdoc/>
+        IReflectionHelper IQueryContextInternal.ReflectionHelper => this.reflectionHelper;
 
         /// <inheritdoc/>
         IQueryParsers IQueryContextInternal.Parsers => this.parserHolder;
@@ -68,9 +68,9 @@ namespace pdq.state
 
         /// <inheritdoc/>
         void IQueryContextInternal.AddQueryTarget(IQueryTarget target)
-			=> this.queryTargets.Add(target);
+            => this.queryTargets.Add(target);
 
-		/// <inheritdoc/>
+        /// <inheritdoc/>
         IQueryTarget IQueryContextInternal.GetQueryTarget(Expression expression)
         {
             GetAliasAndTable(expression, out var alias, out var table);
@@ -83,7 +83,7 @@ namespace pdq.state
         /// <inheritdoc/>
         IQueryTarget IQueryContextInternal.GetQueryTarget(string alias)
         {
-			return this.queryTargets.FirstOrDefault(qt => qt.Alias == alias);
+            return this.queryTargets.FirstOrDefault(qt => qt.Alias == alias);
         }
 
         /// <inheritdoc/>
@@ -108,7 +108,7 @@ namespace pdq.state
             if (expression is LambdaExpression)
             {
                 var lambda = expression as LambdaExpression;
-                if(lambda.Parameters.Count > 1) return;
+                if (lambda.Parameters.Count > 1) return;
                 exprAlias = lambda.Body;
                 exprTable = lambda.Body;
             }
@@ -121,7 +121,7 @@ namespace pdq.state
                 exprTable = obj.Expression;
             }
 
-            if(expression is ParameterExpression)
+            if (expression is ParameterExpression)
             {
                 var paramExpr = expression as ParameterExpression;
                 alias = paramExpr.Name;
@@ -129,7 +129,7 @@ namespace pdq.state
                 return;
             }
 
-            if(expression is MemberExpression)
+            if (expression is MemberExpression)
             {
                 var memberExpr = expression as MemberExpression;
                 alias = this.expressionHelper.GetParameterName(exprAlias);
@@ -149,9 +149,7 @@ namespace pdq.state
         }
 
         protected virtual void Dispose(bool disposing)
-        {
-            this.queryTargets.DisposeAll();
-        }
+            => this.queryTargets.DisposeAll();
     }
 }
 

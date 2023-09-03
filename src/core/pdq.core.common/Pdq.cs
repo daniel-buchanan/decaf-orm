@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using pdq.common.Connections;
 using pdq.common.Exceptions;
 using pdq.common.Logging;
@@ -32,7 +33,9 @@ namespace pdq.common
         private ITransient GetTransient(IConnectionDetails connectionDetails = null)
             => GetTransientAsync(connectionDetails).WaitFor();
 
-        private async Task<ITransient> GetTransientAsync(IConnectionDetails connectionDetails = null)
+        private async Task<ITransient> GetTransientAsync(
+            IConnectionDetails connectionDetails = null,
+            CancellationToken cancellationToken = default)
         {
             if (this.injectedConnectionDetails == null &&
                connectionDetails == null)
@@ -45,7 +48,7 @@ namespace pdq.common
             if (connectionDetails != null) connectionDetailsToUse = connectionDetails;
             else connectionDetailsToUse = this.injectedConnectionDetails;
 
-            return await this.transientFactory.CreateAsync(connectionDetailsToUse);
+            return await this.transientFactory.CreateAsync(connectionDetailsToUse, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -57,12 +60,14 @@ namespace pdq.common
             => GetTransient(connectionDetails);
 
         /// <inheritdoc/>
-        public Task<ITransient> BeginAsync()
-            => GetTransientAsync();
+        public Task<ITransient> BeginAsync(CancellationToken cancellationToken = default)
+            => GetTransientAsync(cancellationToken: cancellationToken);
 
         /// <inheritdoc/>
-        public Task<ITransient> BeginAsync(IConnectionDetails connectionDetails)
-            => GetTransientAsync(connectionDetails);
+        public Task<ITransient> BeginAsync(
+            IConnectionDetails connectionDetails,
+            CancellationToken cancellationToken = default)
+            => GetTransientAsync(connectionDetails, cancellationToken);
 
         /// <inheritdoc/>
         public IQueryContainer BeginQuery()
@@ -73,16 +78,18 @@ namespace pdq.common
             => GetTransient(connectionDetails).Query();
 
         /// <inheritdoc/>
-        public async Task<IQueryContainer> BeginQueryAsync()
+        public async Task<IQueryContainer> BeginQueryAsync(CancellationToken cancellationToken = default)
         {
-            var t = await GetTransientAsync();
+            var t = await GetTransientAsync(cancellationToken: cancellationToken);
             return t.Query();
         }
 
         /// <inheritdoc/>
-        public async Task<IQueryContainer> BeginQueryAsync(IConnectionDetails connectionDetails)
+        public async Task<IQueryContainer> BeginQueryAsync(
+            IConnectionDetails connectionDetails,
+            CancellationToken cancellationToken = default)
         {
-            var t = await GetTransientAsync(connectionDetails);
+            var t = await GetTransientAsync(connectionDetails, cancellationToken);
             return t.Query();
         }
     }

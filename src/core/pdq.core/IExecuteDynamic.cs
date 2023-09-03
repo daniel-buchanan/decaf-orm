@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace pdq
@@ -8,27 +8,27 @@ namespace pdq
 	{
 		IEnumerable<dynamic> AsEnumerable();
 
-		Task<IEnumerable<dynamic>> AsEnumerableAsync();
+        Task<IEnumerable<dynamic>> AsEnumerableAsync(CancellationToken cancellationToken = default);
 
 		IList<dynamic> ToList();
 
-		Task<IList<dynamic>> ToListAsync();
+		Task<IList<dynamic>> ToListAsync(CancellationToken cancellationToken = default);
 
 		dynamic FirstOrDefault();
 
-		Task<dynamic> FirstOrDefaultAsync();
+		Task<dynamic> FirstOrDefaultAsync(CancellationToken cancellationToken = default);
 
 		dynamic First();
 
-		Task<dynamic> FirstAsync();
+		Task<dynamic> FirstAsync(CancellationToken cancellationToken = default);
 
 		dynamic Single();
 
-		Task<dynamic> SingleAsync();
+		Task<dynamic> SingleAsync(CancellationToken cancellationToken = default);
 
 		dynamic SingleOrDefault();
 
-		Task<dynamic> SingleOrDefaultAsync();
+		Task<dynamic> SingleOrDefaultAsync(CancellationToken cancellationToken = default);
 
 		IExecute<T> Typed<T>();
 	}

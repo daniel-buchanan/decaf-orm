@@ -106,17 +106,15 @@ namespace pdq.common.Connections
         }
 
         /// <inheritdoc />
-        public IQueryContainer Query() => Query(disposeTransientOnDispose: false);
-
-        /// <inheritdoc />
-        public IQueryContainer Query(bool disposeTransientOnDispose)
+        public IQueryContainer Query()
         {
-            var query = QueryContainer.Create(this, this.logger, this.hashProvider, this.options, disposeTransientOnDispose);
+            var query = QueryContainer.Create(this, this.logger, this.hashProvider, this.options);
             this.logger.Debug($"Transient({Id}) :: Creating new Query");
             this.queries.Add(query);
             return query;
         }
 
+        /// <inheritdoc />
         public void NotifyQueryDisposed(Guid queryId)
         {
             var found = this.queries.FirstOrDefault(q => q.Id == queryId);

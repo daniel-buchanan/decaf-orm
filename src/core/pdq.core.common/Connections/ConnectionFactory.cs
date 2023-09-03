@@ -40,16 +40,13 @@ namespace pdq.common.Connections
             => GetConnectionAsync(connectionDetails, CancellationToken.None).WaitFor();
 
         /// <inheritdoc/>
-        public Task<IConnection> GetConnectionAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default)
+        public async Task<IConnection> GetConnectionAsync(
+            IConnectionDetails connectionDetails,
+            CancellationToken cancellationToken = default)
         {
             if (connectionDetails == null)
                 throw new ArgumentNullException(nameof(connectionDetails), $"The {nameof(connectionDetails)} cannot be null, it MUST be provided when creating a connection.");
 
-            return GetInternalAsync(connectionDetails, cancellationToken);
-        }
-
-        private async Task<IConnection> GetInternalAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default)
-        {
             if (this.connections == null)
                 this.connections = new Dictionary<string, IConnection>();
             string hash = null;
@@ -82,9 +79,16 @@ namespace pdq.common.Connections
                 throw;
             }
         }
-
-        /// <inheritdoc/>
-        protected abstract Task<IConnection> ConstructConnectionAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default);
+        
+        /// <summary>
+        /// Construct a connection using the provided connection details.
+        /// </summary>
+        /// <param name="connectionDetails">The connection details to use to create the connection.</param>
+        /// <param name="cancellationToken">The cancellation token to use (optional).</param>
+        /// <returns>A newly constructed connection.</returns>
+        protected abstract Task<IConnection> ConstructConnectionAsync(
+            IConnectionDetails connectionDetails,
+            CancellationToken cancellationToken = default);
     }
 }
 

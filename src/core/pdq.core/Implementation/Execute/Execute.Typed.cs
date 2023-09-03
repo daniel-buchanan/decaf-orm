@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using pdq.common;
 using pdq.common.Utilities;
@@ -22,37 +23,43 @@ namespace pdq.Implementation
         public new IEnumerable<TResult> AsEnumerable() => AsEnumerableAsync<TResult>().WaitFor();
 
         /// <inheritdoc/>
-        public new Task<IEnumerable<TResult>> AsEnumerableAsync() => AsEnumerableAsync<TResult>();
+        public new Task<IEnumerable<TResult>> AsEnumerableAsync(CancellationToken cancellationToken = default)
+            => AsEnumerableAsync<TResult>(cancellationToken);
 
         /// <inheritdoc/>
         public new TResult First() => FirstAsync().WaitFor();
 
         /// <inheritdoc/>
-        public new Task<TResult> FirstAsync() => FirstAsync<TResult>();
+        public new Task<TResult> FirstAsync(CancellationToken cancellationToken = default)
+            => FirstAsync<TResult>(cancellationToken);
 
         /// <inheritdoc/>
         public new TResult FirstOrDefault() => FirstOrDefaultAsync().WaitFor();
 
         /// <inheritdoc/>
-        public new Task<TResult> FirstOrDefaultAsync() => FirstOrDefaultAsync<TResult>();
+        public new Task<TResult> FirstOrDefaultAsync(CancellationToken cancellationToken = default)
+            => FirstOrDefaultAsync<TResult>(cancellationToken);
 
         /// <inheritdoc/>
         public new TResult Single() => SingleAsync().WaitFor();
 
         /// <inheritdoc/>
-        public new Task<TResult> SingleAsync() => SingleAsync<TResult>();
+        public new Task<TResult> SingleAsync(CancellationToken cancellationToken = default)
+            => SingleAsync<TResult>(cancellationToken);
 
         /// <inheritdoc/>
         public new TResult SingleOrDefault() => SingleOrDefaultAsync().WaitFor();
 
         /// <inheritdoc/>
-        public new Task<TResult> SingleOrDefaultAsync() => SingleOrDefaultAsync<TResult>();
+        public new Task<TResult> SingleOrDefaultAsync(CancellationToken cancellationToken = default)
+            => SingleOrDefaultAsync<TResult>(cancellationToken);
 
         /// <inheritdoc/>
         public new IList<TResult> ToList() => ToListAsync().WaitFor();
 
         /// <inheritdoc/>
-        public new Task<IList<TResult>> ToListAsync() => ToListAsync<TResult>();
+        public new Task<IList<TResult>> ToListAsync(CancellationToken cancellationToken = default)
+            => ToListAsync<TResult>(cancellationToken);
 
         /// <inheritdoc/>
         void IExecute<TResult>.Execute() => ExecuteAsync().WaitFor();

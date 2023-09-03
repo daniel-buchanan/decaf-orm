@@ -1,18 +1,20 @@
-﻿using System;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace pdq.common.Utilities
 {
 	internal static class AsyncHelper
 	{
-		public static void WaitFor(this Task task)
-        {
-			task.Wait();
-        }
+        public static void WaitFor(
+            this Task task,
+            CancellationToken cancellationToken = default)
+            => task.Wait(cancellationToken);
 
-		public static T WaitFor<T>(this Task<T> task)
+        public static T WaitFor<T>(
+            this Task<T> task,
+            CancellationToken cancellationToken = default)
         {
-			task.Wait();
+			task.Wait(cancellationToken);
 			return task.Result;
         }
 	}

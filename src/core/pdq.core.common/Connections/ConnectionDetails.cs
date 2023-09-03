@@ -21,6 +21,12 @@ namespace pdq.common.Connections
         protected ConnectionDetails(string connectionString)
             => this.connectionString = connectionString;
 
+        /// <summary>
+        /// Parse the provided connection string into the properties of this object.
+        /// </summary>
+        /// <param name="connectionString">The connection string to parse.</param>
+        /// <param name="additionalParsing">A function for any additional parsing.</param>
+        /// <exception cref="ConnectionStringParsingException">An error that occured during the parsing of the connection string.</exception>
         protected virtual void ParseConnectionString(string connectionString, Action<string> additionalParsing = null)
         {
             try
@@ -44,6 +50,15 @@ namespace pdq.common.Connections
             }
         }
 
+        /// <summary>
+        /// Perform a match against a regular expression and return the result
+        /// as a value of the provided tye.
+        /// </summary>
+        /// <typeparam name="T">The return type to use.</typeparam>
+        /// <param name="regex">The regular expression to use.</param>
+        /// <param name="input">The string to match.</param>
+        /// <param name="parse">A function to conver the match into the output type.</param>
+        /// <returns>A match if found, otherwise the default value for the type.</returns>
         protected T MatchAndFetch<T>(string regex, string input, Func<string, T> parse)
         {
             var regExp = new Regex(regex);
@@ -59,6 +74,11 @@ namespace pdq.common.Connections
             return default(T);
         }
 
+        /// <summary>
+        /// Validate the provided connection string.
+        /// </summary>
+        /// <param name="connectionString">The connection string to validate.</param>
+        /// <returns>Any issues with the connection string that were found.</returns>
         protected abstract ConnectionStringParsingException ValidateConnectionString(string connectionString);
 
         /// <summary>
@@ -182,6 +202,7 @@ namespace pdq.common.Connections
         /// <summary>
         /// Construct the connections string.
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token to use (optional).</param>
         /// <returns>The connection string.</returns>
         protected abstract Task<string> ConstructConnectionStringAsync(CancellationToken cancellationToken = default);
 

@@ -12,22 +12,19 @@ namespace pdq.common
 		private readonly IAliasManager aliasManager;
 		private readonly PdqOptions options;
 		private readonly IHashProvider hashProvider;
-		private readonly bool disposeTransientOnDispose;
 		private IQueryContext context;
 
 		private QueryContainer(
 			ITransient transient,
 			ILoggerProxy logger,
 			IHashProvider hashProvider,
-			PdqOptions options,
-			bool disposeTransientOnDispose)
+			PdqOptions options)
 		{
 			this.logger = logger;
 			this.transient = transient as ITransientInternal;
 			this.aliasManager = AliasManager.Create();
 			this.options = options;
 			this.hashProvider = hashProvider;
-			this.disposeTransientOnDispose = disposeTransientOnDispose;
 
 			Id = Guid.NewGuid();
 			Status = QueryStatus.Empty;
@@ -63,9 +60,6 @@ namespace pdq.common
 		public ILoggerProxy Logger => this.logger;
 
 		/// <inheritdoc/>
-		public bool DisposeTransientOnDispose => this.disposeTransientOnDispose;
-
-		/// <inheritdoc/>
 		string IQueryContainerInternal.GetHash() => this.context.GetHash();
 
 		/// <summary>
@@ -79,9 +73,8 @@ namespace pdq.common
 			ITransient transient,
 			ILoggerProxy logger,
 			IHashProvider hashProvider,
-			PdqOptions options,
-			bool disposeTransientOnDispose = false)
-			=> new QueryContainer(transient, logger, hashProvider, options, disposeTransientOnDispose);
+			PdqOptions options)
+			=> new QueryContainer(transient, logger, hashProvider, options);
 
 		/// <summary>
 		/// 
@@ -89,7 +82,7 @@ namespace pdq.common
 		/// <param name="existing"></param>
 		/// <returns></returns>
 		internal static IQueryContainer Create(IQueryContainerInternal existing)
-			=> new QueryContainer(existing.Transient, existing.Logger, existing.HashProvider, existing.Options, existing.DisposeTransientOnDispose);
+			=> new QueryContainer(existing.Transient, existing.Logger, existing.HashProvider, existing.Options);
 
 		/// <inheritdoc/>
 		void IQueryContainerInternal.SetContext(IQueryContext context) => this.context = context;

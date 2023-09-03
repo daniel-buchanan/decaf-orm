@@ -14,7 +14,7 @@ namespace pdq.services
         ICommand<TEntity>
         where TEntity : class, IEntity, new()
     {
-        public Command(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+        public Command(IPdq pdq) : base(pdq) { }
 
         protected Command(ITransient transient) : base(transient) { }
 

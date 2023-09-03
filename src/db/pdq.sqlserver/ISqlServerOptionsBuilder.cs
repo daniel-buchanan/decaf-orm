@@ -1,12 +1,11 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using pdq.db.common;
 
 namespace pdq.sqlserver
 {
-	public interface ISqlServerOptionsBuilder :
+    public interface ISqlServerOptionsBuilder :
         ISqlOptionsBuilder<SqlServerOptions, ISqlServerOptionsBuilder, ISqlServerConnectionDetails>
-	{
+    {
         /// <summary>
         /// Sets the transaction isolation level.<br/>
         /// The default is <see cref="IsolationLevel.ReadCommitted"/>.
@@ -18,6 +17,6 @@ namespace pdq.sqlserver
         /// Quote all identifiers when generating SQL.
         /// </summary>
         ISqlServerOptionsBuilder UseQuotedIdentifiers();
-	}
+    }
 }
 

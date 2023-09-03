@@ -28,8 +28,8 @@ namespace pdq.core_tests
             services.AddScoped<IConnectionDetails, MockConnectionDetails>();
 
             var provider = services.BuildServiceProvider();
-            var uow = provider.GetService<IUnitOfWork>();
-            this.transient = uow.Begin();
+            var pdq = provider.GetService<IPdq>();
+            this.transient = pdq.Begin();
         }
 
         [Theory]

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using pdq.common;
 using pdq.common.Connections;
-using pdq.state;
 
 namespace pdq.services
 {
@@ -13,7 +12,7 @@ namespace pdq.services
         ICommand<TEntity, TKey1, TKey2>
         where TEntity : class, IEntity<TKey1, TKey2>, new()
     {
-        public Command(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+        public Command(IPdq pdq) : base(pdq) { }
 
         private Command(ITransient transient) : base(transient) { }
 

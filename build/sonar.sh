@@ -3,7 +3,7 @@
 ./.sonar/scanner/dotnet-sonarscanner begin \
     /k:"daniel-buchanan_pdq" \
     /o:"daniel-buchanan" \
-    /d:sonar.login="${SONAR_TOKEN}" \
+    /d:sonar.token="${SONAR_TOKEN}" \
     /d:sonar.host.url="https://sonarcloud.io" \
     /d:sonar.cs.opencover.reportsPaths=coverage.xml
 
@@ -44,4 +44,4 @@ dotnet build --no-incremental pdq.sln
     -o="coverage.xml"
 
 ./.sonar/scanner/dotnet-sonarscanner end \
-    /d:sonar.login="${SONAR_TOKEN}"
+    /d:sonar.token="${SONAR_TOKEN}"

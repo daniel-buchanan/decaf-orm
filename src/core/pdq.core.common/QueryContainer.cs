@@ -5,7 +5,7 @@ using pdq.common.Utilities;
 
 namespace pdq.common
 {
-    public class QueryContainer : IQueryContainerInternal
+	public class QueryContainer : IQueryContainerInternal
 	{
 		private readonly ILoggerProxy logger;
 		private readonly ITransientInternal transient;
@@ -36,7 +36,7 @@ namespace pdq.common
 		}
 
 		/// <inheritdoc/>
-        public Guid Id { get; private set; }
+		public Guid Id { get; private set; }
 
 		/// <inheritdoc/>
 		public QueryStatus Status { get; private set; }
@@ -50,31 +50,31 @@ namespace pdq.common
 		/// <inheritdoc/>
 		public IQueryContext Context => this.context;
 
-        /// <inheritdoc/>
-        IHashProvider IQueryContainerInternal.HashProvider => this.hashProvider;
+		/// <inheritdoc/>
+		IHashProvider IQueryContainerInternal.HashProvider => this.hashProvider;
 
-        /// <inheritdoc/>
-        PdqOptions IQueryContainerInternal.Options => this.options;
+		/// <inheritdoc/>
+		PdqOptions IQueryContainerInternal.Options => this.options;
 
 		/// <inheritdoc/>
 		public ISqlFactory SqlFactory => this.transient.SqlFactory;
 
-        /// <inheritdoc/>
-        public ILoggerProxy Logger => this.logger;
+		/// <inheritdoc/>
+		public ILoggerProxy Logger => this.logger;
 
-        /// <inheritdoc/>
-        public bool DisposeTransientOnDispose => this.disposeTransientOnDispose;
+		/// <inheritdoc/>
+		public bool DisposeTransientOnDispose => this.disposeTransientOnDispose;
 
-        /// <inheritdoc/>
-        string IQueryContainerInternal.GetHash() => this.context.GetHash();
+		/// <inheritdoc/>
+		string IQueryContainerInternal.GetHash() => this.context.GetHash();
 
 		/// <summary>
-        /// 
-        /// </summary>
-        /// <param name="options"></param>
-        /// <param name="logger"></param>
-        /// <param name="transient"></param>
-        /// <returns></returns>
+		/// 
+		/// </summary>
+		/// <param name="options"></param>
+		/// <param name="logger"></param>
+		/// <param name="transient"></param>
+		/// <returns></returns>
 		public static IQueryContainer Create(
 			ITransient transient,
 			ILoggerProxy logger,
@@ -98,18 +98,17 @@ namespace pdq.common
 		public void Dispose()
 		{
 			Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+			GC.SuppressFinalize(this);
+		}
 
 		/// <inheritdoc/>
 		protected virtual void Dispose(bool disposing)
-        {
+		{
 			if (!disposing) return;
 			this.logger.Debug($"Query({Id} :: Disposing({disposing})");
-            this.aliasManager.Dispose();
-			if (this.disposeTransientOnDispose)
-				this.transient.Dispose();
-        }
-    }
+			this.aliasManager.Dispose();
+			this.transient.NotifyQueryDisposed(Id);
+		}
+	}
 }
 

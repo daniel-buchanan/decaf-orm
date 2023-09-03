@@ -54,7 +54,7 @@ namespace pdq.common.Options
         /// This means primarily that the query hash and timestamp will not
         /// be included as comments at the beginning of the query.
         /// </summary>
-        /// <returns>(Fluent API) The ability to continnue further setup actions.</returns>
+        /// <returns>(Fluent API) The ability to continue further setup actions.</returns>
         IPdqOptionsBuilder DisableSqlHeaderComments();
     }
 

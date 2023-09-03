@@ -5,7 +5,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
 using pdq.common.Connections;
-using pdq.common.Logging;
 using pdq.tests.common.Mocks;
 using pdq.tests.common.Models;
 using pdq.Implementation;
@@ -25,8 +24,8 @@ namespace pdq.core_tests
             services.AddPdq(o => o.UseMockDatabase());
             services.AddScoped<IConnectionDetails, MockConnectionDetails>();
             var provider = services.BuildServiceProvider();
-            var uow = provider.GetService<IUnitOfWork>();
-            var transient = uow.Begin();
+            var pdq = provider.GetService<IPdq>();
+            var transient = pdq.Begin();
             var query = transient.Query() as IQueryContainerInternal;
             var sqlFactory = provider.GetService<ISqlFactory>();
             this.context = query.CreateContext<ISelectQueryContext>();

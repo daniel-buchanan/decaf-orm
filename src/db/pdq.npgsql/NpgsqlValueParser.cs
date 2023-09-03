@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using pdq.common.Utilities.Reflection;
 using pdq.db.common;
-using pdq.npgsql.Builders;
-using pdq.state.Utilities;
 
 namespace pdq.npgsql
 {
@@ -36,8 +31,8 @@ namespace pdq.npgsql
             else if (underlyingType == typeof(int)) return false;
             else if (underlyingType == typeof(uint)) return false;
             else if (underlyingType == typeof(double) ||
-                        underlyingType == typeof(float) ||
-                        underlyingType == typeof(decimal))
+                     underlyingType == typeof(float) ||
+                     underlyingType == typeof(decimal))
                 return true;
             else if (underlyingType == typeof(string)) return true;
 

@@ -2,14 +2,13 @@
 using pdq.common;
 using pdq.common.Connections;
 using pdq.state;
-using pdq.state.Utilities;
 
 namespace pdq.services
 {
     internal abstract class Service
     {
         private readonly ITransient transient;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IPdq pdq;
         protected readonly bool disposeOnExit;
 
         protected Service(ITransient transient)
@@ -18,9 +17,9 @@ namespace pdq.services
             this.disposeOnExit = false;
         }
 
-        protected Service(IUnitOfWork unitOfWork)
+        protected Service(IPdq pdq)
         {
-            this.unitOfWork = unitOfWork;
+            this.pdq = pdq;
             this.disposeOnExit = true;
         }
 
@@ -34,7 +33,7 @@ namespace pdq.services
         {
             if (this.transient != null) return this.transient;
 
-            return this.unitOfWork.Begin();
+            return this.pdq.Begin();
         }
 
         /// <summary>

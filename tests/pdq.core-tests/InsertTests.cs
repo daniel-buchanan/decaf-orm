@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
@@ -27,8 +26,8 @@ namespace pdq.core_tests
             services.AddScoped<IConnectionDetails, MockConnectionDetails>();
 
             var provider = services.BuildServiceProvider();
-            var uow = provider.GetService<IUnitOfWork>();
-            var transient = uow.Begin();
+            var pdq = provider.GetService<IPdq>();
+            var transient = pdq.Begin();
             this.query = transient.Query() as IQueryContainerInternal;
         }
 

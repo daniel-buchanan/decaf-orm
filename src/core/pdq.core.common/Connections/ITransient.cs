@@ -1,13 +1,12 @@
 ﻿using System;
-using pdq.common.Connections;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.services")]
 namespace pdq.common.Connections
 {
-	/// <summary>
+    /// <summary>
     /// 
     /// </summary>
-	public interface ITransient : IDisposable
+    public interface ITransient : IDisposable
 	{
 		/// <summary>
         /// Gets the Id of the "Transient", this is unqiuely generated for each transient
@@ -40,5 +39,11 @@ namespace pdq.common.Connections
         /// Gets the SQL Factory for this query.
         /// </summary>
         ISqlFactory SqlFactory { get; }
+
+        /// <summary>
+        /// Notify the transient that a query has been disposed.
+        /// </summary>
+        /// <param name="queryId">The ID of the query that was disposed.</param>
+        void NotifyQueryDisposed(Guid queryId);
     }
 }

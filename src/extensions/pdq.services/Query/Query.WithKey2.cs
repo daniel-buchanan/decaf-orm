@@ -12,7 +12,7 @@ namespace pdq.services
         IQuery<TEntity, TKey1, TKey2>
         where TEntity : class, IEntity<TKey1, TKey2>, new()
     {
-        public Query(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+        public Query(IPdq pdq) : base(pdq) { }
 
         private Query(ITransient transient) : base(transient) { }
 

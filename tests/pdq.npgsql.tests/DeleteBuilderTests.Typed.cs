@@ -15,8 +15,8 @@ namespace pdq.npgsql.tests
 		{
             BuildServiceProvider();
 
-            var uow = provider.GetService<IUnitOfWork>();
-            var transient = uow.Begin();
+            var pdq = provider.GetService<IPdq>();
+            var transient = pdq.Begin();
             this.query = transient.Query() as IQueryContainer;
         }
 

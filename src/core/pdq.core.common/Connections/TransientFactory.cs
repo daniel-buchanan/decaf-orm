@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using pdq.common.Connections;
 using pdq.common.Logging;
 using pdq.common.Utilities;
 
 namespace pdq.common.Connections
 {
-	public sealed class TransientFactory : ITransientFactoryInternal
+    public sealed class TransientFactory : ITransientFactoryInternal
 	{
         private readonly List<ITransient> tracker;
         private readonly PdqOptions options;

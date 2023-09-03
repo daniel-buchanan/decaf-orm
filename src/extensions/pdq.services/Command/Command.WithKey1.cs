@@ -13,7 +13,7 @@ namespace pdq.services
         ICommand<TEntity, TKey>
         where TEntity : class, IEntity<TKey>, new()
     {
-        public Command(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+        public Command(IPdq pdq) : base(pdq) { }
 
         private Command(ITransient transient) : base(transient) { }
 

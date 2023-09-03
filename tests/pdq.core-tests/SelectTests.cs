@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +11,6 @@ using pdq.tests.common.Models;
 using pdq.Exceptions;
 using pdq.state;
 using pdq.state.Conditionals;
-using pdq.state.QueryTargets;
 using Xunit;
 
 namespace pdq.core_tests
@@ -33,8 +31,8 @@ namespace pdq.core_tests
             services.AddScoped<IConnectionDetails, MockConnectionDetails>();
 
             var provider = services.BuildServiceProvider();
-            var uow = provider.GetService<IUnitOfWork>();
-            var transient = uow.Begin();
+            var pdq = provider.GetService<IPdq>();
+            var transient = pdq.Begin();
             this.query = transient.Query() as IQueryContainerInternal;
         }
 

@@ -4,9 +4,9 @@ using pdq.db.common;
 
 namespace pdq.npgsql
 {
-	public interface INpgsqlOptionsBuilder :
+    public interface INpgsqlOptionsBuilder :
         ISqlOptionsBuilder<NpgsqlOptions, INpgsqlOptionsBuilder, INpgsqlConnectionDetails>
-	{
+    {
         /// <summary>
         /// Sets the transaction isolation level.<br/>
         /// The default is <see cref="IsolationLevel.ReadCommitted"/>.

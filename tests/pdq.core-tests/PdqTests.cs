@@ -12,7 +12,7 @@ namespace pdq.core_tests
 {
     public class PdqTests
     {
-        IPdq GetPdq()
+        static IPdq GetPdq()
         {
             var logger = Mock.Of<ILoggerProxy>();
             var options = new PdqOptions();

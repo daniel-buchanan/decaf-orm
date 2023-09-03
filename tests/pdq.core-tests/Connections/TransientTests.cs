@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common;
@@ -73,6 +74,20 @@ namespace pdq.core_tests.Connections
             method.Should().NotThrow();
             var result = method();
             result.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void NotifyQueryDisposed_UnknownQueryDoesNothing()
+        {
+            // Arrange
+            var transient = this.pdq.Begin() as ITransientInternal;
+
+            // Act
+            transient.NotifyQueryDisposed(Guid.Empty);
+            var method = () => transient.Query();
+
+            // Assert
+            method.Should().NotThrow<ObjectDisposedException>();
         }
     }
 }

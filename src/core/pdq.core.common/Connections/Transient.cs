@@ -114,12 +114,12 @@ namespace pdq.common.Connections
             return query;
         }
 
-        public void NotifyQueryDisposed(Guid id)
+        public void NotifyQueryDisposed(Guid queryId)
         {
-            var found = this.queries.FirstOrDefault(q => q.Id == id);
+            var found = this.queries.FirstOrDefault(q => q.Id == queryId);
             if(found == null)
             {
-                this.logger.Debug($"Transient({Id}) :: Cound not find query with Id - {id}");
+                this.logger.Debug($"Transient({Id}) :: Cound not find query with Id - {queryId}");
                 return;
             }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using pdq.common.Logging;
 using pdq.common.Utilities;
@@ -35,10 +36,10 @@ namespace pdq.common.Connections
         public ITransient Create(IConnectionDetails connectionDetails) => CreateAsync(connectionDetails).WaitFor();
 
         /// <inheritdoc/>
-        public async Task<ITransient> CreateAsync(IConnectionDetails connectionDetails)
+        public async Task<ITransient> CreateAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default)
         {
             this.logger.Debug("TransientFactory :: Getting Transaction");
-            var transaction = await this.transactionFactory.GetAsync(connectionDetails);
+            var transaction = await this.transactionFactory.GetAsync(connectionDetails, cancellationToken);
             var transient = Transient.Create(
                 transaction,
                 this.sqlFactory,

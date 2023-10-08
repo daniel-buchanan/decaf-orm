@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace pdq.common.Connections
@@ -16,8 +17,9 @@ namespace pdq.common.Connections
         /// 
         /// </summary>
         /// <param name="connectionDetails"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<ITransaction> GetAsync(IConnectionDetails connectionDetails);
+        Task<ITransaction> GetAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default);
 	}
 }
 

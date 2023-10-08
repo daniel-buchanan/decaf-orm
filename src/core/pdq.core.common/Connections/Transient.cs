@@ -6,7 +6,7 @@ using pdq.common.Utilities;
 
 namespace pdq.common.Connections
 {
-	public class Transient : ITransientInternal
+    public class Transient : ITransientInternal
 	{
         private readonly IConnection connection;
         private readonly ITransactionInternal transaction;
@@ -114,6 +114,7 @@ namespace pdq.common.Connections
             return query;
         }
 
+        /// <inheritdoc />
         public void NotifyQueryDisposed(Guid queryId)
         {
             var found = this.queries.FirstOrDefault(q => q.Id == queryId);

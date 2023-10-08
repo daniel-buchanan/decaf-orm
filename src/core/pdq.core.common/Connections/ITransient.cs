@@ -7,21 +7,21 @@ namespace pdq.common.Connections
     /// 
     /// </summary>
     public interface ITransient : IDisposable
-	{
-		/// <summary>
+    {
+        /// <summary>
         /// Gets the Id of the "Transient", this is unqiuely generated for each transient
         /// at the time that it is created and cannot be changed.
         /// </summary>
-		Guid Id { get; }
+        Guid Id { get; }
 
-		/// <summary>
+        /// <summary>
         /// Begin a query on this "Transient", this will allow you to choose what
         /// type of query you wish to write and then execute.
         /// </summary>
         /// <returns>(FluentApi) The ability to begin, write and execute a query.</returns>
         /// <example>t.Query()</example>
-		IQueryContainer Query();
-	}
+        IQueryContainer Query();
+    }
 
     internal interface ITransientInternal : ITransient
     {

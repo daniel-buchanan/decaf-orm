@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading;
 using System.Threading.Tasks;
 using pdq.common;
 using pdq.common.Connections;
@@ -45,14 +46,15 @@ namespace pdq.Implementation
         /// <param name="func">The function to execute.</param>
         /// <returns>The result of the function</returns>
         protected async Task<T> ExecuteAsync<T>(
-            Func<string, object, IDbConnection, IDbTransaction, Task<T>> func)
+            Func<string, object, IDbConnection, IDbTransaction, CancellationToken, Task<T>> func,
+            CancellationToken cancellationToken = default)
         {
             var template = this.sqlFactory.ParseTemplate(this.context);
             var parameters = this.sqlFactory.ParseParameters(this.context, template);
             var connection = GetConnection();
             var transaction = GetTransaction();
 
-            return await func(template.Sql, parameters, connection, transaction);
+            return await func(template.Sql, parameters, connection, transaction, cancellationToken);
         }
 
         /// <inheritdoc/>

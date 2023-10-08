@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using pdq.common.Connections;
 using pdq.common.Exceptions;
 
@@ -14,7 +15,7 @@ namespace pdq.tests.common.Mocks
 
         protected override string DatabaseRegex => ".+";
 
-        protected override Task<string> ConstructConnectionStringAsync()
+        protected override Task<string> ConstructConnectionStringAsync(CancellationToken cancellationToken = default)
         {
             var connStr = $"{Hostname}:{Port},{DatabaseName}";
             return Task.FromResult(connStr);

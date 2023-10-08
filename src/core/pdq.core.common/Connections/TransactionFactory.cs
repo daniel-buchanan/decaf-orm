@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using pdq.common.Logging;
 using pdq.common.Utilities;
@@ -29,23 +30,24 @@ namespace pdq.common.Connections
             => GetAsync(connectionDetails).WaitFor();
 
         /// <inheritdoc/>
-        public async Task<ITransaction> GetAsync(IConnectionDetails connectionDetails)
+        public async Task<ITransaction> GetAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default)
         {
             this.logger.Debug($"ITransactionFactory :: Getting Transaction");
-            var key = (await connectionDetails.GetConnectionStringAsync()).ToBase64String();
+            var connectionString = await connectionDetails.GetConnectionStringAsync(cancellationToken);
+            var key = connectionString.ToBase64String();
             var existing = this.transactions.TryGetValue(key, out var transaction);
             if (existing) return transaction;
 
             this.logger.Debug($"ITransactionFactory :: Creating new Transaction");
-            var connection = await this.connectionFactory.GetAsync(connectionDetails);
-            transaction = await CreateTransaction(connection);
+            var connection = await this.connectionFactory.GetConnectionAsync(connectionDetails, cancellationToken);
+            transaction = await CreateTransactionAsync(connection, cancellationToken);
             this.transactions.Add(key, transaction);
 
             return transaction;
         }
 
         /// <inheritdoc/>
-        protected abstract Task<ITransaction> CreateTransaction(IConnection connection);
+        protected abstract Task<ITransaction> CreateTransactionAsync(IConnection connection, CancellationToken cancellationToken = default);
     }
 }
 

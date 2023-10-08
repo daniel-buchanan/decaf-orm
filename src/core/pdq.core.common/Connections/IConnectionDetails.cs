@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace pdq.common.Connections
@@ -34,8 +35,9 @@ namespace pdq.common.Connections
 		/// <summary>
         /// Gets the connection string to connect to the database.
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns>A task which returns the connection string.</returns>
-		Task<string> GetConnectionStringAsync();
+		Task<string> GetConnectionStringAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets the unique hash for this connection.

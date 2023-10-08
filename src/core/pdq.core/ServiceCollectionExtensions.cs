@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common.Logging;
 using pdq.common;
-using pdq.state.Utilities;
 using pdq.common.Connections;
 using pdq.common.Exceptions;
 using pdq.common.Utilities;
@@ -11,7 +10,7 @@ using pdq.common.Utilities.Reflection;
 
 namespace pdq
 {
-	public static class ServiceCollectionExtensions
+    public static class ServiceCollectionExtensions
 	{
         /// <summary>
         /// Add pdq to your <see cref="IServiceCollection"/>, setting the default options.

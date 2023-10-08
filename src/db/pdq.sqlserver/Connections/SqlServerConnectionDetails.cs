@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using pdq.common.Connections;
 using pdq.common.Exceptions;
@@ -83,7 +84,7 @@ namespace pdq.sqlserver
             => this.isTrustedConnection = true;
 
         /// <inheritdoc/>
-        protected override async Task<string> ConstructConnectionStringAsync()
+        protected override async Task<string> ConstructConnectionStringAsync(CancellationToken cancellationToken = default)
         {
             string username, password;
             username = password = null;
@@ -91,7 +92,7 @@ namespace pdq.sqlserver
 
             // check for delayed fetch
             if(auth is DelayedFetchAuthentication delayedFetch)
-                auth = await delayedFetch.FetchAsync();
+                auth = await delayedFetch.FetchAsync(cancellationToken);
 
             if(auth is UsernamePasswordAuthentication creds)
             {

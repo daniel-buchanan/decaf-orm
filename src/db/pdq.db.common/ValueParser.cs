@@ -1,12 +1,10 @@
 ﻿using System;
 using pdq.common.Utilities.Reflection;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace pdq.db.common
 {
-	public abstract class ValueParser : IValueParser
+    public abstract class ValueParser : IValueParser
 	{
         protected readonly IReflectionHelper reflectionHelper;
 

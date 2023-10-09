@@ -49,8 +49,15 @@ namespace pdq.common.Connections
 
             if (this.connections == null)
                 this.connections = new Dictionary<string, IConnection>();
-            string hash = null;
+            return await GetOrCreateConnectionAsync(connectionDetails, cancellationToken);
+        }
 
+        private async Task<IConnection> GetOrCreateConnectionAsync(
+            IConnectionDetails connectionDetails, 
+            CancellationToken cancellationToken)
+        {
+            string hash;
+            
             try
             {
                 hash = connectionDetails.GetHash();
@@ -61,10 +68,7 @@ namespace pdq.common.Connections
                 throw;
             }
 
-            if (this.connections.ContainsKey(hash))
-            {
-                return this.connections[hash];
-            }
+            if (this.connections.TryGetValue(hash, out var conn)) return conn;
 
             try
             {
@@ -79,7 +83,7 @@ namespace pdq.common.Connections
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Construct a connection using the provided connection details.
         /// </summary>

@@ -14,7 +14,7 @@ namespace pdq.sqlserver
         private const string TrustedConnection = "Trusted_Connection=Yes";
         private const string UsernameRegex = @"User ID=(.+);";
         private const string PasswordRegex = @"Password=(.+);";
-        private const string UserID = "User ID";
+        private const string UserId = "User ID";
 
         private bool isTrustedConnection;
         private bool isMarsEnabled;
@@ -31,12 +31,11 @@ namespace pdq.sqlserver
 
                 this.isTrustedConnection = c.Contains(TrustedConnection);
 
-                if(c.Contains(UserID))
-                {
-                    var username = MatchAndFetch(UsernameRegex, c, s => s);
-                    var password = MatchAndFetch(PasswordRegex, c, s => s);
-                    Authentication = new UsernamePasswordAuthentication(username, password);
-                }
+                if (!c.Contains(UserId)) return;
+                
+                var username = MatchAndFetch(UsernameRegex, c, s => s);
+                var password = MatchAndFetch(PasswordRegex, c, s => s);
+                Authentication = new UsernamePasswordAuthentication(username, password);
             });
 
         /// <inheritdoc/>
@@ -86,8 +85,8 @@ namespace pdq.sqlserver
         /// <inheritdoc/>
         protected override async Task<string> ConstructConnectionStringAsync(CancellationToken cancellationToken = default)
         {
-            string username, password;
-            username = password = null;
+            string password;
+            var username = password = null;
             var auth = Authentication;
 
             // check for delayed fetch
@@ -126,16 +125,16 @@ namespace pdq.sqlserver
             if (connectionString?.Contains("Database") == false)
                 return new ConnectionStringParsingException("Connection String does not contain a \"Database\" parameter.");
 
-            if (connectionString?.Contains(UserID) == true && connectionString?.Contains("Password") == false)
+            if (connectionString?.Contains(UserId) == true && !connectionString.Contains("Password"))
                 return new ConnectionStringParsingException("Connection String User credentials are missing a \"Password\".");
 
-            if (connectionString?.Contains(UserID) == false && connectionString?.Contains("Password") == true)
+            if (connectionString?.Contains(UserId) == false && connectionString.Contains("Password"))
                 return new ConnectionStringParsingException("Connection String User credentials are missing a \"User ID\".");
 
-            if (connectionString?.Contains(UserID) == false &&
-                connectionString?.Contains("Password") == false &&
-                connectionString?.Contains(TrustedConnection) == false)
-                return new ConnectionStringParsingException("Connection String does not have eitehr \"User ID\" and \"Password\" or \"Trusted Credentials\" set.");
+            if (connectionString?.Contains(UserId) == false &&
+                !connectionString.Contains("Password") &&
+                !connectionString.Contains(TrustedConnection))
+                return new ConnectionStringParsingException("Connection String does not have either \"User ID\" and \"Password\" or \"Trusted Credentials\" set.");
 
 
             return null;

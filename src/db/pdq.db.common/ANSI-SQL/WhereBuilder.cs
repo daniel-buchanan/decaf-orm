@@ -9,8 +9,8 @@ namespace pdq.db.common.ANSISQL
 {
     public abstract class WhereBuilder : db.common.Builders.IWhereBuilder
     {
-        protected readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
-        protected readonly IConstants constants;
+        private readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
+        private readonly IConstants constants;
 
         protected WhereBuilder(
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
@@ -58,10 +58,10 @@ namespace pdq.db.common.ANSISQL
             sqlBuilder.PrependIndent();
             sqlBuilder.Append(constants.OpeningParen);
             
-            if (clause is IColumn) AddColumn(clause as IColumn, sqlBuilder, parameterManager);
-            else if (clause is ColumnMatch) AddColumnMatch(clause as ColumnMatch, sqlBuilder);
-            else if (clause is IBetween) AddBetween(clause as IBetween, sqlBuilder, parameterManager);
-            else if (clause is IInValues) AddInValues(clause as IInValues, sqlBuilder, parameterManager);
+            if (clause is IColumn column) AddColumn(column, sqlBuilder, parameterManager);
+            else if (clause is ColumnMatch match) AddColumnMatch(match, sqlBuilder);
+            else if (clause is IBetween between) AddBetween(between, sqlBuilder, parameterManager);
+            else if (clause is IInValues inValues) AddInValues(inValues, sqlBuilder, parameterManager);
             
             sqlBuilder.Append(constants.ClosingParen);
         }
@@ -70,11 +70,10 @@ namespace pdq.db.common.ANSISQL
         {
             sqlBuilder.AppendLine(constants.OpeningParen);
 
-            if (clause is And ||
-               clause is Or)
+            if (clause is And || clause is Or)
                 AddAndOr(clause, sqlBuilder, parameterManager, level);
-            else if (clause is Not)
-                AddNot(clause, sqlBuilder, parameterManager, level);
+            else if (clause is Not not)
+                AddNot(not, sqlBuilder, parameterManager, level);
 
             sqlBuilder.PrependIndent();
             sqlBuilder.Append(constants.ClosingParen);
@@ -93,7 +92,7 @@ namespace pdq.db.common.ANSISQL
             {
                 AddWhere(w, sqlBuilder, parameterManager, indentLevel);
 
-                if (index >= 0 && index < noChildren)
+                if (index < noChildren)
                 {
                     sqlBuilder.IncreaseIndent();
                     sqlBuilder.AppendLine(combinator);
@@ -103,9 +102,10 @@ namespace pdq.db.common.ANSISQL
             }
         }
 
-        private void AddNot(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
+        private void AddNot(Not not, ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
         {
-            var not = clause as Not;
+            if (not == null) return;
+            
             sqlBuilder.IncreaseIndent();
             sqlBuilder.AppendLine(constants.Not);
             sqlBuilder.DecreaseIndent();

@@ -33,7 +33,7 @@ namespace pdq.common.Utilities
             }
 
             alias = alias.ToLower();
-            var existing = knownAliases.FirstOrDefault(a => a.Name == alias);
+            var existing = knownAliases.Find(a => a.Name == alias);
             if (existing != null)
             {
                 if (string.IsNullOrWhiteSpace(existing.Relation))
@@ -64,13 +64,13 @@ namespace pdq.common.Utilities
         /// <inheritdoc />
         public string GetAssociation(string alias)
         {
-            var existing = knownAliases.FirstOrDefault(a => a.Name == alias);
+            var existing = knownAliases.Find(a => a.Name == alias);
             return existing?.Relation;
         }
 
         private string GenerateAlias(string assocWith)
         {
-            var prefix = assocWith?.Substring(0, 1)?.ToLower() ?? "a";
+            var prefix = assocWith.Substring(0, 1)?.ToLower() ?? "a";
 
             var aliasCount = aliasCounts[prefix];
             var alias = $"{prefix}{aliasCount}";

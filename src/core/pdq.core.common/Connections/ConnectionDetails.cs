@@ -24,25 +24,25 @@ namespace pdq.common.Connections
         /// <summary>
         /// Parse the provided connection string into the properties of this object.
         /// </summary>
-        /// <param name="connectionString">The connection string to parse.</param>
+        /// <param name="input">The connection string to parse.</param>
         /// <param name="additionalParsing">A function for any additional parsing.</param>
         /// <exception cref="ConnectionStringParsingException">An error that occured during the parsing of the connection string.</exception>
-        protected virtual void ParseConnectionString(string connectionString, Action<string> additionalParsing = null)
+        protected virtual void ParseConnectionString(string input, Action<string> additionalParsing = null)
         {
             try
             {
-                if(string.IsNullOrWhiteSpace(connectionString))
+                if(string.IsNullOrWhiteSpace(input))
                     throw new ConnectionStringParsingException("No connection string has been provided");
 
-                var validationException = ValidateConnectionString(connectionString);
+                var validationException = ValidateConnectionString(input);
                 if (validationException != null) throw validationException;
 
-                Hostname = MatchAndFetch(HostRegex, connectionString, s => s);
-                Port = MatchAndFetch(PortRegex, connectionString, int.Parse);
-                DatabaseName = MatchAndFetch(DatabaseRegex, connectionString, s => s);
+                Hostname = MatchAndFetch(HostRegex, input, s => s);
+                Port = MatchAndFetch(PortRegex, input, int.Parse);
+                DatabaseName = MatchAndFetch(DatabaseRegex, input, s => s);
 
                 if (additionalParsing != null)
-                    additionalParsing(connectionString);
+                    additionalParsing(input);
             }
             catch (Exception e)
             {
@@ -63,15 +63,14 @@ namespace pdq.common.Connections
         {
             var regExp = new Regex(regex);
             var match = regExp.Match(input);
-            if (match.Success)
-            {
-                var matchedValue = match.Groups[1].Value;
-                var nextSeperator = matchedValue?.IndexOf(";") ?? 0;
-                if (nextSeperator <= 0) return parse(matchedValue);
-                var trimmed = matchedValue?.Substring(0, nextSeperator);
-                return parse(trimmed);
-            }
-            return default(T);
+            
+            if (!match.Success) return default(T);
+            
+            var matchedValue = match.Groups[1].Value;
+            var nextSeperator = matchedValue?.IndexOf(";") ?? 0;
+            if (nextSeperator <= 0) return parse(matchedValue);
+            var trimmed = matchedValue.Substring(0, nextSeperator);
+            return parse(trimmed);
         }
 
         /// <summary>

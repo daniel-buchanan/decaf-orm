@@ -70,8 +70,10 @@ namespace pdq.common.Utilities
 
         private string GenerateAlias(string assocWith)
         {
-            var prefix = assocWith.Substring(0, 1)?.ToLower() ?? "a";
-
+            if (string.IsNullOrWhiteSpace(assocWith) || assocWith.Length <= 1)
+                assocWith = "a";
+            
+            var prefix = assocWith.Substring(0, 1).ToLower();
             var aliasCount = aliasCounts[prefix];
             var alias = $"{prefix}{aliasCount}";
             aliasCounts[prefix] += 1;

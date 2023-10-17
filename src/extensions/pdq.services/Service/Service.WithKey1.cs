@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using pdq.common.Connections;
 
 namespace pdq.services
@@ -24,7 +26,8 @@ namespace pdq.services
         private Service(ITransient transient)
             : base(transient,
                    t => Query<TEntity, TKey>.Create(t),
-                   t => Command<TEntity, TKey>.Create(t)) { }
+                   t => Command<TEntity, TKey>.Create(t))
+        { }
 
         public static IService<TEntity, TKey> Create(ITransient transient)
             => new Service<TEntity, TKey>(transient);
@@ -92,6 +95,46 @@ namespace pdq.services
         /// <inheritdoc/>
         public void Update(TEntity item)
             => this.command.Update(item);
+
+        /// <inheritdoc/>
+        public async Task UpdateAsync(TEntity item, CancellationToken cancellationToken = default)
+            => await this.command.UpdateAsync(item, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task UpdateAsync(dynamic toUpdate, TKey key, CancellationToken cancellationToken = default)
+            => await this.command.UpdateAsync(toUpdate, key, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task DeleteAsync(TKey key, CancellationToken cancellationToken = default)
+            => await this.command.DeleteAsync(key, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task DeleteAsync(TKey[] keys, CancellationToken cancellationToken = default)
+            => await this.command.DeleteAsync(keys, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task DeleteAsync(IEnumerable<TKey> keys, CancellationToken cancellationToken = default)
+            => await this.command.DeleteAsync(keys, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task<TEntity> AddAsync(TEntity toAdd, CancellationToken cancellationToken = default)
+            => await this.command.AddAsync(toAdd, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> toAdd, CancellationToken cancellationToken = default)
+            => await this.command.AddAsync(toAdd, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task UpdateAsync(TEntity toUpdate, Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+            => await this.command.UpdateAsync(toUpdate, expression, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task UpdateAsync(dynamic toUpdate, Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+            => await this.command.UpdateAsync(toUpdate, expression, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task DeleteAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+            => await this.command.DeleteAsync(expression, cancellationToken);
     }
 }
 

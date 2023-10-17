@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using pdq.common;
 using pdq.common.Connections;
+using pdq.common.Utilities;
 using pdq.state;
 
 namespace pdq.services
@@ -42,11 +45,25 @@ namespace pdq.services
         /// </summary>
         /// <param name="method">The <see cref="Action{IQuery}"/> defining the query.</param>
         protected void ExecuteQuery(Action<IQueryContainer> method)
+            => ExecuteQueryAsync(q => { method(q); return Task.CompletedTask; }).WaitFor();
+
+        protected async Task ExecuteQueryAsync(Func<IQueryContainer, Task> method, CancellationToken cancellationToken = default)
         {
             var t = this.GetTransient();
-            using(var q = t.Query())
+            using (var q = await t.QueryAsync(cancellationToken))
             {
-                method(q);
+                await method(q);
+            }
+
+            if (this.disposeOnExit) t.Dispose();
+        }
+
+        protected async Task ExecuteQueryAsync(Func<IQueryContainer, CancellationToken, Task> method, CancellationToken cancellationToken = default)
+        {
+            var t = this.GetTransient();
+            using (var q = await t.QueryAsync(cancellationToken))
+            {
+                await method(q, cancellationToken);
             }
 
             if (this.disposeOnExit) t.Dispose();
@@ -58,12 +75,29 @@ namespace pdq.services
         /// </summary>
         /// <param name="method">The <see cref="Action{IQuery, T}"/> defining the query.</param>
         protected T ExecuteQuery<T>(Func<IQueryContainer, T> method)
+            => ExecuteQueryAsync(q => Task.FromResult(method(q))).WaitFor();
+
+        protected async Task<T> ExecuteQueryAsync<T>(Func<IQueryContainer, Task<T>> method, CancellationToken cancellationToken = default)
         {
             T result;
             var t = this.GetTransient();
-            using (var q = t.Query())
+            using (var q = await t.QueryAsync(cancellationToken))
             {
-                result = method(q);
+                result = await method(q);
+            }
+
+            if (this.disposeOnExit) t.Dispose();
+
+            return result;
+        }
+
+        protected async Task<T> ExecuteQueryAsync<T>(Func<IQueryContainer, CancellationToken, Task<T>> method, CancellationToken cancellationToken = default)
+        {
+            T result;
+            var t = this.GetTransient();
+            using (var q = await t.QueryAsync(cancellationToken))
+            {
+                result = await method(q, cancellationToken);
             }
 
             if (this.disposeOnExit) t.Dispose();

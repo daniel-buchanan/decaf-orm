@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using pdq.common.Connections;
 
 namespace pdq.services
@@ -21,7 +23,8 @@ namespace pdq.services
         private Service(ITransient transient)
             : base(transient,
                    t => Query<TEntity>.Create(t),
-                   t => Command<TEntity>.Create(t)) { }
+                   t => Command<TEntity>.Create(t))
+        { }
 
         public static IService<TEntity> Create(ITransient transient)
             => new Service<TEntity>(transient);
@@ -57,6 +60,26 @@ namespace pdq.services
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
             => this.command.Update(toUpdate, expression);
+
+        /// <inheritdoc/>
+        public async Task<TEntity> AddAsync(TEntity toAdd, CancellationToken cancellationToken = default)
+            => await this.command.AddAsync(toAdd, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> toAdd, CancellationToken cancellationToken = default)
+            => await this.command.AddAsync(toAdd, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task UpdateAsync(TEntity toUpdate, Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+            => await this.command.UpdateAsync(toUpdate, expression, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task UpdateAsync(dynamic toUpdate, Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+            => await this.command.UpdateAsync(toUpdate, expression, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task DeleteAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+            => await this.command.DeleteAsync(expression, cancellationToken);
     }
 }
 

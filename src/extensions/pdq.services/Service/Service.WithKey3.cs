@@ -24,7 +24,8 @@ namespace pdq.services
         private Service(ITransient transient)
             : base(transient,
                    t => Query<TEntity, TKey1, TKey2, TKey3>.Create(t),
-                   t => Command<TEntity, TKey1, TKey2, TKey3>.Create(t)) { }
+                   t => Command<TEntity, TKey1, TKey2, TKey3>.Create(t))
+        { }
 
         public static IService<TEntity, TKey1, TKey2, TKey3> Create(ITransient transient)
             => new Service<TEntity, TKey1, TKey2, TKey3>(transient);

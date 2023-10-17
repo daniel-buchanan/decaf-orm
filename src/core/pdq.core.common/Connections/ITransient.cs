@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.services")]
 namespace pdq.common.Connections
@@ -21,6 +23,12 @@ namespace pdq.common.Connections
         /// <returns>(FluentApi) The ability to begin, write and execute a query.</returns>
         /// <example>t.Query()</example>
         IQueryContainer Query();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<IQueryContainer> QueryAsync(CancellationToken cancellationToken = default);
     }
 
     internal interface ITransientInternal : ITransient

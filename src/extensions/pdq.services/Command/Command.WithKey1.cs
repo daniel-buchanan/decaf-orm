@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using pdq.common;
 using pdq.common.Connections;
+using pdq.common.Utilities;
 using pdq.state;
 
 namespace pdq.services
@@ -36,7 +39,7 @@ namespace pdq.services
                 return new List<TEntity>();
 
             var first = toAdd.First();
-            return Add(toAdd, new[] { first.KeyMetadata.Name });
+            return AddAsync(toAdd, new[] { first.KeyMetadata.Name }).WaitFor();
         }
 
         /// <inheritdoc/>
@@ -47,8 +50,17 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public void Delete(IEnumerable<TKey> keys)
+            => DeleteAsync(keys).WaitFor();
+
+        public async Task DeleteAsync(TKey key, CancellationToken cancellationToken = default)
+            => await DeleteAsync(new[] { key }, cancellationToken);
+
+        public async Task DeleteAsync(TKey[] keys, CancellationToken cancellationToken = default)
+            => await DeleteAsync(keys?.AsEnumerable(), cancellationToken);
+
+        public async Task DeleteAsync(IEnumerable<TKey> keys, CancellationToken cancellationToken = default)
         {
-            DeleteByKeys(keys, (keyBatch, q, b) =>
+            await DeleteByKeysAsync(keys, (keyBatch, q, b) =>
             {
                 GetKeyColumnNames<TEntity, TKey>(q, out var keyName);
                 b.Column(keyName).Is().In(keyBatch);
@@ -57,13 +69,19 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public void Update(TEntity item)
-        {
-            var keyValue = item.GetKeyValue();
-            Update(item, keyValue);
-        }
+            => UpdateAsync(item).WaitFor();
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, TKey key)
+            => UpdateAsync(toUpdate, key).WaitFor();
+
+        public async Task UpdateAsync(TEntity item, CancellationToken cancellationToken = default)
+        {
+            var keyValue = item.GetKeyValue();
+            await UpdateAsync(item, keyValue);
+        }
+
+        public async Task UpdateAsync(dynamic toUpdate, TKey key, CancellationToken cancellationToken = default)
         {
             var temp = new TEntity();
             var parameterExpression = Expression.Parameter(typeof(TEntity), "t");
@@ -72,7 +90,7 @@ namespace pdq.services
             var keyEqualsExpression = Expression.Equal(keyPropertyExpression, keyConstantExpression);
             var lambdaExpression = Expression.Lambda<Func<TEntity, bool>>(keyEqualsExpression, parameterExpression);
 
-            Update(toUpdate, lambdaExpression);
+            await UpdateAsync(toUpdate, lambdaExpression);
         }
     }
 }

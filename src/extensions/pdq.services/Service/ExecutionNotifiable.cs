@@ -27,18 +27,18 @@ namespace pdq.services
         }
 
         /// <inheritdoc/>
-        public event EventHandler<PreExecutionEventArgs> PreExecution
+        public event EventHandler<PreExecutionEventArgs> OnBeforeExecution
         {
             add
             {
-                this.query.PreExecution += value;
-                this.command.PreExecution += value;
+                this.query.OnBeforeExecution += value;
+                this.command.OnBeforeExecution += value;
             }
 
             remove
             {
-                this.query.PreExecution -= value;
-                this.command.PreExecution -= value;
+                this.query.OnBeforeExecution -= value;
+                this.command.OnBeforeExecution -= value;
             }
         }
 

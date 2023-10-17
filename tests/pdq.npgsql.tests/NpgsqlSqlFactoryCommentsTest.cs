@@ -15,13 +15,13 @@ using Xunit;
 
 namespace pdq.npgsql.tests
 {
-	public class NpgsqlSqlFactoryCommentTest : NpgsqlTest
-	{
+    public class NpgsqlSqlFactoryCommentTest : NpgsqlTest
+    {
         private readonly ISqlFactory sqlFactory;
         private readonly IService<Person> personService;
 
-		public NpgsqlSqlFactoryCommentTest() : base(false)
-		{
+        public NpgsqlSqlFactoryCommentTest() : base(false)
+        {
             services.Replace<IConnectionFactory, MockConnectionFactory>();
             services.Replace<ITransactionFactory, MockTransactionFactory>();
             services.AddScoped<IConnectionDetails>(s => new MockConnectionDetails());
@@ -38,7 +38,7 @@ namespace pdq.npgsql.tests
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };

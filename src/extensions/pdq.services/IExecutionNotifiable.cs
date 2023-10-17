@@ -11,6 +11,6 @@ namespace pdq.services
         /// <summary>
         /// Event fired before the query is executed.
         /// </summary>
-        event EventHandler<PreExecutionEventArgs> PreExecution;
+        event EventHandler<PreExecutionEventArgs> OnBeforeExecution;
     }
 }

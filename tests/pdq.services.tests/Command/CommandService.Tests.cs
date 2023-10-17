@@ -42,7 +42,7 @@ namespace pdq.services.tests.Command
             };
 
             // Act
-            this.personService.PreExecution += handler;
+            this.personService.OnBeforeExecution += handler;
             this.personService.Add(new Person
             {
                 Email = "bob@bob.com"
@@ -57,7 +57,7 @@ namespace pdq.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -79,7 +79,7 @@ namespace pdq.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -107,7 +107,7 @@ namespace pdq.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -137,7 +137,7 @@ namespace pdq.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -165,7 +165,7 @@ namespace pdq.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -193,7 +193,7 @@ namespace pdq.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };

@@ -10,17 +10,17 @@ namespace pdq.services
     /// A Service for making modifications to a given <see cref="TEntity"/>. 
     /// </summary>
     /// <typeparam name="TEntity">The type of <see cref="IEntity"/> to work with.</typeparam>
-	public interface ICommand<TEntity> :
+	public partial interface ICommand<TEntity> :
         ICommand,
         IExecutionNotifiable
         where TEntity : IEntity, new()
-	{
-		/// <summary>
+    {
+        /// <summary>
         /// Add an item to the database.
         /// </summary>
         /// <param name="toAdd">The <see cref="TEntity"/> to be added.</param>
         /// <returns>The updated <see cref="TEntity"/> which has been added.</returns>
-		TEntity Add(TEntity toAdd);
+        TEntity Add(TEntity toAdd);
 
         /// <summary>
         /// Add an item to the database.
@@ -50,11 +50,11 @@ namespace pdq.services
         /// <param name="expression">An expression specifying which item(s) to update.</param>
         void Update(dynamic toUpdate, Expression<Func<TEntity, bool>> expression);
 
-		/// <summary>
+        /// <summary>
         /// Delete one or more items.
         /// </summary>
         /// <param name="expression">An expression specifying which item(s) should be deleted.</param>
-		void Delete(Expression<Func<TEntity, bool>> expression);
+        void Delete(Expression<Func<TEntity, bool>> expression);
     }
 }
 

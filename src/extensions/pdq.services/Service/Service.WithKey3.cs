@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using pdq.common.Connections;
 
 namespace pdq.services
@@ -93,6 +95,36 @@ namespace pdq.services
         /// <inheritdoc/>
         public void Update(TEntity toUpdate)
             => this.command.Update(toUpdate);
+
+        public async Task UpdateAsync(TEntity toUpdate, CancellationToken cancellationToken = default)
+            => await this.command.UpdateAsync(toUpdate, cancellationToken);
+
+        public async Task UpdateAsync(dynamic toUpdate, TKey1 key1, TKey2 key2, TKey3 key3, CancellationToken cancellationToken = default)
+            => await this.command.UpdateAsync(toUpdate, key1, key2, key3, cancellationToken);
+
+        public async Task DeleteAsync(TKey1 key1, TKey2 key2, TKey3 key3, CancellationToken cancellationToken = default)
+            => await this.command.DeleteAsync(key1, key2, key3, cancellationToken);
+
+        public async Task DeleteAsync(ICompositeKeyValue<TKey1, TKey2, TKey3>[] keys, CancellationToken cancellationToken = default)
+            => await this.command.DeleteAsync(keys, cancellationToken);
+
+        public async Task DeleteAsync(IEnumerable<ICompositeKeyValue<TKey1, TKey2, TKey3>> keys, CancellationToken cancellationToken = default)
+            => await this.command.DeleteAsync(keys, cancellationToken);
+
+        public async Task<TEntity> AddAsync(TEntity toAdd, CancellationToken cancellationToken = default)
+            => await this.command.AddAsync(toAdd, cancellationToken);
+
+        public async Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> toAdd, CancellationToken cancellationToken = default)
+            => await this.command.AddAsync(toAdd, cancellationToken);
+
+        public async Task UpdateAsync(TEntity toUpdate, Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+            => await this.command.UpdateAsync(toUpdate, expression, cancellationToken);
+
+        public async Task UpdateAsync(dynamic toUpdate, Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+            => await this.command.UpdateAsync(toUpdate, expression, cancellationToken);
+
+        public async Task DeleteAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+            => await this.command.DeleteAsync(expression, cancellationToken);
     }
 }
 

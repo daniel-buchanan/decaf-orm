@@ -85,7 +85,10 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
-            => UpdateAsync(toUpdate, expression).WaitFor();
+        {
+            var t = UpdateAsync(toUpdate, expression);
+            t.Wait();
+        }
 
         private async Task UpdateInternalAsync(
             dynamic toUpdate,

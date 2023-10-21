@@ -15,13 +15,13 @@ using Xunit;
 
 namespace pdq.sqlserver.tests
 {
-	public class SqlServerSqlFactoryTests : SqlServerTest
-	{
+    public class SqlServerSqlFactoryTests : SqlServerTest
+    {
         private readonly ISqlFactory sqlFactory;
         private readonly IService<Person> personService;
 
-		public SqlServerSqlFactoryTests() : base()
-		{
+        public SqlServerSqlFactoryTests() : base()
+        {
             services.Replace<IConnectionFactory, MockConnectionFactory>();
             services.Replace<ITransactionFactory, MockTransactionFactory>();
             services.AddScoped<IConnectionDetails>(s => new MockConnectionDetails());
@@ -40,7 +40,7 @@ namespace pdq.sqlserver.tests
             var expected = "select\r\n  t.Id,\r\n  t.FirstName,\r\n  t.LastName,\r\n  t.Email,\r\n  t.AddressId,\r\n  t.CreatedAt\r\nfrom\r\n  Person t\r\nwhere\r\n(t.Email = @p1)\r\n";
             expected = expected.Replace("\r\n", Environment.NewLine);
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -58,7 +58,7 @@ namespace pdq.sqlserver.tests
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -76,7 +76,7 @@ namespace pdq.sqlserver.tests
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -99,7 +99,7 @@ namespace pdq.sqlserver.tests
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -125,7 +125,7 @@ namespace pdq.sqlserver.tests
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -151,7 +151,7 @@ namespace pdq.sqlserver.tests
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };

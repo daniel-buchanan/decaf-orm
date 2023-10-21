@@ -51,7 +51,7 @@ namespace pdq.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.addressService.PreExecution += (sender, args) =>
+            this.addressService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -81,7 +81,7 @@ namespace pdq.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.addressService.PreExecution += (sender, args) =>
+            this.addressService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -114,7 +114,7 @@ namespace pdq.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.addressService.PreExecution += (sender, args) =>
+            this.addressService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -146,7 +146,7 @@ namespace pdq.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.addressService.PreExecution += (sender, args) =>
+            this.addressService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -182,7 +182,7 @@ namespace pdq.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.addressService.PreExecution += (sender, args) =>
+            this.addressService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };

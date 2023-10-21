@@ -15,7 +15,7 @@ namespace pdq.services
     {
         const string TableAlias = "t";
 
-        public event EventHandler<PreExecutionEventArgs> PreExecution
+        public event EventHandler<PreExecutionEventArgs> OnBeforeExecution
         {
             add => base.preExecution += value;
             remove => base.preExecution -= value;

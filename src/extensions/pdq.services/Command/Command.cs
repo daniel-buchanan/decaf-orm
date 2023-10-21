@@ -18,7 +18,7 @@ namespace pdq.services
 
         protected Command(ITransient transient) : base(transient) { }
 
-        public event EventHandler<PreExecutionEventArgs> PreExecution
+        public event EventHandler<PreExecutionEventArgs> OnBeforeExecution
         {
             add => base.preExecution += value;
             remove => base.preExecution -= value;

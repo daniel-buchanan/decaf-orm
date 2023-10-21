@@ -50,7 +50,7 @@ namespace pdq.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -76,7 +76,7 @@ namespace pdq.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -105,7 +105,7 @@ namespace pdq.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.PreExecution += (sender, args) =>
+            this.personService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };

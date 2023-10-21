@@ -36,7 +36,7 @@ namespace pdq.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.addressNoteService.PreExecution += (sender, args) =>
+            this.addressNoteService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -61,7 +61,7 @@ namespace pdq.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.addressNoteService.PreExecution += (sender, args) =>
+            this.addressNoteService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -73,7 +73,8 @@ namespace pdq.services.tests.Command
                 Id = 42,
                 Value = "Hamilton"
             },
-            new AddressNote {
+            new AddressNote
+            {
                 PersonId = 1,
                 Id = 43,
                 Value = "Hamilton"
@@ -92,7 +93,7 @@ namespace pdq.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.addressNoteService.PreExecution += (sender, args) =>
+            this.addressNoteService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -127,7 +128,7 @@ namespace pdq.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.addressNoteService.PreExecution += (sender, args) =>
+            this.addressNoteService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -145,7 +146,7 @@ namespace pdq.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.addressNoteService.PreExecution += (sender, args) =>
+            this.addressNoteService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -173,7 +174,7 @@ namespace pdq.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.addressNoteService.PreExecution += (sender, args) =>
+            this.addressNoteService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };
@@ -205,7 +206,7 @@ namespace pdq.services.tests.Command
             // Arrange
             // Arrange
             IQueryContext context = null;
-            this.addressNoteService.PreExecution += (sender, args) =>
+            this.addressNoteService.OnBeforeExecution += (sender, args) =>
             {
                 context = args.Context;
             };

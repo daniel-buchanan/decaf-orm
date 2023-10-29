@@ -22,8 +22,8 @@ namespace pdq.services
         public new IEnumerable<TEntity> All() => base.All();
 
         /// <inheritdoc/>
-        public new IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> query)
-            => base.Get(query);
+        public new IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> expression)
+            => base.Find(expression);
 
         /// <inheritdoc/>
         public TEntity Get(TKey key) => Get(new[] { key }).FirstOrDefault();

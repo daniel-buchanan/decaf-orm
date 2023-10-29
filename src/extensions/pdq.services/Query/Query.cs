@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using pdq.common;
 using pdq.common.Connections;
+using pdq.common.Utilities;
 using pdq.state;
 
 namespace pdq.services
@@ -29,29 +32,39 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> All()
+            => AllAsync().WaitFor();
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<TEntity>> AllAsync(CancellationToken cancellationToken = default)
         {
-            return ExecuteQuery(q =>
+            return await ExecuteQueryAsync(async (q, c) =>
             {
                 var sel = q.Select()
                     .From<TEntity>(t => t)
                     .SelectAll<TEntity>(t => t);
                 NotifyPreExecution(this, q);
-                return sel.AsEnumerable();
-            });
+                return await sel.AsEnumerableAsync(c);
+            }, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> query)
+        public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> expression)
+            => FindAsync(expression).WaitFor();
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<TEntity>> FindAsync(
+            Expression<Func<TEntity, bool>> expression,
+            CancellationToken cancellationToken = default)
         {
-            return ExecuteQuery(q =>
+            return await ExecuteQueryAsync(async (q, c) =>
             {
                 var sel = q.Select()
                     .From<TEntity>(t => t)
-                    .Where(query)
+                    .Where(expression)
                     .SelectAll<TEntity>(t => t);
                 NotifyPreExecution(this, q);
-                return sel.AsEnumerable();
-            });
+                return await sel.AsEnumerableAsync(c);
+            }, cancellationToken);
         }
 
         protected IEnumerable<TEntity> GetByKeys<TKey>(

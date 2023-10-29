@@ -44,7 +44,7 @@ namespace pdq.sqlserver.tests
             {
                 context = args.Context;
             };
-            this.personService.Get(p => p.Email == "bob@bob.com");
+            this.personService.Find(p => p.Email == "bob@bob.com");
 
             // Act
             var template = this.sqlFactory.ParseTemplate(context);
@@ -62,7 +62,7 @@ namespace pdq.sqlserver.tests
             {
                 context = args.Context;
             };
-            this.personService.Get(p => p.Email == "bob@bob.com");
+            this.personService.Find(p => p.Email == "bob@bob.com");
 
             // Act
             Action method = () => this.sqlFactory.ParseParameters(context, new common.Templates.SqlTemplate("", new List<common.Templates.SqlParameter>()));
@@ -80,7 +80,7 @@ namespace pdq.sqlserver.tests
             {
                 context = args.Context;
             };
-            this.personService.Get(p => p.Email == "bob@bob.com");
+            this.personService.Find(p => p.Email == "bob@bob.com");
             var template = this.sqlFactory.ParseTemplate(context);
 
             // Act
@@ -103,7 +103,7 @@ namespace pdq.sqlserver.tests
             {
                 context = args.Context;
             };
-            this.personService.Get(u => u.Id == 42 && u.Email.EndsWith(".com") && (u.Id != 0 || u.Email.EndsWith("abc")));
+            this.personService.Find(u => u.Id == 42 && u.Email.EndsWith(".com") && (u.Id != 0 || u.Email.EndsWith("abc")));
             var template = this.sqlFactory.ParseTemplate(context);
 
             // Act
@@ -130,7 +130,7 @@ namespace pdq.sqlserver.tests
                 context = args.Context;
             };
             var ids = new int[] { 1, 2, 3 };
-            this.personService.Get(p => ids.Contains(p.Id));
+            this.personService.Find(p => ids.Contains(p.Id));
             var template = this.sqlFactory.ParseTemplate(context);
 
             // Act
@@ -155,7 +155,7 @@ namespace pdq.sqlserver.tests
             {
                 context = args.Context;
             };
-            this.personService.Get(p => p.Email.Contains("bob"));
+            this.personService.Find(p => p.Email.Contains("bob"));
             var template = this.sqlFactory.ParseTemplate(context);
 
             // Act

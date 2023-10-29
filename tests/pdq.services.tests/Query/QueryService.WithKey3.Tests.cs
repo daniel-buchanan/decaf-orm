@@ -80,7 +80,7 @@ namespace pdq.services.tests.Query
             };
 
             // Act
-            this.addressService.Get(p => p.Id == 42);
+            this.addressService.Find(p => p.Id == 42);
 
             // Assert
             context.Should().NotBeNull();

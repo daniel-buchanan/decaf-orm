@@ -42,7 +42,7 @@ namespace pdq.npgsql.tests
             {
                 context = args.Context;
             };
-            this.personService.Get(p => p.Email == "bob@bob.com");
+            this.personService.Find(p => p.Email == "bob@bob.com");
 
             // Act
             var template = this.sqlFactory.ParseTemplate(context);

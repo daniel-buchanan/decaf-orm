@@ -67,11 +67,13 @@ namespace pdq.services
             }, cancellationToken);
         }
 
-        protected IEnumerable<TEntity> GetByKeys<TKey>(
+        protected async Task<IEnumerable<TEntity>> GetByKeysAsync<TKey>(
             IEnumerable<TKey> keys,
-            Action<IEnumerable<TKey>, IQueryContainer, IWhereBuilder> filter)
+            Action<IEnumerable<TKey>, IQueryContainer, IWhereBuilder> filter,
+            CancellationToken cancellationToken = default)
         {
-            var numKeys = keys?.Count() ?? 0;
+            var keyList = keys?.ToList() ?? new List<TKey>();
+            var numKeys = keyList.Count;
             if (numKeys == 0) return Enumerable.Empty<TEntity>();
 
             var t = this.GetTransient();
@@ -81,9 +83,9 @@ namespace pdq.services
 
             do
             {
-                var keyBatch = keys.Skip(skip).Take(take);
+                var keyBatch = keyList.Skip(skip).Take(take);
 
-                using (var q = t.Query())
+                using (var q = await t.QueryAsync(cancellationToken))
                 {
                     var select = q.Select();
                     var table = q.Context.Helpers().GetTableName<TEntity>();
@@ -93,7 +95,7 @@ namespace pdq.services
                         .SelectAll<TEntity>(TableAlias);
 
                     NotifyPreExecution(this, q);
-                    var batchResults = selected.AsEnumerable();
+                    var batchResults = await selected.AsEnumerableAsync(cancellationToken);
 
                     results.AddRange(batchResults);
                 }

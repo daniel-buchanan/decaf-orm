@@ -9,7 +9,7 @@ namespace pdq.services
         private readonly IExecutionNotifiable query;
         private readonly IExecutionNotifiable command;
 
-        public ExecutionNotifiable(
+        protected ExecutionNotifiable(
             IExecutionNotifiable query,
             IExecutionNotifiable command)
         {

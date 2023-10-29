@@ -78,12 +78,24 @@ namespace pdq.services
             => this.Query.Get(key1, key2, key3);
 
         /// <inheritdoc/>
+        public Task<TEntity> GetAsync(TKey1 key1, TKey2 key2, TKey3 key3, CancellationToken cancellationToken = default)
+            => this.Query.GetAsync(key1, key2, key3, cancellationToken);
+
+        /// <inheritdoc/>
         public IEnumerable<TEntity> Get(params ICompositeKeyValue<TKey1, TKey2, TKey3>[] keys)
             => this.Query.Get(keys);
 
         /// <inheritdoc/>
+        public Task<IEnumerable<TEntity>> GetAsync(ICompositeKeyValue<TKey1, TKey2, TKey3>[] keys, CancellationToken cancellationToken = default)
+            =>this.Query.GetAsync(keys, cancellationToken);
+
+        /// <inheritdoc/>
         public IEnumerable<TEntity> Get(IEnumerable<ICompositeKeyValue<TKey1, TKey2, TKey3>> keys)
             => this.Query.Get(keys);
+
+        /// <inheritdoc/>
+        public Task<IEnumerable<TEntity>> GetAsync(IEnumerable<ICompositeKeyValue<TKey1, TKey2, TKey3>> keys, CancellationToken cancellationToken = default)
+            => this.Query.GetAsync(keys, cancellationToken);
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, TKey1 key1, TKey2 key2, TKey3 key3)
@@ -101,33 +113,43 @@ namespace pdq.services
         public void Update(TEntity toUpdate)
             => this.Command.Update(toUpdate);
 
+        /// <inheritdoc/>
         public async Task UpdateAsync(TEntity toUpdate, CancellationToken cancellationToken = default)
             => await this.Command.UpdateAsync(toUpdate, cancellationToken);
 
+        /// <inheritdoc/>
         public async Task UpdateAsync(dynamic toUpdate, TKey1 key1, TKey2 key2, TKey3 key3, CancellationToken cancellationToken = default)
             => await this.Command.UpdateAsync(toUpdate, key1, key2, key3, cancellationToken);
 
+        /// <inheritdoc/>
         public async Task DeleteAsync(TKey1 key1, TKey2 key2, TKey3 key3, CancellationToken cancellationToken = default)
             => await this.Command.DeleteAsync(key1, key2, key3, cancellationToken);
 
+        /// <inheritdoc/>
         public async Task DeleteAsync(ICompositeKeyValue<TKey1, TKey2, TKey3>[] keys, CancellationToken cancellationToken = default)
             => await this.Command.DeleteAsync(keys, cancellationToken);
 
+        /// <inheritdoc/>
         public async Task DeleteAsync(IEnumerable<ICompositeKeyValue<TKey1, TKey2, TKey3>> keys, CancellationToken cancellationToken = default)
             => await this.Command.DeleteAsync(keys, cancellationToken);
 
+        /// <inheritdoc/>
         public async Task<TEntity> AddAsync(TEntity toAdd, CancellationToken cancellationToken = default)
             => await this.Command.AddAsync(toAdd, cancellationToken);
 
+        /// <inheritdoc/>
         public async Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> toAdd, CancellationToken cancellationToken = default)
             => await this.Command.AddAsync(toAdd, cancellationToken);
 
+        /// <inheritdoc/>
         public async Task UpdateAsync(TEntity toUpdate, Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
             => await this.Command.UpdateAsync(toUpdate, expression, cancellationToken);
 
+        /// <inheritdoc/>
         public async Task UpdateAsync(dynamic toUpdate, Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
             => await this.Command.UpdateAsync(toUpdate, expression, cancellationToken);
 
+        /// <inheritdoc/>
         public async Task DeleteAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
             => await this.Command.DeleteAsync(expression, cancellationToken);
     }

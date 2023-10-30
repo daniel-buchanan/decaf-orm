@@ -19,7 +19,7 @@ namespace pdq.services
 
         private Command(ITransient transient) : base(transient) { }
 
-        public static new ICommand<TEntity, TKey1, TKey2, TKey3> Create(ITransient transient)
+        public new static ICommand<TEntity, TKey1, TKey2, TKey3> Create(ITransient transient)
             => new Command<TEntity, TKey1, TKey2, TKey3>(transient);
 
         /// <inheritdoc/>
@@ -33,12 +33,12 @@ namespace pdq.services
         /// <inheritdoc/>
         public override IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
         {
-            if (toAdd == null ||
-               !toAdd.Any())
+            var items = toAdd?.ToList() ?? new List<TEntity>();
+            if (!items.Any())
                 return new List<TEntity>();
 
-            var first = toAdd.First();
-            return AddAsync(toAdd, new[]
+            var first = items[0];
+            return AddAsync(items, new[]
             {
                 first.KeyMetadata.ComponentOne.Name,
                 first.KeyMetadata.ComponentTwo.Name,
@@ -48,7 +48,7 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public void Delete(TKey1 key1, TKey2 key2, TKey3 key3)
-            => Delete(new[] { new CompositeKeyValue<TKey1, TKey2, TKey3>(key1, key2, key3) });
+            => Delete(new List<CompositeKeyValue<TKey1, TKey2, TKey3>> { new CompositeKeyValue<TKey1, TKey2, TKey3>(key1, key2, key3) });
 
         /// <inheritdoc/>
         public void Delete(params ICompositeKeyValue<TKey1, TKey2, TKey3>[] keys)
@@ -97,7 +97,7 @@ namespace pdq.services
         public async Task UpdateAsync(TEntity toUpdate, CancellationToken cancellationToken = default)
         {
             var key = toUpdate.GetKeyValue();
-            await UpdateAsync(toUpdate, key.ComponentOne, key.ComponentTwo, key.ComponentThree);
+            await UpdateAsync(toUpdate, key.ComponentOne, key.ComponentTwo, key.ComponentThree, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -123,7 +123,7 @@ namespace pdq.services
             var nestedAndExpression = Expression.AndAlso(andExpression, keyThreeEqualsExpression);
             var lambdaExpression = Expression.Lambda<Func<TEntity, bool>>(nestedAndExpression, parameterExpression);
 
-            await UpdateAsync(toUpdate, lambdaExpression);
+            await UpdateAsync(toUpdate, lambdaExpression, cancellationToken);
         }
     }
 }

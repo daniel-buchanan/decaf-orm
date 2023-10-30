@@ -19,7 +19,7 @@ namespace pdq.services
 
         private Command(ITransient transient) : base(transient) { }
 
-        public static new ICommand<TEntity, TKey1, TKey2> Create(ITransient transient)
+        public new static ICommand<TEntity, TKey1, TKey2> Create(ITransient transient)
             => new Command<TEntity, TKey1, TKey2>(transient);
 
         /// <inheritdoc/>
@@ -33,19 +33,21 @@ namespace pdq.services
         /// <inheritdoc/>
         public override IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
         {
-            if (toAdd == null ||
-               !toAdd.Any())
+            var items = toAdd?.ToList() ?? new List<TEntity>();
+            if (!items.Any())
                 return new List<TEntity>();
 
-            var first = toAdd.First();
-            return AddAsync(toAdd, new[] { first.KeyMetadata.ComponentOne.Name, first.KeyMetadata.ComponentTwo.Name }).WaitFor();
+            var first = items[0];
+            return AddAsync(items, new[] { first.KeyMetadata.ComponentOne.Name, first.KeyMetadata.ComponentTwo.Name }).WaitFor();
         }
 
         /// <inheritdoc/>
-        public void Delete(TKey1 key1, TKey2 key2) => Delete(new[] { new CompositeKeyValue<TKey1, TKey2>(key1, key2) });
+        public void Delete(TKey1 key1, TKey2 key2) 
+            => Delete(new List<CompositeKeyValue<TKey1, TKey2>> { new CompositeKeyValue<TKey1, TKey2>(key1, key2) });
 
         /// <inheritdoc/>
-        public void Delete(params ICompositeKeyValue<TKey1, TKey2>[] keys) => Delete(keys?.AsEnumerable());
+        public void Delete(params ICompositeKeyValue<TKey1, TKey2>[] keys) 
+            => Delete(keys?.AsEnumerable());
 
         /// <inheritdoc/>
         public void Delete(IEnumerable<ICompositeKeyValue<TKey1, TKey2>> keys)
@@ -91,7 +93,7 @@ namespace pdq.services
         public async Task UpdateAsync(TEntity toUpdate, CancellationToken cancellationToken = default)
         {
             var key = toUpdate.GetKeyValue();
-            await UpdateAsync(toUpdate, key.ComponentOne, key.ComponentTwo);
+            await UpdateAsync(toUpdate, key.ComponentOne, key.ComponentTwo, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -108,7 +110,7 @@ namespace pdq.services
             var andExpression = Expression.AndAlso(keyOneEqualsExpression, keyTwoEqualsExpression);
             var lambdaExpression = Expression.Lambda<Func<TEntity, bool>>(andExpression, parameterExpression);
 
-            await UpdateAsync(toUpdate, lambdaExpression);
+            await UpdateAsync(toUpdate, lambdaExpression, cancellationToken);
         }
     }
 }

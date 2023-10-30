@@ -20,7 +20,7 @@ namespace pdq.services
 
         private Command(ITransient transient) : base(transient) { }
 
-        public static new ICommand<TEntity, TKey> Create(ITransient transient)
+        public new static ICommand<TEntity, TKey> Create(ITransient transient)
             => new Command<TEntity, TKey>(transient);
 
         /// <inheritdoc/>
@@ -34,16 +34,16 @@ namespace pdq.services
         /// <inheritdoc/>
         public override IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
         {
-            if (toAdd == null ||
-               !toAdd.Any())
+            var items = toAdd?.ToList() ?? new List<TEntity>();
+            if (!items.Any())
                 return new List<TEntity>();
 
-            var first = toAdd.First();
-            return AddAsync(toAdd, new[] { first.KeyMetadata.Name }).WaitFor();
+            var first = items[0];
+            return AddAsync(items, new[] { first.KeyMetadata.Name }).WaitFor();
         }
 
         /// <inheritdoc/>
-        public void Delete(TKey key) => Delete(new[] { key });
+        public void Delete(TKey key) => Delete(new List<TKey> { key });
 
         /// <inheritdoc/>
         public void Delete(params TKey[] keys) => Delete(keys?.AsEnumerable());
@@ -64,7 +64,7 @@ namespace pdq.services
             {
                 GetKeyColumnNames<TEntity, TKey>(q, out var keyName);
                 b.Column(keyName).Is().In(keyBatch);
-            });
+            }, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -78,7 +78,7 @@ namespace pdq.services
         public async Task UpdateAsync(TEntity item, CancellationToken cancellationToken = default)
         {
             var keyValue = item.GetKeyValue();
-            await UpdateAsync(item, keyValue);
+            await UpdateAsync(item, keyValue, cancellationToken);
         }
 
         public async Task UpdateAsync(dynamic toUpdate, TKey key, CancellationToken cancellationToken = default)
@@ -90,7 +90,7 @@ namespace pdq.services
             var keyEqualsExpression = Expression.Equal(keyPropertyExpression, keyConstantExpression);
             var lambdaExpression = Expression.Lambda<Func<TEntity, bool>>(keyEqualsExpression, parameterExpression);
 
-            await UpdateAsync(toUpdate, lambdaExpression);
+            await UpdateAsync(toUpdate, lambdaExpression, cancellationToken);
         }
     }
 }

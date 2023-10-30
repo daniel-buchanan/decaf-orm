@@ -23,50 +23,15 @@ namespace pdq.services
 
         public event EventHandler<PreExecutionEventArgs> OnBeforeExecution
         {
-            add => base.preExecution += value;
-            remove => base.preExecution -= value;
+            add => preExecution += value;
+            remove => preExecution -= value;
         }
 
         public static ICommand<TEntity> Create(ITransient transient) => new Command<TEntity>(transient);
 
         /// <inheritdoc/>
         public TEntity Add(TEntity toAdd) => AddAsync(toAdd).WaitFor();
-
-        protected async Task<IEnumerable<TEntity>> AddAsync(
-            IEnumerable<TEntity> items,
-            IEnumerable<string> outputs,
-            CancellationToken cancellationToken = default)
-        {
-            if (items == null ||
-               !items.Any())
-                return new List<TEntity>();
-
-            var first = items.First();
-            return await ExecuteQueryAsync(async (q, c) =>
-            {
-                var query = q.Insert();
-                var table = GetTableInfo<TEntity>(q);
-                var exec = query.Into(table)
-                    .Columns((t) => first)
-                    .Values(items);
-                foreach (var o in outputs)
-                    exec.Output(o);
-                NotifyPreExecution(this, q);
-
-                var results = await exec.ToListAsync<TEntity>(c);
-
-                var inputItems = items.ToArray();
-                var i = 0;
-                foreach (var item in results)
-                {
-                    var r = inputItems[i];
-                    foreach (var o in outputs) r.SetPropertyValueFrom(o, item);
-                    i += 1;
-                }
-                return inputItems;
-            }, cancellationToken);
-        }
-
+        
         /// <inheritdoc/>
         public virtual IEnumerable<TEntity> Add(params TEntity[] toAdd)
             => Add(toAdd?.ToList());
@@ -74,6 +39,42 @@ namespace pdq.services
         /// <inheritdoc/>
         public virtual IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
             => AddAsync(toAdd).WaitFor();
+
+        protected async Task<IEnumerable<TEntity>> AddAsync(
+            IEnumerable<TEntity> items,
+            IEnumerable<string> outputs,
+            CancellationToken cancellationToken = default)
+        {
+            var inputItems = items?.ToList() ?? new List<TEntity>();
+            var outputColumns = outputs?.ToList() ?? new List<string>();
+            
+            if (!inputItems.Any())
+                return new List<TEntity>();
+
+            var first = inputItems[0];
+            return await ExecuteQueryAsync(async (q, c) =>
+            {
+                var query = q.Insert();
+                var table = GetTableInfo<TEntity>(q);
+                var exec = query.Into(table)
+                    .Columns((t) => first)
+                    .Values(inputItems);
+                foreach (var o in outputColumns)
+                    exec.Output(o);
+                NotifyPreExecution(this, q);
+
+                var results = await exec.ToListAsync<TEntity>(c);
+                
+                var i = 0;
+                foreach (var item in results)
+                {
+                    var r = inputItems[i];
+                    foreach (var o in outputColumns) r.SetPropertyValueFrom(o, item);
+                    i += 1;
+                }
+                return inputItems;
+            }, cancellationToken);
+        }
 
         /// <inheritdoc/>
         public void Delete(Expression<Func<TEntity, bool>> expression)
@@ -115,16 +116,17 @@ namespace pdq.services
             Action<IEnumerable<TKey>, IQueryContainer, IWhereBuilder> action,
             CancellationToken cancellationToken = default)
         {
-            var numKeys = keys?.Count() ?? 0;
+            var keysList = keys?.ToList() ?? new List<TKey>();
+            var numKeys = keysList.Count;
             if (numKeys == 0) return;
 
-            var t = this.GetTransient();
+            var t = GetTransient();
             const int take = 100;
             var skip = 0;
 
             do
             {
-                var keyBatch = keys.Skip(skip).Take(take);
+                var keyBatch = keysList.Skip(skip).Take(take);
 
                 using (var q = await t.QueryAsync(cancellationToken))
                 {
@@ -140,14 +142,14 @@ namespace pdq.services
                 skip += take;
             } while (skip < numKeys);
 
-            if (this.disposeOnExit) t.Dispose();
+            if (disposeOnExit) t.Dispose();
         }
 
         public async Task<TEntity> AddAsync(
             TEntity toAdd,
             CancellationToken cancellationToken = default)
         {
-            var result = await AddAsync(new[] { toAdd }, new string[0], cancellationToken);
+            var result = await AddAsync(new[] { toAdd }, Array.Empty<string>(), cancellationToken);
             return result.First();
         }
 
@@ -155,21 +157,21 @@ namespace pdq.services
             IEnumerable<TEntity> toAdd,
             CancellationToken cancellationToken = default)
         {
-            if (toAdd == null ||
-               !toAdd.Any())
+            var items = toAdd?.ToList() ?? new List<TEntity>();
+            if (!items.Any())
                 return new List<TEntity>();
 
             return await ExecuteQueryAsync(async (q, c) =>
             {
-                var first = toAdd.First();
+                var first = items[0];
                 var query = q.Insert()
                     .Into<TEntity>(t => t)
                     .Columns(t => first)
-                    .Values(toAdd);
+                    .Values(items);
                 NotifyPreExecution(this, q);
                 await query.ExecuteAsync(c);
-                return toAdd;
-            });
+                return items;
+            }, cancellationToken);
         }
 
         public async Task UpdateAsync(

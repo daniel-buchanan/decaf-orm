@@ -30,7 +30,7 @@ namespace pdq.services
         public static ICommand<TEntity> Create(ITransient transient) => new Command<TEntity>(transient);
 
         /// <inheritdoc/>
-        public TEntity Add(TEntity toAdd) => AddAsync(toAdd).WaitFor();
+        public virtual TEntity Add(TEntity toAdd) => AddAsync(toAdd).WaitFor();
         
         /// <inheritdoc/>
         public virtual IEnumerable<TEntity> Add(params TEntity[] toAdd)
@@ -154,25 +154,9 @@ namespace pdq.services
         }
 
         public async Task<IEnumerable<TEntity>> AddAsync(
-            IEnumerable<TEntity> toAdd,
+            IEnumerable<TEntity> items,
             CancellationToken cancellationToken = default)
-        {
-            var items = toAdd?.ToList() ?? new List<TEntity>();
-            if (!items.Any())
-                return new List<TEntity>();
-
-            return await ExecuteQueryAsync(async (q, c) =>
-            {
-                var first = items[0];
-                var query = q.Insert()
-                    .Into<TEntity>(t => t)
-                    .Columns(t => first)
-                    .Values(items);
-                NotifyPreExecution(this, q);
-                await query.ExecuteAsync(c);
-                return items;
-            }, cancellationToken);
-        }
+            => await AddAsync(items, Array.Empty<string>(), cancellationToken);
 
         public async Task UpdateAsync(
             TEntity toUpdate,

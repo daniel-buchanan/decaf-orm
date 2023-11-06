@@ -23,14 +23,6 @@ namespace pdq.services
             => new Command<TEntity, TKey1, TKey2, TKey3>(transient);
 
         /// <inheritdoc/>
-        public new TEntity Add(TEntity toAdd)
-            => Add(new List<TEntity> { toAdd }).FirstOrDefault();
-
-        /// <inheritdoc/>
-        public override IEnumerable<TEntity> Add(params TEntity[] toAdd)
-            => Add(toAdd?.ToList());
-
-        /// <inheritdoc/>
         public override IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
         {
             var items = toAdd?.ToList() ?? new List<TEntity>();

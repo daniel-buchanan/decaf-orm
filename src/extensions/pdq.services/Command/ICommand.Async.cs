@@ -23,9 +23,9 @@ namespace pdq.services
         /// <summary>
         /// Add an item to the database.
         /// </summary>
-        /// <param name="toAdd">The <see cref="TEntity"/> to be added.</param>
+        /// <param name="items">The <see cref="TEntity"/> to be added.</param>
         /// <returns>The updated <see cref="TEntity"/> which has been added.</returns>
-		Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> toAdd, CancellationToken cancellationToken = default);
+		Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> items, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Update the provided item.

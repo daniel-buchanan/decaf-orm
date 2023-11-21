@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using pdq.common.Connections;
+using pdq.common.Utilities;
 
 namespace pdq.services
 {
@@ -31,19 +33,19 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public TEntity Add(TEntity toAdd)
-            => this.Command.Add(toAdd);
+            => AddAsync(toAdd).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Add(params TEntity[] toAdd)
-            => this.Command.Add(toAdd);
+            => AddAsync(toAdd?.AsEnumerable()).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
-            => this.Command.Add(toAdd);
+            => AddAsync(toAdd).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> All()
-            => this.Query.All();
+            => AllAsync().WaitFor();
 
         /// <inheritdoc/>
         public Task<IEnumerable<TEntity>> AllAsync(CancellationToken cancellationToken = default)
@@ -51,23 +53,23 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public void Delete(TKey key)
-            => this.Command.Delete(key);
+            => DeleteAsync(key).WaitFor();
 
         /// <inheritdoc/>
         public void Delete(params TKey[] keys)
-            => this.Command.Delete(keys);
+            => DeleteAsync(keys?.AsEnumerable()).WaitFor();
 
         /// <inheritdoc/>
         public void Delete(IEnumerable<TKey> keys)
-            => this.Command.Delete(keys);
+            => DeleteAsync(keys).WaitFor();
 
         /// <inheritdoc/>
         public void Delete(Expression<Func<TEntity, bool>> expression)
-            => this.Command.Delete(expression);
+            => DeleteAsync(expression).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> expression)
-            => this.Query.Find(expression);
+            => FindAsync(expression).WaitFor();
 
         /// <inheritdoc/>
         public Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
@@ -75,15 +77,15 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public TEntity Get(TKey key)
-            => this.Query.Get(key);
+            => GetAsync(key).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Get(params TKey[] keys)
-            => this.Query.Get(keys);
+            => GetAsync(keys?.AsEnumerable()).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Get(IEnumerable<TKey> keys)
-            => this.Query.Get(keys);
+            => GetAsync(keys).WaitFor();
 
         /// <inheritdoc/>
         public Task<TEntity> GetAsync(TKey key, CancellationToken cancellationToken = default)
@@ -99,11 +101,14 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, TKey key)
-            => this.Command.Update(toUpdate, key);
+        {
+            var t = UpdateAsync(toUpdate, key);
+            t.Wait();
+        }
 
         /// <inheritdoc/>
         public void Update(TEntity toUpdate, Expression<Func<TEntity, bool>> expression)
-            => this.Command.Update(toUpdate, expression);
+            => UpdateAsync(toUpdate, expression).WaitFor();
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
@@ -111,7 +116,7 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public void Update(TEntity item)
-            => this.Command.Update(item);
+            => UpdateAsync(item).WaitFor();
 
         /// <inheritdoc/>
         public async Task UpdateAsync(TEntity item, CancellationToken cancellationToken = default)

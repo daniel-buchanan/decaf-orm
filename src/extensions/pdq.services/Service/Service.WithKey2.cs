@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using pdq.common.Connections;
+using pdq.common.Utilities;
 
 namespace pdq.services
 {
@@ -31,19 +33,19 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public TEntity Add(TEntity toAdd)
-            => this.Command.Add(toAdd);
+            => AddAsync(toAdd).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Add(params TEntity[] toAdd)
-            => this.Command.Add(toAdd);
+            => AddAsync(toAdd).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
-            => this.Command.Add(toAdd);
+            => AddAsync(toAdd).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> All()
-            => this.Query.All();
+            => AllAsync().WaitFor();
 
         /// <inheritdoc/>
         public Task<IEnumerable<TEntity>> AllAsync(CancellationToken cancellationToken = default)
@@ -51,23 +53,23 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public void Delete(TKey1 key1, TKey2 key2)
-            => this.Command.Delete(key1, key2);
+            => DeleteAsync(key1, key2).WaitFor();
 
         /// <inheritdoc/>
         public void Delete(params ICompositeKeyValue<TKey1, TKey2>[] keys)
-            => this.Command.Delete(keys);
+            => DeleteAsync(keys?.AsEnumerable()).WaitFor();
 
         /// <inheritdoc/>
         public void Delete(IEnumerable<ICompositeKeyValue<TKey1, TKey2>> keys)
-            => this.Command.Delete(keys);
+            => DeleteAsync(keys).WaitFor();
 
         /// <inheritdoc/>
         public void Delete(Expression<Func<TEntity, bool>> expression)
-            => this.Command.Delete(expression);
+            => DeleteAsync(expression).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> expression)
-            => this.Query.Find(expression);
+            => FindAsync(expression).WaitFor();
 
         /// <inheritdoc/>
         public Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
@@ -75,15 +77,15 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public TEntity Get(TKey1 key1, TKey2 key2)
-            => this.Query.Get(key1, key2);
+            => GetAsync(key1, key2).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Get(params ICompositeKeyValue<TKey1, TKey2>[] keys)
-            => this.Query.Get(keys);
+            => GetAsync(keys?.AsEnumerable()).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Get(IEnumerable<ICompositeKeyValue<TKey1, TKey2>> keys)
-            => this.Query.Get(keys);
+            => GetAsync(keys).WaitFor();
 
         /// <inheritdoc/>
         public Task<TEntity> GetAsync(TKey1 key1, TKey2 key2, CancellationToken cancellationToken = default)
@@ -99,19 +101,25 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, TKey1 key1, TKey2 key2)
-            => this.Command.Update(toUpdate, key1, key2);
+        {
+            var t = UpdateAsync(toUpdate, key1, key2);
+            t.Wait();
+        }
 
         /// <inheritdoc/>
         public void Update(TEntity toUpdate, Expression<Func<TEntity, bool>> expression)
-            => this.Command.Update(toUpdate, expression);
+            => UpdateAsync(toUpdate, expression).WaitFor();
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
-            => this.Command.Update(toUpdate, expression);
+        {
+            var t = UpdateAsync(toUpdate, expression);
+            t.Wait();
+        }
 
         /// <inheritdoc/>
         public void Update(TEntity toUpdate)
-            => this.Command.Update(toUpdate);
+            => UpdateAsync(toUpdate).WaitFor();
 
         /// <inheritdoc/>
         public async Task UpdateAsync(TEntity toUpdate, CancellationToken cancellationToken = default)
@@ -154,4 +162,3 @@ namespace pdq.services
             => await this.Command.DeleteAsync(expression, cancellationToken);
     }
 }
-

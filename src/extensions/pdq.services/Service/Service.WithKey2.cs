@@ -78,20 +78,20 @@ namespace pdq.services
             => this.Query.Get(key1, key2);
 
         /// <inheritdoc/>
-        public Task<TEntity> GetAsync(TKey1 key1, TKey2 key2, CancellationToken cancellationToken = default)
-            => this.Query.GetAsync(key1, key2, cancellationToken);
-
-        /// <inheritdoc/>
         public IEnumerable<TEntity> Get(params ICompositeKeyValue<TKey1, TKey2>[] keys)
             => this.Query.Get(keys);
 
         /// <inheritdoc/>
-        public Task<IEnumerable<TEntity>> GetAsync(ICompositeKeyValue<TKey1, TKey2>[] keys, CancellationToken cancellationToken = default)
-            => this.Query.GetAsync(keys, cancellationToken);
-
-        /// <inheritdoc/>
         public IEnumerable<TEntity> Get(IEnumerable<ICompositeKeyValue<TKey1, TKey2>> keys)
             => this.Query.Get(keys);
+
+        /// <inheritdoc/>
+        public Task<TEntity> GetAsync(TKey1 key1, TKey2 key2, CancellationToken cancellationToken = default)
+            => this.Query.GetAsync(key1, key2, cancellationToken);
+
+        /// <inheritdoc/>
+        public Task<IEnumerable<TEntity>> GetAsync(ICompositeKeyValue<TKey1, TKey2>[] keys, CancellationToken cancellationToken = default)
+            => this.Query.GetAsync(keys, cancellationToken);
 
         /// <inheritdoc/>
         public Task<IEnumerable<TEntity>> GetAsync(IEnumerable<ICompositeKeyValue<TKey1, TKey2>> keys, CancellationToken cancellationToken = default)

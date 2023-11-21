@@ -24,14 +24,33 @@ namespace pdq.services
             => new Command<TEntity, TKey>(transient);
 
         /// <inheritdoc/>
+        public override TEntity Add(TEntity toAdd)
+            => AddAsync(toAdd).WaitFor();
+
+        /// <inheritdoc/>
+        public override IEnumerable<TEntity> Add(params TEntity[] toAdd)
+            => AddAsync(toAdd?.AsEnumerable()).WaitFor();
+
+        /// <inheritdoc/>
         public override IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
+            => AddAsync(toAdd).WaitFor();
+
+        /// <inheritdoc/>
+        public override async Task<TEntity> AddAsync(TEntity toAdd, CancellationToken cancellationToken = default)
         {
-            var items = toAdd?.ToList() ?? new List<TEntity>();
+            var results = await AddAsync(new[] { toAdd }, cancellationToken);
+            return results.FirstOrDefault();
+        }
+
+        /// <inheritdoc/>
+        public override async Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> items, CancellationToken cancellationToken = default)
+        {
+            if (items == null) items = new List<TEntity>();
             if (!items.Any())
                 return new List<TEntity>();
 
-            var first = items[0];
-            return AddAsync(items, new[] { first.KeyMetadata.Name }).WaitFor();
+            var first = items.First();
+            return await AddAsync(items, new[] { first.KeyMetadata.Name }, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -44,12 +63,15 @@ namespace pdq.services
         public void Delete(IEnumerable<TKey> keys)
             => DeleteAsync(keys).WaitFor();
 
+        /// <inheritdoc/>
         public async Task DeleteAsync(TKey key, CancellationToken cancellationToken = default)
             => await DeleteAsync(new[] { key }, cancellationToken);
 
+        /// <inheritdoc/>
         public async Task DeleteAsync(TKey[] keys, CancellationToken cancellationToken = default)
             => await DeleteAsync(keys?.AsEnumerable(), cancellationToken);
 
+        /// <inheritdoc/>
         public async Task DeleteAsync(IEnumerable<TKey> keys, CancellationToken cancellationToken = default)
         {
             await DeleteByKeysAsync(keys, (keyBatch, q, b) =>
@@ -65,14 +87,19 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, TKey key)
-            => UpdateAsync(toUpdate, key).WaitFor();
+        {
+            var t = UpdateAsync(toUpdate, key);
+            t.Wait();
+        }
 
+        /// <inheritdoc/>
         public async Task UpdateAsync(TEntity item, CancellationToken cancellationToken = default)
         {
             var keyValue = item.GetKeyValue();
             await UpdateAsync(item, keyValue, cancellationToken);
         }
 
+        /// <inheritdoc/>
         public async Task UpdateAsync(dynamic toUpdate, TKey key, CancellationToken cancellationToken = default)
         {
             var temp = new TEntity();

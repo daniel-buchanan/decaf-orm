@@ -30,11 +30,12 @@ namespace pdq.services
         public static ICommand<TEntity> Create(ITransient transient) => new Command<TEntity>(transient);
 
         /// <inheritdoc/>
-        public virtual TEntity Add(TEntity toAdd) => AddAsync(toAdd).WaitFor();
-        
+        public virtual TEntity Add(TEntity toAdd)
+            => AddAsync(toAdd).WaitFor();
+
         /// <inheritdoc/>
         public virtual IEnumerable<TEntity> Add(params TEntity[] toAdd)
-            => Add(toAdd?.ToList());
+            => AddAsync(toAdd?.ToList()).WaitFor();
 
         /// <inheritdoc/>
         public virtual IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
@@ -47,7 +48,7 @@ namespace pdq.services
         {
             var inputItems = items?.ToList() ?? new List<TEntity>();
             var outputColumns = outputs?.ToList() ?? new List<string>();
-            
+
             if (!inputItems.Any())
                 return new List<TEntity>();
 
@@ -64,7 +65,7 @@ namespace pdq.services
                 NotifyPreExecution(this, q);
 
                 var results = await exec.ToListAsync<TEntity>(c);
-                
+
                 var i = 0;
                 foreach (var item in results)
                 {
@@ -145,15 +146,15 @@ namespace pdq.services
             if (disposeOnExit) t.Dispose();
         }
 
-        public async Task<TEntity> AddAsync(
+        public virtual async Task<TEntity> AddAsync(
             TEntity toAdd,
             CancellationToken cancellationToken = default)
         {
-            var result = await AddAsync(new[] { toAdd }, Array.Empty<string>(), cancellationToken);
+            var result = await AddAsync(new[] { toAdd }, cancellationToken);
             return result.First();
         }
 
-        public async Task<IEnumerable<TEntity>> AddAsync(
+        public virtual async Task<IEnumerable<TEntity>> AddAsync(
             IEnumerable<TEntity> items,
             CancellationToken cancellationToken = default)
             => await AddAsync(items, Array.Empty<string>(), cancellationToken);

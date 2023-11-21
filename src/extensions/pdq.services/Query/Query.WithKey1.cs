@@ -20,8 +20,16 @@ namespace pdq.services
         public new static IQuery<TEntity, TKey> Create(ITransient transient) => new Query<TEntity, TKey>(transient);
 
         /// <inheritdoc/>
-        public TEntity Get(TKey key) 
+        public TEntity Get(TKey key)
             => GetAsync(key).WaitFor();
+
+        /// <inheritdoc/>
+        public IEnumerable<TEntity> Get(params TKey[] keys)
+            => Get(keys.ToList());
+
+        /// <inheritdoc/>
+        public IEnumerable<TEntity> Get(IEnumerable<TKey> keys)
+            => GetAsync(keys).WaitFor();
 
         /// <inheritdoc/>
         public async Task<TEntity> GetAsync(TKey key, CancellationToken cancellationToken = default)
@@ -31,22 +39,14 @@ namespace pdq.services
         }
 
         /// <inheritdoc/>
-        public IEnumerable<TEntity> Get(params TKey[] keys) 
-            => Get(keys.ToList());
-
-        /// <inheritdoc/>
-        public Task<IEnumerable<TEntity>> GetAsync(TKey[] keys, CancellationToken cancellationToken = default)
-            => GetAsync(keys?.ToList(), cancellationToken);
-
-        /// <inheritdoc/>
-        public IEnumerable<TEntity> Get(IEnumerable<TKey> keys)
-            => GetAsync(keys).WaitFor();
+        public async Task<IEnumerable<TEntity>> GetAsync(TKey[] keys, CancellationToken cancellationToken = default)
+            => await GetAsync(keys?.ToList(), cancellationToken);
 
         /// <inheritdoc/>
         public Task<IEnumerable<TEntity>> GetAsync(IEnumerable<TKey> keys, CancellationToken cancellationToken = default)
         {
             var tmp = new TEntity();
-         
+
             return GetByKeysAsync(keys, (keyBatch, q, b) =>
             {
                 var keyName = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata);

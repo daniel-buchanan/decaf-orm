@@ -10,19 +10,33 @@ namespace pdq.services
     /// <typeparam name="TEntity">The type of <see cref="IEntity{TKey}"/> to query.</typeparam>
     /// <typeparam name="TKey1">The data type of the Primary Key.</typeparam>
     /// <typeparam name="TKey2">The data type of the Primary Key.</typeparam>
-	public interface IQuery<TEntity, in TKey1, in TKey2> : 
-	    IQuery<TEntity>
-		where TEntity : IEntity<TKey1, TKey2>
+	public interface IQuery<TEntity, in TKey1, in TKey2> :
+        IQuery<TEntity>
+        where TEntity : IEntity<TKey1, TKey2>
     {
-		/// <summary>
+        /// <summary>
         /// Get a specific Entity by it's Key.
         /// </summary>
         /// <param name="key1">The value of the first key to use.</param>
-		/// <param name="key2">The value of the second key to use.</param>
+        /// <param name="key2">The value of the second key to use.</param>
         /// <returns>An instance of <see cref="TEntity"/> if found, or <code>default(TEntity)</code> if not found.</returns>
-		TEntity Get(TKey1 key1, TKey2 key2);
+        TEntity Get(TKey1 key1, TKey2 key2);
 
-		/// <summary>
+        /// <summary>
+        /// Get Entities by their Keys.
+        /// </summary>
+        /// <param name="keys">The keys to use.</param>
+        /// <returns>An enumeration containg all found </returns>
+        IEnumerable<TEntity> Get(params ICompositeKeyValue<TKey1, TKey2>[] keys);
+
+        /// <summary>
+        /// Get Entities by their Keys.
+        /// </summary>
+        /// <param name="keys"></param>
+        /// <returns></returns>
+		IEnumerable<TEntity> Get(IEnumerable<ICompositeKeyValue<TKey1, TKey2>> keys);
+
+        /// <summary>
 		/// Get a specific Entity by it's Key.
 		/// </summary>
 		/// <param name="key1">The value of the first key to use.</param>
@@ -31,27 +45,13 @@ namespace pdq.services
 		/// <returns>An instance of <see cref="TEntity"/> if found, or <code>default(TEntity)</code> if not found.</returns>
 		Task<TEntity> GetAsync(TKey1 key1, TKey2 key2, CancellationToken cancellationToken = default);
 
-		/// <summary>
-        /// Get Entities by their Keys.
-        /// </summary>
-        /// <param name="keys">The keys to use.</param>
-        /// <returns>An enumeration containg all found </returns>
-		IEnumerable<TEntity> Get(params ICompositeKeyValue<TKey1, TKey2>[] keys);
-
-		/// <summary>
-		/// Get Entities by their Keys.
-		/// </summary>
-		/// <param name="keys">The keys to use.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <returns>An enumeration containing all found </returns>
-		Task<IEnumerable<TEntity>> GetAsync(ICompositeKeyValue<TKey1, TKey2>[] keys, CancellationToken cancellationToken = default);
-
         /// <summary>
         /// Get Entities by their Keys.
         /// </summary>
-        /// <param name="keys"></param>
-        /// <returns></returns>
-		IEnumerable<TEntity> Get(IEnumerable<ICompositeKeyValue<TKey1, TKey2>> keys);
+        /// <param name="keys">The keys to use.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>An enumeration containing all found </returns>
+        Task<IEnumerable<TEntity>> GetAsync(ICompositeKeyValue<TKey1, TKey2>[] keys, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get Entities by their Keys.

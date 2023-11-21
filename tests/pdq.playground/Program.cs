@@ -14,8 +14,8 @@ services.AddPdq(o =>
     o.EnableTransientTracking()
         .OverrideDefaultLogLevel(LogLevel.Debug)
         .UseMockDatabase();
-});
-services.AddScoped<IConnectionDetails, MockConnectionDetails>();
+})
+.WithConnection<IConnectionDetails, MockConnectionDetails>();
 
 var provider = services.BuildServiceProvider();
 

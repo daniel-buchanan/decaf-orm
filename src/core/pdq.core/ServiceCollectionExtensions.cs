@@ -11,16 +11,16 @@ using pdq.common.Utilities.Reflection;
 namespace pdq
 {
     public static class ServiceCollectionExtensions
-	{
+    {
         /// <summary>
         /// Add pdq to your <see cref="IServiceCollection"/>, setting the default options.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add to.</param>
         /// <returns></returns>
-        public static IServiceCollection AddPdq(this IServiceCollection services)
+        public static IPdqServiceCollection AddPdq(this IServiceCollection services)
         {
-			var o = new PdqOptions();
-			return AddPdq(services, o);
+            var o = new PdqOptions();
+            return AddPdq(services, o);
         }
 
         /// <summary>
@@ -30,13 +30,13 @@ namespace pdq
         /// <param name="services">The <see cref="IServiceCollection"/> to add to.</param>
         /// <param name="options">An <see cref="Action{T}"/> that resolves the pdq options.</param>
         /// <returns></returns>
-        public static IServiceCollection AddPdq(
+        public static IPdqServiceCollection AddPdq(
             this IServiceCollection services,
             Action<IPdqOptionsBuilder> options)
         {
-			var b = new PdqOptionsBuilder(services);
-			options(b);
-			return AddPdq(services, b.Build());
+            var b = new PdqOptionsBuilder(services);
+            options(b);
+            return AddPdq(services, b.Build());
         }
 
         /// <summary>
@@ -46,22 +46,22 @@ namespace pdq
         /// <param name="services">The <see cref="IServiceCollection"/> to add to.</param>
         /// <param name="options">A set of pre-configured <see cref="PdqOptions"/>.</param>
         /// <returns></returns>
-        public static IServiceCollection AddPdq(
+        public static IPdqServiceCollection AddPdq(
             this IServiceCollection services,
             PdqOptions options)
         {
             ValidateOptions(options);
 
-			services.AddSingleton(options);
+            services.AddSingleton(options);
             services.AddTransient<IPdq, Pdq>();
-			services.AddScoped(typeof(ILoggerProxy), options.LoggerProxyType);
+            services.AddScoped(typeof(ILoggerProxy), options.LoggerProxyType);
             services.AddSingleton<IHashProvider, HashProvider>();
             services.AddScoped<ITransientFactory, TransientFactory>();
             services.AddSingleton<IReflectionHelper, ReflectionHelper>();
             services.AddSingleton<IExpressionHelper, ExpressionHelper>();
 
-			return services;
-		}
+            return services as PdqServiceCollection;
+        }
 
         private static void ValidateOptions(PdqOptions options)
         {
@@ -70,6 +70,6 @@ namespace pdq
                 throw new PdqOptionsInvalidException($"The provided {nameof(options)} is NULL.");
             }
         }
-	}
+    }
 }
 

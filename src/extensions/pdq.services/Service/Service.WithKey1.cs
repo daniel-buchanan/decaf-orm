@@ -134,8 +134,8 @@ namespace pdq.services
             => await this.Command.DeleteAsync(keys, cancellationToken);
 
         /// <inheritdoc/>
-        public async Task<TEntity> AddAsync(TEntity toAdd, CancellationToken cancellationToken = default)
-            => await this.Command.AddAsync(toAdd, cancellationToken);
+        public async Task<TEntity> AddAsync(TEntity item, CancellationToken cancellationToken = default)
+            => await this.Command.AddAsync(item, cancellationToken);
 
         /// <inheritdoc/>
         public async Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> items, CancellationToken cancellationToken = default)

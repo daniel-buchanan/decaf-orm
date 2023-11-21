@@ -47,6 +47,14 @@ namespace pdq.services
         protected void ExecuteQuery(Action<IQueryContainer> method)
             => ExecuteQueryAsync(q => { method(q); return Task.CompletedTask; }).WaitFor();
 
+        /// <summary>
+        /// Execute the provided query.<br/>
+        /// Ensuring that everything is disposed properly and the results of the query are returned.
+        /// </summary>
+        /// <param name="method">The <see cref="Action{IQuery, T}"/> defining the query.</param>
+        protected T ExecuteQuery<T>(Func<IQueryContainer, T> method)
+            => ExecuteQueryAsync(q => Task.FromResult(method(q))).WaitFor();
+
         protected async Task ExecuteQueryAsync(Func<IQueryContainer, Task> method, CancellationToken cancellationToken = default)
         {
             var t = this.GetTransient();
@@ -69,27 +77,8 @@ namespace pdq.services
             if (this.disposeOnExit) t.Dispose();
         }
 
-        /// <summary>
-        /// Execute the provided query.<br/>
-        /// Ensuring that everything is disposed properly and the results of the query are returned.
-        /// </summary>
-        /// <param name="method">The <see cref="Action{IQuery, T}"/> defining the query.</param>
-        protected T ExecuteQuery<T>(Func<IQueryContainer, T> method)
-            => ExecuteQueryAsync(q => Task.FromResult(method(q))).WaitFor();
-
         protected async Task<T> ExecuteQueryAsync<T>(Func<IQueryContainer, Task<T>> method, CancellationToken cancellationToken = default)
-        {
-            T result;
-            var t = this.GetTransient();
-            using (var q = await t.QueryAsync(cancellationToken))
-            {
-                result = await method(q);
-            }
-
-            if (this.disposeOnExit) t.Dispose();
-
-            return result;
-        }
+            => await ExecuteQueryAsync((q, c) => method(q), cancellationToken);
 
         protected async Task<T> ExecuteQueryAsync<T>(Func<IQueryContainer, CancellationToken, Task<T>> method, CancellationToken cancellationToken = default)
         {

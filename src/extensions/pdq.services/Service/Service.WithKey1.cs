@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using pdq.common.Connections;
+using pdq.common.Utilities;
 
 namespace pdq.services
 {
@@ -10,11 +14,8 @@ namespace pdq.services
         IService<TEntity, TKey>
         where TEntity : class, IEntity<TKey>, new()
     {
-        private IQuery<TEntity, TKey> query
-            => GetQuery<IQuery<TEntity, TKey>>();
-
-        private ICommand<TEntity, TKey> command
-            => GetCommand<ICommand<TEntity, TKey>>();
+        private IQuery<TEntity, TKey> Query => GetQuery<IQuery<TEntity, TKey>>();
+        private ICommand<TEntity, TKey> Command => GetCommand<ICommand<TEntity, TKey>>();
 
         public Service(
             IQuery<TEntity, TKey> query,
@@ -23,75 +24,139 @@ namespace pdq.services
 
         private Service(ITransient transient)
             : base(transient,
-                   t => Query<TEntity, TKey>.Create(t),
-                   t => Command<TEntity, TKey>.Create(t)) { }
+                   Query<TEntity, TKey>.Create,
+                   Command<TEntity, TKey>.Create)
+        { }
 
         public static IService<TEntity, TKey> Create(ITransient transient)
             => new Service<TEntity, TKey>(transient);
 
         /// <inheritdoc/>
         public TEntity Add(TEntity toAdd)
-            => this.command.Add(toAdd);
+            => AddAsync(toAdd).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Add(params TEntity[] toAdd)
-            => this.command.Add(toAdd);
+            => AddAsync(toAdd?.AsEnumerable()).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
-            => this.command.Add(toAdd);
+            => AddAsync(toAdd).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> All()
-            => this.query.All();
+            => AllAsync().WaitFor();
+
+        /// <inheritdoc/>
+        public Task<IEnumerable<TEntity>> AllAsync(CancellationToken cancellationToken = default)
+            => this.Query.AllAsync(cancellationToken);
 
         /// <inheritdoc/>
         public void Delete(TKey key)
-            => this.command.Delete(key);
+            => DeleteAsync(key).WaitFor();
 
         /// <inheritdoc/>
         public void Delete(params TKey[] keys)
-            => this.command.Delete(keys);
+            => DeleteAsync(keys?.AsEnumerable()).WaitFor();
 
         /// <inheritdoc/>
         public void Delete(IEnumerable<TKey> keys)
-            => this.command.Delete(keys);
+            => DeleteAsync(keys).WaitFor();
 
         /// <inheritdoc/>
         public void Delete(Expression<Func<TEntity, bool>> expression)
-            => this.command.Delete(expression);
+            => DeleteAsync(expression).WaitFor();
 
         /// <inheritdoc/>
-        public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> query)
-            => this.query.Get(query);
+        public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> expression)
+            => FindAsync(expression).WaitFor();
+
+        /// <inheritdoc/>
+        public Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+            => this.Query.FindAsync(expression, cancellationToken);
 
         /// <inheritdoc/>
         public TEntity Get(TKey key)
-            => this.query.Get(key);
+            => GetAsync(key).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Get(params TKey[] keys)
-            => this.query.Get(keys);
+            => GetAsync(keys?.AsEnumerable()).WaitFor();
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Get(IEnumerable<TKey> keys)
-            => this.query.Get(keys);
+            => GetAsync(keys).WaitFor();
+
+        /// <inheritdoc/>
+        public Task<TEntity> GetAsync(TKey key, CancellationToken cancellationToken = default)
+            => this.Query.GetAsync(key, cancellationToken);
+
+        /// <inheritdoc/>
+        public Task<IEnumerable<TEntity>> GetAsync(TKey[] keys, CancellationToken cancellationToken = default)
+            => this.Query.GetAsync(keys, cancellationToken);
+
+        /// <inheritdoc/>
+        public Task<IEnumerable<TEntity>> GetAsync(IEnumerable<TKey> keys, CancellationToken cancellationToken = default)
+            => this.Query.GetAsync(keys, cancellationToken);
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, TKey key)
-            => this.command.Update(toUpdate, key);
+        {
+            var t = UpdateAsync(toUpdate, key);
+            t.Wait();
+        }
 
         /// <inheritdoc/>
         public void Update(TEntity toUpdate, Expression<Func<TEntity, bool>> expression)
-            => this.command.Update(toUpdate, expression);
+            => UpdateAsync(toUpdate, expression).WaitFor();
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
-            => this.command.Update(toUpdate, expression);
+            => this.Command.Update(toUpdate, expression);
 
         /// <inheritdoc/>
         public void Update(TEntity item)
-            => this.command.Update(item);
+            => UpdateAsync(item).WaitFor();
+
+        /// <inheritdoc/>
+        public async Task UpdateAsync(TEntity item, CancellationToken cancellationToken = default)
+            => await this.Command.UpdateAsync(item, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task UpdateAsync(dynamic toUpdate, TKey key, CancellationToken cancellationToken = default)
+            => await this.Command.UpdateAsync(toUpdate, key, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task DeleteAsync(TKey key, CancellationToken cancellationToken = default)
+            => await this.Command.DeleteAsync(key, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task DeleteAsync(TKey[] keys, CancellationToken cancellationToken = default)
+            => await this.Command.DeleteAsync(keys, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task DeleteAsync(IEnumerable<TKey> keys, CancellationToken cancellationToken = default)
+            => await this.Command.DeleteAsync(keys, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task<TEntity> AddAsync(TEntity item, CancellationToken cancellationToken = default)
+            => await this.Command.AddAsync(item, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> items, CancellationToken cancellationToken = default)
+            => await this.Command.AddAsync(items, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task UpdateAsync(TEntity toUpdate, Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+            => await this.Command.UpdateAsync(toUpdate, expression, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task UpdateAsync(dynamic toUpdate, Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+            => await this.Command.UpdateAsync(toUpdate, expression, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task DeleteAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+            => await this.Command.DeleteAsync(expression, cancellationToken);
     }
 }
 

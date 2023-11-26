@@ -17,6 +17,14 @@ namespace pdq.common.Utilities
 			task.Wait(cancellationToken);
 			return task.Result;
         }
+        
+        public static dynamic WaitFor(
+	        this Task<dynamic> task,
+	        CancellationToken cancellationToken = default)
+        {
+	        task.Wait(cancellationToken);
+	        return task.Result;
+        }
 	}
 }
 

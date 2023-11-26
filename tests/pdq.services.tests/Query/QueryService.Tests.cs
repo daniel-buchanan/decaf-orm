@@ -82,7 +82,7 @@ namespace pdq.services.tests.Query
             };
 
             // Act
-            this.personService.Get(p => p.Id == 42);
+            this.personService.Find(p => p.Id == 42);
 
             // Assert
             context.Should().NotBeNull();

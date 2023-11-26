@@ -29,7 +29,7 @@ namespace pdq.services
     /// </summary>
     /// <typeparam name="TKey1">The data type for the first component of the key.</typeparam>
     /// <typeparam name="TKey2">The data type for the second component of the key.</typeparam>
-    public interface IEntity<TKey1, TKey2> : IEntity
+    public interface IEntity<out TKey1, out TKey2> : IEntity
     {
         /// <summary>
         /// Metadata about the Primary Key for this <see cref="IEntity{TKey1, TKey2}"/>
@@ -49,7 +49,7 @@ namespace pdq.services
     /// <typeparam name="TKey1">The data type for the first component of the key.</typeparam>
     /// <typeparam name="TKey2">The data type for the second component of the key.</typeparam>
     /// <typeparam name="TKey3">The data type for the third component of the key.</typeparam>
-    public interface IEntity<TKey1, TKey2, TKey3> : IEntity
+    public interface IEntity<out TKey1, out TKey2, out TKey3> : IEntity
     {
         /// <summary>
         /// Metadata about the Primary Key for this <see cref="IEntity{TKey1, TKey2, TKey3}"/>

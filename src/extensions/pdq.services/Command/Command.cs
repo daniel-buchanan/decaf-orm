@@ -6,6 +6,9 @@ using pdq.common;
 using pdq.common.Connections;
 using pdq.state;
 using pdq.common.Utilities.Reflection;
+using System.Threading.Tasks;
+using System.Threading;
+using pdq.common.Utilities;
 
 namespace pdq.services
 {
@@ -20,104 +23,81 @@ namespace pdq.services
 
         public event EventHandler<PreExecutionEventArgs> OnBeforeExecution
         {
-            add => base.preExecution += value;
-            remove => base.preExecution -= value;
+            add => preExecution += value;
+            remove => preExecution -= value;
         }
 
         public static ICommand<TEntity> Create(ITransient transient) => new Command<TEntity>(transient);
 
         /// <inheritdoc/>
-        public TEntity Add(TEntity toAdd)
-        {
-            return ExecuteQuery(q =>
-            {
-                var query = q.Insert()
-                    .Into<TEntity>()
-                    .Columns(e => toAdd)
-                    .Value(toAdd);
-                NotifyPreExecution(this, q);
-                query.Execute();
+        public virtual TEntity Add(TEntity toAdd)
+            => AddAsync(toAdd).WaitFor();
 
-                return toAdd;
-            });
-        }
+        /// <inheritdoc/>
+        public virtual IEnumerable<TEntity> Add(params TEntity[] toAdd)
+            => AddAsync(toAdd?.ToList()).WaitFor();
 
-        protected IEnumerable<TEntity> Add(IEnumerable<TEntity> items, IEnumerable<string> outputs)
+        /// <inheritdoc/>
+        public virtual IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
+            => AddAsync(toAdd).WaitFor();
+
+        protected async Task<IEnumerable<TEntity>> AddAsync(
+            IEnumerable<TEntity> items,
+            IEnumerable<string> outputs,
+            CancellationToken cancellationToken = default)
         {
-            var first = items.First();
-            return ExecuteQuery(q =>
+            var inputItems = items?.ToList() ?? new List<TEntity>();
+            var outputColumns = outputs?.ToList() ?? new List<string>();
+
+            if (!inputItems.Any())
+                return new List<TEntity>();
+
+            var first = inputItems[0];
+            return await ExecuteQueryAsync(async (q, c) =>
             {
                 var query = q.Insert();
                 var table = GetTableInfo<TEntity>(q);
                 var exec = query.Into(table)
                     .Columns((t) => first)
-                    .Values(items);
-                foreach (var o in outputs)
+                    .Values(inputItems);
+                foreach (var o in outputColumns)
                     exec.Output(o);
                 NotifyPreExecution(this, q);
 
-                var results = exec.ToList<TEntity>();
+                var results = await exec.ToListAsync<TEntity>(c);
 
-                var inputItems = items.ToArray();
                 var i = 0;
                 foreach (var item in results)
                 {
                     var r = inputItems[i];
-                    foreach (var o in outputs) r.SetPropertyValueFrom(o, item);
+                    foreach (var o in outputColumns) r.SetPropertyValueFrom(o, item);
                     i += 1;
                 }
                 return inputItems;
-            });
-        }
-
-        /// <inheritdoc/>
-        public virtual IEnumerable<TEntity> Add(params TEntity[] toAdd)
-            => Add(toAdd?.ToList());
-
-        /// <inheritdoc/>
-        public virtual IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
-        {
-            if (toAdd == null ||
-               !toAdd.Any())
-                return new List<TEntity>();
-
-            return ExecuteQuery(q =>
-            {
-                var first = toAdd.First();
-                var query = q.Insert()
-                    .Into<TEntity>(t => t)
-                    .Columns(t => first)
-                    .Values(toAdd);
-                NotifyPreExecution(this, q);
-                query.Execute();
-                return toAdd;
-            });
+            }, cancellationToken);
         }
 
         /// <inheritdoc/>
         public void Delete(Expression<Func<TEntity, bool>> expression)
-        {
-            ExecuteQuery(q =>
-            {
-                var query = q.Delete()
-                    .From<TEntity>()
-                    .Where(expression);
-                NotifyPreExecution(this, q);
-                query.Execute();
-            });
-        }
+            => DeleteAsync(expression).WaitFor();
 
         /// <inheritdoc/>
         public void Update(TEntity toUpdate, Expression<Func<TEntity, bool>> expression)
-            => UpdateInternal(toUpdate, expression);
+            => UpdateAsync(toUpdate, expression).WaitFor();
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
-            => UpdateInternal(toUpdate, expression);
-
-        private void UpdateInternal(dynamic toUpdate, Expression<Func<TEntity, bool>> expression)
         {
-            ExecuteQuery(q =>
+            var t = UpdateAsync(toUpdate, expression);
+            t.Wait();
+        }
+
+        private async Task UpdateInternalAsync(
+            dynamic toUpdate,
+            Expression<Func<TEntity, bool>> expression,
+            CancellationToken cancellationToken = default)
+        {
+            await ExecuteQueryAsync(async (q, c) =>
             {
                 var updateQ = q.Update();
                 var alias = q.Context.Helpers().GetTableAlias(expression);
@@ -128,24 +108,28 @@ namespace pdq.services
 
                 executeQ.Where(whereClause);
                 NotifyPreExecution(this, q);
-                executeQ.Execute();
-            });
+                await executeQ.ExecuteAsync(c);
+            }, cancellationToken);
         }
 
-        protected void DeleteByKeys<TKey>(IEnumerable<TKey> keys, Action<IEnumerable<TKey>, IQueryContainer, IWhereBuilder> action)
+        protected async Task DeleteByKeysAsync<TKey>(
+            IEnumerable<TKey> keys,
+            Action<IEnumerable<TKey>, IQueryContainer, IWhereBuilder> action,
+            CancellationToken cancellationToken = default)
         {
-            var numKeys = keys?.Count() ?? 0;
+            var keysList = keys?.ToList() ?? new List<TKey>();
+            var numKeys = keysList.Count;
             if (numKeys == 0) return;
 
-            var t = this.GetTransient();
+            var t = GetTransient();
             const int take = 100;
             var skip = 0;
 
             do
             {
-                var keyBatch = keys.Skip(skip).Take(take);
+                var keyBatch = keysList.Skip(skip).Take(take);
 
-                using (var q = t.Query())
+                using (var q = await t.QueryAsync(cancellationToken))
                 {
                     var query = q.Delete();
                     var table = base.GetTableInfo<TEntity>(q);
@@ -153,13 +137,52 @@ namespace pdq.services
                         .Where(b => action(keyBatch, q, b));
                     NotifyPreExecution(this, q);
 
-                    exec.Execute();
+                    await exec.ExecuteAsync(cancellationToken);
                 }
 
                 skip += take;
             } while (skip < numKeys);
 
-            if (this.disposeOnExit) t.Dispose();
+            if (disposeOnExit) t.Dispose();
+        }
+
+        public virtual async Task<TEntity> AddAsync(
+            TEntity toAdd,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await AddAsync(new[] { toAdd }, cancellationToken);
+            return result.First();
+        }
+
+        public virtual async Task<IEnumerable<TEntity>> AddAsync(
+            IEnumerable<TEntity> items,
+            CancellationToken cancellationToken = default)
+            => await AddAsync(items, Array.Empty<string>(), cancellationToken);
+
+        public async Task UpdateAsync(
+            TEntity toUpdate,
+            Expression<Func<TEntity, bool>> expression,
+            CancellationToken cancellationToken = default)
+            => await UpdateInternalAsync(toUpdate, expression, cancellationToken);
+
+        public async Task UpdateAsync(
+            dynamic toUpdate,
+            Expression<Func<TEntity, bool>> expression,
+            CancellationToken cancellationToken = default)
+            => await UpdateInternalAsync(toUpdate, expression, cancellationToken);
+
+        public async Task DeleteAsync(
+            Expression<Func<TEntity, bool>> expression,
+            CancellationToken cancellationToken = default)
+        {
+            await ExecuteQueryAsync(async (q, c) =>
+            {
+                var query = q.Delete()
+                    .From<TEntity>()
+                    .Where(expression);
+                NotifyPreExecution(this, q);
+                await query.ExecuteAsync();
+            }, cancellationToken);
         }
     }
 }

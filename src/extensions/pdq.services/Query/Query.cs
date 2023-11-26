@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using pdq.common;
 using pdq.common.Connections;
+using pdq.common.Utilities;
 using pdq.state;
 
 namespace pdq.services
@@ -29,36 +32,48 @@ namespace pdq.services
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> All()
+            => AllAsync().WaitFor();
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<TEntity>> AllAsync(CancellationToken cancellationToken = default)
         {
-            return ExecuteQuery(q =>
+            return await ExecuteQueryAsync(async (q, c) =>
             {
                 var sel = q.Select()
                     .From<TEntity>(t => t)
                     .SelectAll<TEntity>(t => t);
                 NotifyPreExecution(this, q);
-                return sel.AsEnumerable();
-            });
+                return await sel.AsEnumerableAsync(c);
+            }, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> query)
+        public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> expression)
+            => FindAsync(expression).WaitFor();
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<TEntity>> FindAsync(
+            Expression<Func<TEntity, bool>> expression,
+            CancellationToken cancellationToken = default)
         {
-            return ExecuteQuery(q =>
+            return await ExecuteQueryAsync(async (q, c) =>
             {
                 var sel = q.Select()
                     .From<TEntity>(t => t)
-                    .Where(query)
+                    .Where(expression)
                     .SelectAll<TEntity>(t => t);
                 NotifyPreExecution(this, q);
-                return sel.AsEnumerable();
-            });
+                return await sel.AsEnumerableAsync(c);
+            }, cancellationToken);
         }
 
-        protected IEnumerable<TEntity> GetByKeys<TKey>(
+        protected async Task<IEnumerable<TEntity>> GetByKeysAsync<TKey>(
             IEnumerable<TKey> keys,
-            Action<IEnumerable<TKey>, IQueryContainer, IWhereBuilder> filter)
+            Action<IEnumerable<TKey>, IQueryContainer, IWhereBuilder> filter,
+            CancellationToken cancellationToken = default)
         {
-            var numKeys = keys?.Count() ?? 0;
+            var keyList = keys?.ToList() ?? new List<TKey>();
+            var numKeys = keyList.Count;
             if (numKeys == 0) return Enumerable.Empty<TEntity>();
 
             var t = this.GetTransient();
@@ -68,9 +83,9 @@ namespace pdq.services
 
             do
             {
-                var keyBatch = keys.Skip(skip).Take(take);
+                var keyBatch = keyList.Skip(skip).Take(take);
 
-                using (var q = t.Query())
+                using (var q = await t.QueryAsync(cancellationToken))
                 {
                     var select = q.Select();
                     var table = q.Context.Helpers().GetTableName<TEntity>();
@@ -80,7 +95,7 @@ namespace pdq.services
                         .SelectAll<TEntity>(TableAlias);
 
                     NotifyPreExecution(this, q);
-                    var batchResults = selected.AsEnumerable();
+                    var batchResults = await selected.AsEnumerableAsync(cancellationToken);
 
                     results.AddRange(batchResults);
                 }

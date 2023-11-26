@@ -9,9 +9,9 @@ namespace pdq.services
     /// </summary>
     /// <typeparam name="TEntity">The type of <see cref="IEntity{TKey}"/> to work with.</typeparam>
     /// <typeparam name="TKey">The data type of the primary key.</typeparam>
-	public interface ICommand<TEntity, TKey> :
+	public partial interface ICommand<TEntity, TKey> :
         ICommand<TEntity>
-		where TEntity: IEntity<TKey>, new()
+        where TEntity : IEntity<TKey>, new()
     {
         /// <summary>
         /// Update the entire item, using it's Primary Key.

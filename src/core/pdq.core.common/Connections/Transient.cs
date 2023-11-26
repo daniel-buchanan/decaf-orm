@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using pdq.common.Logging;
 using pdq.common.Utilities;
 
 namespace pdq.common.Connections
 {
     public class Transient : ITransientInternal
-	{
+    {
         private readonly IConnection connection;
         private readonly ITransactionInternal transaction;
         private readonly Action<Guid> notifyDisposed;
@@ -17,14 +19,14 @@ namespace pdq.common.Connections
         private readonly IHashProvider hashProvider;
         private readonly List<IQueryContainer> queries;
 
-		private Transient(
+        private Transient(
             ITransaction transaction,
             ISqlFactory sqlFactory,
             ILoggerProxy logger,
             IHashProvider hashProvider,
             PdqOptions options,
             Action<Guid> notifyDisposed)
-		{
+        {
             this.connection = transaction.Connection;
             this.transaction = transaction as ITransactionInternal;
             this.sqlFactory = sqlFactory;
@@ -36,7 +38,7 @@ namespace pdq.common.Connections
 
             Id = Guid.NewGuid();
             this.logger.Debug($"Transient({Id}) :: Created");
-		}
+        }
 
         /// <inheritdoc />
         public Guid Id { get; private set; }
@@ -107,18 +109,21 @@ namespace pdq.common.Connections
 
         /// <inheritdoc />
         public IQueryContainer Query()
+            => QueryAsync().WaitFor();
+
+        public Task<IQueryContainer> QueryAsync(CancellationToken cancellationToken = default)
         {
             var query = QueryContainer.Create(this, this.logger, this.hashProvider, this.options);
             this.logger.Debug($"Transient({Id}) :: Creating new Query");
             this.queries.Add(query);
-            return query;
+            return Task.FromResult(query);
         }
 
         /// <inheritdoc />
         public void NotifyQueryDisposed(Guid queryId)
         {
             var found = this.queries.FirstOrDefault(q => q.Id == queryId);
-            if(found == null)
+            if (found == null)
             {
                 this.logger.Debug($"Transient({Id}) :: Cound not find query with Id - {queryId}");
                 return;

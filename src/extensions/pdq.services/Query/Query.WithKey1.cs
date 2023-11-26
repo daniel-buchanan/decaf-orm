@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Collections.Generic;
 using pdq.common;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using pdq.common.Connections;
+using pdq.common.Utilities;
 
 namespace pdq.services
 {
@@ -19,28 +20,38 @@ namespace pdq.services
         public new static IQuery<TEntity, TKey> Create(ITransient transient) => new Query<TEntity, TKey>(transient);
 
         /// <inheritdoc/>
-        public new IEnumerable<TEntity> All() => base.All();
+        public TEntity Get(TKey key)
+            => GetAsync(key).WaitFor();
 
         /// <inheritdoc/>
-        public new IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> query)
-            => base.Get(query);
-
-        /// <inheritdoc/>
-        public TEntity Get(TKey key) => Get(new[] { key }).FirstOrDefault();
-
-        /// <inheritdoc/>
-        public IEnumerable<TEntity> Get(params TKey[] keys) => Get(keys.ToList());
+        public IEnumerable<TEntity> Get(params TKey[] keys)
+            => Get(keys.ToList());
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> Get(IEnumerable<TKey> keys)
+            => GetAsync(keys).WaitFor();
+
+        /// <inheritdoc/>
+        public async Task<TEntity> GetAsync(TKey key, CancellationToken cancellationToken = default)
+        {
+            var results = await GetAsync(new[] { key }, cancellationToken);
+            return results.FirstOrDefault();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<TEntity>> GetAsync(TKey[] keys, CancellationToken cancellationToken = default)
+            => await GetAsync(keys?.ToList(), cancellationToken);
+
+        /// <inheritdoc/>
+        public Task<IEnumerable<TEntity>> GetAsync(IEnumerable<TKey> keys, CancellationToken cancellationToken = default)
         {
             var tmp = new TEntity();
-         
-            return GetByKeys(keys, (keyBatch, q, b) =>
+
+            return GetByKeysAsync(keys, (keyBatch, q, b) =>
             {
                 var keyName = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata);
                 b.Column(keyName).Is().In(keyBatch);
-            });
+            }, cancellationToken);
         }
     }
 }

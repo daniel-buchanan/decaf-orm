@@ -44,12 +44,17 @@ namespace pdq.common.Connections
             IConnectionDetails connectionDetails,
             CancellationToken cancellationToken = default)
         {
+            ValidateConnectionParameters(connectionDetails);
+            return await GetOrCreateConnectionAsync(connectionDetails, cancellationToken);
+        }
+
+        private void ValidateConnectionParameters(IConnectionDetails connectionDetails)
+        {
             if (connectionDetails == null)
                 throw new ArgumentNullException(nameof(connectionDetails), $"The {nameof(connectionDetails)} cannot be null, it MUST be provided when creating a connection.");
 
             if (this.connections == null)
                 this.connections = new Dictionary<string, IConnection>();
-            return await GetOrCreateConnectionAsync(connectionDetails, cancellationToken);
         }
 
         private async Task<IConnection> GetOrCreateConnectionAsync(

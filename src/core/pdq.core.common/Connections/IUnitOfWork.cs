@@ -8,7 +8,7 @@ namespace pdq.common.Connections
     /// <summary>
     /// 
     /// </summary>
-    public interface ITransient : IDisposable
+    public interface IUnitOfWork : IDisposable
     {
         /// <summary>
         /// Gets the Id of the "Transient", this is unqiuely generated for each transient
@@ -31,7 +31,7 @@ namespace pdq.common.Connections
         Task<IQueryContainer> QueryAsync(CancellationToken cancellationToken = default);
     }
 
-    internal interface ITransientInternal : ITransient
+    internal interface IUnitOfWorkInternal : IUnitOfWork
     {
         /// <summary>
         /// Gets the connection associated with this Transient.

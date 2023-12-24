@@ -20,7 +20,7 @@ namespace pdq.core_tests
             var transactionFactory = new MockTransactionFactory(connectionFactory, logger, options);
             var sqlFactory = new MockSqlFactory();
             var hashProvider = new HashProvider();
-            var transientFactory = new TransientFactory(options, logger, transactionFactory, sqlFactory, hashProvider);
+            var transientFactory = new UnitOfWorkFactory(options, logger, transactionFactory, sqlFactory, hashProvider);
             return new Pdq(logger, transientFactory);
         }
 

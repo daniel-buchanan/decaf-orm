@@ -18,12 +18,12 @@ namespace pdq.services
         }
 
         protected ExecutionNotifiable(
-            ITransient transient,
-            Func<ITransient, IExecutionNotifiable> createQuery,
-            Func<ITransient, IExecutionNotifiable> createCommand)
+            IUnitOfWork unitOfWork,
+            Func<IUnitOfWork, IExecutionNotifiable> createQuery,
+            Func<IUnitOfWork, IExecutionNotifiable> createCommand)
         {
-            this.query = createQuery(transient);
-            this.command = createCommand(transient);
+            this.query = createQuery(unitOfWork);
+            this.command = createCommand(unitOfWork);
         }
 
         /// <inheritdoc/>

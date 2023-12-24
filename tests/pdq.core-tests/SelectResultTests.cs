@@ -17,7 +17,7 @@ namespace pdq.core_tests
             var services = new ServiceCollection();
             services.AddPdq(o =>
             {
-                o.EnableTransientTracking();
+                o.TrackUnitsOfWork();
                 o.OverrideDefaultLogLevel(LogLevel.Debug);
                 o.UseMockDatabase();
             });

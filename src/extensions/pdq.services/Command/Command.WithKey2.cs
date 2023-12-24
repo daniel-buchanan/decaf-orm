@@ -17,10 +17,10 @@ namespace pdq.services
     {
         public Command(IPdq pdq) : base(pdq) { }
 
-        private Command(ITransient transient) : base(transient) { }
+        private Command(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public new static ICommand<TEntity, TKey1, TKey2> Create(ITransient transient)
-            => new Command<TEntity, TKey1, TKey2>(transient);
+        public new static ICommand<TEntity, TKey1, TKey2> Create(IUnitOfWork unitOfWork)
+            => new Command<TEntity, TKey1, TKey2>(unitOfWork);
 
         /// <inheritdoc/>
         public override IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
@@ -61,7 +61,7 @@ namespace pdq.services
             await DeleteByKeysAsync(keys, (keyBatch, q, b) =>
             {
                 b.ClauseHandling.DefaultToOr();
-                GetKeyColumnNames<TEntity, TKey1, TKey2>(q, out var keyColumnOne, out var keyColumnTwo);
+                GetKeyColumnNames(q, out var keyColumnOne, out var keyColumnTwo);
                 foreach (var k in keyBatch)
                 {
                     b.And(a =>
@@ -103,6 +103,23 @@ namespace pdq.services
             var lambdaExpression = Expression.Lambda<Func<TEntity, bool>>(andExpression, parameterExpression);
 
             await UpdateAsync(toUpdate, lambdaExpression, cancellationToken);
+        }
+        
+        /// <summary>
+        /// Get the column names for an Entity.<br/>
+        /// Where it has a composite key with two values.
+        /// </summary>
+        /// <typeparam name="TEntity">The Entity type to work with.</typeparam>
+        /// <typeparam name="TKey1">The type of the first component of the key.</typeparam>
+        /// <typeparam name="TKey2">The type of the second component of the key.</typeparam>
+        /// <param name="q">The <see cref="IQuery"/> instance to work with.</param>
+        /// <param name="key1Name">The name of the first Key comoponent.</param>
+        /// <param name="key2Name">The name of the second Key compononent.</param>
+        private void GetKeyColumnNames(IQueryContainer q, out string key1Name, out string key2Name)
+        {
+            var tmp = new TEntity();
+            key1Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentOne);
+            key2Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentTwo);
         }
     }
 }

@@ -49,7 +49,7 @@ namespace pdq.core_tests.Connections
         public void CanGetConnectionSucceeds()
         {
             // Arrange
-            var transient = this.pdq.Begin() as ITransientInternal;
+            var transient = this.pdq.Begin() as IUnitOfWorkInternal;
 
             // Act
             Func<IConnection> method = () => transient.Connection;
@@ -64,7 +64,7 @@ namespace pdq.core_tests.Connections
         public void CanGetTransactionSucceeds()
         {
             // Arrange
-            var transient = this.pdq.Begin() as ITransientInternal;
+            var transient = this.pdq.Begin() as IUnitOfWorkInternal;
 
             // Act
             Func<ITransaction> method = () => transient.Transaction;
@@ -79,7 +79,7 @@ namespace pdq.core_tests.Connections
         public void NotifyQueryDisposed_UnknownQueryDoesNothing()
         {
             // Arrange
-            var transient = this.pdq.Begin() as ITransientInternal;
+            var transient = this.pdq.Begin() as IUnitOfWorkInternal;
 
             // Act
             transient.NotifyQueryDisposed(Guid.Empty);

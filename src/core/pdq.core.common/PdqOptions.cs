@@ -14,7 +14,7 @@ namespace pdq
         {
             DefaultLogLevel = LogLevel.Error;
             DefaultClauseHandling = ClauseHandling.And;
-            TrackTransients = false;
+            TrackUnitsOfWork = false;
             CloseConnectionOnCommitOrRollback = false;
             LoggerProxyType = typeof(DefaultLogger);
             IncludeHeaderCommentsInSql = true;
@@ -36,7 +36,7 @@ namespace pdq
 		/// <summary>
         /// Whether or not to track transients as they are used, and disposed.
         /// </summary>
-		public bool TrackTransients { get; private set; }
+		public bool TrackUnitsOfWork { get; private set; }
 
         /// <summary>
         /// Whether or not to close the connection on commit or rollback of the transaction.
@@ -47,6 +47,11 @@ namespace pdq
         /// Whether or not to include header comments in generated SQL.
         /// </summary>
         public bool IncludeHeaderCommentsInSql { get; private set; }
+        
+        /// <summary>
+        /// Whether or not to automatically inject an <see cref="IUnitOfWork"/> as a scoped service.
+        /// </summary>
+        public bool InjectUnitOfWorkAsScoped { get; private set; }
 
         /// <summary>
         /// The type of the logger proxy to use.

@@ -14,14 +14,14 @@ namespace pdq.core_tests
 {
     public class TransientExtensionsTests
     {
-        private readonly ITransient transient;
+        private readonly IUnitOfWork unitOfWork;
 
         public TransientExtensionsTests()
         {
             var services = new ServiceCollection();
             services.AddPdq(o =>
             {
-                o.EnableTransientTracking();
+                o.TrackUnitsOfWork();
                 o.OverrideDefaultLogLevel(LogLevel.Debug);
                 o.UseMockDatabase();
             });
@@ -29,15 +29,15 @@ namespace pdq.core_tests
 
             var provider = services.BuildServiceProvider();
             var pdq = provider.GetService<IPdq>();
-            this.transient = pdq.Begin();
+            this.unitOfWork = pdq.Begin();
         }
 
         [Theory]
         [MemberData(nameof(ExtensionTests))]
-        public void ServicesShouldNotBeNull<T>(Func<ITransient, T> method)
+        public void ServicesShouldNotBeNull<T>(Func<IUnitOfWork, T> method)
         {
             // Act
-            var result = method(this.transient);
+            var result = method(this.unitOfWork);
 
             // Assert
             result.Should().NotBeNull();
@@ -66,7 +66,7 @@ namespace pdq.core_tests
             }
         }
 
-        private static Func<ITransient, T> GetMethod<T>(Expression<Func<ITransient, T>> expression)
+        private static Func<IUnitOfWork, T> GetMethod<T>(Expression<Func<IUnitOfWork, T>> expression)
             => expression.Compile();
     }
 }

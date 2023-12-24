@@ -20,15 +20,15 @@ namespace pdq.services
 
         public event EventHandler<PreExecutionEventArgs> OnBeforeExecution
         {
-            add => base.preExecution += value;
-            remove => base.preExecution -= value;
+            add => base.PreExecution += value;
+            remove => base.PreExecution -= value;
         }
 
         public Query(IPdq pdq) : base(pdq) { }
 
-        protected Query(ITransient transient) : base(transient) { }
+        protected Query(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public static IQuery<TEntity> Create(ITransient transient) => new Query<TEntity>(transient);
+        public static IQuery<TEntity> Create(IUnitOfWork unitOfWork) => new Query<TEntity>(unitOfWork);
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> All()

@@ -23,12 +23,12 @@ namespace pdq.core_tests
         {
             var services = new ServiceCollection();
             services.AddPdq(o =>
-            {
-                o.EnableTransientTracking();
-                o.OverrideDefaultLogLevel(LogLevel.Debug);
-                o.UseMockDatabase();
-            });
-            services.AddScoped<IConnectionDetails, MockConnectionDetails>();
+                {
+                    o.TrackUnitsOfWork();
+                    o.OverrideDefaultLogLevel(LogLevel.Debug);
+                    o.UseMockDatabase();
+                })
+                .WithConnection<IConnectionDetails, MockConnectionDetails>();
 
             var provider = services.BuildServiceProvider();
             var pdq = provider.GetService<IPdq>();

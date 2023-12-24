@@ -8,7 +8,7 @@ using pdq.common.Utilities;
 
 namespace pdq.common.Connections
 {
-    public class Transient : ITransientInternal
+    public class UnitOfWork : IUnitOfWorkInternal
     {
         private readonly IConnection connection;
         private readonly ITransactionInternal transaction;
@@ -19,7 +19,7 @@ namespace pdq.common.Connections
         private readonly IHashProvider hashProvider;
         private readonly List<IQueryContainer> queries;
 
-        private Transient(
+        private UnitOfWork(
             ITransaction transaction,
             ISqlFactory sqlFactory,
             ILoggerProxy logger,
@@ -37,29 +37,29 @@ namespace pdq.common.Connections
             this.queries = new List<IQueryContainer>();
 
             Id = Guid.NewGuid();
-            this.logger.Debug($"Transient({Id}) :: Created");
+            this.logger.Debug($"UnitOfWork({Id}) :: Created");
         }
 
         /// <inheritdoc />
         public Guid Id { get; private set; }
 
         /// <inheritdoc />
-        IConnection ITransientInternal.Connection => this.connection;
+        IConnection IUnitOfWorkInternal.Connection => this.connection;
 
         /// <inheritdoc />
-        ITransaction ITransientInternal.Transaction => this.transaction;
+        ITransaction IUnitOfWorkInternal.Transaction => this.transaction;
 
         /// <inheritdoc />
-        ISqlFactory ITransientInternal.SqlFactory => this.sqlFactory;
+        ISqlFactory IUnitOfWorkInternal.SqlFactory => this.sqlFactory;
 
-        public static ITransient Create(
+        public static IUnitOfWork Create(
             ITransaction transaction,
             ISqlFactory sqlFactory,
             ILoggerProxy logger,
             IHashProvider hashProvider,
             PdqOptions options,
             Action<Guid> notifyDisposed)
-            => new Transient(transaction, sqlFactory, logger, hashProvider, options, notifyDisposed);
+            => new UnitOfWork(transaction, sqlFactory, logger, hashProvider, options, notifyDisposed);
 
         /// <inheritdoc />
         public void Dispose()
@@ -73,37 +73,37 @@ namespace pdq.common.Connections
             if (!disposing) return;
             if (this.queries.Any(q => q.Status != QueryStatus.Executed))
             {
-                this.logger.Warning($"Transient({Id}) :: One or more queries have not been executed.");
+                this.logger.Warning($"UnitOfWork({Id}) :: One or more queries have not been executed.");
             }
 
             try
             {
-                this.logger.Debug($"Transient({Id}) :: Committing Transaction");
+                this.logger.Debug($"UnitOfWork({Id}) :: Committing Transaction");
                 this.transaction.Commit();
             }
             catch (Exception commitException)
             {
-                this.logger.Error(commitException, $"Transient({Id}) :: Committing Transaction Failed");
+                this.logger.Error(commitException, $"UnitOfWork({Id}) :: Committing Transaction Failed");
                 try
                 {
-                    this.logger.Debug($"Transient({Id}) :: Rolling back Transaction");
+                    this.logger.Debug($"UnitOfWork({Id}) :: Rolling back Transaction");
                     this.transaction.Rollback();
                 }
                 catch (Exception rollbackException)
                 {
-                    this.logger.Error(rollbackException, $"Transient({Id}) :: Rolling back Transaction Failed");
+                    this.logger.Error(rollbackException, $"UnitOfWork({Id}) :: Rolling back Transaction Failed");
                 }
             }
             finally
             {
                 if (this.transaction.CloseConnectionOnCommitOrRollback)
                 {
-                    this.logger.Debug($"Transient({Id}) :: Closing Connection after Commit or Rollback");
+                    this.logger.Debug($"UnitOfWork({Id}) :: Closing Connection after Commit or Rollback");
                     this.connection.Close();
                 }
             }
 
-            this.logger.Debug($"Transient({Id}) :: Disposed");
+            this.logger.Debug($"UnitOfWork({Id}) :: Disposed");
             this.notifyDisposed(this.Id);
         }
 
@@ -114,7 +114,7 @@ namespace pdq.common.Connections
         public Task<IQueryContainer> QueryAsync(CancellationToken cancellationToken = default)
         {
             var query = QueryContainer.Create(this, this.logger, this.hashProvider, this.options);
-            this.logger.Debug($"Transient({Id}) :: Creating new Query");
+            this.logger.Debug($"UnitOfWork({Id}) :: Creating new Query");
             this.queries.Add(query);
             return Task.FromResult(query);
         }
@@ -125,7 +125,7 @@ namespace pdq.common.Connections
             var found = this.queries.FirstOrDefault(q => q.Id == queryId);
             if (found == null)
             {
-                this.logger.Debug($"Transient({Id}) :: Cound not find query with Id - {queryId}");
+                this.logger.Debug($"UnitOfWork({Id}) :: Cound not find query with Id - {queryId}");
                 return;
             }
 

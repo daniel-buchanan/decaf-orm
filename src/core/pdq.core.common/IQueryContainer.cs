@@ -27,6 +27,11 @@ namespace pdq.common
         /// Gets the <see cref="IQueryContext"/> for this query.
         /// </summary>
 		IQueryContext Context { get; }
-    }
+
+        /// <summary>
+        /// Discard the current query.
+        /// </summary>
+        void Discard();
+	}
 }
 

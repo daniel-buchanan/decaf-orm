@@ -11,7 +11,7 @@ using pdq.tests.common.Models;
 var services = new ServiceCollection();
 services.AddPdq(o =>
 {
-    o.EnableTransientTracking()
+    o.TrackUnitsOfWork()
         .OverrideDefaultLogLevel(LogLevel.Debug)
         .UseMockDatabase();
 })
@@ -37,7 +37,8 @@ using (var q = pdq.BeginQuery())
         {
             Name = b.Is("name", "b"),
             City = b.Is("city", "b")
-        });
+        })
+        .Execute();
 
     q.Select()
         .From<Person>(x => x)

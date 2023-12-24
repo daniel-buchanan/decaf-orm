@@ -22,14 +22,14 @@ namespace pdq.services
             ICommand<TEntity> command)
             : base(query, command) { }
 
-        private Service(ITransient transient)
-            : base(transient,
+        private Service(IUnitOfWork unitOfWork)
+            : base(unitOfWork,
                    Query<TEntity>.Create,
                    Command<TEntity>.Create)
         { }
 
-        public static IService<TEntity> Create(ITransient transient)
-            => new Service<TEntity>(transient);
+        public static IService<TEntity> Create(IUnitOfWork unitOfWork)
+            => new Service<TEntity>(unitOfWork);
 
         /// <inheritdoc/>
         public TEntity Add(TEntity toAdd)

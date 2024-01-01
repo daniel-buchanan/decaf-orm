@@ -2,7 +2,7 @@
 
 namespace pdq.services
 {
-	public static class TransientExtensions
+	public static class UnitOfWorkExtensions
 	{
 		/// <summary>
         /// 

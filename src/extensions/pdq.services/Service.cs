@@ -17,13 +17,13 @@ namespace pdq.services
         protected Service(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
-            this.disposeOnExit = false;
+            disposeOnExit = false;
         }
 
         protected Service(IPdq pdq)
         {
             this.pdq = pdq;
-            this.disposeOnExit = true;
+            disposeOnExit = true;
         }
 
         protected event EventHandler<PreExecutionEventArgs> PreExecution;
@@ -58,7 +58,7 @@ namespace pdq.services
                 await method(q, cancellationToken);
             }
 
-            if (this.disposeOnExit) t.Dispose();
+            if (disposeOnExit) t.Dispose();
         }
         
         protected async Task<T> ExecuteQueryAsync<T>(Func<IQueryContainer, CancellationToken, Task<T>> method, CancellationToken cancellationToken = default)
@@ -70,7 +70,7 @@ namespace pdq.services
                 result = await method(q, cancellationToken);
             }
 
-            if (this.disposeOnExit) t.Dispose();
+            if (disposeOnExit) t.Dispose();
 
             return result;
         }
@@ -83,7 +83,7 @@ namespace pdq.services
         protected void NotifyPreExecution(object sender, IQueryContainer query)
         {
             var args = new PreExecutionEventArgs(query.Context);
-            this.PreExecution?.Invoke(sender, args);
+            PreExecution?.Invoke(sender, args);
         }
 
         /// <summary>
@@ -101,23 +101,13 @@ namespace pdq.services
         /// </summary>
         /// <typeparam name="TEntity">The Entity type to work with.</typeparam>
         /// <param name="q">The <see cref="IQuery"/> instance to use.</param>
-        /// <param name="name">The name of the property.</param>
-        /// <returns>The SQL name of the Column.</returns>
-        protected static string GetKeyColumnName<TEntity>(IQueryContainer q, string name)
-        {
-            var prop = typeof(TEntity).GetProperty(name);
-            return q.Context.Helpers().GetFieldName(prop);
-        }
-
-        /// <summary>
-        /// Get an individual key column name.
-        /// </summary>
-        /// <typeparam name="TEntity">The Entity type to work with.</typeparam>
-        /// <param name="q">The <see cref="IQuery"/> instance to use.</param>
         /// <param name="key">The key metadata</param>
         /// <returns>The SQL name of the Column.</returns>
         protected static string GetKeyColumnName<TEntity>(IQueryContainer q, IKeyMetadata key)
-            => GetKeyColumnName<TEntity>(q, key.Name);
+        {
+            var prop = typeof(TEntity).GetProperty(key.Name);
+            return q.Context.Helpers().GetFieldName(prop);
+        }
     }
 }
 

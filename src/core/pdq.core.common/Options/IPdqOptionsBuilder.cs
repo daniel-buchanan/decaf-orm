@@ -60,6 +60,13 @@ namespace pdq.common.Options
         /// </summary>
         /// <returns>(Fluent API) The ability to continue further setup actions.</returns>
         IPdqOptionsBuilder InjectUnitOfWorkAsScoped();
+
+        /// <summary>
+        /// Inject the <see cref="IUnitOfWork"/> using the provided lifetime
+        /// </summary>
+        /// <param name="lifetime">The lifetime for the <see cref="IUnitOfWork"/> when injected.</param>
+        /// <returns>(FluentAPI) The ability to continue further setup actions.</returns>
+        IPdqOptionsBuilder InjectUnitOfWork(ServiceLifetime lifetime);
     }
 
     public interface IPdqOptionsBuilderExtensions : IPdqOptionsBuilder

@@ -57,8 +57,10 @@ namespace pdq
             services.AddSingleton<IReflectionHelper, ReflectionHelper>();
             services.AddSingleton<IExpressionHelper, ExpressionHelper>();
 
-            if (options.InjectUnitOfWorkAsScoped)
-                services.AddScoped(GetUnitOfWork);
+            if (options.InjectUnitOfWork)
+            {
+                services.Add(new ServiceDescriptor(typeof(IUnitOfWork), GetUnitOfWork, options.UnitOfWorkLifetime));
+            }
 
             return PdqServiceCollection.Create(services);
         }

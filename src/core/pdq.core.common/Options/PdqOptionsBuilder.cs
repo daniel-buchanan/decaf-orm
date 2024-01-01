@@ -36,7 +36,15 @@ namespace pdq.common
 
         /// <inheritdoc/>
         public IPdqOptionsBuilder InjectUnitOfWorkAsScoped()
-            => ConfigureProperty(nameof(PdqOptions.InjectUnitOfWorkAsScoped), true);
+            => InjectUnitOfWork(ServiceLifetime.Scoped);
+
+        /// <inheritdoc/>
+        public IPdqOptionsBuilder InjectUnitOfWork(ServiceLifetime lifetime)
+        {
+            ConfigureProperty(nameof(PdqOptions.InjectUnitOfWork), true);
+            ConfigureProperty(nameof(PdqOptions.UnitOfWorkLifetime), lifetime);
+            return this;
+        }
 
         /// <inheritdoc/>
         protected IPdqOptionsBuilder SetLoggerProxy<T>() where T : ILoggerProxy

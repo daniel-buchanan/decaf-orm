@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common.Connections;
 
@@ -44,84 +42,5 @@ namespace pdq.common
         /// <returns>The current <see cref="IServiceCollection"/> in use.</returns>
         IServiceCollection WithConnection<T>(Func<IServiceProvider, T> expression)
             where T : class, IConnectionDetails;
-    }
-
-    public class PdqServiceCollection : IPdqServiceCollection
-    {
-        private readonly IServiceCollection services;
-
-        private PdqServiceCollection(IServiceCollection services)
-            => this.services = services;
-
-        public static IPdqServiceCollection Create(IServiceCollection services)
-            => new PdqServiceCollection(services);
-        
-        /// <inheritdoc/>
-        public IServiceCollection WithConnection<T>(T connectionDetails)
-            where T : class, IConnectionDetails
-            => this.AddSingleton<T>(connectionDetails);
-
-        /// <inheritdoc/>
-        public IServiceCollection WithConnection<T>(Action<T> builder)
-            where T : class, IConnectionDetails, new()
-        {
-            var options = new T();
-            builder(options);
-            return this.AddSingleton<T>(options);
-        }
-
-        /// <inheritdoc/>
-        public IServiceCollection WithConnection<T>(Func<IServiceProvider, T> expression)
-            where T : class, IConnectionDetails
-            => this.AddScoped<T>(expression);
-
-        /// <inheritdoc/>
-        public IServiceCollection WithConnection<TInterface, TImplementation>()
-            where TInterface : class, IConnectionDetails
-            where TImplementation : class, TInterface
-            => this.AddScoped<TInterface, TImplementation>();
-
-        /// <inheritdoc/>
-        public IEnumerator<ServiceDescriptor> GetEnumerator() => services.GetEnumerator();
-
-        /// <inheritdoc/>
-        IEnumerator IEnumerable.GetEnumerator() => services.GetEnumerator();
-
-        /// <inheritdoc/>
-        public void Add(ServiceDescriptor item) => services.Add(item);
-
-        /// <inheritdoc/>
-        public void Clear() => services.Clear();
-
-        /// <inheritdoc/>
-        public bool Contains(ServiceDescriptor item) => services.Contains(item);
-
-        /// <inheritdoc/>
-        public void CopyTo(ServiceDescriptor[] array, int arrayIndex) => services.CopyTo(array, arrayIndex);
-
-        /// <inheritdoc/>
-        public bool Remove(ServiceDescriptor item) => services.Remove(item);
-
-        /// <inheritdoc/>
-        public int Count => services.Count;
-        
-        /// <inheritdoc/>
-        public bool IsReadOnly => services.IsReadOnly;
-
-        /// <inheritdoc/>
-        public int IndexOf(ServiceDescriptor item) => services.IndexOf(item);
-
-        /// <inheritdoc/>
-        public void Insert(int index, ServiceDescriptor item) => services.Insert(index, item);
-
-        /// <inheritdoc/>
-        public void RemoveAt(int index) => services.RemoveAt(index);
-
-        /// <inheritdoc/>
-        public ServiceDescriptor this[int index]
-        {
-            get => services[index];
-            set => services[index] = value;
-        }
     }
 }

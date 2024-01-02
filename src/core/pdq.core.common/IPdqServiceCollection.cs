@@ -9,10 +9,11 @@ namespace pdq.common
         /// <summary>
         /// Specify a connection details implementation to use, this assumes that the connection is able to get its details from a configuration source.
         /// </summary>
+        /// <param name="lifetime">The lifetime of the connection details. <see cref="ServiceLifetime"/></param>
         /// <typeparam name="TInterface">The connection details interface to use, either <see cref="IConnectionDetails"/>, or a sub-interface thereof.</typeparam>
         /// <typeparam name="TImplementation">The implementation type to use, must inherit from <see cref="TInterface"/>.</typeparam>
         /// <returns>The current <see cref="IServiceCollection"/> in use.</returns>
-        IServiceCollection WithConnection<TInterface, TImplementation>()
+        IServiceCollection WithConnection<TInterface, TImplementation>(ServiceLifetime lifetime = ServiceLifetime.Singleton)
             where TInterface : class, IConnectionDetails
             where TImplementation : class, TInterface;
 
@@ -30,8 +31,9 @@ namespace pdq.common
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="builder"></param>
+        /// <param name="lifetime">The lifetime of the connection details. <see cref="ServiceLifetime"/></param>
         /// <returns>The current <see cref="IServiceCollection"/> in use.</returns>
-        IServiceCollection WithConnection<T>(Action<T> builder)
+        IServiceCollection WithConnection<T>(Action<T> builder, ServiceLifetime lifetime = ServiceLifetime.Singleton)
             where T : class, IConnectionDetails, new();
 
         /// <summary>
@@ -39,8 +41,9 @@ namespace pdq.common
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="expression"></param>
+        /// <param name="lifetime">The lifetime of the connection details. <see cref="ServiceLifetime"/></param>
         /// <returns>The current <see cref="IServiceCollection"/> in use.</returns>
-        IServiceCollection WithConnection<T>(Func<IServiceProvider, T> expression)
+        IServiceCollection WithConnection<T>(Func<IServiceProvider, T> expression, ServiceLifetime lifetime = ServiceLifetime.Singleton)
             where T : class, IConnectionDetails;
     }
 }

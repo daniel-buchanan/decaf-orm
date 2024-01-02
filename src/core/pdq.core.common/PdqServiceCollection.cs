@@ -22,24 +22,37 @@ namespace pdq.common
             => this.AddSingleton<T>(connectionDetails);
 
         /// <inheritdoc/>
-        public IServiceCollection WithConnection<T>(Action<T> builder)
+        public IServiceCollection WithConnection<T>(
+            Action<T> builder,
+            ServiceLifetime lifetime = ServiceLifetime.Singleton)
             where T : class, IConnectionDetails, new()
+            => WithConnection(
+                p =>
+                {
+                    var connectionDetails = new T();
+                    builder(connectionDetails);
+                    return connectionDetails;
+                }, lifetime); 
+
+        /// <inheritdoc/>
+        public IServiceCollection WithConnection<T>(
+            Func<IServiceProvider, T> expression,
+            ServiceLifetime lifetime = ServiceLifetime.Singleton)
+            where T : class, IConnectionDetails
         {
-            var options = new T();
-            builder(options);
-            return this.AddSingleton<T>(options);
+            Add(new ServiceDescriptor(typeof(T), expression, lifetime));
+            return this;
         }
 
         /// <inheritdoc/>
-        public IServiceCollection WithConnection<T>(Func<IServiceProvider, T> expression)
-            where T : class, IConnectionDetails
-            => this.AddScoped<T>(expression);
-
-        /// <inheritdoc/>
-        public IServiceCollection WithConnection<TInterface, TImplementation>()
+        public IServiceCollection WithConnection<TInterface, TImplementation>(
+            ServiceLifetime lifetime = ServiceLifetime.Singleton)
             where TInterface : class, IConnectionDetails
             where TImplementation : class, TInterface
-            => this.AddScoped<TInterface, TImplementation>();
+        {
+            Add(new ServiceDescriptor(typeof(TInterface), typeof(TImplementation), lifetime));
+            return this;
+        }
 
         /// <inheritdoc/>
         public IEnumerator<ServiceDescriptor> GetEnumerator() => services.GetEnumerator();

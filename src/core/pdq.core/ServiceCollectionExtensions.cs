@@ -18,10 +18,7 @@ namespace pdq
         /// <param name="services">The <see cref="IServiceCollection"/> to add to.</param>
         /// <returns></returns>
         public static IPdqServiceCollection AddPdq(this IServiceCollection services)
-        {
-            var o = new PdqOptions();
-            return AddPdq(services, o);
-        }
+            => AddPdq(services, new PdqOptions());
 
         /// <summary>
         /// Add pdq to your <see cref="IServiceCollection"/>, providing an action
@@ -56,11 +53,23 @@ namespace pdq
             services.AddTransient<IPdq, Pdq>();
             services.AddScoped(typeof(ILoggerProxy), options.LoggerProxyType);
             services.AddSingleton<IHashProvider, HashProvider>();
-            services.AddScoped<ITransientFactory, TransientFactory>();
+            services.AddScoped<IUnitOfWorkFactory, UnitOfWorkFactory>();
             services.AddSingleton<IReflectionHelper, ReflectionHelper>();
             services.AddSingleton<IExpressionHelper, ExpressionHelper>();
 
-            return services as PdqServiceCollection;
+            if (options.InjectUnitOfWork)
+            {
+                services.Add(new ServiceDescriptor(typeof(IUnitOfWork), GetUnitOfWork, options.UnitOfWorkLifetime));
+            }
+
+            return PdqServiceCollection.Create(services);
+        }
+
+        private static IUnitOfWork GetUnitOfWork(IServiceProvider p)
+        {
+            var factory = p.GetRequiredService<IUnitOfWorkFactory>();
+            var connectionDetails = p.GetRequiredService<IConnectionDetails>();
+            return factory.Create(connectionDetails);
         }
 
         private static void ValidateOptions(PdqOptions options)

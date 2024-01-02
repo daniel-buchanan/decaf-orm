@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using pdq.common;
 using pdq.common.Connections;
 using pdq.common.Utilities;
-using pdq.state;
 
 namespace pdq.services
 {
@@ -18,10 +17,10 @@ namespace pdq.services
     {
         public Command(IPdq pdq) : base(pdq) { }
 
-        private Command(ITransient transient) : base(transient) { }
+        private Command(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public new static ICommand<TEntity, TKey> Create(ITransient transient)
-            => new Command<TEntity, TKey>(transient);
+        public new static ICommand<TEntity, TKey> Create(IUnitOfWork unitOfWork)
+            => new Command<TEntity, TKey>(unitOfWork);
 
         /// <inheritdoc/>
         public override TEntity Add(TEntity toAdd)
@@ -76,7 +75,7 @@ namespace pdq.services
         {
             await DeleteByKeysAsync(keys, (keyBatch, q, b) =>
             {
-                GetKeyColumnNames<TEntity, TKey>(q, out var keyName);
+                GetKeyColumnNames(q, out var keyName);
                 b.Column(keyName).Is().In(keyBatch);
             }, cancellationToken);
         }
@@ -110,6 +109,20 @@ namespace pdq.services
             var lambdaExpression = Expression.Lambda<Func<TEntity, bool>>(keyEqualsExpression, parameterExpression);
 
             await UpdateAsync(toUpdate, lambdaExpression, cancellationToken);
+        }
+        
+        /// <summary>
+        /// Get the column names for an Entity.<br/>
+        /// Where it has a single key.
+        /// </summary>
+        /// <typeparam name="TEntity">The Entity type to work with.</typeparam>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <param name="q">The <see cref="IQuery"/> instance to work with.</param>
+        /// <param name="keyName">The name of the Key.</param>
+        private void GetKeyColumnNames(IQueryContainer q, out string keyName)
+        {
+            var tmp = new TEntity();
+            keyName = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata);
         }
     }
 }

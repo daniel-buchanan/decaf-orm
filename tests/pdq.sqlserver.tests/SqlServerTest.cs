@@ -14,7 +14,7 @@ namespace pdq.sqlserver.tests
             services = new ServiceCollection();
             services.AddPdq(o =>
             {
-                o.EnableTransientTracking()
+                o.TrackUnitsOfWork()
                     .OverrideDefaultLogLevel(LogLevel.Debug)
                     .UseSqlServer(options =>
                     {

@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using pdq.common;
 using pdq.common.Options;
 
 namespace pdq.db.common
 {
-    public static class PdqOptionsBuilderExtensions
+	public static class PdqOptionsBuilderExtensions
 	{
 		/// <summary>
 		/// Configure a given Database Implementation.
@@ -15,21 +16,33 @@ namespace pdq.db.common
 			this IPdqOptionsBuilderExtensions self,
 			IDatabaseOptions options)
 			where T : IDbImplementationFactory, new()
+			=> self.Services.ConfigureDbImplementation<T>(options);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="services"></param>
+		/// <param name="options"></param>
+		/// <returns></returns>
+		public static IPdqServiceCollection UseDbImplementation<T>(
+			this IPdqServiceCollection services,
+			IDatabaseOptions options)
+			where T : IDbImplementationFactory, new()
+		{
+			services.ConfigureDbImplementation<T>(options);
+			return services;
+		}
+
+		public static void ConfigureDbImplementation<T>(
+			this IServiceCollection services,
+			IDatabaseOptions options)
+			where T : IDbImplementationFactory, new()
 		{
 			var x = new T();
 			var internalOptions = options as IDatabaseOptionsExtensions;
-			x.Configure(self.Services, internalOptions);
+			x.Configure(services, internalOptions);
 		}
-	}
-
-	public interface IDbImplementationFactory
-	{
-		/// <summary>
-		/// Configure the database implementation and related services.
-		/// </summary>
-		/// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
-		/// <param name="options">The <see cref="IDatabaseOptions"/> to configure.</param>
-		void Configure(IServiceCollection services, IDatabaseOptionsExtensions options);
 	}
 }
 

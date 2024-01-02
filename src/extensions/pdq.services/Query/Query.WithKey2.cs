@@ -17,10 +17,10 @@ namespace pdq.services
     {
         public Query(IPdq pdq) : base(pdq) { }
 
-        private Query(ITransient transient) : base(transient) { }
+        private Query(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public new static IQuery<TEntity, TKey1, TKey2> Create(ITransient transient)
-            => new Query<TEntity, TKey1, TKey2>(transient);
+        public new static IQuery<TEntity, TKey1, TKey2> Create(IUnitOfWork unitOfWork)
+            => new Query<TEntity, TKey1, TKey2>(unitOfWork);
 
         /// <inheritdoc/>
         public TEntity Get(TKey1 key1, TKey2 key2)

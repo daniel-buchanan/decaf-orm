@@ -10,30 +10,30 @@ namespace pdq.common
     public class Pdq : IPdq
 	{
         private readonly ILoggerProxy logger;
-        private readonly ITransientFactory transientFactory;
+        private readonly IUnitOfWorkFactory unitOfWorkFactory;
         private readonly IConnectionDetails injectedConnectionDetails;
 
 		public Pdq(
             ILoggerProxy logger,
-            ITransientFactory transientFactory)
+            IUnitOfWorkFactory unitOfWorkFactory)
 		{
             this.logger = logger;
-            this.transientFactory = transientFactory;
+            this.unitOfWorkFactory = unitOfWorkFactory;
 		}
 
         public Pdq(
             ILoggerProxy logger,
-            ITransientFactory transientFactory,
+            IUnitOfWorkFactory unitOfWorkFactory,
             IConnectionDetails connectionDetails)
-            : this(logger, transientFactory)
+            : this(logger, unitOfWorkFactory)
         {
             this.injectedConnectionDetails = connectionDetails;
         }
 
-        private ITransient GetTransient(IConnectionDetails connectionDetails = null)
-            => GetTransientAsync(connectionDetails).WaitFor();
+        private IUnitOfWork GetUnitOfWork(IConnectionDetails connectionDetails = null)
+            => GetUnitOfWorkAsync(connectionDetails).WaitFor();
 
-        private async Task<ITransient> GetTransientAsync(
+        private async Task<IUnitOfWork> GetUnitOfWorkAsync(
             IConnectionDetails connectionDetails = null,
             CancellationToken cancellationToken = default)
         {
@@ -48,49 +48,46 @@ namespace pdq.common
             if (connectionDetails != null) connectionDetailsToUse = connectionDetails;
             else connectionDetailsToUse = this.injectedConnectionDetails;
 
-            return await this.transientFactory.CreateAsync(connectionDetailsToUse, cancellationToken);
+            return await this.unitOfWorkFactory.CreateAsync(connectionDetailsToUse, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public ITransient Begin()
-            => GetTransient();
+        public IUnitOfWork Begin()
+            => GetUnitOfWork();
 
         /// <inheritdoc/>
-        public ITransient Begin(IConnectionDetails connectionDetails)
-            => GetTransient(connectionDetails);
+        public IUnitOfWork Begin(IConnectionDetails connectionDetails)
+            => GetUnitOfWork(connectionDetails);
 
         /// <inheritdoc/>
-        public Task<ITransient> BeginAsync(CancellationToken cancellationToken = default)
-            => GetTransientAsync(cancellationToken: cancellationToken);
+        public Task<IUnitOfWork> BeginAsync(CancellationToken cancellationToken = default)
+            => GetUnitOfWorkAsync(cancellationToken: cancellationToken);
 
         /// <inheritdoc/>
-        public Task<ITransient> BeginAsync(
+        public async Task<IUnitOfWork> BeginAsync(
             IConnectionDetails connectionDetails,
             CancellationToken cancellationToken = default)
-            => GetTransientAsync(connectionDetails, cancellationToken);
+            => await GetUnitOfWorkAsync(connectionDetails, cancellationToken);
 
         /// <inheritdoc/>
         public IQueryContainer BeginQuery()
-            => GetTransient().Query();
+            => GetUnitOfWork().Query();
 
         /// <inheritdoc/>
         public IQueryContainer BeginQuery(IConnectionDetails connectionDetails)
-            => GetTransient(connectionDetails).Query();
+            => GetUnitOfWork(connectionDetails).Query();
 
         /// <inheritdoc/>
         public async Task<IQueryContainer> BeginQueryAsync(CancellationToken cancellationToken = default)
-        {
-            var t = await GetTransientAsync(cancellationToken: cancellationToken);
-            return t.Query();
-        }
+            => await BeginQueryAsync(null, cancellationToken);
 
         /// <inheritdoc/>
         public async Task<IQueryContainer> BeginQueryAsync(
             IConnectionDetails connectionDetails,
             CancellationToken cancellationToken = default)
         {
-            var t = await GetTransientAsync(connectionDetails, cancellationToken);
-            return t.Query();
+            var t = await GetUnitOfWorkAsync(connectionDetails, cancellationToken);
+            return await t.QueryAsync(cancellationToken);
         }
     }
 }

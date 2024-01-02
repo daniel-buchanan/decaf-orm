@@ -1,7 +1,5 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using pdq.common.Connections;
-using pdq.common.Logging;
 
 namespace pdq.common.Options
 {
@@ -38,7 +36,7 @@ namespace pdq.common.Options
         /// discovery of issues.
         /// </summary>
         /// <returns>(Fluent API) The ability to continnue further setup actions.</returns>
-        IPdqOptionsBuilder EnableTransientTracking();
+        IPdqOptionsBuilder TrackUnitsOfWork();
 
         /// <summary>
         /// Close database connections after a commit or rollback. This will mean
@@ -56,6 +54,19 @@ namespace pdq.common.Options
         /// </summary>
         /// <returns>(Fluent API) The ability to continue further setup actions.</returns>
         IPdqOptionsBuilder DisableSqlHeaderComments();
+
+        /// <summary>
+        /// Inject the <see cref="IUnitOfWork"/> as a scoped service.
+        /// </summary>
+        /// <returns>(Fluent API) The ability to continue further setup actions.</returns>
+        IPdqOptionsBuilder InjectUnitOfWorkAsScoped();
+
+        /// <summary>
+        /// Inject the <see cref="IUnitOfWork"/> using the provided lifetime
+        /// </summary>
+        /// <param name="lifetime">The lifetime for the <see cref="IUnitOfWork"/> when injected.</param>
+        /// <returns>(FluentAPI) The ability to continue further setup actions.</returns>
+        IPdqOptionsBuilder InjectUnitOfWork(ServiceLifetime lifetime);
     }
 
     public interface IPdqOptionsBuilderExtensions : IPdqOptionsBuilder

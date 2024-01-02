@@ -37,30 +37,30 @@ namespace pdq.common
 		/// <summary>
 		/// Begin a transient allowing you to execute multiple queries.
 		/// </summary>
-		/// <returns>An <see cref="ITransient"/>.</returns>
-		ITransient Begin();
+		/// <returns>An <see cref="IUnitOfWork"/>.</returns>
+		IUnitOfWork Begin();
 
         /// <summary>
         /// Begin a transient allowing you to execute multiple queries.
         /// </summary>
         /// <param name="connectionDetails">The <see cref="IConnectionDetails"/> to use.</param>
-        /// <returns>An <see cref="ITransient"/>.</returns>
-        ITransient Begin(IConnectionDetails connectionDetails);
+        /// <returns>An <see cref="IUnitOfWork"/>.</returns>
+        IUnitOfWork Begin(IConnectionDetails connectionDetails);
 
         /// <summary>
 		/// Begin a transient allowing you to execute multiple queries. (async)
 		/// </summary>
         /// <param name="cancellationToken">The cancellation token to use (optional).</param>
-		/// <returns>An <see cref="ITransient"/>.</returns>
-		Task<ITransient> BeginAsync(CancellationToken cancellationToken = default);
+		/// <returns>An <see cref="IUnitOfWork"/>.</returns>
+		Task<IUnitOfWork> BeginAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Begin a transient allowing you to execute multiple queries. (async)
         /// </summary>
         /// <param name="connectionDetails">The <see cref="IConnectionDetails"/> to use.</param>
         /// <param name="cancellationToken">The cancellation token to use (optional).</param>
-        /// <returns>An <see cref="ITransient"/>.</returns>
-		Task<ITransient> BeginAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default);
+        /// <returns>An <see cref="IUnitOfWork"/>.</returns>
+		Task<IUnitOfWork> BeginAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default);
 	}
 }
 

@@ -34,7 +34,7 @@ namespace pdq.core_tests
             var connectionFactory = new MockConnectionFactory(loggerProxy);
             var transactionFactory = new MockTransactionFactory(connectionFactory, loggerProxy, this.options);
             var sqlFactory = new MockSqlFactory();
-            var transientFactory = new TransientFactory(this.options, loggerProxy, transactionFactory, sqlFactory, hashProvider);
+            var transientFactory = new UnitOfWorkFactory(this.options, loggerProxy, transactionFactory, sqlFactory, hashProvider);
             var connectionDetails = new MockConnectionDetails();
             var transient = transientFactory.Create(connectionDetails);
 

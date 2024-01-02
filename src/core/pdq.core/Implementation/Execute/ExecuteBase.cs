@@ -29,13 +29,13 @@ namespace pdq.Implementation
 
         protected IDbTransaction GetTransaction()
         {
-            var internalTransient = this.query.Transient as ITransientInternal;
+            var internalTransient = this.query.UnitOfWork as IUnitOfWorkInternal;
             return internalTransient.Transaction.GetUnderlyingTransaction();
         }
 
         protected IDbConnection GetConnection()
         {
-            var internalTransient = this.query.Transient as ITransientInternal;
+            var internalTransient = this.query.UnitOfWork as IUnitOfWorkInternal;
             return internalTransient.Connection.GetUnderlyingConnection();
         }
 

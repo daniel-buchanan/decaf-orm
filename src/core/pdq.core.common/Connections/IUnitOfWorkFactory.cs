@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 
 namespace pdq.common.Connections
 {
-	public interface ITransientFactory : IDisposable
+	public interface IUnitOfWorkFactory : IDisposable
 	{
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="connectionDetails"></param>
 		/// <returns></returns>
-		ITransient Create(IConnectionDetails connectionDetails);
+		IUnitOfWork Create(IConnectionDetails connectionDetails);
 
 		/// <summary>
 		/// 
@@ -19,16 +19,16 @@ namespace pdq.common.Connections
 		/// <param name="connectionDetails"></param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		Task<ITransient> CreateAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default);
+		Task<IUnitOfWork> CreateAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default);
 	}
 
-	internal interface ITransientFactoryInternal : ITransientFactory
+	internal interface IUnitOfWorkFactoryInternal : IUnitOfWorkFactory
     {
 		/// <summary>
 		/// Notify the transient factory that the transient has been disposed.
 		/// </summary>
 		/// <param name="id">The ID of the transient that was disposed.</param>
-		void NotifyTransientDisposed(Guid id);
+		void NotifyUnitOfWorkDisposed(Guid id);
 	}
 }
 

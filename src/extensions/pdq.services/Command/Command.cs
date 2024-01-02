@@ -19,15 +19,15 @@ namespace pdq.services
     {
         public Command(IPdq pdq) : base(pdq) { }
 
-        protected Command(ITransient transient) : base(transient) { }
+        protected Command(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
         public event EventHandler<PreExecutionEventArgs> OnBeforeExecution
         {
-            add => preExecution += value;
-            remove => preExecution -= value;
+            add => PreExecution += value;
+            remove => PreExecution -= value;
         }
 
-        public static ICommand<TEntity> Create(ITransient transient) => new Command<TEntity>(transient);
+        public static ICommand<TEntity> Create(IUnitOfWork unitOfWork) => new Command<TEntity>(unitOfWork);
 
         /// <inheritdoc/>
         public virtual TEntity Add(TEntity toAdd)

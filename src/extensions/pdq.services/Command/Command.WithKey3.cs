@@ -17,10 +17,10 @@ namespace pdq.services
     {
         public Command(IPdq pdq) : base(pdq) { }
 
-        private Command(ITransient transient) : base(transient) { }
+        private Command(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public new static ICommand<TEntity, TKey1, TKey2, TKey3> Create(ITransient transient)
-            => new Command<TEntity, TKey1, TKey2, TKey3>(transient);
+        public new static ICommand<TEntity, TKey1, TKey2, TKey3> Create(IUnitOfWork unitOfWork)
+            => new Command<TEntity, TKey1, TKey2, TKey3>(unitOfWork);
 
         /// <inheritdoc/>
         public override IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
@@ -63,7 +63,7 @@ namespace pdq.services
         {
             await DeleteByKeysAsync(keys, (keyBatch, q, b) =>
             {
-                GetKeyColumnNames<TEntity, TKey1, TKey2, TKey3>(q, out var key1Name, out var key2Name, out var key3Name);
+                GetKeyColumnNames(q, out var key1Name, out var key2Name, out var key3Name);
                 b.ClauseHandling.DefaultToOr();
                 foreach (var k in keyBatch)
                 {
@@ -116,6 +116,22 @@ namespace pdq.services
             var lambdaExpression = Expression.Lambda<Func<TEntity, bool>>(nestedAndExpression, parameterExpression);
 
             await UpdateAsync(toUpdate, lambdaExpression, cancellationToken);
+        }
+        
+        /// <summary>
+        /// Get the column names for an Entity.<br/>
+        /// Where it has a composite key with two values.
+        /// </summary>
+        /// <param name="q">The <see cref="IQuery"/> instance to work with.</param>
+        /// <param name="key1Name">The name of the first Key component.</param>
+        /// <param name="key2Name">The name of the second Key component.</param>
+        /// <param name="key3Name">The name of the third Key component.</param>
+        private void GetKeyColumnNames(IQueryContainer q, out string key1Name, out string key2Name, out string key3Name)
+        {
+            var tmp = new TEntity();
+            key1Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentOne);
+            key2Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentTwo);
+            key3Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentThree);
         }
     }
 }

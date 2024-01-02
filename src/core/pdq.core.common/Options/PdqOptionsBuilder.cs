@@ -15,8 +15,8 @@ namespace pdq.common
         public IServiceCollection Services { get; private set; }
 
         /// <inheritdoc/>
-        public IPdqOptionsBuilder EnableTransientTracking()
-            => ConfigureProperty(nameof(PdqOptions.TrackTransients), true);
+        public IPdqOptionsBuilder TrackUnitsOfWork()
+            => ConfigureProperty(nameof(PdqOptions.TrackUnitsOfWork), true);
 
         /// <inheritdoc/>
         public IPdqOptionsBuilder OverrideDefaultClauseHandling(ClauseHandling handling)
@@ -33,6 +33,18 @@ namespace pdq.common
         /// <inheritdoc/>
         public IPdqOptionsBuilder DisableSqlHeaderComments()
             => ConfigureProperty(nameof(PdqOptions.IncludeHeaderCommentsInSql), false);
+
+        /// <inheritdoc/>
+        public IPdqOptionsBuilder InjectUnitOfWorkAsScoped()
+            => InjectUnitOfWork(ServiceLifetime.Scoped);
+
+        /// <inheritdoc/>
+        public IPdqOptionsBuilder InjectUnitOfWork(ServiceLifetime lifetime)
+        {
+            ConfigureProperty(nameof(PdqOptions.InjectUnitOfWork), true);
+            ConfigureProperty(nameof(PdqOptions.UnitOfWorkLifetime), lifetime);
+            return this;
+        }
 
         /// <inheritdoc/>
         protected IPdqOptionsBuilder SetLoggerProxy<T>() where T : ILoggerProxy

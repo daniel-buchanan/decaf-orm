@@ -20,9 +20,9 @@ namespace pdq.common
 		IAliasManager AliasManager { get; }
 
 		/// <summary>
-        /// Gets the <see cref="ITransient"/> for this query.
+        /// Gets the <see cref="IUnitOfWork"/> for this query.
         /// </summary>
-		ITransient Transient { get; }
+		IUnitOfWork UnitOfWork { get; }
 
         /// <summary>
         /// Gets the <see cref="ISqlFactory"/> for this query.

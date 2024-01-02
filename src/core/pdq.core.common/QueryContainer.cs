@@ -8,20 +8,20 @@ namespace pdq.common
 	public class QueryContainer : IQueryContainerInternal
 	{
 		private readonly ILoggerProxy logger;
-		private readonly ITransientInternal transient;
+		private readonly IUnitOfWorkInternal unitOfWork;
 		private readonly IAliasManager aliasManager;
 		private readonly PdqOptions options;
 		private readonly IHashProvider hashProvider;
 		private IQueryContext context;
 
 		private QueryContainer(
-			ITransient transient,
+			IUnitOfWork unitOfWork,
 			ILoggerProxy logger,
 			IHashProvider hashProvider,
 			PdqOptions options)
 		{
 			this.logger = logger;
-			this.transient = transient as ITransientInternal;
+			this.unitOfWork = unitOfWork as IUnitOfWorkInternal;
 			this.aliasManager = AliasManager.Create();
 			this.options = options;
 			this.hashProvider = hashProvider;
@@ -42,10 +42,13 @@ namespace pdq.common
 		IAliasManager IQueryContainerInternal.AliasManager => this.aliasManager;
 
 		/// <inheritdoc/>
-		ITransient IQueryContainerInternal.Transient => this.transient;
+		IUnitOfWork IQueryContainerInternal.UnitOfWork => this.unitOfWork;
 
 		/// <inheritdoc/>
 		public IQueryContext Context => this.context;
+
+		/// <inheritdoc/>
+		public void Discard() => this.Dispose();
 
 		/// <inheritdoc/>
 		IHashProvider IQueryContainerInternal.HashProvider => this.hashProvider;
@@ -54,7 +57,7 @@ namespace pdq.common
 		PdqOptions IQueryContainerInternal.Options => this.options;
 
 		/// <inheritdoc/>
-		public ISqlFactory SqlFactory => this.transient.SqlFactory;
+		public ISqlFactory SqlFactory => this.unitOfWork.SqlFactory;
 
 		/// <inheritdoc/>
 		public ILoggerProxy Logger => this.logger;
@@ -67,14 +70,14 @@ namespace pdq.common
 		/// </summary>
 		/// <param name="options"></param>
 		/// <param name="logger"></param>
-		/// <param name="transient"></param>
+		/// <param name="unitOfWork"></param>
 		/// <returns></returns>
 		public static IQueryContainer Create(
-			ITransient transient,
+			IUnitOfWork unitOfWork,
 			ILoggerProxy logger,
 			IHashProvider hashProvider,
 			PdqOptions options)
-			=> new QueryContainer(transient, logger, hashProvider, options);
+			=> new QueryContainer(unitOfWork, logger, hashProvider, options);
 
 		/// <summary>
 		/// 
@@ -82,7 +85,7 @@ namespace pdq.common
 		/// <param name="existing"></param>
 		/// <returns></returns>
 		internal static IQueryContainer Create(IQueryContainerInternal existing)
-			=> new QueryContainer(existing.Transient, existing.Logger, existing.HashProvider, existing.Options);
+			=> new QueryContainer(existing.UnitOfWork, existing.Logger, existing.HashProvider, existing.Options);
 
 		/// <inheritdoc/>
 		void IQueryContainerInternal.SetContext(IQueryContext context) => this.context = context;
@@ -100,7 +103,7 @@ namespace pdq.common
 			if (!disposing) return;
 			this.logger.Debug($"Query({Id} :: Disposing({disposing})");
 			this.aliasManager.Dispose();
-			this.transient.NotifyQueryDisposed(Id);
+			this.unitOfWork.NotifyQueryDisposed(Id);
 		}
 	}
 }

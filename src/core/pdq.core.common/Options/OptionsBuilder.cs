@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Reflection;
+using pdq.common.Utilities.Reflection;
 
 namespace pdq.common.Options
 {
@@ -7,6 +10,13 @@ namespace pdq.common.Options
 		where T: class, new()
 	{
         private readonly Dictionary<string, object> values = new Dictionary<string, object>();
+        private readonly ExpressionHelper expressionHelper;
+
+        public OptionsBuilder()
+        {
+            var reflectionHelper = new ReflectionHelper();
+            this.expressionHelper = new ExpressionHelper(reflectionHelper);
+        }
 
         /// <inheritdoc/>
         public T Build()
@@ -27,6 +37,13 @@ namespace pdq.common.Options
             }
 
             return options;
+        }
+
+        /// <inheritdoc />
+        public void ConfigureProperty<TValue>(Expression<Func<T, TValue>> expr, TValue value)
+        {
+            var prop = expressionHelper.GetMemberName(expr);
+            ConfigureProperty(prop, value);
         }
 
         /// <summary>

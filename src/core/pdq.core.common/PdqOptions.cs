@@ -6,6 +6,7 @@ using pdq.common.Logging;
 using pdq.Exceptions;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.playground")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.logging.serilog")]
 namespace pdq
 {
     /// <summary>

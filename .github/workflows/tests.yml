@@ -21,12 +21,15 @@ jobs:
               - 'src/db/pdq.sqlserver/**'
             services:
               - 'src/extensions/pdq.services/**'
+            logging:
+              - 'src/extensions/pdq.logging.serilog/**'
     outputs:
       run-core: ${{ steps.changes.outputs.core }}
       run-db: ${{ steps.changes.outputs.db }}
       run-services: ${{ steps.changes.outputs.services }}
       run-npgsql: ${{ steps.changes.outputs.npgsql }}
       run-sqlserver: ${{ steps.changes.outputs.sqlserver }}
+      run-logging-serilog: ${{ steps.changes.outputs.logging_serilog }}
 
   test-pdq:
     needs: [check-paths]
@@ -77,3 +80,12 @@ jobs:
     with:
       job-name: pdq.sqlserver
       test-project: tests/pdq.sqlserver.tests/pdq.sqlserver.tests.csproj
+  test-pdqlogging:
+    needs: [check-paths]
+    name: test-pdqlogging
+    if: ${{ needs.check-paths.outputs.run-logging == 'true' }}
+    uses: ./.github/workflows/test-run.yml
+    secrets: inherit
+    with:
+      job-name: pdq.logging.serilog
+      test-project: tests/pdq.logging.tests/pdq.logging.tests.csproj

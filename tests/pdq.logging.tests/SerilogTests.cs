@@ -9,6 +9,7 @@ using pdq.logging.serilog;
 using pdq.tests.common.Mocks;
 using Serilog;
 using Xunit;
+using LoggerProxy = pdq.logging.serilog.LoggerProxy;
 
 namespace pdq.logging.tests;
 
@@ -38,7 +39,7 @@ public class SerilogTests
     public void LoggerProxyIsRegistered()
     {
         // Act
-        var proxy = provider.GetRequiredService<ILoggerProxy>();
+        var proxy = provider.GetRequiredService<ILoggerProxy>() as LoggerProxy;
 
         // Assert
         proxy.Should().NotBeNull();
@@ -50,7 +51,7 @@ public class SerilogTests
     {
         // Arrange
         var message = "hello world";
-        var proxy = provider.GetRequiredService<ILoggerProxy>();
+        var proxy = provider.GetRequiredService<ILoggerProxy>() as LoggerProxy;
         
         // Act
         method(proxy, message);
@@ -64,7 +65,7 @@ public class SerilogTests
     {
         // Arrange
         var message = "hello world";
-        var proxy = provider.GetRequiredService<ILoggerProxy>();
+        var proxy = provider.GetRequiredService<ILoggerProxy>() as LoggerProxy;
         
         // Act
         proxy.Error(new Exception(message), message);

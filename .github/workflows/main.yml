@@ -37,12 +37,15 @@ jobs:
               - 'src/db/pdq.sqlserver/**'
             services:
               - 'src/extensions/pdq.services/**'
+            logging_serilog:
+              - 'src/extensions/pdq.logging.serilog/**'
     outputs:
       run-core: ${{ steps.changes.outputs.core }}
       run-db: ${{ steps.changes.outputs.db }}
       run-npgsql: ${{ steps.changes.outputs.npgsql }}
       run-sqlserver: ${{ steps.changes.outputs.sqlserver }}
       run-services: ${{ steps.changes.outputs.services }}
+      run-logging-serilog: ${{ steps.changes.outputs.logging_serilog }}
 
   pub-pdq:
     name: pdq
@@ -77,4 +80,11 @@ jobs:
     needs: [check-paths]
     if: ${{ needs.check-paths.outputs.run-services == 'true' }}
     uses: ./.github/workflows/publish-pdq.services.yml
+    secrets: inherit
+  
+  pub-pdqloggingserilog:
+    name: pdq.logging.serilog
+    needs: [check-paths]
+    if: ${{ needs.check-paths.outputs.run-logging-serilog == 'true' }}
+    uses: ./.github/workflows/publish-pdq.logging.serilog.yml
     secrets: inherit

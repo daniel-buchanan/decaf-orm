@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>pdq.logging.serilog</PackageId>
+    <Version>1.0.0</Version> 
+    <Authors>Daniel Buchanan</Authors> 
+    <PackageTags>ORM,SQL,Lite,Serilog</PackageTags> 
+    <Description>This package enables the use of Serilog as the default logger for PDQ</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Serilog" Version="3.1.1" />
+  </ItemGroup>
+</Project>

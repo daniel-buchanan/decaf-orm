@@ -22,10 +22,17 @@ dotnet build --no-incremental pdq.sln
     -f=json \
     -o="services-merged.json"
 
-./.coverlet/coverlet ./tests/pdq.npgsql.tests/bin/Debug/net7.0/pdq.npgsql.tests.dll \
+./.coverlet/coverlet ./tests/pdq.logging.tests/bin/Debug/net7.0/pdq.logging.tests.dll \
     --target "dotnet" \
     --targetargs "test --no-build" \
     --merge-with "services-merged.json" \
+    -f=json \
+    -o="logging-merged.json"
+
+./.coverlet/coverlet ./tests/pdq.npgsql.tests/bin/Debug/net7.0/pdq.npgsql.tests.dll \
+    --target "dotnet" \
+    --targetargs "test --no-build" \
+    --merge-with "logging-merged.json" \
     -f=json \
     -o="npgsql-merged.json"
 

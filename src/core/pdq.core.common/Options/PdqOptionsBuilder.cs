@@ -45,9 +45,8 @@ namespace pdq.common
             ConfigureProperty(nameof(PdqOptions.UnitOfWorkLifetime), lifetime);
             return this;
         }
-
-        /// <inheritdoc/>
-        protected IPdqOptionsBuilder SetLoggerProxy<T>() where T : ILoggerProxy
+        
+        internal IPdqOptionsBuilder SetLoggerProxy<T>() where T : ILoggerProxy
             => ConfigureProperty(nameof(PdqOptions.LoggerProxyType), typeof(T));
 
         private new IPdqOptionsBuilder ConfigureProperty<TValue>(string name, TValue value)

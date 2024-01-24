@@ -1,18 +1,19 @@
+using pdq.common;
 using pdq.common.Options;
-using Serilog;
 
 namespace pdq.logging.serilog
 {
     public static class PdqOptionsBuilderExtensions
     {
         /// <summary>
-        /// 
+        /// Use Serilog as the logger for pdq.
         /// </summary>
         /// <param name="self"></param>
-        /// <returns></returns>
+        /// <returns>(FluentAPI) an <see cref="IPdqOptionsBuilder"/></returns>
         public static IPdqOptionsBuilder UseSerilog(this IPdqOptionsBuilder self)
         {
-            self.ConfigureProperty(o => o.LoggerProxyType, typeof(LoggerProxy));
+            var builder = self as PdqOptionsBuilder;
+            builder.SetLoggerProxy<LoggerProxy>();
             return self;
         }
     }

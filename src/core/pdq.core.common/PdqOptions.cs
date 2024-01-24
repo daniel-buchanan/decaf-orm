@@ -6,7 +6,6 @@ using pdq.common.Logging;
 using pdq.Exceptions;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.playground")]
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("pdq.logging.serilog")]
 namespace pdq
 {
     /// <summary>
@@ -20,7 +19,6 @@ namespace pdq
             DefaultClauseHandling = ClauseHandling.And;
             TrackUnitsOfWork = false;
             CloseConnectionOnCommitOrRollback = false;
-            LoggerProxyType = typeof(DefaultLogger);
             IncludeHeaderCommentsInSql = true;
         }
 
@@ -61,11 +59,6 @@ namespace pdq
         /// The lifetime for the <see cref="IUnitOfWork"/> when injected.
         /// </summary>
         public ServiceLifetime UnitOfWorkLifetime { get; private set; }
-
-        /// <summary>
-        /// The type of the logger proxy to use.
-        /// </summary>
-        internal Type LoggerProxyType { get; private set; }
 	}
 }
 

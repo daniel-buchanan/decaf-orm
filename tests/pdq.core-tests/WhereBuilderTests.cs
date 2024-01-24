@@ -27,7 +27,7 @@ namespace pdq.core_tests
         public WhereBuilderTests()
         {
             this.options = new PdqOptions();
-            var loggerProxy = new DefaultLogger(this.options);
+            var loggerProxy = new DefaultLoggerProxy(this.options, new StdOutputWrapper());
             var aliasManager = AliasManager.Create();
             var hashProvider = new HashProvider();
             this.context = SelectQueryContext.Create(aliasManager, hashProvider);

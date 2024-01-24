@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using pdq.common.Logging;
 using pdq.common;
@@ -51,7 +52,6 @@ namespace pdq
 
             services.AddSingleton(options);
             services.AddTransient<IPdq, Pdq>();
-            services.AddScoped(typeof(ILoggerProxy), options.LoggerProxyType);
             services.AddSingleton<IHashProvider, HashProvider>();
             services.AddScoped<IUnitOfWorkFactory, UnitOfWorkFactory>();
             services.AddSingleton<IReflectionHelper, ReflectionHelper>();
@@ -60,6 +60,12 @@ namespace pdq
             if (options.InjectUnitOfWork)
             {
                 services.Add(new ServiceDescriptor(typeof(IUnitOfWork), GetUnitOfWork, options.UnitOfWorkLifetime));
+            }
+
+            if (services.FirstOrDefault(sd => sd.ServiceType == typeof(ILoggerProxy)) == null)
+            {
+                services.AddSingleton<IStdOutputWrapper, StdOutputWrapper>();
+                services.AddScoped<ILoggerProxy, DefaultLoggerProxy>();
             }
 
             return PdqServiceCollection.Create(services);

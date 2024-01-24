@@ -2,14 +2,19 @@
 
 namespace pdq.common.Logging
 {
-	public class DefaultLogger : LoggerProxy
-	{
-		public DefaultLogger(PdqOptions options) : base(options.DefaultLogLevel) { }
+	public class DefaultLoggerProxy : LoggerProxy
+    {
+        private readonly IStdOutputWrapper output;
+
+        public DefaultLoggerProxy(
+            PdqOptions options,
+            IStdOutputWrapper output) : base(options.DefaultLogLevel)
+            => this.output = output;
 
         protected override void WriteMessage(LogLevel level, string message)
         {
             var timestamp = DateTime.Now.ToString("yy-MM-dd hh:mm:ss:fff");
-            Console.WriteLine($"[{timestamp}] :: {LogLevelToString(level)} :: {message}");
+            output.WriteOut($"[{timestamp}] :: {LogLevelToString(level)} :: {message}");
         }
 
         private string LogLevelToString(LogLevel level)
@@ -18,7 +23,7 @@ namespace pdq.common.Logging
             {
                 case LogLevel.Debug: return "DEBUG";
                 case LogLevel.Warning: return "WARN ";
-                case LogLevel.Information: return "ERROR";
+                case LogLevel.Error: return "ERROR";
                 default: return "INFO ";
             }
         }

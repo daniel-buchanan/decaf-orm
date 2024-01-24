@@ -30,7 +30,7 @@ namespace pdq
 
         /// <summary>
         /// The default where clause handling behaviour, this is set to <see cref="ClauseHandling.And"/>.
-        /// If you want to ensure that you always set this explictly, override with <see cref="ClauseHandling.Unspecified"/> and
+        /// If you want to ensure that you always set this explicitly, override with <see cref="ClauseHandling.Unspecified"/> and
         /// the <see cref="WhereBuildFailedException"/> will be thrown if you haven't set it.
         /// </summary>
         public ClauseHandling DefaultClauseHandling { get; private set; }

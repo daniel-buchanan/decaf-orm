@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 using pdq.common.Connections;
 using pdq.common.Logging;
-using pdq.logging.serilog;
 using pdq.tests.common.Mocks;
 using Xunit;
 

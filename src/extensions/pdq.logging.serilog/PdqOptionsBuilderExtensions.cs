@@ -1,4 +1,5 @@
-using pdq.common;
+using Microsoft.Extensions.DependencyInjection;
+using pdq.common.Logging;
 using pdq.common.Options;
 
 namespace pdq.logging.serilog
@@ -12,8 +13,8 @@ namespace pdq.logging.serilog
         /// <returns>(FluentAPI) an <see cref="IPdqOptionsBuilder"/></returns>
         public static IPdqOptionsBuilder UseSerilog(this IPdqOptionsBuilder self)
         {
-            var builder = self as PdqOptionsBuilder;
-            builder.SetLoggerProxy<LoggerProxy>();
+            var builder = self as IPdqOptionsBuilderExtensions;
+            builder.Services.AddScoped<ILoggerProxy, LoggerProxy>();
             return self;
         }
     }

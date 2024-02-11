@@ -15,7 +15,7 @@ namespace pdq.core_tests.Connections
 
         public ConnectionTests()
         {
-            var logger = new DefaultLogger(new PdqOptions());
+            var logger = new DefaultLoggerProxy(new PdqOptions(), new StdOutputWrapper());
             var connectionDetails = new MockConnectionDetails();
             this.connection = new MockConnection(logger, connectionDetails);
         }

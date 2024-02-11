@@ -114,42 +114,36 @@ namespace pdq.db.common.ANSISQL
 
             sqlBuilder.IncreaseIndent();
 
-            for (var valueIndex = 0; valueIndex < values.Length; valueIndex++)
-            {
-                sqlBuilder.PrependIndent();
-                sqlBuilder.Append(constants.OpeningParen);
-
-                for (var columnIndex = 0; columnIndex < values[valueIndex].Length; columnIndex++)
-                {
-                    var itemNumber = columnIndex + 1;
-                    if (columnIndex >= columns.Length ||
-                        columnIndex >= values[valueIndex].Length)
-                    {
-                        sqlBuilder.Append("{0}{0}", constants.ValueQuote);
-                        continue;
-                    }
-
-                    var quoteCharacter = valueParser.ValueNeedsQuoting(columns[columnIndex]) ?
-                        constants.ValueQuote :
-                        string.Empty;
-
-                    var parameter = parameterManager.Add(columns[columnIndex], values[valueIndex][columnIndex]);
-                    sqlBuilder.Append("{0}{1}{0}", quoteCharacter, parameter.Name);
-
-                    if (itemNumber < values[valueIndex].Length)
-                        sqlBuilder.Append(constants.Seperator);
-                }
-
-                sqlBuilder.Append(constants.ClosingParen);
-
-                var valueNumber = valueIndex + 1;
-                if (valueNumber < values.Length)
-                    sqlBuilder.Append(constants.Seperator);
-
-                sqlBuilder.AppendLine();
-            }
+            for (var i = 0; i < values.Length; i++)
+                BuildValueClause(values[i], columns, sqlBuilder, parameterManager);
 
             sqlBuilder.DecreaseIndent();
+        }
+
+        private void BuildValueClause(object[] row, Column[] columns, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        {
+            sqlBuilder.PrependIndent();
+            sqlBuilder.Append(constants.OpeningParen);
+
+            for (var i = 0; i < row.Length; i++)
+            {
+                var seperatorValue = i < row.Length ?
+                    constants.Seperator :
+                    string.Empty;
+
+                row.TryGetValue(i, out var v);
+                if (!columns.TryGetValue(i, out var c))
+                {
+                    sqlBuilder.Append("{0}{0}{1}", constants.ValueQuote, seperatorValue);
+                    continue;
+                }
+
+                var parameter = parameterManager.Add(c, v);
+                sqlBuilder.Append("@{0}{1}", parameter.Name, seperatorValue);
+            }
+
+            sqlBuilder.Append(constants.ClosingParen);
+            sqlBuilder.AppendLine();
         }
 
         private void AddValuesFromQuery(IInsertQueryValuesSource source, IPipelineStageInput<IInsertQueryContext> input)

@@ -45,7 +45,6 @@ namespace pdq.db.common
             if (ConnectionDetailsServiceProviderFactory != null)
                 return ConnectionDetailsServiceProviderFactory(provider);
 
-            //throw new MissingConnectionDetailsException("ConnectionDetails were not injected or provided. Please ensure that either method is used.");
             return null;
         }
     }

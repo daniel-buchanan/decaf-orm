@@ -6,6 +6,7 @@ namespace pdq.services
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
     public interface IService<TEntity> :
+        IService,
         IQuery<TEntity>,
         ICommand<TEntity>
         where TEntity : IEntity, new()

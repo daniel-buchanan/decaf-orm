@@ -10,8 +10,8 @@ using pdq.state;
 
 namespace pdq.db.common.ANSISQL
 {
-	public abstract class InsertBuilderPipeline : db.common.Builders.InsertBuilderPipeline
-	{
+    public abstract class InsertBuilderPipeline : db.common.Builders.InsertBuilderPipeline
+    {
         protected readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
         protected readonly IValueParser valueParser;
         protected readonly IBuilderPipeline<ISelectQueryContext> selectBuilder;
@@ -43,7 +43,7 @@ namespace pdq.db.common.ANSISQL
                 processMethod(sqlBuilder, items[i]);
                 sqlBuilder.Append(delimiter);
 
-                if(appendNewLine) sqlBuilder.AppendLine();
+                if (appendNewLine) sqlBuilder.AppendLine();
             }
         }
 
@@ -114,28 +114,35 @@ namespace pdq.db.common.ANSISQL
 
             sqlBuilder.IncreaseIndent();
 
-            for(var i = 0; i < values.Length; i++)
+            for (var valueIndex = 0; valueIndex < values.Length; valueIndex++)
             {
                 sqlBuilder.PrependIndent();
                 sqlBuilder.Append(constants.OpeningParen);
-                
-                for(var j = 0; j < values[i].Length; j++)
+
+                for (var columnIndex = 0; columnIndex < values[valueIndex].Length; columnIndex++)
                 {
-                    var itemNumber = j + 1;
-                    var quoteCharacter = valueParser.ValueNeedsQuoting(columns[j]) ?
+                    var itemNumber = columnIndex + 1;
+                    if (columnIndex >= columns.Length ||
+                        columnIndex >= values[valueIndex].Length)
+                    {
+                        sqlBuilder.Append("{0}{0}", constants.ValueQuote);
+                        continue;
+                    }
+
+                    var quoteCharacter = valueParser.ValueNeedsQuoting(columns[columnIndex]) ?
                         constants.ValueQuote :
                         string.Empty;
 
-                    var parameter = parameterManager.Add(columns[j], values[i][j]);
+                    var parameter = parameterManager.Add(columns[columnIndex], values[valueIndex][columnIndex]);
                     sqlBuilder.Append("{0}{1}{0}", quoteCharacter, parameter.Name);
 
-                    if (itemNumber < values[i].Length)
+                    if (itemNumber < values[valueIndex].Length)
                         sqlBuilder.Append(constants.Seperator);
                 }
 
                 sqlBuilder.Append(constants.ClosingParen);
 
-                var valueNumber = i + 1;
+                var valueNumber = valueIndex + 1;
                 if (valueNumber < values.Length)
                     sqlBuilder.Append(constants.Seperator);
 

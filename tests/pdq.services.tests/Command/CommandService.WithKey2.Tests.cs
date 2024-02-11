@@ -23,7 +23,7 @@ namespace pdq.services.tests.Command
             {
                 o.TrackUnitsOfWork();
                 o.OverrideDefaultLogLevel(LogLevel.Debug);
-                o.UseMockDatabase();
+                o.UseMockDatabase().WithMockConnectionDetails();
             });
             services.AddPdqService<Address, int, int>().AsScoped();
 

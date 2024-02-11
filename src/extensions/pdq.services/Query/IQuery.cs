@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace pdq.services
 {
-    public interface IQuery : IExecutionNotifiable { }
+    public interface IQuery : IService, IExecutionNotifiable { }
 
     /// <summary>
     /// Service for querying a given Entity.

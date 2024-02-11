@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Collections.Generic;
 using pdq.common;
 using System.Linq;
 using System.Threading;
@@ -15,7 +13,7 @@ namespace pdq.services
         IQuery<TEntity, TKey1, TKey2>
         where TEntity : class, IEntity<TKey1, TKey2>, new()
     {
-        public Query(IPdq pdq) : base(pdq) { }
+        public Query(IPdq pdq, ISqlFactory sqlFactory) : base(pdq, sqlFactory) { }
 
         private Query(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 

@@ -15,7 +15,7 @@ namespace pdq.services
         ICommand<TEntity, TKey1, TKey2>
         where TEntity : class, IEntity<TKey1, TKey2>, new()
     {
-        public Command(IPdq pdq) : base(pdq) { }
+        public Command(IPdq pdq, ISqlFactory sqlFactory) : base(pdq, sqlFactory) { }
 
         private Command(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 

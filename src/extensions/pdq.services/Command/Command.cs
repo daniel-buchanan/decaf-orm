@@ -17,9 +17,9 @@ namespace pdq.services
         ICommand<TEntity>
         where TEntity : class, IEntity, new()
     {
-        public Command(IPdq pdq) : base(pdq) { }
+        public Command(IPdq pdq, ISqlFactory sqlFactory) : base(pdq, sqlFactory) { }
 
-        protected Command(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+        protected Command(IUnitOfWork unitOfWork) : base(unitOfWork, (unitOfWork as IUnitOfWorkInternal)?.SqlFactory) { }
 
         public event EventHandler<PreExecutionEventArgs> OnBeforeExecution
         {
@@ -27,7 +27,8 @@ namespace pdq.services
             remove => PreExecution -= value;
         }
 
-        public static ICommand<TEntity> Create(IUnitOfWork unitOfWork) => new Command<TEntity>(unitOfWork);
+        public static ICommand<TEntity> Create(IUnitOfWork unitOfWork) 
+            => new Command<TEntity>(unitOfWork);
 
         /// <inheritdoc/>
         public virtual TEntity Add(TEntity toAdd)
@@ -132,7 +133,7 @@ namespace pdq.services
                 using (var q = await t.QueryAsync(cancellationToken))
                 {
                     var query = q.Delete();
-                    var table = base.GetTableInfo<TEntity>(q);
+                    var table = GetTableInfo<TEntity>(q);
                     var exec = query.From(table, "t")
                         .Where(b => action(keyBatch, q, b));
                     NotifyPreExecution(this, q);
@@ -181,7 +182,7 @@ namespace pdq.services
                     .From<TEntity>()
                     .Where(expression);
                 NotifyPreExecution(this, q);
-                await query.ExecuteAsync();
+                await query.ExecuteAsync(cancellationToken);
             }, cancellationToken);
         }
     }

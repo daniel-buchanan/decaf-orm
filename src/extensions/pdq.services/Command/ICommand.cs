@@ -4,15 +4,14 @@ using System.Linq.Expressions;
 
 namespace pdq.services
 {
-    public interface ICommand { }
+    public interface ICommand : IService, IExecutionNotifiable { }
 
     /// <summary>
     /// A Service for making modifications to a given <see cref="TEntity"/>. 
     /// </summary>
     /// <typeparam name="TEntity">The type of <see cref="IEntity"/> to work with.</typeparam>
 	public partial interface ICommand<TEntity> :
-        ICommand,
-        IExecutionNotifiable
+        ICommand
         where TEntity : IEntity, new()
     {
         /// <summary>

@@ -15,7 +15,7 @@ namespace pdq.services
         ICommand<TEntity, TKey>
         where TEntity : class, IEntity<TKey>, new()
     {
-        public Command(IPdq pdq) : base(pdq) { }
+        public Command(IPdq pdq, ISqlFactory sqlFactory) : base(pdq, sqlFactory) { }
 
         private Command(IUnitOfWork unitOfWork) : base(unitOfWork) { }
 
@@ -33,15 +33,13 @@ namespace pdq.services
         /// <inheritdoc/>
         public override IEnumerable<TEntity> Add(IEnumerable<TEntity> toAdd)
             => AddAsync(toAdd).WaitFor();
-
-        /// <inheritdoc/>
+        
         public override async Task<TEntity> AddAsync(TEntity toAdd, CancellationToken cancellationToken = default)
         {
             var results = await AddAsync(new[] { toAdd }, cancellationToken);
             return results.FirstOrDefault();
         }
-
-        /// <inheritdoc/>
+        
         public override async Task<IEnumerable<TEntity>> AddAsync(IEnumerable<TEntity> items, CancellationToken cancellationToken = default)
         {
             if (items == null) items = new List<TEntity>();

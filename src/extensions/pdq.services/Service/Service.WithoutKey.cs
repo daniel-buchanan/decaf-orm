@@ -1,4 +1,5 @@
-﻿using pdq.common.Connections;
+﻿using pdq.common;
+using pdq.common.Connections;
 
 namespace pdq.services
 {
@@ -7,15 +8,17 @@ namespace pdq.services
         where TEntity : class, IEntity, new()
     {
         public Service(
+            ISqlFactory sqlFactory,
             IQuery<TEntity> query,
             ICommand<TEntity> command)
-            : base(query, command) { }
+            : base(sqlFactory, query, command) { }
 
         private Service(IUnitOfWork unitOfWork)
-            : base(unitOfWork,
-                   Query<TEntity>.Create,
-                   Command<TEntity>.Create)
-        { }
+            : base(
+                unitOfWork,
+                (unitOfWork as IUnitOfWorkInternal)?.SqlFactory,
+                Query<TEntity>.Create,
+                Command<TEntity>.Create) { }
 
         public static IService<TEntity> Create(IUnitOfWork unitOfWork)
             => new Service<TEntity>(unitOfWork);

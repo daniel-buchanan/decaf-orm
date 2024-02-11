@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using pdq.common;
 using pdq.common.Connections;
 using pdq.common.Utilities;
 
@@ -14,20 +15,37 @@ namespace pdq.services
         IService<TEntity>
         where TEntity : class, IEntity, new()
     {
+        private readonly ISqlFactory sqlFactory;
         private IQuery<TEntity> Query => GetQuery<IQuery<TEntity>>();
         private ICommand<TEntity> Command => GetCommand<ICommand<TEntity>>();
+
+        protected ServiceBase(
+            ISqlFactory sqlFactory,
+            IExecutionNotifiable query,
+            IExecutionNotifiable command) :
+            base(query, command)
+        {
+            this.sqlFactory = sqlFactory;
+            OnBeforeExecution += HandleLastExecutedSql;
+        }
+
+        protected ServiceBase(
+            IUnitOfWork unitOfWork,
+            ISqlFactory sqlFactory,
+            Func<IUnitOfWork, IExecutionNotifiable> createQuery,
+            Func<IUnitOfWork, IExecutionNotifiable> createCommand) :
+            base(unitOfWork, createQuery, createCommand)
+        {
+            this.sqlFactory = sqlFactory;
+            OnBeforeExecution += HandleLastExecutedSql;
+        }
+
+        private void HandleLastExecutedSql(object sender, PreExecutionEventArgs e)
+        {
+            var template = sqlFactory.ParseTemplate(e.Context);
+            LastExecutedSql = template.Sql;
+        }
         
-        protected ServiceBase(
-            IExecutionNotifiable query, 
-            IExecutionNotifiable command) : 
-            base(query, command) { }
-
-        protected ServiceBase(
-            IUnitOfWork unitOfWork, 
-            Func<IUnitOfWork, IExecutionNotifiable> createQuery, 
-            Func<IUnitOfWork, IExecutionNotifiable> createCommand) : 
-            base(unitOfWork, createQuery, createCommand) { }
-
         /// <inheritdoc/>
         public IEnumerable<TEntity> All()
             => AllAsync().WaitFor();
@@ -104,5 +122,7 @@ namespace pdq.services
         /// <inheritdoc/>
         public void Delete(Expression<Func<TEntity, bool>> expression)
             => DeleteAsync(expression).WaitFor();
+
+        public string LastExecutedSql { get; private set; }
     }
 }

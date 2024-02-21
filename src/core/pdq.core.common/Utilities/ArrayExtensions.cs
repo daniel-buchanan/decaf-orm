@@ -6,7 +6,8 @@ namespace pdq.common.Utilities
         {
             value = default(T);
             if (index < 0 ||
-               index > self.Length)
+               index > self.Length ||
+               self.Length == 0)
                 return false;
 
             value = self[index];

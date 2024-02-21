@@ -23,7 +23,7 @@ namespace pdq.core_tests
             {
                 o.TrackUnitsOfWork();
                 o.OverrideDefaultLogLevel(LogLevel.Debug);
-                o.UseMockDatabase();
+                o.UseMockDatabase().WithMockConnectionDetails();
             });
 
             var provider = services.BuildServiceProvider();

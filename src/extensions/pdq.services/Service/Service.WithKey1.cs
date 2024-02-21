@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using pdq.common;
 using pdq.common.Connections;
 using pdq.common.Utilities;
 
@@ -16,17 +17,21 @@ namespace pdq.services
         private ICommand<TEntity, TKey> Command => GetCommand<ICommand<TEntity, TKey>>();
 
         public Service(
+            ISqlFactory sqlFactory,
             IQuery<TEntity, TKey> query,
             ICommand<TEntity, TKey> command)
-            : base(query, command) { }
+            : base(sqlFactory, query, command) { }
 
-        private Service(IUnitOfWork unitOfWork)
-            : base(unitOfWork,
-                   Query<TEntity, TKey>.Create,
-                   Command<TEntity, TKey>.Create)
-        { }
+        private Service(
+            IUnitOfWork unitOfWork)
+            : base(
+                unitOfWork,
+                (unitOfWork as IUnitOfWorkInternal)?.SqlFactory,
+                Query<TEntity, TKey>.Create,
+                Command<TEntity, TKey>.Create) { }
 
-        public static IService<TEntity, TKey> Create(IUnitOfWork unitOfWork)
+        public static IService<TEntity, TKey> Create(
+            IUnitOfWork unitOfWork)
             => new Service<TEntity, TKey>(unitOfWork);
 
         /// <inheritdoc/>

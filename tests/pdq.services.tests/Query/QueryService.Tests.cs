@@ -1,13 +1,15 @@
 ﻿using System;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using pdq.common;
+using pdq.db.common.Builders;
 using pdq.tests.common.Mocks;
 using pdq.tests.common.Models;
-using pdq.services;
 using pdq.state;
 using pdq.state.Conditionals;
 using Xunit;
+using SelectBuilderPipeline = pdq.db.common.ANSISQL.SelectBuilderPipeline;
 
 namespace pdq.services.tests.Query
 {
@@ -22,7 +24,7 @@ namespace pdq.services.tests.Query
             {
                 o.TrackUnitsOfWork();
                 o.OverrideDefaultLogLevel(LogLevel.Debug);
-                o.UseMockDatabase();
+                o.UseMockDatabase().WithMockConnectionDetails();
             });
             services.AddPdqService<Person>().AsScoped();
 

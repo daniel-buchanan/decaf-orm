@@ -1,38 +1,52 @@
 ﻿using System.Collections.Generic;
 using pdq.state;
 using pdq.common.Templates;
+using pdq.db.common.Builders;
 
 namespace pdq.tests.common.Mocks
 {
     public class MockSqlFactory : SqlFactory
     {
-        public MockSqlFactory() { }
+        private readonly IBuilderPipeline<IDeleteQueryContext> _delete;
+        private readonly IBuilderPipeline<IInsertQueryContext> _insert;
+        private readonly IBuilderPipeline<IUpdateQueryContext> _update;
+        private readonly IBuilderPipeline<ISelectQueryContext> _select;
+
+        public MockSqlFactory(
+            IBuilderPipeline<IDeleteQueryContext> delete,
+            IBuilderPipeline<IInsertQueryContext> insert,
+            IBuilderPipeline<IUpdateQueryContext> update,
+            IBuilderPipeline<ISelectQueryContext> select)
+        {
+            _delete = delete;
+            _insert = insert;
+            _update = update;
+            _select = select;
+        }
 
         protected override SqlTemplate ParseQuery(IDeleteQueryContext context)
-            => GetTemplate();
+            => _delete.Execute(context);
 
         protected override SqlTemplate ParseQuery(IInsertQueryContext context)
-            => GetTemplate();
+            => _insert.Execute(context);
 
         protected override SqlTemplate ParseQuery(ISelectQueryContext context)
-            => GetTemplate();
+            => _select.Execute(context);
 
         protected override SqlTemplate ParseQuery(IUpdateQueryContext context)
-            => GetTemplate();
-
-        private static SqlTemplate GetTemplate() => SqlTemplate.Create(string.Empty, null);
+            => _update.Execute(context);
 
         protected override IDictionary<string, object> ParseParameters(ISelectQueryContext context)
-            => new Dictionary<string, object>();
+            => _select.GetParameterValues(context);
 
         protected override IDictionary<string, object> ParseParameters(IDeleteQueryContext context)
-            => new Dictionary<string, object>();
+            => _delete.GetParameterValues(context);
 
         protected override IDictionary<string, object> ParseParameters(IUpdateQueryContext context)
-            => new Dictionary<string, object>();
+            => _update.GetParameterValues(context);
 
         protected override IDictionary<string, object> ParseParameters(IInsertQueryContext context)
-            => new Dictionary<string, object>();
+            => _insert.GetParameterValues(context);
     }
 }
 

@@ -20,15 +20,17 @@ namespace pdq.services
 
         public event EventHandler<PreExecutionEventArgs> OnBeforeExecution
         {
-            add => base.PreExecution += value;
-            remove => base.PreExecution -= value;
+            add => PreExecution += value;
+            remove => PreExecution -= value;
         }
 
-        public Query(IPdq pdq) : base(pdq) { }
+        public Query(IPdq pdq, ISqlFactory sqlFactory) : base(pdq, sqlFactory) { }
 
-        protected Query(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+        protected Query(IUnitOfWork unitOfWork) : base(unitOfWork, (unitOfWork as IUnitOfWorkInternal)?.SqlFactory) { }
 
-        public static IQuery<TEntity> Create(IUnitOfWork unitOfWork) => new Query<TEntity>(unitOfWork);
+        public static IQuery<TEntity> Create(
+            IUnitOfWork unitOfWork) 
+            => new Query<TEntity>(unitOfWork);
 
         /// <inheritdoc/>
         public IEnumerable<TEntity> All()

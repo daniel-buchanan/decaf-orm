@@ -8,22 +8,38 @@ using pdq.state;
 
 namespace pdq.services
 {
-    internal abstract class Service
+    internal abstract class Service : IService
     {
         private readonly IUnitOfWork unitOfWork;
+        private readonly ISqlFactory sqlFactory;
         private readonly IPdq pdq;
         protected readonly bool disposeOnExit;
+        private string lastExecutedSql;
 
-        protected Service(IUnitOfWork unitOfWork)
+        protected Service(
+            IUnitOfWork unitOfWork,
+            ISqlFactory sqlFactory)
         {
             this.unitOfWork = unitOfWork;
+            this.sqlFactory = sqlFactory;
             disposeOnExit = false;
+            PreExecution += SelfNotifyPreExecution;
         }
 
-        protected Service(IPdq pdq)
+        protected Service(
+            IPdq pdq,
+            ISqlFactory sqlFactory)
         {
             this.pdq = pdq;
+            this.sqlFactory = sqlFactory;
             disposeOnExit = true;
+            PreExecution += SelfNotifyPreExecution;
+        }
+
+        private void SelfNotifyPreExecution(object sender, PreExecutionEventArgs args)
+        {
+            var template = sqlFactory.ParseTemplate(args.Context);
+            lastExecutedSql = template.Sql;
         }
 
         protected event EventHandler<PreExecutionEventArgs> PreExecution;
@@ -108,6 +124,9 @@ namespace pdq.services
             var prop = typeof(TEntity).GetProperty(key.Name);
             return q.Context.Helpers().GetFieldName(prop);
         }
+
+        /// <inheritdoc />
+        public string LastExecutedSql => lastExecutedSql;
     }
 }
 

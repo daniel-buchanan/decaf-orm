@@ -7,8 +7,8 @@ using pdq.db.common.Exceptions;
 
 namespace pdq.db.common
 {
-	public abstract class DatabaseOptions : IDatabaseOptionsExtensions
-	{
+    public abstract class DatabaseOptions : IDatabaseOptionsExtensions
+    {
         /// <inheritdoc/>
         public Func<IServiceProvider, IConnectionDetails> ConnectionDetailsServiceProviderFactory { get; protected set; }
 
@@ -45,7 +45,7 @@ namespace pdq.db.common
             if (ConnectionDetailsServiceProviderFactory != null)
                 return ConnectionDetailsServiceProviderFactory(provider);
 
-            throw new ShouldNeverOccurException("No way to get IConnectionDetails.");
+            return null;
         }
     }
 }

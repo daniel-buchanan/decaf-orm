@@ -15,6 +15,8 @@ using pdq.services;
 using pdq.common.Utilities;
 using pdq.common.Connections;
 using pdq.common.Utilities.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using pdq.db.common;
 
 namespace pdq.core_tests
 {
@@ -26,19 +28,18 @@ namespace pdq.core_tests
 
         public WhereBuilderTests()
         {
-            this.options = new PdqOptions();
-            var loggerProxy = new DefaultLoggerProxy(this.options, new StdOutputWrapper());
+            var services = new ServiceCollection();
+            services.AddPdq(b =>
+            {
+                b.UseMockDatabase().WithMockConnectionDetails();
+            });
+            var provider = services.BuildServiceProvider();
+            var pdq = provider.GetRequiredService<IPdq>();
+            this.options = provider.GetRequiredService<PdqOptions>();
+            var query = pdq.BeginQuery();
             var aliasManager = AliasManager.Create();
             var hashProvider = new HashProvider();
             this.context = SelectQueryContext.Create(aliasManager, hashProvider);
-            var connectionFactory = new MockConnectionFactory(loggerProxy);
-            var transactionFactory = new MockTransactionFactory(connectionFactory, loggerProxy, this.options);
-            var sqlFactory = new MockSqlFactory();
-            var transientFactory = new UnitOfWorkFactory(this.options, loggerProxy, transactionFactory, sqlFactory, hashProvider);
-            var connectionDetails = new MockConnectionDetails();
-            var transient = transientFactory.Create(connectionDetails);
-
-            var query = QueryContainer.Create(transient, loggerProxy, hashProvider, this.options) as IQueryContainerInternal;
             this.select = Select.Create(this.context, query);
         }
 
@@ -166,7 +167,7 @@ namespace pdq.core_tests
         [Theory]
         [MemberData(nameof(NonStringTests))]
         public void LessThan<T>(Func<T> getValue)
-            where T: struct
+            where T : struct
         {
             // Arrange
             select.From("person", "p");

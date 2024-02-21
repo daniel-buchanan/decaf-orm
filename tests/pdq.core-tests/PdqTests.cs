@@ -1,27 +1,25 @@
 using Xunit;
-using Moq;
 using pdq.common;
-using pdq.common.Logging;
-using pdq.common.Connections;
 using pdq.tests.common.Mocks;
-using pdq.common.Utilities;
 using FluentAssertions;
 using pdq.common.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace pdq.core_tests
 {
     public class PdqTests
     {
-        static IPdq GetPdq()
+        static IPdq GetPdq(bool needsConnectionDetails = false)
         {
-            var logger = Mock.Of<ILoggerProxy>();
-            var options = new PdqOptions();
-            var connectionFactory = new MockConnectionFactory(logger);
-            var transactionFactory = new MockTransactionFactory(connectionFactory, logger, options);
-            var sqlFactory = new MockSqlFactory();
-            var hashProvider = new HashProvider();
-            var transientFactory = new UnitOfWorkFactory(options, logger, transactionFactory, sqlFactory, hashProvider);
-            return new Pdq(logger, transientFactory);
+            var services = new ServiceCollection();
+            services.AddPdq(b =>
+            {
+                b.InjectUnitOfWorkAsScoped();
+                b.UseMockDatabase();
+                if (needsConnectionDetails) b.WithMockConnectionDetails();
+            });
+            var provider = services.BuildServiceProvider();
+            return provider.GetRequiredService<IPdq>();
         }
 
         [Fact]

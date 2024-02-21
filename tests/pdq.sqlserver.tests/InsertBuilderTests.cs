@@ -23,7 +23,7 @@ namespace pdq.sqlserver.tests
 		public void InsertSucceeds()
 		{
             // Arrange
-            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  ('@p1','@p2')\\r\\n";
+            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  (@p1,@p2)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act
@@ -49,7 +49,7 @@ namespace pdq.sqlserver.tests
         public void InsertWithOutputSucceeds()
         {
             // Arrange
-            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  ('@p1','@p2')\\r\\noutput\\r\\n  id\\r\\n";
+            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  (@p1,@p2)\\r\\noutput\\r\\n  id\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act
@@ -80,7 +80,7 @@ namespace pdq.sqlserver.tests
         public void InsertMultipleValuesSucceeds()
         {
             // Arrange
-            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  ('@p1','@p2'),\\r\\n  ('@p3','@p2')\\r\\n";
+            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  (@p1,@p2),\\r\\n  (@p3,@p2)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act

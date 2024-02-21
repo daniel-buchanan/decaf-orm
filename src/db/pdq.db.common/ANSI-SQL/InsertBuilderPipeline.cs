@@ -115,19 +115,21 @@ namespace pdq.db.common.ANSISQL
             sqlBuilder.IncreaseIndent();
 
             for (var i = 0; i < values.Length; i++)
-                BuildValueClause(values[i], columns, sqlBuilder, parameterManager);
+                BuildValueClause(values, i, columns, sqlBuilder, parameterManager);
 
             sqlBuilder.DecreaseIndent();
         }
 
-        private void BuildValueClause(object[] row, Column[] columns, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        private void BuildValueClause(object[][] rows, int rowIndex, Column[] columns, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             sqlBuilder.PrependIndent();
             sqlBuilder.Append(constants.OpeningParen);
 
+            var row = rows[rowIndex];
+            
             for (var i = 0; i < row.Length; i++)
             {
-                var seperatorValue = i < row.Length ?
+                var seperatorValue = i < (row.Length - 1) ?
                     constants.Seperator :
                     string.Empty;
 
@@ -139,10 +141,14 @@ namespace pdq.db.common.ANSISQL
                 }
 
                 var parameter = parameterManager.Add(c, v);
-                sqlBuilder.Append("@{0}{1}", parameter.Name, seperatorValue);
+                sqlBuilder.Append("{0}{1}", parameter.Name, seperatorValue);
             }
 
             sqlBuilder.Append(constants.ClosingParen);
+            
+            if(rowIndex < (rows.Length - 1))
+                sqlBuilder.Append(constants.Seperator);
+            
             sqlBuilder.AppendLine();
         }
 

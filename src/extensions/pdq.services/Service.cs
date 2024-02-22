@@ -48,7 +48,7 @@ namespace pdq.services
         /// Get the Transient required to begin a query.
         /// </summary>
         /// <returns>Returns a <see cref="IUnitOfWork"/>.</returns>
-        internal IUnitOfWork GetTransient() => this.unitOfWork ?? this.pdq.Begin();
+        internal IUnitOfWork GetUnitOfWork() => this.unitOfWork ?? this.pdq.Begin();
 
         /// <summary>
         /// Execute the provided query.<br/>
@@ -68,7 +68,7 @@ namespace pdq.services
 
         protected async Task ExecuteQueryAsync(Func<IQueryContainer, CancellationToken, Task> method, CancellationToken cancellationToken = default)
         {
-            var t = this.GetTransient();
+            var t = this.GetUnitOfWork();
             using (var q = await t.QueryAsync(cancellationToken))
             {
                 await method(q, cancellationToken);
@@ -80,7 +80,7 @@ namespace pdq.services
         protected async Task<T> ExecuteQueryAsync<T>(Func<IQueryContainer, CancellationToken, Task<T>> method, CancellationToken cancellationToken = default)
         {
             T result;
-            var t = this.GetTransient();
+            var t = this.GetUnitOfWork();
             using (var q = await t.QueryAsync(cancellationToken))
             {
                 result = await method(q, cancellationToken);

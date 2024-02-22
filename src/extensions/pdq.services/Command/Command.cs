@@ -122,7 +122,7 @@ namespace pdq.services
             var numKeys = keysList.Count;
             if (numKeys == 0) return;
 
-            var t = GetTransient();
+            var t = GetUnitOfWork();
             const int take = 100;
             var skip = 0;
 

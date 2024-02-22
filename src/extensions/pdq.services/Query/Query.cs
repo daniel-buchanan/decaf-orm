@@ -78,7 +78,7 @@ namespace pdq.services
             var numKeys = keyList.Count;
             if (numKeys == 0) return Enumerable.Empty<TEntity>();
 
-            var t = this.GetTransient();
+            var t = this.GetUnitOfWork();
             const int take = 100;
             var skip = 0;
             var results = new List<TEntity>();

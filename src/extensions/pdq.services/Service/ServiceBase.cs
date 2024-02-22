@@ -65,6 +65,46 @@ namespace pdq.services
             => Query.FindAsync(expression, cancellationToken);
 
         /// <inheritdoc/>
+        public TEntity Single(Expression<Func<TEntity, bool>> expression)
+            => SingleAsync(expression).WaitFor();
+
+        /// <inheritdoc/>
+        public Task<TEntity> SingleAsync(
+            Expression<Func<TEntity, bool>> expression, 
+            CancellationToken cancellationToken = default)
+            => Query.SingleAsync(expression, cancellationToken);
+
+        /// <inheritdoc/>
+        public TEntity SingleOrDefault(Expression<Func<TEntity, bool>> expression)
+            => SingleOrDefaultAsync(expression).WaitFor();
+
+        /// <inheritdoc/>
+        public Task<TEntity> SingleOrDefaultAsync(
+            Expression<Func<TEntity, bool>> expression,
+            CancellationToken cancellationToken = default)
+            => Query.SingleOrDefaultAsync(expression, cancellationToken);
+
+        /// <inheritdoc/>
+        public TEntity First(Expression<Func<TEntity, bool>> expression)
+            => FirstAsync(expression).WaitFor();
+
+        /// <inheritdoc/>
+        public Task<TEntity> FirstAsync(
+            Expression<Func<TEntity, bool>> expression,
+            CancellationToken cancellationToken = default)
+            => Query.FirstAsync(expression, cancellationToken);
+
+        /// <inheritdoc/>
+        public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> expression)
+            => FirstOrDefaultAsync(expression).WaitFor();
+
+        /// <inheritdoc/>
+        public Task<TEntity> FirstOrDefaultAsync(
+            Expression<Func<TEntity, bool>> expression,
+            CancellationToken cancellationToken = default)
+            => Query.FirstOrDefaultAsync(expression, cancellationToken);
+
+        /// <inheritdoc/>
         public Task<TEntity> AddAsync(
             TEntity toAdd, 
             CancellationToken cancellationToken = default)

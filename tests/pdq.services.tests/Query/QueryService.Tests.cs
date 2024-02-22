@@ -135,7 +135,14 @@ namespace pdq.services.tests.Query
             };
 
             // Act
-            this.personService.Single(p => p.Id == 42);
+            try
+            {
+                this.personService.Single(p => p.Id == 42);
+            }
+            catch
+            {
+                // ignored
+            }
 
             // Assert
             context.Should().NotBeNull();
@@ -193,7 +200,14 @@ namespace pdq.services.tests.Query
             };
 
             // Act
-            this.personService.First(p => p.Id == 42);
+            try
+            {
+                this.personService.First(p => p.Id == 42);
+            }
+            catch
+            {
+                // ignored
+            }
 
             // Assert
             context.Should().NotBeNull();

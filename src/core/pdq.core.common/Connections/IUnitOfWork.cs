@@ -31,7 +31,7 @@ namespace pdq.common.Connections
         Task<IQueryContainer> QueryAsync(CancellationToken cancellationToken = default);
     }
 
-    internal interface IUnitOfWorkInternal : IUnitOfWork
+    public interface IUnitOfWorkExtended : IUnitOfWork
     {
         /// <summary>
         /// Gets the connection associated with this Transient.

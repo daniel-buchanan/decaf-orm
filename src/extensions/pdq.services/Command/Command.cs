@@ -19,7 +19,7 @@ namespace pdq.services
     {
         public Command(IPdq pdq, ISqlFactory sqlFactory) : base(pdq, sqlFactory) { }
 
-        protected Command(IUnitOfWork unitOfWork) : base(unitOfWork, (unitOfWork as IUnitOfWorkInternal)?.SqlFactory) { }
+        protected Command(IUnitOfWork unitOfWork) : base(unitOfWork, (unitOfWork as IUnitOfWorkExtended)?.SqlFactory) { }
 
         public event EventHandler<PreExecutionEventArgs> OnBeforeExecution
         {

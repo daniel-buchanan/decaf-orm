@@ -8,7 +8,7 @@ using pdq.common.Utilities;
 
 namespace pdq.common.Connections
 {
-    public class UnitOfWork : IUnitOfWorkInternal
+    public class UnitOfWork : IUnitOfWorkExtended
     {
         private readonly IConnection connection;
         private readonly ITransactionInternal transaction;
@@ -44,13 +44,13 @@ namespace pdq.common.Connections
         public Guid Id { get; private set; }
 
         /// <inheritdoc />
-        IConnection IUnitOfWorkInternal.Connection => this.connection;
+        IConnection IUnitOfWorkExtended.Connection => this.connection;
 
         /// <inheritdoc />
-        ITransaction IUnitOfWorkInternal.Transaction => this.transaction;
+        ITransaction IUnitOfWorkExtended.Transaction => this.transaction;
 
         /// <inheritdoc />
-        ISqlFactory IUnitOfWorkInternal.SqlFactory => this.sqlFactory;
+        ISqlFactory IUnitOfWorkExtended.SqlFactory => this.sqlFactory;
 
         public static IUnitOfWork Create(
             ITransaction transaction,

@@ -24,7 +24,7 @@ namespace pdq.services
 
         private Service(IUnitOfWork unitOfWork)
             : base(unitOfWork,
-                (unitOfWork as IUnitOfWorkInternal)?.SqlFactory,
+                (unitOfWork as IUnitOfWorkExtended)?.SqlFactory,
                    Query<TEntity, TKey1, TKey2, TKey3>.Create,
                    Command<TEntity, TKey1, TKey2, TKey3>.Create)
         { }

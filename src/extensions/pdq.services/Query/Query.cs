@@ -26,7 +26,7 @@ namespace pdq.services
 
         public Query(IPdq pdq, ISqlFactory sqlFactory) : base(pdq, sqlFactory) { }
 
-        protected Query(IUnitOfWork unitOfWork) : base(unitOfWork, (unitOfWork as IUnitOfWorkInternal)?.SqlFactory) { }
+        protected Query(IUnitOfWork unitOfWork) : base(unitOfWork, (unitOfWork as IUnitOfWorkExtended)?.SqlFactory) { }
 
         public static IQuery<TEntity> Create(
             IUnitOfWork unitOfWork) 

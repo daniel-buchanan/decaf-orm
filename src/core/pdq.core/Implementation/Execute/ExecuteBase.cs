@@ -29,13 +29,13 @@ namespace pdq.Implementation
 
         protected IDbTransaction GetTransaction()
         {
-            var internalTransient = this.query.UnitOfWork as IUnitOfWorkInternal;
+            var internalTransient = this.query.UnitOfWork as IUnitOfWorkExtended;
             return internalTransient.Transaction.GetUnderlyingTransaction();
         }
 
         protected IDbConnection GetConnection()
         {
-            var internalTransient = this.query.UnitOfWork as IUnitOfWorkInternal;
+            var internalTransient = this.query.UnitOfWork as IUnitOfWorkExtended;
             return internalTransient.Connection.GetUnderlyingConnection();
         }
 
@@ -44,6 +44,7 @@ namespace pdq.Implementation
         /// </summary>
         /// <typeparam name="T">The return type for the function.</typeparam>
         /// <param name="func">The function to execute.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The result of the function</returns>
         protected async Task<T> ExecuteAsync<T>(
             Func<string, object, IDbConnection, IDbTransaction, CancellationToken, Task<T>> func,

@@ -8,8 +8,8 @@ namespace pdq.common.Connections
 	{
         private readonly ILoggerProxy logger;
         protected readonly IConnection connection;
+        protected readonly PdqOptions options;
         protected IDbTransaction transaction;
-        protected PdqOptions options;
 
 		protected Transaction(
             Guid id,

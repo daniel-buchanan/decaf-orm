@@ -8,7 +8,7 @@ namespace pdq.common
 	public class QueryContainer : IQueryContainerInternal
 	{
 		private readonly ILoggerProxy logger;
-		private readonly IUnitOfWorkInternal unitOfWork;
+		private readonly IUnitOfWorkExtended unitOfWork;
 		private readonly IAliasManager aliasManager;
 		private readonly PdqOptions options;
 		private readonly IHashProvider hashProvider;
@@ -21,7 +21,7 @@ namespace pdq.common
 			PdqOptions options)
 		{
 			this.logger = logger;
-			this.unitOfWork = unitOfWork as IUnitOfWorkInternal;
+			this.unitOfWork = unitOfWork as IUnitOfWorkExtended;
 			this.aliasManager = AliasManager.Create();
 			this.options = options;
 			this.hashProvider = hashProvider;

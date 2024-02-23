@@ -42,6 +42,66 @@ namespace pdq.services
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>An <see cref="IEnumerable{TEntity}"/> set of the results.</returns>
         Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Fetch a single item matching the predicate, if there is more than one throw an exception.
+        /// </summary>
+        /// <param name="expression">The <see cref="Expression{Func{TEntity, bool}}"/> defining the query to run.</param>
+        /// <returns>An <see cref="TEntity"/> which is found</returns>
+        TEntity Single(Expression<Func<TEntity, bool>> expression);
+        
+        /// <summary>
+        /// Fetch a single item matching the predicate, if there is more than one throw an exception.
+        /// </summary>
+        /// <param name="expression">The <see cref="Expression{Func{TEntity, bool}}"/> defining the query to run.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>An <see cref="TEntity"/> which is found</returns>
+        Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Fetch a single item matching the predicate, if none are found return default.
+        /// </summary>
+        /// <param name="expression">The <see cref="Expression{Func{TEntity, bool}}"/> defining the query to run.</param>
+        /// <returns>An <see cref="TEntity"/> which is found</returns>
+        TEntity SingleOrDefault(Expression<Func<TEntity, bool>> expression);
+        
+        /// <summary>
+        /// Fetch a single item matching the predicate, if none are found return default.
+        /// </summary>
+        /// <param name="expression">The <see cref="Expression{Func{TEntity, bool}}"/> defining the query to run.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>An <see cref="TEntity"/> which is found</returns>
+        Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Fetch the first item matching the predicate, if none are found throw an exception.
+        /// </summary>
+        /// <param name="expression">The <see cref="Expression{Func{TEntity, bool}}"/> defining the query to run.</param>
+        /// <returns>An <see cref="TEntity"/> which is found</returns>
+        TEntity First(Expression<Func<TEntity, bool>> expression);
+        
+        /// <summary>
+        /// Fetch the first item matching the predicate, if none are found throw an exception.
+        /// </summary>
+        /// <param name="expression">The <see cref="Expression{Func{TEntity, bool}}"/> defining the query to run.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>An <see cref="TEntity"/> which is found</returns>
+        Task<TEntity> FirstAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Fetch the first item matching the predicate, if none are found return the default value.
+        /// </summary>
+        /// <param name="expression">The <see cref="Expression{Func{TEntity, bool}}"/> defining the query to run.</param>
+        /// <returns>An <see cref="TEntity"/> which is found</returns>
+        TEntity FirstOrDefault(Expression<Func<TEntity, bool>> expression);
+        
+        /// <summary>
+        /// Fetch the first item matching the predicate, if none are found return the default value.
+        /// </summary>
+        /// <param name="expression">The <see cref="Expression{Func{TEntity, bool}}"/> defining the query to run.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>An <see cref="TEntity"/> which is found</returns>
+        Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default);
 	}
 }
 

@@ -19,7 +19,7 @@ namespace pdq.services
     {
         public Command(IPdq pdq, ISqlFactory sqlFactory) : base(pdq, sqlFactory) { }
 
-        protected Command(IUnitOfWork unitOfWork) : base(unitOfWork, (unitOfWork as IUnitOfWorkInternal)?.SqlFactory) { }
+        protected Command(IUnitOfWork unitOfWork) : base(unitOfWork, (unitOfWork as IUnitOfWorkExtended)?.SqlFactory) { }
 
         public event EventHandler<PreExecutionEventArgs> OnBeforeExecution
         {
@@ -122,7 +122,7 @@ namespace pdq.services
             var numKeys = keysList.Count;
             if (numKeys == 0) return;
 
-            var t = GetTransient();
+            var t = GetUnitOfWork();
             const int take = 100;
             var skip = 0;
 

@@ -26,7 +26,7 @@ namespace pdq.services
 
         public Query(IPdq pdq, ISqlFactory sqlFactory) : base(pdq, sqlFactory) { }
 
-        protected Query(IUnitOfWork unitOfWork) : base(unitOfWork, (unitOfWork as IUnitOfWorkInternal)?.SqlFactory) { }
+        protected Query(IUnitOfWork unitOfWork) : base(unitOfWork, (unitOfWork as IUnitOfWorkExtended)?.SqlFactory) { }
 
         public static IQuery<TEntity> Create(
             IUnitOfWork unitOfWork) 
@@ -69,6 +69,54 @@ namespace pdq.services
             }, cancellationToken);
         }
 
+        /// <inheritdoc/>
+        public TEntity Single(Expression<Func<TEntity, bool>> expression)
+            => SingleAsync(expression).WaitFor();
+
+        /// <inheritdoc/>
+        public async Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default) 
+            => await GetIndividual(expression, (e, c) => e.SingleAsync(c), cancellationToken);
+
+        /// <inheritdoc/>
+        public TEntity SingleOrDefault(Expression<Func<TEntity, bool>> expression)
+            => SingleOrDefaultAsync(expression).WaitFor();
+
+        /// <inheritdoc/>
+        public async Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default) 
+            => await GetIndividual(expression, (e, c) => e.SingleOrDefaultAsync(c), cancellationToken);
+
+        /// <inheritdoc/>
+        public TEntity First(Expression<Func<TEntity, bool>> expression)
+            => FirstAsync(expression).WaitFor();
+
+        /// <inheritdoc/>
+        public Task<TEntity> FirstAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+            => GetIndividual(expression, (e, c) => e.FirstAsync(c), cancellationToken);
+
+        /// <inheritdoc/>
+        public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> expression)
+            => FirstOrDefaultAsync(expression).WaitFor();
+
+        /// <inheritdoc/>
+        public Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> expression, CancellationToken cancellationToken = default)
+            => GetIndividual(expression, (e, c) => e.FirstOrDefaultAsync(c), cancellationToken);
+
+        private async Task<TEntity> GetIndividual(
+            Expression<Func<TEntity, bool>> expression,
+            Func<IExecute<TEntity>, CancellationToken, Task<TEntity>> method,
+            CancellationToken cancellationToken = default)
+        {
+            return await ExecuteQueryAsync(async (q, c) =>
+            {
+                var sel = q.Select()
+                    .From<TEntity>(t => t)
+                    .Where(expression)
+                    .SelectAll<TEntity>(t => t);
+                NotifyPreExecution(this, q);
+                return await method(sel, c);
+            }, cancellationToken);
+        }
+
         protected async Task<IEnumerable<TEntity>> GetByKeysAsync<TKey>(
             IEnumerable<TKey> keys,
             Action<IEnumerable<TKey>, IQueryContainer, IWhereBuilder> filter,
@@ -78,7 +126,7 @@ namespace pdq.services
             var numKeys = keyList.Count;
             if (numKeys == 0) return Enumerable.Empty<TEntity>();
 
-            var t = this.GetTransient();
+            var t = this.GetUnitOfWork();
             const int take = 100;
             var skip = 0;
             var results = new List<TEntity>();

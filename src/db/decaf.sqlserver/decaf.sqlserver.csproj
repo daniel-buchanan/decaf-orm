@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>decaf.sqlserver</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\core\decaf\decaf.csproj" />
+    <ProjectReference Include="..\..\core\decaf.common\decaf.common.csproj" />
+    <ProjectReference Include="..\decaf.db.common\decaf.db.common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Connections\" />
+    <None Remove="Builders\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Connections\" />
+    <Folder Include="Builders\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.3" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,23 @@
+﻿using System.Linq;
+using decaf.common.Utilities;
+using decaf.db.common.Builders;
+using decaf.state;
+
+namespace decaf.sqlserver.Builders
+{
+    public class SelectBuilderPipeline : db.common.ANSISQL.SelectBuilderPipeline
+    {
+        protected override bool LimitBeforeGroupBy => true;
+
+        public SelectBuilderPipeline(
+            DecafOptions options,
+            IHashProvider hashProvider,
+            IQuotedIdentifierBuilder quotedIdentifierBuilder,
+            db.common.Builders.IWhereBuilder whereBuilder,
+            IConstants constants)
+            : base(options, hashProvider, quotedIdentifierBuilder, whereBuilder, constants)
+        {
+        }
+    }
+}
+

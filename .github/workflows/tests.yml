@@ -39,7 +39,7 @@ jobs:
     secrets: inherit
     with:
       job-name: decaf.core
-      test-project: tests/decaf.core-tests/decaf.core.tests.csproj
+      test-project: tests/decaf.core.tests/decaf.core.tests.csproj
 
   test-decafdb:
     needs: [check-paths]

@@ -1,5 +1,5 @@
 ﻿using System;
-using decaf.Attributes;
+using decaf.common.Attributes;
 using decaf.state;
 using decaf.common.Utilities.Reflection;
 

@@ -1,7 +1,6 @@
 ﻿using System;
-using decaf.common;
 
-namespace decaf.Attributes
+namespace decaf.common.Attributes
 {
     public class IgnoreColumnForAttribute : Attribute
     {

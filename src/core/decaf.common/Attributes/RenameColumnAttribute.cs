@@ -1,5 +1,6 @@
 ﻿using System;
-namespace decaf.Attributes
+
+namespace decaf.common.Attributes
 {
 	public class RenameColumnAttribute : Attribute
 	{

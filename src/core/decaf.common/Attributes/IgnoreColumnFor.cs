@@ -1,58 +1,57 @@
-﻿using decaf.common;
-
-namespace decaf.Attributes
+﻿namespace decaf.common.Attributes
 {
-    public class IgnoreColumnFor
+    public static class IgnoreColumnFor
     {
         /// <summary>
         /// Ignore the field this is applied to for UPDATE commands
         /// </summary>
-        public class All : IgnoreColumnForAttribute
+        public class AllAttribute : IgnoreColumnForAttribute
         {
-            public All() : base(QueryTypes.Select |
-                QueryTypes.Insert |
-                QueryTypes.Update |
-                QueryTypes.Delete) { }
+            public AllAttribute() : 
+                base(QueryTypes.Select |
+                     QueryTypes.Insert |
+                     QueryTypes.Update |
+                     QueryTypes.Delete) { }
         }
 
         /// <summary>
         /// Ignore the field this is applied to for UPDATE commands
         /// </summary>
-        public class Update : IgnoreColumnForAttribute
+        public class UpdateAttribute : IgnoreColumnForAttribute
         {
-            public Update() : base(QueryTypes.Update) { }
+            public UpdateAttribute() : base(QueryTypes.Update) { }
         }
 
         /// <summary>
         /// Ingore the field this is applied to for INSERT commands
         /// </summary>
-        public class Insert : IgnoreColumnForAttribute
+        public class InsertAttribute : IgnoreColumnForAttribute
         {
-            public Insert() : base(QueryTypes.Insert) { }
+            public InsertAttribute() : base(QueryTypes.Insert) { }
         }
 
         /// <summary>
         /// Ingore the field this is applied to for DELETE commands
         /// </summary>
-        public class Delete : IgnoreColumnForAttribute
+        public class DeleteAttribute : IgnoreColumnForAttribute
         {
-            public Delete() : base(QueryTypes.Delete) { }
+            public DeleteAttribute() : base(QueryTypes.Delete) { }
         }
 
         /// <summary>
         /// Ignore the field this is applied to for SELECT commands
         /// </summary>
-        public class Select : IgnoreColumnForAttribute
+        public class SelectAttribute : IgnoreColumnForAttribute
         {
-            public Select() : base(QueryTypes.Select) { }
+            public SelectAttribute() : base(QueryTypes.Select) { }
         }
 
         /// <summary>
         /// Ignore the field this is applied to for INSERT and UPDATE commands
         /// </summary>
-        public class InsertAndUpdate : IgnoreColumnForAttribute
+        public class InsertAndUpdateAttribute : IgnoreColumnForAttribute
         {
-            public InsertAndUpdate() : base(QueryTypes.Insert | QueryTypes.Update) { }
+            public InsertAndUpdateAttribute() : base(QueryTypes.Insert | QueryTypes.Update) { }
         }
     }
 }

@@ -30,15 +30,15 @@ jobs:
             core:
               - 'src/core/**'
             db:
-              - 'src/db/pdq.db.common/**'
+              - 'src/db/decaf.db.common/**'
             npgsql:
-              - 'src/db/pdq.npgsql/**'
+              - 'src/db/decaf.npgsql/**'
             sqlserver:
-              - 'src/db/pdq.sqlserver/**'
+              - 'src/db/decaf.sqlserver/**'
             services:
-              - 'src/extensions/pdq.services/**'
+              - 'src/extensions/decaf.services/**'
             logging_serilog:
-              - 'src/extensions/pdq.logging.serilog/**'
+              - 'src/extensions/decaf.logging.serilog/**'
     outputs:
       run-core: ${{ steps.changes.outputs.core }}
       run-db: ${{ steps.changes.outputs.db }}
@@ -47,44 +47,44 @@ jobs:
       run-services: ${{ steps.changes.outputs.services }}
       run-logging-serilog: ${{ steps.changes.outputs.logging_serilog }}
 
-  pub-pdq:
-    name: pdq
+  pub-decaf:
+    name: decaf
     needs: [check-paths]
     if: ${{ needs.check-paths.outputs.run-core == 'true' }}
-    uses: ./.github/workflows/publish-pdq.yml
+    uses: ./.github/workflows/publish-decaf.yml
     secrets: inherit
 
-  pub-pdqdb:
-    name: pdq.db
+  pub-decafdb:
+    name: decaf.db
     needs: [check-paths]
     if: ${{ needs.check-paths.outputs.run-db == 'true' }}
-    uses: ./.github/workflows/publish-pdq.db.yml
+    uses: ./.github/workflows/publish-decaf.db.yml
     secrets: inherit
 
-  pub-pdqnpgsql:
-    name: pdq.npgsql
+  pub-decafnpgsql:
+    name: decaf.npgsql
     needs: [check-paths]
     if: ${{ needs.check-paths.outputs.run-npgsql == 'true' }}
-    uses: ./.github/workflows/publish-pdq.db.npgsql.yml
+    uses: ./.github/workflows/publish-decaf.db.npgsql.yml
     secrets: inherit
 
-  pub-pdqsqlserver:
-    name: pdq.sqlserver
+  pub-decafsqlserver:
+    name: decaf.sqlserver
     needs: [check-paths]
     if: ${{ needs.check-paths.outputs.run-sqlserver == 'true' }}
-    uses: ./.github/workflows/publish-pdq.db.sqlserver.yml
+    uses: ./.github/workflows/publish-decaf.db.sqlserver.yml
     secrets: inherit
 
-  pub-pdqservices:
-    name: pdq.services
+  pub-decafservices:
+    name: decaf.services
     needs: [check-paths]
     if: ${{ needs.check-paths.outputs.run-services == 'true' }}
-    uses: ./.github/workflows/publish-pdq.services.yml
+    uses: ./.github/workflows/publish-decaf.services.yml
     secrets: inherit
   
-  pub-pdqloggingserilog:
-    name: pdq.logging.serilog
+  pub-decafloggingserilog:
+    name: decaf.logging.serilog
     needs: [check-paths]
     if: ${{ needs.check-paths.outputs.run-logging-serilog == 'true' }}
-    uses: ./.github/workflows/publish-pdq.logging.serilog.yml
+    uses: ./.github/workflows/publish-decaf.logging.serilog.yml
     secrets: inherit

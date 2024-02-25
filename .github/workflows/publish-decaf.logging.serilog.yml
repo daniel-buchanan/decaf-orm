@@ -10,7 +10,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Pack
-        run: dotnet pack src/core/pdq.core/pdq.csproj -c Release -p:Version=${FULL_PACKAGE_VERSION} -o ./output
+        env:
+          CSPROJ: src/extensions/decaf.logging.serilog/decaf.logging.serilog-nuget.csproj
+        run: |
+          dotnet add ${CSPROJ} package decaf-orm --version ${{ vars.LATEST_DECAF }}
+          dotnet pack ${CSPROJ} -c Release -p:Version=${FULL_PACKAGE_VERSION} -o ./output
       - name: Upload Package
         uses: actions/upload-artifact@v2.2.4
         with:
@@ -30,7 +34,7 @@ jobs:
     - name: Upload to NuGet
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        PACKAGE_NAME: ${{ format('pdq.{0}.nupkg', env.PACKAGE_VERSION) }}
+        PACKAGE_NAME: ${{ format('decaf-orm.logging.serilog.{0}.nupkg', env.PACKAGE_VERSION) }}
       run: |
         dotnet nuget push ./output/${PACKAGE_NAME} \
           -k ${NUGET_API_KEY} \
@@ -39,4 +43,4 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GH_CLI_PAT }}
       run: |
-       gh variable set LATEST_PDQ --body=${PACKAGE_VERSION} -R daniel-buchanan/pdq
+       gh variable set LATEST_SERILOG --body=${PACKAGE_VERSION} -R daniel-buchanan/decaf-orm

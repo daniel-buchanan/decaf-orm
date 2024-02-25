@@ -11,15 +11,11 @@ jobs:
       - uses: actions/checkout@v3
       - name: Pack
         env:
-          CSPROJ: src/db/pdq.npgsql/pdq.npgsql-nuget.csproj
+          CSPROJ: src/extensions/decaf.services/decaf.services-nuget.csproj
         run: |
-          dotnet add ${CSPROJ} package pdq --version ${{ vars.LATEST_PDQ }} --no-restore
-          dotnet add ${CSPROJ} package pdq.db --version ${{ vars.LATEST_DB }} --no-restore
-          dotnet nuget locals all --clear
-          dotnet restore ${CSPROJ}
-          dotnet build ${CSPROJ} -c Release
-          dotnet pack ${CSPROJ} -p:Version=${FULL_PACKAGE_VERSION} -o ./output
-      - name: Save Archive
+          dotnet add ${CSPROJ} package decaf-orm --version ${{ vars.LATEST_DECAF }}
+          dotnet pack ${CSPROJ} -c Release -p:Version=${FULL_PACKAGE_VERSION} -o ./output
+      - name: Upload Package
         uses: actions/upload-artifact@v2.2.4
         with:
           name: package
@@ -38,7 +34,7 @@ jobs:
     - name: Upload to NuGet
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        PACKAGE_NAME: ${{ format('pdq.npgsql.{0}.nupkg', env.PACKAGE_VERSION) }}
+        PACKAGE_NAME: ${{ format('decaf-orm.services.{0}.nupkg', env.PACKAGE_VERSION) }}
       run: |
         dotnet nuget push ./output/${PACKAGE_NAME} \
           -k ${NUGET_API_KEY} \
@@ -47,4 +43,4 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GH_CLI_PAT }}
       run: |
-        gh variable set LATEST_NPGSQL --body=${PACKAGE_VERSION} -R daniel-buchanan/pdq
+       gh variable set LATEST_SERVICES --body=${PACKAGE_VERSION} -R daniel-buchanan/decaf-orm

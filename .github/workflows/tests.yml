@@ -14,15 +14,15 @@ jobs:
             core:
               - 'src/core/**'
             db:
-              - 'src/db/pdq.db.common/**'
+              - 'src/db/decaf.db.common/**'
             npgsql:
-              - 'src/db/pdq.npgsql/**'
+              - 'src/db/decaf.npgsql/**'
             sqlserver:
-              - 'src/db/pdq.sqlserver/**'
+              - 'src/db/decaf.sqlserver/**'
             services:
-              - 'src/extensions/pdq.services/**'
+              - 'src/extensions/decaf.services/**'
             logging:
-              - 'src/extensions/pdq.logging.serilog/**'
+              - 'src/extensions/decaf.logging.serilog/**'
     outputs:
       run-core: ${{ steps.changes.outputs.core }}
       run-db: ${{ steps.changes.outputs.db }}
@@ -31,61 +31,61 @@ jobs:
       run-sqlserver: ${{ steps.changes.outputs.sqlserver }}
       run-logging: ${{ steps.changes.outputs.logging }}
 
-  test-pdq:
+  test-decaf:
     needs: [check-paths]
-    name: test-pdq
+    name: test-decaf
     if: ${{ needs.check-paths.outputs.run-core == 'true' }}
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
-      job-name: pdq.core
-      test-project: tests/pdq.core-tests/pdq.core-tests.csproj
+      job-name: decaf.core
+      test-project: tests/decaf.core-tests/decaf.core.tests.csproj
 
-  test-pdqdb:
+  test-decafdb:
     needs: [check-paths]
-    name: test-pdqdb
+    name: test-decafdb
     if: ${{ needs.check-paths.outputs.run-db == 'true' }}
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
-      job-name: pdq.db.common
-      test-project: tests/pdq.db.common.tests/pdq.db.common.tests.csproj
+      job-name: decaf.db.common
+      test-project: tests/decaf.db.common.tests/decaf.db.common.tests.csproj
   
-  test-pdqservices:
+  test-decafservices:
     needs: [check-paths]
-    name: test-pdqservices
+    name: test-decafservices
     if: ${{ needs.check-paths.outputs.run-services == 'true' }}
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
-      job-name: pdq.services
-      test-project: tests/pdq.services.tests/pdq.services.tests.csproj
+      job-name: decaf.services
+      test-project: tests/decaf.services.tests/decaf.services.tests.csproj
 
-  test-pdqnpgsql:
+  test-decafnpgsql:
     needs: [check-paths]
-    name: test-pdqnpgsql
+    name: test-decafnpgsql
     if: ${{ needs.check-paths.outputs.run-npgsql == 'true' }}
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
-      job-name: pdq.npgsql
-      test-project: tests/pdq.npgsql.tests/pdq.npgsql.tests.csproj
+      job-name: decaf.npgsql
+      test-project: tests/decaf.npgsql.tests/decaf.npgsql.tests.csproj
 
-  test-pdqsqlserver:
+  test-decafsqlserver:
     needs: [check-paths]
-    name: test-pdqsqlserver
+    name: test-decafsqlserver
     if: ${{ needs.check-paths.outputs.run-sqlserver == 'true' }}
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
-      job-name: pdq.sqlserver
-      test-project: tests/pdq.sqlserver.tests/pdq.sqlserver.tests.csproj
-  test-pdqlogging:
+      job-name: decaf.sqlserver
+      test-project: tests/decaf.sqlserver.tests/decaf.sqlserver.tests.csproj
+  test-decaflogging:
     needs: [check-paths]
-    name: test-pdqlogging
+    name: test-decaflogging
     if: ${{ needs.check-paths.outputs.run-logging == 'true' }}
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
-      job-name: pdq.logging.serilog
-      test-project: tests/pdq.logging.tests/pdq.logging.tests.csproj
+      job-name: decaf.logging.serilog
+      test-project: tests/decaf.logging.tests/decaf.logging.tests.csproj

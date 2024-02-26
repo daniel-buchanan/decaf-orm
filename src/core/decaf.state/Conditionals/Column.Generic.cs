@@ -6,7 +6,7 @@ namespace decaf.state.Conditionals
 {
     public class Column<T> : Where, IColumn
     {
-		internal Column(
+		public Column(
 			state.Column column,
 			EqualityOperator op,
 			T value)
@@ -19,7 +19,7 @@ namespace decaf.state.Conditionals
 			ValueType = typeof(T);
 		}
 
-		internal Column(
+		public Column(
 			state.Column column,
 			EqualityOperator op,
 			IValueFunction valueFunction,

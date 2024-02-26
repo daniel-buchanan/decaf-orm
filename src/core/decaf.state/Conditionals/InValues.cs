@@ -19,7 +19,7 @@ namespace decaf.state.Conditionals
     {
         private readonly List<T> values;
 
-        internal InValues(state.Column column, IEnumerable<T> values)
+        public InValues(state.Column column, IEnumerable<T> values)
         {
             ValueType = typeof(T);
             Column = column;

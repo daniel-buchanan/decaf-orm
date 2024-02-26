@@ -119,10 +119,10 @@ namespace decaf.state.Utilities
                 }
 
                 var functionType = typeof(Column<>);
-                var genericType = value?.GetType() ?? memberExpression.Type;
+                var genericType = value?.GetType() ?? memberExpression?.Type;
                 var implementedType = functionType.MakeGenericType(genericType);
                 var parameters = new object[] { col, op, valueFunction, value };
-                var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+                var bindingFlags = BindingFlags.Instance | BindingFlags.Public;
                 result = (IWhere)Activator.CreateInstance(
                     implementedType,
                     bindingFlags,
@@ -142,7 +142,7 @@ namespace decaf.state.Utilities
             if (nonCallExpr.NodeType == ExpressionType.Call)
             {
                 var rightCallExpr = nonCallExpr as MethodCallExpression;
-                var rightBody = rightCallExpr.Object;
+                var rightBody = rightCallExpr?.Object;
                 var fieldB = this.expressionHelper.GetMemberName(rightBody);
                 var targetB = context.GetQueryTarget(rightBody);
                 var colB = state.Column.Create(fieldB, targetB);
@@ -168,7 +168,7 @@ namespace decaf.state.Utilities
             if (binaryExpr == null)
             {
                 var lambda = expression as LambdaExpression;
-                binaryExpr = lambda.Body as BinaryExpression;
+                binaryExpr = lambda?.Body as BinaryExpression;
             }
 
             if (binaryExpr == null) return;
@@ -240,7 +240,7 @@ namespace decaf.state.Utilities
 
             var inputGenericType = typeof(List<>);
             var inputType = inputGenericType.MakeGenericType(typeArgs);
-            var input = Activator.CreateInstance(inputType, new object[] { values });
+            var input = Activator.CreateInstance(inputType, values);
             var target = context.GetQueryTarget(memberAccessExp);
             var col = state.Column.Create(fieldName, target);
 
@@ -252,7 +252,7 @@ namespace decaf.state.Utilities
             var toCreate = typeof(InValues<>);
             var genericToCreate = toCreate.MakeGenericType(typeArgs);
             var parameterTypes = new[] { col.GetType(), enumerableType };
-            var bindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
+            var bindingFlags = BindingFlags.Public | BindingFlags.Instance;
 
             var ctor = genericToCreate.GetConstructor(bindingFlags, null, parameterTypes, null);
 

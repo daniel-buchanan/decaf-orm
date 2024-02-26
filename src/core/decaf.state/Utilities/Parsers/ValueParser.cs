@@ -38,7 +38,7 @@ namespace decaf.state.Utilities.Parsers
             var convertedValue = GetConvertedValue(valueResult.Value, valueResult.ValueType);
             var parameters = new[] { col, valueResult.Operator, convertedValue };
             var parameterTypes = new[] { col.GetType(), typeof(EqualityOperator), valueResult.ValueType };
-            var bindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
+            var bindingFlags = BindingFlags.Public | BindingFlags.Instance;
 
             //get the generic type definition for the model
             var genericType = typeof(Column<>);

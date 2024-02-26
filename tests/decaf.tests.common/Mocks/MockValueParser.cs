@@ -10,7 +10,7 @@ namespace decaf.tests.common.Mocks
             base(reflectionHelper)
         { }
 
-        protected override List<Tuple<string, string>> Replacements => throw new NotImplementedException();
+        protected override List<Tuple<string, string>> Replacements => new List<Tuple<string, string>>();
 
         public override bool ValueNeedsQuoting(Type type)
             => true;

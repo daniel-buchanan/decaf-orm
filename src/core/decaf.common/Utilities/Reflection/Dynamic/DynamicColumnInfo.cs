@@ -112,9 +112,15 @@ namespace decaf.common.Utilities.Reflection.Dynamic
 
         public static bool operator >(DynamicColumnInfo left, DynamicColumnInfo right)
 			=> Compare(left, right) > 0;
+        
+        public static bool operator >=(DynamicColumnInfo left, DynamicColumnInfo right)
+	        => Compare(left, right) > 0;
 
         public static bool operator <(DynamicColumnInfo left, DynamicColumnInfo right)
 			=> Compare(left, right) < 0;
+        
+        public static bool operator <=(DynamicColumnInfo left, DynamicColumnInfo right)
+	        => Compare(left, right) < 0;
     }
 }
 

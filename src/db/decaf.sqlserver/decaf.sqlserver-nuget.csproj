@@ -6,7 +6,7 @@
     <Version>1.0.0</Version> 
     <Authors>Daniel Buchanan</Authors> 
     <PackageTags>ORM,SQL,Lite,SQL Server</PackageTags> 
-    <Description>This package provides a SQL Server compliant implementation for pdq.</Description>
+    <Description>This package provides a SQL Server compliant implementation for decaf.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>

@@ -1,4 +1,4 @@
-# pdq.logging.serilog
+# decaf.logging.serilog
 This package provides additional logging support for Serilog if that is your logger of choice.
 
 The main way that this package is intended to be used is to provide a **Serilog** implementation for the `ILoggerProxy` interface.  
@@ -11,7 +11,7 @@ To use, simply add:
 To the *pdq* options builder. A full example is included below.
 
 ```csharp
-services.AddPdq(o =>
+services.AddDecaf(o =>
     {
         o.TrackUnitsOfWork()
             .OverrideDefaultLogLevel(LogLevel.Debug)
@@ -36,4 +36,4 @@ services.AddPdq(o =>
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)
 
 ## Documentation
-Documentation can be found here: [README](https://github.com/daniel-buchanan/pdq/blob/main/README.md).
+Documentation can be found here: [README](https://github.com/daniel-buchanan/decaf-orm/blob/main/README.md).

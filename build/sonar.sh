@@ -43,7 +43,7 @@ dotnet build --no-incremental decaf-orm.sln
     -f=json \
     -o="sqlserver-merged.json"
 
-./.coverlet/coverlet ./tests/decaf.core-tests/bin/Debug/net7.0/decaf.core-tests.dll \
+./.coverlet/coverlet ./tests/decaf.core.tests/bin/Debug/net7.0/decaf.core.tests.dll \
     --target "dotnet" \
     --targetargs "test --no-build" \
     --merge-with "sqlserver-merged.json" \

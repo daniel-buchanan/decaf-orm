@@ -2,9 +2,9 @@
 
 namespace decaf.common.Logging
 {
-	public abstract class LoggerProxy : ILoggerProxy
-	{
-        private const string Prefix = "Pdq :: ";
+    public abstract class LoggerProxy : ILoggerProxy
+    {
+        private const string Prefix = "Decaf :: ";
         private readonly LogLevel defaultLogLevel;
 
         protected LoggerProxy(LogLevel defaultLogLevel)

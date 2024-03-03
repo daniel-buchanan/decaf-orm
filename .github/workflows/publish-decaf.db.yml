@@ -13,7 +13,7 @@ jobs:
         env:
           CSPROJ: src/db/decaf.db.common/decaf.db.common-nuget.csproj
         run: |
-          dotnet add ${CSPROJ} package pdq --version ${{ vars.LATEST_DECAF }}
+          dotnet add ${CSPROJ} package decaf-orm --version ${{ vars.LATEST_DECAF }}
           dotnet build ${CSPROJ} -c Release
           dotnet pack ${CSPROJ} -c Release -p:Version=${FULL_PACKAGE_VERSION} -o ./output
       - name: Save Archive

@@ -7,16 +7,16 @@ using Xunit;
 
 namespace decaf.npgsql.tests
 {
-	public class DeleteBuilderTypedTests : NpgsqlTest
-	{
-		private readonly IQueryContainer query;
+    public class DeleteBuilderTypedTests : NpgsqlTest
+    {
+        private readonly IQueryContainer query;
 
-		public DeleteBuilderTypedTests() : base()
-		{
+        public DeleteBuilderTypedTests() : base()
+        {
             BuildServiceProvider();
 
-            var pdq = provider.GetService<IDecaf>();
-            var transient = pdq.Begin();
+            var decaf = provider.GetService<IDecaf>();
+            var transient = decaf.Begin();
             this.query = transient.Query() as IQueryContainer;
         }
 

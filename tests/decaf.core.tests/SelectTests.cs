@@ -31,8 +31,8 @@ namespace decaf.core_tests
                 .WithConnection<IConnectionDetails, MockConnectionDetails>();
 
             var provider = services.BuildServiceProvider();
-            var pdq = provider.GetService<IDecaf>();
-            var transient = pdq.Begin();
+            var decaf = provider.GetService<IDecaf>();
+            var transient = decaf.Begin();
             this.query = transient.Query() as IQueryContainerInternal;
         }
 

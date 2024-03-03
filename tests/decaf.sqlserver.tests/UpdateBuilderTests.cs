@@ -6,40 +6,41 @@ using Xunit;
 
 namespace decaf.sqlserver.tests
 {
-	public class UpdateBuilderTests : SqlServerTest
-	{
-		private readonly IQueryContainer query;
+    public class UpdateBuilderTests : SqlServerTest
+    {
+        private readonly IQueryContainer query;
 
-		public UpdateBuilderTests() : base()
-		{
+        public UpdateBuilderTests() : base()
+        {
             BuildServiceProvider();
 
-            var pdq = provider.GetService<IDecaf>();
-            var transient = pdq.Begin();
+            var decaf = provider.GetService<IDecaf>();
+            var transient = decaf.Begin();
             this.query = transient.Query() as IQueryContainer;
         }
 
-		[Fact]
-		public void SimpleUpdateSucceeds()
-		{
-			// Arrange
-			var expected = "update\\r\\n  users\\r\\nset\\r\\n  sub = @p1\\r\\nwhere\\r\\n(\\r\\n  (id = @p2)\\r\\n)\\r\\n";
-			expected = expected.Replace("\\r\\n", Environment.NewLine);
-			var idValue = Guid.NewGuid();
+        [Fact]
+        public void SimpleUpdateSucceeds()
+        {
+            // Arrange
+            var expected = "update\\r\\n  users\\r\\nset\\r\\n  sub = @p1\\r\\nwhere\\r\\n(\\r\\n  (id = @p2)\\r\\n)\\r\\n";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
+            var idValue = Guid.NewGuid();
 
             // Act
             var q = this.query.Update()
-				.Table("users")
-                .Set(new {
-					sub = "abc123"
-				})
+                .Table("users")
+                .Set(new
+                {
+                    sub = "abc123"
+                })
                 .Where(b => b.Column("id").Is().EqualTo(idValue));
 
-			var sql = q.GetSql();
+            var sql = q.GetSql();
 
-			// Assert
-			sql.Should().Be(expected);
-		}
+            // Assert
+            sql.Should().Be(expected);
+        }
 
         [Fact]
         public void MultipleUpdateSucceeds()
@@ -55,7 +56,7 @@ namespace decaf.sqlserver.tests
                 .Set(new
                 {
                     sub = "abc123",
-					name = "bob"
+                    name = "bob"
                 })
                 .Where(b => b.Column("id").Is().EqualTo(idValue));
 

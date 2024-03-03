@@ -28,8 +28,8 @@ namespace decaf.core_tests
             services.AddScoped<IConnectionDetails, MockConnectionDetails>();
 
             var provider = services.BuildServiceProvider();
-            var pdq = provider.GetService<IDecaf>();
-            this.unitOfWork = pdq.Begin();
+            var decaf = provider.GetService<IDecaf>();
+            this.unitOfWork = decaf.Begin();
         }
 
         [Theory]

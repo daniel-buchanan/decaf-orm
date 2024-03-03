@@ -6,45 +6,45 @@ using Xunit;
 
 namespace decaf.sqlserver.tests
 {
-	public class SelectBuilderTests : SqlServerTest
-	{
-		private readonly IQueryContainer query;
+    public class SelectBuilderTests : SqlServerTest
+    {
+        private readonly IQueryContainer query;
 
-		public SelectBuilderTests() : base()
-		{
+        public SelectBuilderTests() : base()
+        {
             BuildServiceProvider();
 
-            var pdq = provider.GetService<IDecaf>();
-            var transient = pdq.Begin();
+            var decaf = provider.GetService<IDecaf>();
+            var transient = decaf.Begin();
             this.query = transient.Query() as IQueryContainer;
         }
 
-		[Fact]
-		public void SimpleSelectSucceeds()
-		{
-			// Arrange
-			var expected = "select\\r\\n  u.email,\\r\\n  u.sub as id\\r\\nfrom\\r\\n  users u\\r\\nwhere\\r\\n(u.sub = @p1)\\r\\n";
-			expected = expected.Replace("\\r\\n", Environment.NewLine);
-			var subValue = Guid.NewGuid();
+        [Fact]
+        public void SimpleSelectSucceeds()
+        {
+            // Arrange
+            var expected = "select\\r\\n  u.email,\\r\\n  u.sub as id\\r\\nfrom\\r\\n  users u\\r\\nwhere\\r\\n(u.sub = @p1)\\r\\n";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
+            var subValue = Guid.NewGuid();
 
-			// Act
-			var q = this.query.Select()
-				.From("users", "u")
-				.Where(b =>
-				{
-					b.Column("sub", "u").Is().EqualTo(subValue);
-				})
-				.Select(c => new
-				{
-					email = c.Is("email", "u"),
-					id = c.Is("sub", "u")
-				});
+            // Act
+            var q = this.query.Select()
+                .From("users", "u")
+                .Where(b =>
+                {
+                    b.Column("sub", "u").Is().EqualTo(subValue);
+                })
+                .Select(c => new
+                {
+                    email = c.Is("email", "u"),
+                    id = c.Is("sub", "u")
+                });
 
-			var sql = q.GetSql();
+            var sql = q.GetSql();
 
-			// Assert
-			sql.Should().Be(expected);
-		}
+            // Assert
+            sql.Should().Be(expected);
+        }
 
         [Fact]
         public void SimpleSelectReturnsCorrectParameters()
@@ -65,11 +65,11 @@ namespace decaf.sqlserver.tests
                     id = c.Is("sub", "u")
                 });
 
-			var parameters = q.GetSqlParameters();
+            var parameters = q.GetSqlParameters();
 
-			// Assert
-			parameters.Should().Satisfy(
-				p => p.Key == "p1" && ((Guid)p.Value) == subValue);
+            // Assert
+            parameters.Should().Satisfy(
+                p => p.Key == "p1" && ((Guid)p.Value) == subValue);
         }
 
         [Fact]
@@ -308,7 +308,7 @@ namespace decaf.sqlserver.tests
             // Arrange
             var expected = "select\\r\\n  r.name as role,\\r\\n  u.email,\\r\\n  u.sub as id\\r\\nfrom\\r\\n  users u\\r\\njoin roles r on\\r\\n  (\\r\\n    (r.user_id = u.id)\\r\\n  )\\r\\nwhere\\r\\n(id = @p1)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
-            
+
             // Arrange
             var q = this.query.Select()
                 .From("users", "u")

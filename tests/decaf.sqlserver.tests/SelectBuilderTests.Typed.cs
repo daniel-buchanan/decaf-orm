@@ -7,42 +7,42 @@ using Xunit;
 
 namespace decaf.sqlserver.tests
 {
-	public class SelectBuilderTypedTests : SqlServerTest
-	{
-		private readonly IQueryContainer query;
+    public class SelectBuilderTypedTests : SqlServerTest
+    {
+        private readonly IQueryContainer query;
 
-		public SelectBuilderTypedTests() : base()
-		{
+        public SelectBuilderTypedTests() : base()
+        {
             BuildServiceProvider();
 
-            var pdq = provider.GetService<IDecaf>();
-            var transient = pdq.Begin();
+            var decaf = provider.GetService<IDecaf>();
+            var transient = decaf.Begin();
             this.query = transient.Query() as IQueryContainer;
         }
 
-		[Fact]
-		public void SimpleSelectSucceeds()
-		{
-			// Arrange
-			var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User u\\r\\nwhere\\r\\n(u.Id = @p1)\\r\\n";
-			expected = expected.Replace("\\r\\n", Environment.NewLine);
-			var subValue = Guid.NewGuid();
+        [Fact]
+        public void SimpleSelectSucceeds()
+        {
+            // Arrange
+            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User u\\r\\nwhere\\r\\n(u.Id = @p1)\\r\\n";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
+            var subValue = Guid.NewGuid();
 
-			// Act
-			var q = this.query.Select()
+            // Act
+            var q = this.query.Select()
                 .From<User>(u => u)
                 .Where(u => u.Id == 42)
-				.Select(u => new
-				{
-					email = u.Email,
-					id = u.Id
-				});
+                .Select(u => new
+                {
+                    email = u.Email,
+                    id = u.Id
+                });
 
-			var sql = q.GetSql();
+            var sql = q.GetSql();
 
-			// Assert
-			sql.Should().Be(expected);
-		}
+            // Assert
+            sql.Should().Be(expected);
+        }
 
         [Fact]
         public void SimpleSelectReturnsCorrectParameters()
@@ -60,11 +60,11 @@ namespace decaf.sqlserver.tests
                     id = u.Id
                 });
 
-			var parameters = q.GetSqlParameters();
+            var parameters = q.GetSqlParameters();
 
-			// Assert
-			parameters.Should().Satisfy(
-				p => p.Key == "p1" && ((int)p.Value) == idValue);
+            // Assert
+            parameters.Should().Satisfy(
+                p => p.Key == "p1" && ((int)p.Value) == idValue);
         }
 
         [Fact]
@@ -218,7 +218,7 @@ namespace decaf.sqlserver.tests
             // Arrange
             var expected = "select\\r\\n  p.FirstName as fname,\\r\\n  p.LastName as lname,\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User u\\r\\njoin Person p on\\r\\n  (p.Id = u.PersonId)\\r\\nwhere\\r\\n(u.Id = @p1)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
-            
+
             // Arrange
             var q = this.query.Select()
                 .From<User>(u => u)

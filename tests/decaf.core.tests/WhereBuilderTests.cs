@@ -34,9 +34,9 @@ namespace decaf.core_tests
                 b.UseMockDatabase().WithMockConnectionDetails();
             });
             var provider = services.BuildServiceProvider();
-            var pdq = provider.GetRequiredService<IDecaf>();
+            var decaf = provider.GetRequiredService<IDecaf>();
             this.options = provider.GetRequiredService<DecafOptions>();
-            var query = pdq.BeginQuery();
+            var query = decaf.BeginQuery();
             var aliasManager = AliasManager.Create();
             var hashProvider = new HashProvider();
             this.context = SelectQueryContext.Create(aliasManager, hashProvider);

@@ -6,26 +6,26 @@ using Xunit;
 
 namespace decaf.sqlserver.tests
 {
-	public class DeleteBuilderTests : SqlServerTest
-	{
-		private readonly IQueryContainer query;
+    public class DeleteBuilderTests : SqlServerTest
+    {
+        private readonly IQueryContainer query;
 
-		public DeleteBuilderTests() : base()
-		{
+        public DeleteBuilderTests() : base()
+        {
             BuildServiceProvider();
 
-            var pdq = provider.GetService<IDecaf>();
-            var transient = pdq.Begin();
+            var decaf = provider.GetService<IDecaf>();
+            var transient = decaf.Begin();
             this.query = transient.Query() as IQueryContainer;
         }
 
-		[Fact]
-		public void SimpleDeleteSucceeds()
-		{
-			// Arrange
-			var expected = "delete from\\r\\n  users u\\r\\nwhere\\r\\n(u.sub = @p1)\\r\\noutput\\r\\n  id\\r\\n";
-			expected = expected.Replace("\\r\\n", Environment.NewLine);
-			var subValue = Guid.NewGuid();
+        [Fact]
+        public void SimpleDeleteSucceeds()
+        {
+            // Arrange
+            var expected = "delete from\\r\\n  users u\\r\\nwhere\\r\\n(u.sub = @p1)\\r\\noutput\\r\\n  id\\r\\n";
+            expected = expected.Replace("\\r\\n", Environment.NewLine);
+            var subValue = Guid.NewGuid();
 
             // Act
             var q = this.query.Delete()
@@ -33,11 +33,11 @@ namespace decaf.sqlserver.tests
                 .Where(b => b.Column("sub", "u").Is().EqualTo(subValue))
                 .Output("id");
 
-			var sql = q.GetSql();
+            var sql = q.GetSql();
 
-			// Assert
-			sql.Should().Be(expected);
-		}
+            // Assert
+            sql.Should().Be(expected);
+        }
 
         [Fact]
         public void SimpleDeleteReturnsCorrectParameters()
@@ -52,9 +52,9 @@ namespace decaf.sqlserver.tests
 
             var parameters = q.GetSqlParameters();
 
-			// Assert
-			parameters.Should().Satisfy(
-				p => p.Key == "p1" && ((Guid)p.Value) == subValue);
+            // Assert
+            parameters.Should().Satisfy(
+                p => p.Key == "p1" && ((Guid)p.Value) == subValue);
         }
 
         [Fact]

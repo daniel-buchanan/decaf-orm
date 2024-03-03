@@ -1,24 +1,24 @@
-# pdq.sqlserver
-This package is the SQL Server implementation for [pdq](https://www.nuget.org/packages/pdq/), it provides all the method implementations to build queries specifically for PostgreSQL databases.
+# decaf-orm.sqlserver
+This package is the SQL Server implementation for [decaf-orm](https://www.nuget.org/packages/decaf-orm/), it provides all the method implementations to build queries specifically for PostgreSQL databases.
 
 The package has two dependencies:
-1. [`pdq`](https://www.nuget.org/packages/pdq/)
-2. [`pdq.db`](https://www.nuget.org/packages/pdq.db/)
+1. [`decaf-orm`](https://www.nuget.org/packages/decaf-orm/)
+2. [`decaf-orm.db`](https://www.nuget.org/packages/decaf-orm.db/)
 
 Both of these packages are .Net Standard 2.0 only, and thus are usable across almost all .Net Core, .Net Framework and other .Net Standard projects.
 
 To use Npgsql:
 ```csharp
-services.AddPdq(o => o.UseSqlServer(b => b.WithConnectionDetails(...)));
+services.AddDecaf(o => o.UseSqlServer(b => b.WithConnectionDetails(...)));
 ```
 
 Ideally your `IConnectionDetails` would be injected already and you can re-use it, or coming from Configuration.
-At present pdq does not support 'delayed resolution' of the `IConnectionDetails` and it will need to be passed in at the time you setup pdq.
+At present decaf does not support 'delayed resolution' of the `IConnectionDetails` and it will need to be passed in at the time you setup decaf.
 
 ### Status:
 **Build**  
-[![Build](https://github.com/daniel-buchanan/pdq/actions/workflows/sonar.yml/badge.svg)](https://github.com/daniel-buchanan/pdq/actions/workflows/sonar.yml)
-[![CodeQL](https://github.com/daniel-buchanan/pdq/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/daniel-buchanan/pdq/actions/workflows/codeql-analysis.yml)  
+[![Build](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/sonar.yml/badge.svg)](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/sonar.yml)
+[![CodeQL](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/codeql-analysis.yml)  
 **Sonar Cloud**  
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)

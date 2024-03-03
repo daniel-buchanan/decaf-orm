@@ -26,10 +26,10 @@ namespace decaf.core_tests
         public void Begin_MissingConnectionDetailsThrows()
         {
             // Arrange
-            var pdq = GetDecaf();
+            var decaf = GetDecaf();
 
             // Act
-            var method = () => pdq.Begin();
+            var method = () => decaf.Begin();
 
             // Assert
             method.Should().Throw<MissingConnectionDetailsException>();
@@ -39,10 +39,10 @@ namespace decaf.core_tests
         public void BeginQuery_MissingConnectionDetailsThrows()
         {
             // Arrange
-            var pdq = GetDecaf();
+            var decaf = GetDecaf();
 
             // Act
-            var method = () => pdq.BeginQuery();
+            var method = () => decaf.BeginQuery();
 
             // Assert
             method.Should().Throw<MissingConnectionDetailsException>();
@@ -52,10 +52,10 @@ namespace decaf.core_tests
         public void BeginAsync_MissingConnectionDetailsThrows()
         {
             // Arrange
-            var pdq = GetDecaf();
+            var decaf = GetDecaf();
 
             // Act
-            var method = () => pdq.BeginAsync();
+            var method = () => decaf.BeginAsync();
 
             // Assert
             method.Should().ThrowAsync<MissingConnectionDetailsException>();
@@ -65,10 +65,10 @@ namespace decaf.core_tests
         public void BeginQueryAsync_MissingConnectionDetailsThrows()
         {
             // Arrange
-            var pdq = GetDecaf();
+            var decaf = GetDecaf();
 
             // Act
-            var method = () => pdq.BeginQueryAsync();
+            var method = () => decaf.BeginQueryAsync();
 
             // Assert
             method.Should().ThrowAsync<MissingConnectionDetailsException>();
@@ -78,11 +78,11 @@ namespace decaf.core_tests
         public void Begin_ProvidedConnectionDetailsDoesNotThrow()
         {
             // Arrange
-            var pdq = GetDecaf();
+            var decaf = GetDecaf();
             var connectionDetails = new MockConnectionDetails();
 
             // Act
-            var method = () => pdq.Begin(connectionDetails);
+            var method = () => decaf.Begin(connectionDetails);
 
             // Assert
             method.Should().NotThrow<MissingConnectionDetailsException>();
@@ -92,11 +92,11 @@ namespace decaf.core_tests
         public void BeginQuery_ProvidedConnectionDetailsDoesNotThrow()
         {
             // Arrange
-            var pdq = GetDecaf();
+            var decaf = GetDecaf();
             var connectionDetails = new MockConnectionDetails();
 
             // Act
-            var method = () => pdq.BeginQuery(connectionDetails);
+            var method = () => decaf.BeginQuery(connectionDetails);
 
             // Assert
             method.Should().NotThrow<MissingConnectionDetailsException>();
@@ -106,11 +106,11 @@ namespace decaf.core_tests
         public void BeginAsync_ProvidedConnectionDetailsDoesNotThrow()
         {
             // Arrange
-            var pdq = GetDecaf();
+            var decaf = GetDecaf();
             var connectionDetails = new MockConnectionDetails();
 
             // Act
-            var method = () => pdq.BeginAsync(connectionDetails);
+            var method = () => decaf.BeginAsync(connectionDetails);
 
             // Assert
             method.Should().NotThrowAsync<MissingConnectionDetailsException>();
@@ -120,11 +120,11 @@ namespace decaf.core_tests
         public void BeginQueryAsync_ProvidedConnectionDetailsDoesNotThrow()
         {
             // Arrange
-            var pdq = GetDecaf();
+            var decaf = GetDecaf();
             var connectionDetails = new MockConnectionDetails();
 
             // Act
-            var method = () => pdq.BeginQueryAsync(connectionDetails);
+            var method = () => decaf.BeginQueryAsync(connectionDetails);
 
             // Assert
             method.Should().NotThrowAsync<MissingConnectionDetailsException>();

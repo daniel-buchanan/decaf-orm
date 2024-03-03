@@ -6,38 +6,38 @@ using Xunit;
 
 namespace decaf.sqlserver.tests
 {
-	public class InsertBuilderTests : SqlServerTest
-	{
-		private readonly IQueryContainer query;
+    public class InsertBuilderTests : SqlServerTest
+    {
+        private readonly IQueryContainer query;
 
-		public InsertBuilderTests() : base()
-		{
+        public InsertBuilderTests() : base()
+        {
             BuildServiceProvider();
 
-            var pdq = provider.GetService<IDecaf>();
-            var transient = pdq.Begin();
+            var decaf = provider.GetService<IDecaf>();
+            var transient = decaf.Begin();
             this.query = transient.Query() as IQueryContainer;
         }
 
-		[Fact]
-		public void InsertSucceeds()
-		{
+        [Fact]
+        public void InsertSucceeds()
+        {
             // Arrange
             var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  (@p1,@p2)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act
             var q = this.query.Insert()
-				.Into("users")
-				.Columns(c => new
-				{
-					first_name = c.Is<string>(),
-					last_name = c.Is<string>()
-				})
-				.Values(new[]
-				{
-					new { first_name = "bob", last_name = "smith" }
-				});
+                .Into("users")
+                .Columns(c => new
+                {
+                    first_name = c.Is<string>(),
+                    last_name = c.Is<string>()
+                })
+                .Values(new[]
+                {
+                    new { first_name = "bob", last_name = "smith" }
+                });
 
             var sql = q.GetSql();
 

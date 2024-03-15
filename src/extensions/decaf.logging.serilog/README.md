@@ -19,6 +19,11 @@ services.AddDecaf(o =>
     });
 ```
 
+## Serilog Configuration
+Serilog will need to have already been configured in your DI pipeline, see the Serilog docs for more information.  
+Docs: https://serilog.net  
+Nuget: https://www.nuget.org/packages/Serilog  
+
 ### Status:
 **Build**  
 [![Build](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/sonar.yml/badge.svg)](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/sonar.yml)

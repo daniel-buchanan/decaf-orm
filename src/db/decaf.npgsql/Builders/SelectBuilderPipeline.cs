@@ -1,8 +1,5 @@
-﻿using System;
-using System.Linq;
-using decaf.common.Utilities;
+﻿using decaf.common.Utilities;
 using decaf.db.common.Builders;
-using decaf.state;
 
 namespace decaf.npgsql.Builders
 {

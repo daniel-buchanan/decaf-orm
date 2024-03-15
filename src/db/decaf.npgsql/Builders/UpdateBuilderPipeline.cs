@@ -1,12 +1,6 @@
-﻿using System;
-using System.Linq;
-using decaf.common.Utilities;
+﻿using decaf.common.Utilities;
 using decaf.db.common.Builders;
 using decaf.state;
-using decaf.common.Templates;
-using decaf.db.common;
-using decaf.Exceptions;
-using decaf.state.ValueSources.Update;
 
 namespace decaf.npgsql.Builders
 {

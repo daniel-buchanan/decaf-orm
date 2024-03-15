@@ -7,43 +7,43 @@
     /d:sonar.host.url="https://sonarcloud.io" \
     /d:sonar.cs.opencover.reportsPaths=coverage.xml
 
-dotnet build --no-incremental pdq.sln 
+dotnet build --no-incremental decaf-orm.sln 
 
-./.coverlet/coverlet ./tests/pdq.db.common.tests/bin/Debug/net7.0/pdq.db.common.tests.dll \
+./.coverlet/coverlet ./tests/decaf.db.common.tests/bin/Debug/net7.0/decaf.db.common.tests.dll \
     --target "dotnet" \
     --targetargs "test --no-build" \
     -f=json \
     -o="db-common.json"
 
-./.coverlet/coverlet ./tests/pdq.services.tests/bin/Debug/net7.0/pdq.services.tests.dll \
+./.coverlet/coverlet ./tests/decaf.services.tests/bin/Debug/net7.0/decaf.services.tests.dll \
     --target "dotnet" \
     --targetargs "test --no-build" \
     --merge-with "db-common.json" \
     -f=json \
     -o="services-merged.json"
 
-./.coverlet/coverlet ./tests/pdq.logging.tests/bin/Debug/net7.0/pdq.logging.tests.dll \
+./.coverlet/coverlet ./tests/decaf.logging.tests/bin/Debug/net7.0/decaf.logging.tests.dll \
     --target "dotnet" \
     --targetargs "test --no-build" \
     --merge-with "services-merged.json" \
     -f=json \
     -o="logging-merged.json"
 
-./.coverlet/coverlet ./tests/pdq.npgsql.tests/bin/Debug/net7.0/pdq.npgsql.tests.dll \
+./.coverlet/coverlet ./tests/decaf.npgsql.tests/bin/Debug/net7.0/decaf.npgsql.tests.dll \
     --target "dotnet" \
     --targetargs "test --no-build" \
     --merge-with "logging-merged.json" \
     -f=json \
     -o="npgsql-merged.json"
 
-./.coverlet/coverlet ./tests/pdq.sqlserver.tests/bin/Debug/net7.0/pdq.sqlserver.tests.dll \
+./.coverlet/coverlet ./tests/decaf.sqlserver.tests/bin/Debug/net7.0/decaf.sqlserver.tests.dll \
     --target "dotnet" \
     --targetargs "test --no-build" \
     --merge-with "npgsql-merged.json" \
     -f=json \
     -o="sqlserver-merged.json"
 
-./.coverlet/coverlet ./tests/pdq.core-tests/bin/Debug/net7.0/pdq.core-tests.dll \
+./.coverlet/coverlet ./tests/decaf.core.tests/bin/Debug/net7.0/decaf.core.tests.dll \
     --target "dotnet" \
     --targetargs "test --no-build" \
     --merge-with "sqlserver-merged.json" \

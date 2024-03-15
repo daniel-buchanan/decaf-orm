@@ -1,4 +1,4 @@
-# decaf
+# decaf-orm
 decaf is a "lite" ORM (Object Relational Mapper), designed to fill the void between tools like [Dapper](https://github.com/DapperLib/Dapper) and using a full blown ORM like EntityFramework.
 
 Unsurprisingly, Dapper forms the foundation of how decaf executes the queries that it builds against the database. This is because what decaf aims to excel at is formulating queries and giving the developer precise control over those queries *before* they are executed.

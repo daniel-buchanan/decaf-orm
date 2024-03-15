@@ -10,7 +10,7 @@ Both of these packages are .Net Standard 2.0 only, and thus are usable across al
 To use Npgsql:
 ```csharp
 services.AddDecaf(o => o.UseNpgsql(b => b.WithConnectionDetails(...)));
-```
+```  
 
 Ideally your `IConnectionDetails` would be injected already and you can re-use it, or coming from Configuration.
 At present decaf does not support 'delayed resolution' of the `IConnectionDetails` and it will need to be passed in at the time you setup decaf.

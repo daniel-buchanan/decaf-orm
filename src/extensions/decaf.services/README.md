@@ -46,8 +46,8 @@ The above method registers the following:
 
 ### Status:
 **Build**  
-[![Build](https://github.com/daniel-buchanan/decaf/actions/workflows/sonar.yml/badge.svg)](https://github.com/daniel-buchanan/decaf/actions/workflows/sonar.yml)
-[![CodeQL](https://github.com/daniel-buchanan/decaf/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/daniel-buchanan/decaf/actions/workflows/codeql-analysis.yml)  
+[![Build](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/sonar.yml/badge.svg)](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/sonar.yml)
+[![CodeQL](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/codeql-analysis.yml)  
 **Sonar Cloud**  
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_decaf&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_decaf)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_decaf&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_decaf)

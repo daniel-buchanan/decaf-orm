@@ -32,4 +32,4 @@ At present decaf does not support 'delayed resolution' of the `IConnectionDetail
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)
 
 ## Documentation
-Documentation can be found here: [README](https://github.com/daniel-buchanan/pdq/blob/main/README.md).
+Documentation can be found here: [README](https://github.com/daniel-buchanan/decaf-orm/blob/main/README.md).

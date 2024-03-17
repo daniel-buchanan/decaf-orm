@@ -3,6 +3,10 @@ decaf is a "lite" ORM (Object Relational Mapper), designed to fill the void betw
 
 Unsurprisingly, Dapper forms the foundation of how decaf executes the queries that it builds against the database. This is because what decaf aims to excel at is formulating queries and giving the developer precise control over those queries *before* they are executed.
 
+
+<a href="https://www.buymeacoffee.com/daniel.buchanan" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+
 **So what is decaf?**.  
 decaf is so named because it's like coffee, but without the kick.  
 The aim has always been to provide a intuitive development experience that allows performant queries to be written, while not re-inventing the wheel for accessing the database and materialising objects.

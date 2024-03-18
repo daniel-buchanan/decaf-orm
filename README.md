@@ -7,9 +7,14 @@ Unsurprisingly, Dapper forms the foundation of how decaf executes the queries th
 <a href="https://www.buymeacoffee.com/daniel.buchanan" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 
-**So what is decaf?**.  
+**So what is decaf?**  
 decaf is so named because it's like coffee, but without the kick.  
 The aim has always been to provide a intuitive development experience that allows performant queries to be written, while not re-inventing the wheel for accessing the database and materialising objects.
+
+**Where can I get some?**  
+You can download Decaf using Nuget, all packages are published here: https://www.nuget.org/packages?q=decaf-orm  
+You could also - if you're really keen build from source.
+
 
 ### Status:
 **Build**  

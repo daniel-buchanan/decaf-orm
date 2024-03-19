@@ -25,10 +25,66 @@ namespace decaf.common.Connections
         IQueryContainer Query();
 
         /// <summary>
-        /// 
+        /// Execute a query on this "Unit of Work" using the Fluent API
         /// </summary>
-        /// <returns></returns>
+        /// <param name="method">The method containing the query to run.</param>
+        /// <returns>(FluentApi) A reference to this UnitOfWork</returns>
+        IUnitOfWork Query(Action<IQueryContainer> method);
+
+        /// <summary>
+        /// (awaitable) Get a query so you can start building.
+        /// </summary>
+        /// <returns>A new query, from which you can choose how you create the sql statement.</returns>
         Task<IQueryContainer> QueryAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// (awaitable) Execute a query on this "Unit of Work" using the Fluent API
+        /// </summary>
+        /// <param name="method">The method containing the query to run.</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        /// <returns>(FluentApi) A reference to this UnitOfWork</returns>
+        Task<IUnitOfWork> QueryAsync(Func<IQueryContainer, Task> method, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Provide a error handler function for commit failures.
+        /// </summary>
+        /// <param name="handler">A function to handle commit or rollback errors.</param>
+        /// <returns>(FluentApi) A reference to this UnitOfWork.</returns>
+        IUnitOfWork WithCatch(Action<Exception> handler);
+
+        /// <summary>
+        /// (awaitable) Provide a error handler function for commit failures.
+        /// </summary>
+        /// <param name="handler">A function to handle commit or rollback errors.</param>
+        /// <returns>(FluentApi) A reference to this UnitOfWork.</returns>
+        Task<IUnitOfWork> WithCatchAsync(Func<Exception, Task> handler);
+
+        /// <summary>
+        /// Provide a success handler.
+        /// </summary>
+        /// <param name="handler">A function to handle successful commits.</param>
+        /// <returns>(FluentApi) A reference to this UnitOfWork.</returns>
+        IUnitOfWork WithSuccess(Action handler);
+
+        /// <summary>
+        /// (awaitable) Provide a success handler.
+        /// </summary>
+        /// <param name="handler">A function to handle successful commits.</param>
+        /// <returns>(FluentApi) A reference to this UnitOfWork.</returns>
+        Task<IUnitOfWork> WithSuccessAsync(Func<Task> handler);
+
+        /// <summary>
+        /// Attempt to execute any queries run on this Unit of Work.
+        /// </summary>
+        /// <returns>(FluentApi) A reference to this UnitOfWork.</returns>
+        IUnitOfWork PersistChanges();
+
+        /// <summary>
+        /// (awaitable) Attempt to execute any queries run on this Unit of Work.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>(FluentApi) A reference to this UnitOfWork.</returns>
+        Task<IUnitOfWork> PersistChangesAsync(CancellationToken cancellationToken = default);
     }
 
     public interface IUnitOfWorkExtended : IUnitOfWork

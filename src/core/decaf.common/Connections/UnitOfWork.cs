@@ -18,6 +18,8 @@ namespace decaf.common.Connections
         private readonly DecafOptions options;
         private readonly IHashProvider hashProvider;
         private readonly List<IQueryContainer> queries;
+        private Action<Exception> catchHandler;
+        private Action successHandler;
 
         private UnitOfWork(
             ITransaction transaction,
@@ -76,14 +78,28 @@ namespace decaf.common.Connections
                 this.logger.Warning($"UnitOfWork({Id}) :: One or more queries have not been executed.");
             }
 
+            if (this.transaction.State == TransactionState.Disposed ||
+                this.transaction.State == TransactionState.RolledBack)
+                return;
+            
+            Persist();
+
+            this.logger.Debug($"UnitOfWork({Id}) :: Disposed");
+            this.notifyDisposed(this.Id);
+        }
+
+        private void Persist()
+        {
             try
             {
                 this.logger.Debug($"UnitOfWork({Id}) :: Committing Transaction");
                 this.transaction.Commit();
+                this.successHandler?.Invoke();
             }
             catch (Exception commitException)
             {
                 this.logger.Error(commitException, $"UnitOfWork({Id}) :: Committing Transaction Failed");
+                this.catchHandler?.Invoke(commitException);
                 try
                 {
                     this.logger.Debug($"UnitOfWork({Id}) :: Rolling back Transaction");
@@ -92,6 +108,7 @@ namespace decaf.common.Connections
                 catch (Exception rollbackException)
                 {
                     this.logger.Error(rollbackException, $"UnitOfWork({Id}) :: Rolling back Transaction Failed");
+                    this.catchHandler?.Invoke(rollbackException);
                 }
             }
             finally
@@ -102,15 +119,21 @@ namespace decaf.common.Connections
                     this.connection.Close();
                 }
             }
-
-            this.logger.Debug($"UnitOfWork({Id}) :: Disposed");
-            this.notifyDisposed(this.Id);
         }
 
         /// <inheritdoc />
         public IQueryContainer Query()
             => QueryAsync().WaitFor();
 
+        /// <inheritdoc />
+        public IUnitOfWork Query(Action<IQueryContainer> method)
+        {
+            var query = Query();
+            method(query);
+            return this;
+        }
+
+        /// <inheritdoc />
         public Task<IQueryContainer> QueryAsync(CancellationToken cancellationToken = default)
         {
             var query = QueryContainer.Create(this, this.logger, this.hashProvider, this.options);
@@ -120,12 +143,65 @@ namespace decaf.common.Connections
         }
 
         /// <inheritdoc />
+        public async Task<IUnitOfWork> QueryAsync(Func<IQueryContainer, Task> method, CancellationToken cancellationToken = default)
+        {
+            var query = await QueryAsync(cancellationToken);
+            await method(query);
+            return this;
+        }
+
+        /// <inheritdoc />
+        public IUnitOfWork WithCatch(Action<Exception> handler)
+        {
+            catchHandler = handler;
+            return this;
+        }
+
+        /// <inheritdoc />
+        public Task<IUnitOfWork> WithCatchAsync(Func<Exception, Task> handler)
+        {
+            catchHandler = (ex) => handler(ex).WaitFor();
+            var uow = this as IUnitOfWork;
+            return Task.FromResult(uow);
+        }
+
+        /// <inheritdoc />
+        public IUnitOfWork WithSuccess(Action handler)
+        {
+            successHandler = handler;
+            return this;
+        }
+
+        /// <inheritdoc />
+        public Task<IUnitOfWork> WithSuccessAsync(Func<Task> handler)
+        {
+            successHandler = () => handler().WaitFor();
+            var uow = this as IUnitOfWork;
+            return Task.FromResult(uow);
+        }
+
+        /// <inheritdoc />
+        public IUnitOfWork PersistChanges()
+        {
+            Persist();
+            return this;
+        }
+
+        /// <inheritdoc />
+        public Task<IUnitOfWork> PersistChangesAsync(CancellationToken cancellationToken = default)
+        {
+            Persist();
+            var uow = this as IUnitOfWork;
+            return Task.FromResult(uow);
+        }
+
+        /// <inheritdoc />
         public void NotifyQueryDisposed(Guid queryId)
         {
             var found = this.queries.FirstOrDefault(q => q.Id == queryId);
             if (found == null)
             {
-                this.logger.Debug($"UnitOfWork({Id}) :: Cound not find query with Id - {queryId}");
+                this.logger.Debug($"UnitOfWork({Id}) :: Could not find query with Id - {queryId}");
                 return;
             }
 

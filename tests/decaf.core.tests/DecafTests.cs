@@ -12,7 +12,7 @@ namespace decaf.core_tests
         static IDecaf GetDecaf(bool needsConnectionDetails = false)
         {
             var services = new ServiceCollection();
-            services.AddDecafOrm(b =>
+            services.AddDecaf(b =>
             {
                 b.InjectUnitOfWorkAsScoped();
                 b.UseMockDatabase();

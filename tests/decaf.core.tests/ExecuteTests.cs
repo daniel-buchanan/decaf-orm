@@ -21,7 +21,7 @@ namespace decaf.core_tests
         public ExecuteTests()
         {
             var services = new ServiceCollection();
-            services.AddDecafOrm(o => o.UseMockDatabase());
+            services.AddDecaf(o => o.UseMockDatabase());
             services.AddScoped<IConnectionDetails, MockConnectionDetails>();
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetService<IDecaf>();

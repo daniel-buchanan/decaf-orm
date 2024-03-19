@@ -15,7 +15,7 @@ namespace decaf.core_tests.Connections
         public TransientTests()
         {
             var services = new ServiceCollection();
-            services.AddDecafOrm(o =>
+            services.AddDecaf(o =>
             {
                 o.UseMockDatabase();
             });

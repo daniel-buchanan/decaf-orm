@@ -28,7 +28,7 @@ namespace decaf
         /// <param name="services">The <see cref="IServiceCollection"/> to add to.</param>
         /// <param name="options">An <see cref="Action{T}"/> that resolves the decaf options.</param>
         /// <returns></returns>
-        public static IDecafOrmServiceCollection AddDecafOrm(
+        public static IDecafOrmServiceCollection AddDecaf(
             this IServiceCollection services,
             Action<IDecafOptionsBuilder> options)
         {

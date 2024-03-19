@@ -61,6 +61,7 @@ There are several core concepts within decaf.
    More specifically, statements should either:  
    *a)* Make sense from a SQL statement as you would write it  
    *b)* Read as understandable English
+3. It should integrate seamlessly into the default Dependency Injection Pipeline.
    
 # Examples
 [Return to Top](#decaf)  
@@ -115,20 +116,35 @@ Once this is injected into your service, handler or other class it can be used i
 
 **Disposable:**
 ```csharp
-using(var transient = this.uow.Begin())
+public class Example(IUnitOfWorkFactory factory)
 {
-  using(var query = transient.Query())
-  {
-    ...
-  }
+   public async Task DoStuff()
+   {
+       using var uow = await factory.CreateAsync();
+       uow.WithCatch((ex) => Console.Error.WriteLine(ex.Message))
+        .Query(q => ...)
+        .PersistChanges();
+   }
 }
 ```
 
+> **Note:** In the disposable case *all* queries are executed on exit of the disposable scope.
+
 **Non-Disposable:**
 ```csharp
-var transient = this.uow.Begin();
-var query = t.Query();
+public class Example(IUnitOfWorkFactory factory)
+{
+   public async Task DoStuff()
+   {
+       var uow = await factory.CreateAsync();
+       uow.WithCatch((ex) => Console.Error.WriteLine(ex.Message))
+        .Query(q => ...)
+        .PersistChanges();
+   }
+}
 ```
+
+> **Note:** using the "non-disposable" approach means that you need to call `PersistChanges` or `PersistChangesAsync` in order for any queries to be executed.
 
 ## Creating a Simple Query
 [Return to Top](#decaf)  

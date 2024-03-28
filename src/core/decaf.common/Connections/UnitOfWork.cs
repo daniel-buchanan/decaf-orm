@@ -18,7 +18,7 @@ namespace decaf.common.Connections
         private readonly DecafOptions options;
         private readonly IHashProvider hashProvider;
         private readonly List<IQueryContainer> queries;
-        private Action<Exception> catchHandler;
+        private Func<Exception, bool> catchHandler;
         private Action successHandler;
 
         private UnitOfWork(
@@ -99,16 +99,18 @@ namespace decaf.common.Connections
             catch (Exception commitException)
             {
                 this.logger.Error(commitException, $"UnitOfWork({Id}) :: Committing Transaction Failed");
-                this.catchHandler?.Invoke(commitException);
+                var reThrow = this.catchHandler?.Invoke(commitException);
                 try
                 {
                     this.logger.Debug($"UnitOfWork({Id}) :: Rolling back Transaction");
                     this.transaction.Rollback();
+                    if (reThrow == true) throw;
                 }
                 catch (Exception rollbackException)
                 {
                     this.logger.Error(rollbackException, $"UnitOfWork({Id}) :: Rolling back Transaction Failed");
-                    this.catchHandler?.Invoke(rollbackException);
+                    reThrow = this.catchHandler?.Invoke(rollbackException);
+                    if (reThrow == true) throw;
                 }
             }
             finally
@@ -151,29 +153,51 @@ namespace decaf.common.Connections
         }
 
         /// <inheritdoc />
-        public IUnitOfWork WithCatch(Action<Exception> handler)
+        public IUnitOfWork OnException(Action<Exception> handler)
+        {
+            catchHandler = e =>
+            {
+                handler(e);
+                return false;
+            };
+            return this;
+        }
+
+        /// <inheritdoc />
+        public IUnitOfWork OnException(Func<Exception, bool> handler)
         {
             catchHandler = handler;
             return this;
         }
 
         /// <inheritdoc />
-        public Task<IUnitOfWork> WithCatchAsync(Func<Exception, Task> handler)
+        public Task<IUnitOfWork> OnExceptionAsync(Func<Exception, Task> handler, CancellationToken cancellationToken = default)
         {
-            catchHandler = (ex) => handler(ex).WaitFor();
+            catchHandler = ex =>
+            {
+                handler(ex).WaitFor();
+                return false;
+            };
             var uow = this as IUnitOfWork;
             return Task.FromResult(uow);
         }
 
         /// <inheritdoc />
-        public IUnitOfWork WithSuccess(Action handler)
+        public Task<IUnitOfWork> OnExceptionAsync(Func<Exception, Task<bool>> handler, CancellationToken cancellationToken = default)
+        {
+            catchHandler = ex => handler(ex).WaitFor();
+            return Task.FromResult<IUnitOfWork>(this);
+        }
+
+        /// <inheritdoc />
+        public IUnitOfWork OnSuccess(Action handler)
         {
             successHandler = handler;
             return this;
         }
 
         /// <inheritdoc />
-        public Task<IUnitOfWork> WithSuccessAsync(Func<Task> handler)
+        public Task<IUnitOfWork> OnSuccessAsync(Func<Task> handler, CancellationToken cancellationToken = default)
         {
             successHandler = () => handler().WaitFor();
             var uow = this as IUnitOfWork;

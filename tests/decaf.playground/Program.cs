@@ -22,6 +22,7 @@ var provider = services.BuildServiceProvider();
 Console.WriteLine("Hello, World!");
 
 var decaf = provider.GetService<IDecaf>();
+
 using (var q = decaf.BeginQuery())
 {
     q.Select()

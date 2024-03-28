@@ -25,7 +25,7 @@ namespace decaf.core_tests
             services.AddScoped<IConnectionDetails, MockConnectionDetails>();
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetService<IDecaf>();
-            var transient = decaf.Begin();
+            var transient = decaf.BuildUnit();
             var query = transient.Query() as IQueryContainerInternal;
             var sqlFactory = provider.GetService<ISqlFactory>();
             this.context = query.CreateContext<ISelectQueryContext>();

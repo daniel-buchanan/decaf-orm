@@ -8,7 +8,7 @@ using decaf.common.Utilities;
 
 namespace decaf.common.Connections
 {
-    public class UnitOfWork : IUnitOfWorkExtended
+    public sealed class UnitOfWork : IUnitOfWorkExtended
     {
         private readonly IConnection connection;
         private readonly ITransactionInternal transaction;
@@ -70,18 +70,21 @@ namespace decaf.common.Connections
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!disposing) return;
-            if (this.queries.Any(q => q.Status != QueryStatus.Executed))
+            if (Enumerable.Any(this.queries, q => q.Status != QueryStatus.Executed))
             {
                 this.logger.Warning($"UnitOfWork({Id}) :: One or more queries have not been executed.");
             }
 
             if (this.transaction.State == TransactionState.Disposed ||
                 this.transaction.State == TransactionState.RolledBack)
+            {
+                this.logger.Warning($"UnitOfWork({Id}) :: Unable to commit, transaction is already in {transaction.State} state.");
                 return;
-            
+            }
+
             Persist();
 
             this.logger.Debug($"UnitOfWork({Id}) :: Disposed");
@@ -175,7 +178,7 @@ namespace decaf.common.Connections
         {
             catchHandler = ex =>
             {
-                handler(ex).WaitFor();
+                handler(ex).WaitFor(cancellationToken);
                 return false;
             };
             var uow = this as IUnitOfWork;
@@ -199,7 +202,7 @@ namespace decaf.common.Connections
         /// <inheritdoc />
         public Task<IUnitOfWork> OnSuccessAsync(Func<Task> handler, CancellationToken cancellationToken = default)
         {
-            successHandler = () => handler().WaitFor();
+            successHandler = () => handler().WaitFor(cancellationToken);
             var uow = this as IUnitOfWork;
             return Task.FromResult(uow);
         }

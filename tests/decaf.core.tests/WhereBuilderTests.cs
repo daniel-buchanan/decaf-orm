@@ -36,7 +36,7 @@ namespace decaf.core_tests
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetRequiredService<IDecaf>();
             this.options = provider.GetRequiredService<DecafOptions>();
-            var query = decaf.BeginQuery();
+            var query = decaf.Query();
             var aliasManager = AliasManager.Create();
             var hashProvider = new HashProvider();
             this.context = SelectQueryContext.Create(aliasManager, hashProvider);

@@ -29,7 +29,7 @@ namespace decaf.core_tests
 
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetService<IDecaf>();
-            this.unitOfWork = decaf.Begin();
+            this.unitOfWork = decaf.BuildUnit();
         }
 
         [Theory]

@@ -1,6 +1,7 @@
 using System;
 using decaf.common;
 using decaf.common.Connections;
+using decaf.common.Logging;
 using decaf.tests.common.Mocks;
 using decaf.tests.common.Models;
 using FluentAssertions;
@@ -61,5 +62,34 @@ public class UnitOfWorkTests : CoreTestBase
 
         // Assert
         method.Should().NotThrow();
+    }
+
+    [Fact]
+    public void WarnWhenNotAllQueriesExecuted()
+    {
+        // Arrange
+        var decaf = provider.GetService<IDecaf>();
+        var unit = decaf.BuildUnit();
+
+        // Act
+        unit.Query(q =>
+            {
+                var result = q.Select()
+                    .From<User>(u => u)
+                    .Where(u => u.Id == 1)
+                    .SelectAll<User>(u => u)
+                    .SingleOrDefault();
+            })
+            .Query(q =>
+            {
+                q.Delete()
+                    .From<User>()
+                    .Where(u => u.Id == 42);
+            })
+            .PersistChanges();
+        unit.Dispose();
+
+        // Assert
+        logger.Invocations.Should().Contain(i => i.Method.Name == "Warning");
     }
 }

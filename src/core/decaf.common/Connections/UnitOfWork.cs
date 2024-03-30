@@ -73,10 +73,6 @@ namespace decaf.common.Connections
         private void Dispose(bool disposing)
         {
             if (!disposing) return;
-            if (Enumerable.Any(this.queries, q => q.Status != QueryStatus.Executed))
-            {
-                this.logger.Warning($"UnitOfWork({Id}) :: One or more queries have not been executed.");
-            }
 
             if (this.transaction.State == TransactionState.Disposed ||
                 this.transaction.State == TransactionState.RolledBack)
@@ -93,6 +89,11 @@ namespace decaf.common.Connections
 
         private void Persist()
         {
+            if (Enumerable.Any(this.queries, q => q.Status != QueryStatus.Executed))
+            {
+                this.logger.Warning($"UnitOfWork({Id}) :: One or more queries have not been executed.");
+            }
+            
             try
             {
                 this.logger.Debug($"UnitOfWork({Id}) :: Committing Transaction");

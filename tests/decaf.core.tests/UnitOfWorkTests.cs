@@ -1,4 +1,7 @@
+using System;
 using decaf.common;
+using decaf.common.Connections;
+using decaf.tests.common.Mocks;
 using decaf.tests.common.Models;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,5 +35,31 @@ public class UnitOfWorkTests : CoreTestBase
 
         // Assert
         hasException.Should().BeFalse();
+    }
+
+    [Fact]
+    public void CreateUnitSucceeds()
+    {
+        // Arrange
+        var factory = provider.GetService<IUnitOfWorkFactory>();
+
+        // Act
+        Action method = () => factory.Create();
+
+        // Assert
+        method.Should().NotThrow();
+    }
+    
+    [Fact]
+    public void CreateUnitWithDetailsSucceeds()
+    {
+        // Arrange
+        var factory = provider.GetService<IUnitOfWorkFactory>();
+
+        // Act
+        Action method = () => factory.Create(new MockConnectionDetails());
+
+        // Assert
+        method.Should().NotThrow();
     }
 }

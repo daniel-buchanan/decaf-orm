@@ -18,8 +18,8 @@ public class CoreTestBase
             o.TrackUnitsOfWork();
             o.OverrideDefaultLogLevel(LogLevel.Debug);
             o.UseMockDatabase();
-        });
-        services.AddScoped<IConnectionDetails, MockConnectionDetails>();
+        })
+            .WithConnection<IConnectionDetails>(new MockConnectionDetails());
 
         provider = services.BuildServiceProvider();
     }

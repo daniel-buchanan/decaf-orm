@@ -95,9 +95,9 @@ Extensions methods are provided for the built in .Net Dependency Injection frame
    });
    ```
 
-> **Note:** this documentation assumes a certain level of knowledge of dependency injection, specifically the default
+> **Note:** this documentation assumes a certain level of knowledge of dependency injection, specifically about the default
 > provider included with .Net from version 5 onwards.  
-> Specifically, it is assumed that you know how to either create or configure the dependency injection for either:  
+> It is assumed that you know how to either create or configure the dependency injection for either:  
 > a) A WebAPI project  
 > b) A console application using bare metal `IServiceCollection` and `IServiceProvider`
 

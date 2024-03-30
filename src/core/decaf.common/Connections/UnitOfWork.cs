@@ -176,16 +176,12 @@ namespace decaf.common.Connections
         }
 
         /// <inheritdoc />
-        public Task<IUnitOfWork> OnExceptionAsync(Func<Exception, Task> handler, CancellationToken cancellationToken = default)
-        {
-            catchHandler = ex =>
+        public async Task<IUnitOfWork> OnExceptionAsync(Func<Exception, Task> handler, CancellationToken cancellationToken = default) 
+            => await OnExceptionAsync(async e =>
             {
-                handler(ex).WaitFor(cancellationToken);
+                await handler(e);
                 return false;
-            };
-            var uow = this as IUnitOfWork;
-            return Task.FromResult(uow);
-        }
+            }, cancellationToken);
 
         /// <inheritdoc />
         public Task<IUnitOfWork> OnExceptionAsync(Func<Exception, Task<bool>> handler, CancellationToken cancellationToken = default)
@@ -197,8 +193,11 @@ namespace decaf.common.Connections
         /// <inheritdoc />
         public IUnitOfWork OnSuccess(Action handler)
         {
-            successHandler = handler;
-            return this;
+            return OnSuccessAsync(() =>
+            {
+                handler();
+                return Task.CompletedTask;
+            }).WaitFor();
         }
 
         /// <inheritdoc />
@@ -210,11 +209,8 @@ namespace decaf.common.Connections
         }
 
         /// <inheritdoc />
-        public IUnitOfWork PersistChanges()
-        {
-            Persist();
-            return this;
-        }
+        public IUnitOfWork PersistChanges() 
+            => PersistChangesAsync().WaitFor();
 
         /// <inheritdoc />
         public Task<IUnitOfWork> PersistChangesAsync(CancellationToken cancellationToken = default)

@@ -22,7 +22,8 @@ namespace decaf.sqlserver.tests
                         {
                             Authentication = new UsernamePasswordAuthentication("bob", "password")
                         });
-                    });
+                    })
+                    .LazyInitialiseConnections();
 
                 if(disableHeaderComments) o.DisableSqlHeaderComments();
             });

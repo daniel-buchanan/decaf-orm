@@ -22,7 +22,8 @@ namespace decaf.npgsql.tests
                         {
                             Authentication = new UsernamePasswordAuthentication("bob", "password")
                         });
-                    });
+                    })
+                    .LazyInitialiseConnections();
 
                 if(disableHeaderComments) o.DisableSqlHeaderComments();
             });

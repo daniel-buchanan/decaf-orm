@@ -45,6 +45,10 @@ namespace decaf.common
             return this;
         }
 
+        /// <inheritdoc/>
+        public IDecafOptionsBuilder LazyInitialiseConnections()
+            => ConfigureProperty(nameof(DecafOptions.LazyInitialiseConnections), true);
+
         private new IDecafOptionsBuilder ConfigureProperty<TValue>(string name, TValue value)
         {
             base.ConfigureProperty(name, value);

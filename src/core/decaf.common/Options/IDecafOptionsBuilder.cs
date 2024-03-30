@@ -67,6 +67,12 @@ namespace decaf.common.Options
         /// <param name="lifetime">The lifetime for the <see cref="IUnitOfWork"/> when injected.</param>
         /// <returns>(FluentAPI) The ability to continue further setup actions.</returns>
         IDecafOptionsBuilder InjectUnitOfWork(ServiceLifetime lifetime);
+
+        /// <summary>
+        /// Lazily initialise database connections, rather than eagerly opening them before they are used.
+        /// </summary>
+        /// <returns>(FluentAPI) The ability to continue further setup actions.</returns>
+        IDecafOptionsBuilder LazyInitialiseConnections();
     }
 
     public interface IDecafOptionsBuilderExtensions : IDecafOptionsBuilder

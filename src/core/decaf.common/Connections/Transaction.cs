@@ -7,12 +7,11 @@ namespace decaf.common.Connections
 	public abstract class Transaction : ITransactionInternal
 	{
         private readonly ILoggerProxy logger;
+        private readonly DecafOptions options;
         protected readonly IConnection connection;
-        protected readonly DecafOptions options;
-        protected IDbTransaction transaction;
-        private TransactionState state;
+        private IDbTransaction transaction;
 
-		protected Transaction(
+        protected Transaction(
             Guid id,
             ILoggerProxy logger,
             IConnection connection,
@@ -22,7 +21,7 @@ namespace decaf.common.Connections
             this.logger = logger;
             this.connection = connection;
             this.options = options;
-            this.state = TransactionState.Created;
+            this.State = TransactionState.Created;
 
             this.logger.Debug($"ITransaction({Id}) :: Transaction created");
 		}
@@ -42,8 +41,9 @@ namespace decaf.common.Connections
             if (this.transaction != null) return;
 
             this.logger.Debug($"ITransaction({Id}) :: Beginning Transaction");
-            this.transaction = GetUnderlyingTransaction();
-            this.state = TransactionState.Begun;
+            if(!options.LazyInitialiseConnections)
+                this.transaction = GetUnderlyingTransaction();
+            this.State = TransactionState.Begun;
         }
 
         /// <inheritdoc/>
@@ -51,9 +51,12 @@ namespace decaf.common.Connections
         {
             try
             {
+                if (options.LazyInitialiseConnections)
+                    Begin();
+                
                 this.logger.Debug($"ITransaction({Id}) :: Committing Transaction");
                 this.transaction.Commit();
-                this.state = TransactionState.Committed;
+                this.State = TransactionState.Committed;
                 this.logger.Debug($"ITransaction({Id}) :: Commit SUCCEEDED");
             }
             catch (Exception commitEx)
@@ -61,15 +64,14 @@ namespace decaf.common.Connections
                 try
                 {
                     this.logger.Error(commitEx, $"ITransaction({Id}) :: Commit FAILED, attempting Rollback");
-                    this.transaction.Rollback();
-                    this.logger.Information($"ITransaction({Id}) :: Rollback SUCCEEDED");
+                    Rollback();
                 }
                 catch (Exception rollbackEx)
                 {
                     this.logger.Error(rollbackEx, $"ITransaction({Id}) :: Rollback FAILED");
                 }
 
-                this.state = TransactionState.RolledBack;
+                this.State = TransactionState.RolledBack;
             }
             finally
             {
@@ -88,7 +90,7 @@ namespace decaf.common.Connections
         {
             if (!disposing) return;
             this.transaction = null;
-            this.state = TransactionState.Disposed;
+            this.State = TransactionState.Disposed;
         }
 
         /// <inheritdoc/>
@@ -106,7 +108,7 @@ namespace decaf.common.Connections
             }
             finally
             {
-                this.state = TransactionState.RolledBack;
+                this.State = TransactionState.RolledBack;
             }
         }
 
@@ -114,7 +116,7 @@ namespace decaf.common.Connections
         public abstract IDbTransaction GetUnderlyingTransaction();
 
         /// <inheritdoc/>
-        public TransactionState State => this.state;
+        public TransactionState State { get; private set; }
     }
 }
 

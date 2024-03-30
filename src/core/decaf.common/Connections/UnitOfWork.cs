@@ -141,6 +141,8 @@ namespace decaf.common.Connections
         /// <inheritdoc />
         public Task<IQueryContainer> QueryAsync(CancellationToken cancellationToken = default)
         {
+            this.transaction.Begin();
+            
             var query = QueryContainer.Create(this, this.logger, this.hashProvider, this.options);
             this.logger.Debug($"UnitOfWork({Id}) :: Creating new Query");
             this.queries.Add(query);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using decaf.common.Options;
 using decaf.db.common;
 
@@ -18,13 +19,14 @@ namespace decaf.sqlserver
         /// </summary>
         /// <param name="optionsBuilder"></param>
         /// <param name="builder"></param>
-        public static void UseSqlServer(
+        public static IDecafOptionsBuilder UseSqlServer(
             this IDecafOptionsBuilder optionsBuilder,
             Action<ISqlServerOptionsBuilder> builder)
         {
             var options = new SqlServerOptionsBuilder();
             builder(options);
             UseSqlServer(optionsBuilder, options.Build());
+            return optionsBuilder;
         }
 
         /// <summary>

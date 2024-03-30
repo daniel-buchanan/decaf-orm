@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using decaf.common;
+using decaf.common.Connections;
 using decaf.tests.common.Mocks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,8 +36,8 @@ public class DecafOrmServiceCollectionTests
 
         // Assert
         services.Should().HaveCount(1);
-        var sd = services.First(s => s.ServiceType == typeof(MockConnectionDetails));
-        sd.ServiceType.Should().Be(typeof(MockConnectionDetails));
+        var sd = services.First(s => s.ServiceType == typeof(IConnectionDetails));
+        sd.ServiceType.Should().Be(typeof(IConnectionDetails));
         sd.ImplementationType.Should().BeNull();
         sd.ImplementationInstance.Should().Be(connectionDetails);
         sd.Lifetime.Should().Be(ServiceLifetime.Singleton);
@@ -59,9 +60,9 @@ public class DecafOrmServiceCollectionTests
 
         // Assert
         services.Should().HaveCount(1);
-        var sd = services.First(s => s.ServiceType == typeof(MockConnectionDetails));
-        sd.ServiceType.Should().Be(typeof(MockConnectionDetails));
+        var sd = services.First(s => s.ServiceType == typeof(IConnectionDetails));
         sd.ImplementationType.Should().BeNull();
+        sd.ServiceType.Should().Be(typeof(IConnectionDetails));
         sd.ImplementationFactory.Should().NotBeNull();
         sd.Lifetime.Should().Be(lifetime);
     }

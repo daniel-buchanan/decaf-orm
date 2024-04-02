@@ -71,11 +71,11 @@ namespace decaf.common
 
         /// <inheritdoc/>
         public IQueryContainer Query()
-            => GetUnitOfWork().Query();
+            => GetUnitOfWork().GetQuery();
 
         /// <inheritdoc/>
         public IQueryContainer Query(IConnectionDetails connectionDetails)
-            => GetUnitOfWork(connectionDetails).Query();
+            => GetUnitOfWork(connectionDetails).GetQuery();
 
         /// <inheritdoc/>
         public async Task<IQueryContainer> QueryAsync(CancellationToken cancellationToken = default)
@@ -87,7 +87,7 @@ namespace decaf.common
             CancellationToken cancellationToken = default)
         {
             var t = await GetUnitOfWorkAsync(connectionDetails, cancellationToken);
-            return await t.QueryAsync(cancellationToken);
+            return await t.GetQueryAsync(cancellationToken);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace decaf.npgsql.tests
 
             var decaf = provider.GetService<IDecaf>();
             var transient = decaf.BuildUnit();
-            this.query = transient.Query() as IQueryContainer;
+            this.query = transient.GetQuery() as IQueryContainer;
         }
 
         [Fact]

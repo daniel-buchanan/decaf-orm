@@ -69,7 +69,7 @@ namespace decaf.services
         protected async Task ExecuteQueryAsync(Func<IQueryContainer, CancellationToken, Task> method, CancellationToken cancellationToken = default)
         {
             var t = this.GetUnitOfWork();
-            using (var q = await t.QueryAsync(cancellationToken))
+            using (var q = await t.GetQueryAsync(cancellationToken))
             {
                 await method(q, cancellationToken);
             }
@@ -81,7 +81,7 @@ namespace decaf.services
         {
             T result;
             var t = this.GetUnitOfWork();
-            using (var q = await t.QueryAsync(cancellationToken))
+            using (var q = await t.GetQueryAsync(cancellationToken))
             {
                 result = await method(q, cancellationToken);
             }

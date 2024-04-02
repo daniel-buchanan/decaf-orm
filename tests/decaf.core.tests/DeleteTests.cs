@@ -29,7 +29,7 @@ namespace decaf.core_tests
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetService<IDecaf>();
             var transient = decaf.BuildUnit();
-            this.query = transient.Query() as IQueryContainerInternal;
+            this.query = transient.GetQuery() as IQueryContainerInternal;
         }
 
         [Fact]

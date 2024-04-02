@@ -26,7 +26,7 @@ namespace decaf.core_tests
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetService<IDecaf>();
             var transient = decaf.BuildUnit();
-            var query = transient.Query() as IQueryContainerInternal;
+            var query = transient.GetQuery() as IQueryContainerInternal;
             var sqlFactory = provider.GetService<ISqlFactory>();
             this.context = query.CreateContext<ISelectQueryContext>();
             this.execute = new InheritedExecutor<ISelectQueryContext>(query, this.context);

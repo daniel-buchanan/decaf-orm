@@ -22,7 +22,7 @@ namespace decaf.common.Connections
         /// </summary>
         /// <returns>(FluentApi) The ability to begin, write and execute a query.</returns>
         /// <example>t.Query()</example>
-        IQueryContainer Query();
+        IQueryContainer GetQuery();
 
         /// <summary>
         /// Execute a query on this "Unit of Work" using the Fluent API
@@ -35,7 +35,7 @@ namespace decaf.common.Connections
         /// (awaitable) Get a query so you can start building.
         /// </summary>
         /// <returns>A new query, from which you can choose how you create the sql statement.</returns>
-        Task<IQueryContainer> QueryAsync(CancellationToken cancellationToken = default);
+        Task<IQueryContainer> GetQueryAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// (awaitable) Execute a query on this "Unit of Work" using the Fluent API

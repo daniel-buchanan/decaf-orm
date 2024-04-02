@@ -131,13 +131,13 @@ namespace decaf.common.Connections
         }
 
         /// <inheritdoc />
-        public IQueryContainer Query()
-            => QueryAsync().WaitFor();
+        public IQueryContainer GetQuery()
+            => GetQueryAsync().WaitFor();
 
         /// <inheritdoc />
         public IUnitOfWork Query(Action<IQueryContainer> method)
         {
-            var query = Query();
+            var query = GetQuery();
             try
             {
                 method(query);
@@ -153,7 +153,7 @@ namespace decaf.common.Connections
         }
 
         /// <inheritdoc />
-        public Task<IQueryContainer> QueryAsync(CancellationToken cancellationToken = default)
+        public Task<IQueryContainer> GetQueryAsync(CancellationToken cancellationToken = default)
         {
             this.transaction.Begin();
             
@@ -166,7 +166,7 @@ namespace decaf.common.Connections
         /// <inheritdoc />
         public async Task<IUnitOfWork> QueryAsync(Func<IQueryContainer, Task> method, CancellationToken cancellationToken = default)
         {
-            var query = await QueryAsync(cancellationToken);
+            var query = await GetQueryAsync(cancellationToken);
             try
             {
                 await method(query);

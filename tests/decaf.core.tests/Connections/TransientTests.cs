@@ -83,7 +83,7 @@ namespace decaf.core_tests.Connections
 
             // Act
             transient.NotifyQueryDisposed(Guid.Empty);
-            var method = () => transient.Query();
+            var method = () => transient.GetQuery();
 
             // Assert
             method.Should().NotThrow<ObjectDisposedException>();

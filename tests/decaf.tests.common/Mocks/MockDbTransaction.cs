@@ -6,13 +6,13 @@ namespace decaf.tests.common.Mocks
 {
     public class MockDbTransaction : DbTransaction
     {
-        private readonly bool throwOnCommit;
+        private readonly MockDatabaseOptions options;
         private readonly DbConnection connection;
         private readonly IsolationLevel isolationLevel;
 
-        public MockDbTransaction(bool throwOnCommit, DbConnection connection, IsolationLevel il)
+        public MockDbTransaction(MockDatabaseOptions options, DbConnection connection, IsolationLevel il)
         {
-            this.throwOnCommit = throwOnCommit;
+            this.options = options;
             this.connection = connection;
             this.isolationLevel = il;
         }
@@ -23,10 +23,13 @@ namespace decaf.tests.common.Mocks
 
         public override void Commit()
         {
-            if (throwOnCommit) throw new NullReferenceException("Throwing on Commit!");
+            if (options.ThrowOnCommit) throw new NullReferenceException("Throwing on Commit!");
         }
 
-        public override void Rollback() { }
+        public override void Rollback()
+        {
+            if (options.ThrowOnRollback) throw new NullReferenceException("Throwing on Rollback!");
+        }
     }
 }
 

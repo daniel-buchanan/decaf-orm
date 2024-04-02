@@ -1,24 +1,21 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using decaf.common.Connections;
 using decaf.common.Logging;
-using Moq;
-using decaf.common;
 
 namespace decaf.tests.common.Mocks
 {
 	public class MockConnection : Connection
     {
-        private readonly bool throwOnCommit;
+        private readonly MockDatabaseOptions options;
         
         public MockConnection(
-            bool throwOnCommit,
+            MockDatabaseOptions options,
             ILoggerProxy logger, 
             IConnectionDetails connectionDetails)
             : base(logger, connectionDetails) 
-            => this.throwOnCommit = throwOnCommit;
+            => this.options = options;
 
-        public override IDbConnection GetUnderlyingConnection() => new MockDbConnection(throwOnCommit);
+        public override IDbConnection GetUnderlyingConnection() => new MockDbConnection(options);
     }
 }
 

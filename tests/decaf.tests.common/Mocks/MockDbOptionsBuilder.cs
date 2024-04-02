@@ -1,9 +1,7 @@
-﻿using System.Data;
-using decaf.common.Connections;
+﻿using decaf.common.Connections;
 using decaf.db.common;
-using decaf.tests.common.Mocks;
 
-namespace decaf.sqlserver
+namespace decaf.tests.common.Mocks
 {
     public class MockDbOptionsBuilder :
         SqlOptionsBuilder<MockDatabaseOptions, IMockDbOptionsBuilder, IConnectionDetails>,
@@ -11,6 +9,11 @@ namespace decaf.sqlserver
 	{
         public IMockDbOptionsBuilder ThrowOnCommit()
             => ConfigureProperty(nameof(MockDatabaseOptions.ThrowOnCommit), true);
+
+        public IMockDbOptionsBuilder ThrowOnRollback()
+            => ConfigureProperty(nameof(MockDatabaseOptions.ThrowOnRollback), true);
+
+        public IMockDbOptionsBuilder Noop() => this;
 
         public override IMockDbOptionsBuilder WithConnectionString(string connectionString)
         {

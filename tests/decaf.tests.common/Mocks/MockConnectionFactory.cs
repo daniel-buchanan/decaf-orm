@@ -15,7 +15,7 @@ namespace decaf.tests.common.Mocks
 
         protected override Task<IConnection> ConstructConnectionAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default)
         {
-            var connection = (IConnection)new MockConnection(dbOptions.ThrowOnCommit, logger, connectionDetails);
+            var connection = (IConnection)new MockConnection(dbOptions, logger, connectionDetails);
             return Task.FromResult(connection);
         }
     }

@@ -1,14 +1,16 @@
-﻿using System.Data;
-using decaf.common.Connections;
+﻿using decaf.common.Connections;
 using decaf.db.common;
-using decaf.tests.common.Mocks;
 
-namespace decaf.sqlserver
+namespace decaf.tests.common.Mocks
 {
     public interface IMockDbOptionsBuilder :
         ISqlOptionsBuilder<MockDatabaseOptions, IMockDbOptionsBuilder, IConnectionDetails>
     {
         IMockDbOptionsBuilder ThrowOnCommit();
+
+        IMockDbOptionsBuilder ThrowOnRollback();
+
+        IMockDbOptionsBuilder Noop();
     }
 }
 

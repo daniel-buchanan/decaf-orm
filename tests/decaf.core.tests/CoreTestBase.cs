@@ -27,6 +27,7 @@ public class CoreTestBase
                 o.TrackUnitsOfWork();
                 o.OverrideDefaultLogLevel(LogLevel.Debug);
                 o.UseMockDatabase(method);
+                o.CloseConnectionsOnCommitOrRollback();
                 if (swallowExceptions) o.SwallowTransactionExceptions();
             })
             .WithConnection<IConnectionDetails>(new MockConnectionDetails());

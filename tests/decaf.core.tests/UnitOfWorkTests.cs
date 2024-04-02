@@ -223,4 +223,28 @@ public class UnitOfWorkTests : CoreTestBase
         // Assert
         method.Should().NotThrow();
     }
+    
+    [Fact]
+    public void CloseOnCommitOrRollbackTriggered()
+    {
+        // Arrange
+        var p = Build(b => b.Noop());
+        var decaf = p.GetService<IDecaf>();
+        var unit = decaf.BuildUnit();
+        var exceptionHandled = false;
+
+        // Act
+        Action method = () => unit
+            .Query(q => q.Select().From<User>().Where(u => u.Id != 42))
+            .OnException(e =>
+            {
+                exceptionHandled = true;
+            })
+            .PersistChanges();
+
+        // Assert
+        method.Should().NotThrow();
+        var ext = unit as IUnitOfWorkExtended;
+        ext.Connection.State.Should().Be(ConnectionState.Closed);
+    }
 }

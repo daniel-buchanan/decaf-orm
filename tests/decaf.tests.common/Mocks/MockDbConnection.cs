@@ -10,7 +10,10 @@ namespace decaf.tests.common.Mocks
         private readonly MockDatabaseOptions options;
 
         public MockDbConnection(MockDatabaseOptions options)
-            => this.options = options;
+        {
+            this.options = options;
+            state = ConnectionState.Closed;
+        }
 
         public override string ConnectionString { get; set; }
 
@@ -26,9 +29,9 @@ namespace decaf.tests.common.Mocks
 
         public override void ChangeDatabase(string databaseName) { }
 
-        public override void Close() => this.state = ConnectionState.Closed;
+        public override void Close() => state = ConnectionState.Closed;
 
-        public override void Open() => this.state = ConnectionState.Open;
+        public override void Open() => state = ConnectionState.Open;
 
         protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
             => new MockDbTransaction(options, this, isolationLevel);

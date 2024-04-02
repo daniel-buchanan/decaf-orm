@@ -29,15 +29,15 @@ namespace decaf.common.Connections
             DecafOptions options,
             Action<Guid> notifyDisposed)
         {
-            this.connection = transaction.Connection;
+            connection = transaction.Connection;
             this.transaction = transaction as ITransactionInternal;
             this.sqlFactory = sqlFactory;
             this.logger = logger;
             this.options = options;
             this.hashProvider = hashProvider;
             this.notifyDisposed = notifyDisposed;
-            this.queries = new List<IQueryContainer>();
-            this.catchHandler = _ => true;
+            queries = new List<IQueryContainer>();
+            catchHandler = _ => true;
 
             Id = Guid.NewGuid();
             this.logger.Debug($"UnitOfWork({Id}) :: Created");
@@ -49,13 +49,13 @@ namespace decaf.common.Connections
         public Guid Id { get; private set; }
 
         /// <inheritdoc />
-        IConnection IUnitOfWorkExtended.Connection => this.connection;
+        IConnection IUnitOfWorkExtended.Connection => connection;
 
         /// <inheritdoc />
-        ITransaction IUnitOfWorkExtended.Transaction => this.transaction;
+        ITransaction IUnitOfWorkExtended.Transaction => transaction;
 
         /// <inheritdoc />
-        ISqlFactory IUnitOfWorkExtended.SqlFactory => this.sqlFactory;
+        ISqlFactory IUnitOfWorkExtended.SqlFactory => sqlFactory;
 
         public static IUnitOfWork Create(
             ITransaction transaction,
@@ -77,55 +77,55 @@ namespace decaf.common.Connections
         {
             if (!disposing) return;
 
-            if (this.transaction.State == TransactionState.Disposed ||
-                this.transaction.State == TransactionState.RolledBack)
+            if (transaction.State == TransactionState.Disposed ||
+                transaction.State == TransactionState.RolledBack)
             {
-                this.logger.Warning($"UnitOfWork({Id}) :: Unable to commit, transaction is already in {transaction.State} state.");
+                logger.Warning($"UnitOfWork({Id}) :: Unable to commit, transaction is already in {transaction.State} state.");
                 return;
             }
 
             Persist();
 
-            this.logger.Debug($"UnitOfWork({Id}) :: Disposed");
-            this.notifyDisposed(this.Id);
+            logger.Debug($"UnitOfWork({Id}) :: Disposed");
+            notifyDisposed(Id);
         }
 
         private void Persist()
         {
-            if (Enumerable.Any(this.queries, q => q.Status != QueryStatus.Executed))
+            if (queries.Any(q => q.Status != QueryStatus.Executed))
             {
-                this.logger.Warning($"UnitOfWork({Id}) :: One or more queries have not been executed.");
+                logger.Warning($"UnitOfWork({Id}) :: One or more queries have not been executed.");
             }
             
             try
             {
-                this.logger.Debug($"UnitOfWork({Id}) :: Committing Transaction");
-                this.transaction.Commit();
-                this.successHandler?.Invoke();
+                logger.Debug($"UnitOfWork({Id}) :: Committing Transaction");
+                transaction.Commit();
+                successHandler?.Invoke();
             }
             catch (Exception commitException)
             {
-                this.logger.Error(commitException, $"UnitOfWork({Id}) :: Committing Transaction Failed");
-                var reThrow = this.catchHandler?.Invoke(commitException);
+                logger.Error(commitException, $"UnitOfWork({Id}) :: Committing Transaction Failed");
+                var reThrow = catchHandler?.Invoke(commitException);
                 try
                 {
-                    this.logger.Debug($"UnitOfWork({Id}) :: Rolling back Transaction");
-                    this.transaction.Rollback();
+                    logger.Debug($"UnitOfWork({Id}) :: Rolling back Transaction");
+                    transaction.Rollback();
                     if (reThrow == true && !options.SwallowCommitExceptions) throw;
                 }
                 catch (Exception rollbackException)
                 {
-                    this.logger.Error(rollbackException, $"UnitOfWork({Id}) :: Rolling back Transaction Failed");
-                    reThrow = this.catchHandler?.Invoke(rollbackException);
+                    logger.Error(rollbackException, $"UnitOfWork({Id}) :: Rolling back Transaction Failed");
+                    reThrow = catchHandler?.Invoke(rollbackException);
                     if (reThrow == true && !options.SwallowCommitExceptions) throw;
                 }
             }
             finally
             {
-                if (this.transaction.CloseConnectionOnCommitOrRollback)
+                if (transaction.CloseConnectionOnCommitOrRollback)
                 {
-                    this.logger.Debug($"UnitOfWork({Id}) :: Closing Connection after Commit or Rollback");
-                    this.connection.Close();
+                    logger.Debug($"UnitOfWork({Id}) :: Closing Connection after Commit or Rollback");
+                    connection.Close();
                 }
             }
         }
@@ -155,11 +155,11 @@ namespace decaf.common.Connections
         /// <inheritdoc />
         public Task<IQueryContainer> GetQueryAsync(CancellationToken cancellationToken = default)
         {
-            this.transaction.Begin();
+            transaction.Begin();
             
-            var query = QueryContainer.Create(this, this.logger, this.hashProvider, this.options);
-            this.logger.Debug($"UnitOfWork({Id}) :: Creating new Query");
-            this.queries.Add(query);
+            var query = QueryContainer.Create(this, logger, hashProvider, options);
+            logger.Debug($"UnitOfWork({Id}) :: Creating new Query");
+            queries.Add(query);
             return Task.FromResult(query);
         }
 
@@ -182,15 +182,12 @@ namespace decaf.common.Connections
         }
 
         /// <inheritdoc />
-        public IUnitOfWork OnException(Action<Exception> handler)
-        {
-            catchHandler = e =>
+        public IUnitOfWork OnException(Action<Exception> handler) 
+            => OnException(e =>
             {
                 handler(e);
                 return false;
-            };
-            return this;
-        }
+            });
 
         /// <inheritdoc />
         public IUnitOfWork OnException(Func<Exception, bool> handler)
@@ -247,18 +244,18 @@ namespace decaf.common.Connections
         /// <inheritdoc />
         public void NotifyQueryDisposed(Guid queryId)
         {
-            var found = this.queries.FirstOrDefault(q => q.Id == queryId);
+            var found = queries.FirstOrDefault(q => q.Id == queryId);
             if (found == null)
             {
-                this.logger.Debug($"UnitOfWork({Id}) :: Could not find query with Id - {queryId}");
+                logger.Debug($"UnitOfWork({Id}) :: Could not find query with Id - {queryId}");
                 return;
             }
 
-            this.queries.Remove(found);
+            queries.Remove(found);
 
-            if (this.queries.Count != 0) return;
+            if (queries.Count != 0) return;
 
-            this.Dispose();
+            Dispose();
         }
     }
 }

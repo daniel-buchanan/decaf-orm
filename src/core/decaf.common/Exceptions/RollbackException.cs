@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 
 namespace decaf.common.Exceptions
 {
+    [Serializable]
     public class RollbackException : SqlException
     {
         public RollbackException(string reason)

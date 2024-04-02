@@ -15,16 +15,21 @@ public class CoreTestBase
     
     public CoreTestBase()
     {
+        provider = Build(b => b.Noop());
+    }
+
+    protected IServiceProvider Build(Action<IMockDbOptionsBuilder> method, bool swallowExceptions = false)
+    {
         var services = new ServiceCollection();
         services.AddSingleton<ILoggerProxy>(logger.Object);
         services.AddDecaf(o =>
-        {
-            o.TrackUnitsOfWork();
-            o.OverrideDefaultLogLevel(LogLevel.Debug);
-            o.UseMockDatabase();
-        })
+            {
+                o.TrackUnitsOfWork();
+                o.OverrideDefaultLogLevel(LogLevel.Debug);
+                o.UseMockDatabase(method);
+                if (swallowExceptions) o.SwallowTransactionExceptions();
+            })
             .WithConnection<IConnectionDetails>(new MockConnectionDetails());
-
-        provider = services.BuildServiceProvider();
+        return services.BuildServiceProvider();
     }
 }

@@ -5,7 +5,9 @@ namespace decaf.common.Connections
         Created,
         Begun,
         Committed,
+        CommitFailed,
         RolledBack,
+        RollbackFailed,
         Disposed
     }
 }

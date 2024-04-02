@@ -49,6 +49,10 @@ namespace decaf.common
         public IDecafOptionsBuilder LazyInitialiseConnections()
             => ConfigureProperty(nameof(DecafOptions.LazyInitialiseConnections), true);
 
+        /// <inheritdoc/>
+        public IDecafOptionsBuilder SwallowTransactionExceptions()
+            => ConfigureProperty(nameof(DecafOptions.SwallowCommitExceptions), true);
+
         private new IDecafOptionsBuilder ConfigureProperty<TValue>(string name, TValue value)
         {
             base.ConfigureProperty(name, value);

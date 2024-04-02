@@ -1,13 +1,12 @@
 using System;
 using decaf.common;
 using decaf.common.Connections;
-using decaf.common.Logging;
+using decaf.common.Exceptions;
 using decaf.tests.common.Mocks;
 using decaf.tests.common.Models;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-using Xunit.Sdk;
 
 namespace decaf.core_tests;
 
@@ -112,5 +111,94 @@ public class UnitOfWorkTests : CoreTestBase
 
         // Assert
         exceptionThrown.Should().Be(true);
+    }
+
+    [Fact]
+    public void CommitThrowsException()
+    {
+        // Arrange
+        var p = Build(b =>
+        {
+            b.ThrowOnCommit();
+        });
+        var decaf = p.GetService<IDecaf>();
+        var unit = decaf.BuildUnit();
+
+        // Act
+        Action method = () => unit
+            .Query(q => q.Select().From<User>().Where(u => u.Id != 42))
+            .PersistChanges();
+
+        // Assert
+        method.Should().Throw<CommitException>();
+    }
+    
+    [Fact]
+    public void RollbackThrowsException()
+    {
+        // Arrange
+        var p = Build(b =>
+        {
+            b.ThrowOnCommit();
+            b.ThrowOnRollback();
+        });
+        var decaf = p.GetService<IDecaf>();
+        var unit = decaf.BuildUnit();
+
+        // Act
+        Action method = () => unit
+            .Query(q => q.Select().From<User>().Where(u => u.Id != 42))
+            .PersistChanges();
+
+        // Assert
+        method.Should().Throw<RollbackException>();
+    }
+    
+    [Fact]
+    public void SwallowExceptionsNoneThrown()
+    {
+        // Arrange
+        var p = Build(b =>
+        {
+            b.ThrowOnCommit();
+            b.ThrowOnRollback();
+        }, swallowExceptions: true);
+        var decaf = p.GetService<IDecaf>();
+        var unit = decaf.BuildUnit();
+
+        // Act
+        Action method = () => unit
+            .Query(q => q.Select().From<User>().Where(u => u.Id != 42))
+            .PersistChanges();
+
+        // Assert
+        method.Should().NotThrow();
+    }
+    
+    [Fact]
+    public void SwallowExceptionsOnExceptionCalled()
+    {
+        // Arrange
+        var p = Build(b =>
+        {
+            b.ThrowOnCommit();
+            b.ThrowOnRollback();
+        }, swallowExceptions: true);
+        var decaf = p.GetService<IDecaf>();
+        var unit = decaf.BuildUnit();
+        var exceptionHandled = false;
+
+        // Act
+        Action method = () => unit
+            .Query(q => q.Select().From<User>().Where(u => u.Id != 42))
+            .OnException(e =>
+            {
+                exceptionHandled = true;
+            })
+            .PersistChanges();
+
+        // Assert
+        method.Should().NotThrow();
+        exceptionHandled.Should().BeTrue();
     }
 }

@@ -37,9 +37,12 @@ namespace decaf.common.Connections
             this.hashProvider = hashProvider;
             this.notifyDisposed = notifyDisposed;
             this.queries = new List<IQueryContainer>();
+            this.catchHandler = _ => true;
 
             Id = Guid.NewGuid();
             this.logger.Debug($"UnitOfWork({Id}) :: Created");
+            if(options.SwallowCommitExceptions)
+                logger.Warning($"UnitOfWork({Id}) :: Exceptions will be swallowed!");
         }
 
         /// <inheritdoc />
@@ -108,13 +111,13 @@ namespace decaf.common.Connections
                 {
                     this.logger.Debug($"UnitOfWork({Id}) :: Rolling back Transaction");
                     this.transaction.Rollback();
-                    if (reThrow == true) throw;
+                    if (reThrow == true && !options.SwallowCommitExceptions) throw;
                 }
                 catch (Exception rollbackException)
                 {
                     this.logger.Error(rollbackException, $"UnitOfWork({Id}) :: Rolling back Transaction Failed");
                     reThrow = this.catchHandler?.Invoke(rollbackException);
-                    if (reThrow == true) throw;
+                    if (reThrow == true && !options.SwallowCommitExceptions) throw;
                 }
             }
             finally
@@ -143,7 +146,7 @@ namespace decaf.common.Connections
             catch (Exception e)
             {
                 var reThrow = catchHandler?.Invoke(e);
-                if (reThrow == true) throw;
+                if (reThrow == true && !options.SwallowCommitExceptions) throw;
             }
 
             return this;
@@ -172,7 +175,7 @@ namespace decaf.common.Connections
             catch (Exception e)
             {
                 var reThrow = catchHandler?.Invoke(e);
-                if (reThrow == true) throw;
+                if (reThrow == true && !options.SwallowCommitExceptions) throw;
             }
 
             return this;
@@ -201,7 +204,7 @@ namespace decaf.common.Connections
             => await OnExceptionAsync(async e =>
             {
                 await handler(e);
-                return false;
+                return true;
             }, cancellationToken);
 
         /// <inheritdoc />

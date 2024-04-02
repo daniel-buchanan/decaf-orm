@@ -1,15 +1,15 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace decaf.tests.common.Mocks.Exceptions
+namespace decaf.common.Exceptions
 {
-    public class CommitException : Exception
+    public class CommitException : SqlException
     {
         public CommitException(string reason)
             : base(reason) { }
 
         public CommitException(Exception innerException, string reason = null)
-            : base(reason, innerException) { }
+            : base(innerException, reason) { }
 
 
         protected CommitException(SerializationInfo info, StreamingContext context)

@@ -201,4 +201,26 @@ public class UnitOfWorkTests : CoreTestBase
         method.Should().NotThrow();
         exceptionHandled.Should().BeTrue();
     }
+    
+    [Fact]
+    public void DisposeSuccessful()
+    {
+        // Arrange
+        var decaf = provider.GetService<IDecaf>();
+        var unit = decaf.BuildUnit();
+        var exceptionHandled = false;
+
+        // Act
+        Action method = () => unit
+            .Query(q => q.Select().From<User>().Where(u => u.Id != 42))
+            .OnException(e =>
+            {
+                exceptionHandled = true;
+            })
+            .PersistChanges()
+            .Dispose();
+
+        // Assert
+        method.Should().NotThrow();
+    }
 }

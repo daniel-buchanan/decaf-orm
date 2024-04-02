@@ -106,7 +106,7 @@ public class UnitOfWorkTests : CoreTestBase
                 exceptionThrown = true;
                 return false;
             })
-            .Query(q => throw new Exception("testing rollback"))
+            .Query(_ => throw new Exception("testing rollback"))
             .PersistChanges();
 
         // Assert
@@ -208,15 +208,11 @@ public class UnitOfWorkTests : CoreTestBase
         // Arrange
         var decaf = provider.GetService<IDecaf>();
         var unit = decaf.BuildUnit();
-        var exceptionHandled = false;
 
         // Act
         Action method = () => unit
             .Query(q => q.Select().From<User>().Where(u => u.Id != 42))
-            .OnException(e =>
-            {
-                exceptionHandled = true;
-            })
+            .OnException(e => { })
             .PersistChanges()
             .Dispose();
 
@@ -231,15 +227,11 @@ public class UnitOfWorkTests : CoreTestBase
         var p = Build(b => b.Noop());
         var decaf = p.GetService<IDecaf>();
         var unit = decaf.BuildUnit();
-        var exceptionHandled = false;
 
         // Act
         Action method = () => unit
             .Query(q => q.Select().From<User>().Where(u => u.Id != 42))
-            .OnException(e =>
-            {
-                exceptionHandled = true;
-            })
+            .OnException(e => { })
             .PersistChanges();
 
         // Assert

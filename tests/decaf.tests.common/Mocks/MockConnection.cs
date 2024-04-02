@@ -8,13 +8,17 @@ using decaf.common;
 namespace decaf.tests.common.Mocks
 {
 	public class MockConnection : Connection
-	{
-        public MockConnection(ILoggerProxy logger, IConnectionDetails connectionDetails)
-            : base(logger, connectionDetails)
-        {
-        }
+    {
+        private readonly bool throwOnCommit;
+        
+        public MockConnection(
+            bool throwOnCommit,
+            ILoggerProxy logger, 
+            IConnectionDetails connectionDetails)
+            : base(logger, connectionDetails) 
+            => this.throwOnCommit = throwOnCommit;
 
-        public override IDbConnection GetUnderlyingConnection() => new MockDbConnection();
+        public override IDbConnection GetUnderlyingConnection() => new MockDbConnection(throwOnCommit);
     }
 }
 

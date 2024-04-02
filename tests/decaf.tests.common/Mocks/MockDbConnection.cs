@@ -7,10 +7,10 @@ namespace decaf.tests.common.Mocks
     public class MockDbConnection : DbConnection
     {
         private ConnectionState state;
+        private readonly bool throwOnCommit;
 
-        public MockDbConnection()
-        {
-        }
+        public MockDbConnection(bool throwOnCommit)
+            => this.throwOnCommit = throwOnCommit;
 
         public override string ConnectionString { get; set; }
 
@@ -31,7 +31,7 @@ namespace decaf.tests.common.Mocks
         public override void Open() => this.state = ConnectionState.Open;
 
         protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
-            => new MockDbTransaction(this, isolationLevel);
+            => new MockDbTransaction(throwOnCommit, this, isolationLevel);
 
         protected override DbCommand CreateDbCommand() => new MockDbCommand();
     }

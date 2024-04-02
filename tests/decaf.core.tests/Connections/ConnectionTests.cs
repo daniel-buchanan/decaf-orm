@@ -17,7 +17,7 @@ namespace decaf.core_tests.Connections
         {
             var logger = new DefaultLoggerProxy(new DecafOptions(), new StdOutputWrapper());
             var connectionDetails = new MockConnectionDetails();
-            this.connection = new MockConnection(logger, connectionDetails);
+            this.connection = new MockConnection(false, logger, connectionDetails);
         }
 
         [Fact]

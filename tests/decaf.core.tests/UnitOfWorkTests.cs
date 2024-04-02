@@ -7,6 +7,7 @@ using decaf.tests.common.Models;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Xunit.Sdk;
 
 namespace decaf.core_tests;
 
@@ -87,9 +88,29 @@ public class UnitOfWorkTests : CoreTestBase
                     .Where(u => u.Id == 42);
             })
             .PersistChanges();
-        unit.Dispose();
 
         // Assert
         logger.Invocations.Should().Contain(i => i.Method.Name == "Warning");
+    }
+
+    [Fact]
+    public void RollbackSucceeds()
+    {
+        // Arrange
+        var decaf = provider.GetService<IDecaf>();
+        var unit = decaf.BuildUnit();
+        var exceptionThrown = false;
+
+        // Act
+        unit.OnException(_ =>
+            {
+                exceptionThrown = true;
+                return false;
+            })
+            .Query(q => throw new Exception("testing rollback"))
+            .PersistChanges();
+
+        // Assert
+        exceptionThrown.Should().Be(true);
     }
 }

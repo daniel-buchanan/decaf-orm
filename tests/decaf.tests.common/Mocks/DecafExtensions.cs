@@ -7,10 +7,15 @@ namespace decaf.tests.common.Mocks
 {
 	public static class DecafExtensions
 	{
-		public static IDecafOptionsBuilder UseMockDatabase(this IDecafOptionsBuilder builder)
+		public static IDecafOptionsBuilder UseMockDatabase(this IDecafOptionsBuilder builder, bool throwOnCommit = false)
 		{
+			var options = new MockDatabaseOptions();
+			if(throwOnCommit)
+				options.ThrowExceptionOnCommit();
+			
 			var x = builder as IDecafOptionsBuilderExtensions;
-			x.UseDbImplementation<MockDbImplementationFactory>(new MockDatabaseOptions());
+			x.Services.AddSingleton(options);
+			x.UseDbImplementation<MockDbImplementationFactory>(options);
 			return builder;
 		}
 

@@ -135,7 +135,17 @@ namespace decaf.common.Connections
         public IUnitOfWork Query(Action<IQueryContainer> method)
         {
             var query = Query();
-            method(query);
+            try
+            {
+                method(query);
+                successHandler?.Invoke();
+            } 
+            catch (Exception e)
+            {
+                var reThrow = catchHandler?.Invoke(e);
+                if (reThrow == true) throw;
+            }
+
             return this;
         }
 
@@ -154,7 +164,17 @@ namespace decaf.common.Connections
         public async Task<IUnitOfWork> QueryAsync(Func<IQueryContainer, Task> method, CancellationToken cancellationToken = default)
         {
             var query = await QueryAsync(cancellationToken);
-            await method(query);
+            try
+            {
+                await method(query);
+                successHandler?.Invoke();
+            }
+            catch (Exception e)
+            {
+                var reThrow = catchHandler?.Invoke(e);
+                if (reThrow == true) throw;
+            }
+
             return this;
         }
 

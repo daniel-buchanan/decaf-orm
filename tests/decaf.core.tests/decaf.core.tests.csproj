@@ -40,6 +40,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />
-    <Folder Include="Connections\" />
   </ItemGroup>
 </Project>

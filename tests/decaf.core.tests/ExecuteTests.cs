@@ -21,12 +21,12 @@ namespace decaf.core_tests
         public ExecuteTests()
         {
             var services = new ServiceCollection();
-            services.AddDecafOrm(o => o.UseMockDatabase());
+            services.AddDecaf(o => o.UseMockDatabase());
             services.AddScoped<IConnectionDetails, MockConnectionDetails>();
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetService<IDecaf>();
-            var transient = decaf.Begin();
-            var query = transient.Query() as IQueryContainerInternal;
+            var transient = decaf.BuildUnit();
+            var query = transient.GetQuery() as IQueryContainerInternal;
             var sqlFactory = provider.GetService<ISqlFactory>();
             this.context = query.CreateContext<ISelectQueryContext>();
             this.execute = new InheritedExecutor<ISelectQueryContext>(query, this.context);

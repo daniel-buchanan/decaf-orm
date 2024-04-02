@@ -6,7 +6,7 @@ using decaf.common.Exceptions;
 namespace decaf.tests.common.Mocks
 {
 	public class MockConnectionDetails : ConnectionDetails
-	{
+    {
         protected override int DefaultPort => 0;
 
         protected override string HostRegex => ".+";

@@ -1,9 +1,7 @@
-﻿using System;
-using decaf.common;
+﻿using decaf.common;
 using decaf.common.Connections;
 using decaf.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
-using decaf.common.Logging;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("decaf.playground")]
 namespace decaf
@@ -56,9 +54,19 @@ namespace decaf
         public bool InjectUnitOfWork { get; private set; }
         
         /// <summary>
+        /// Lazily initialise database connections, rather than eagerly opening them before they are used.
+        /// </summary>
+        public bool LazyInitialiseConnections { get; private set; }
+        
+        /// <summary>
         /// The lifetime for the <see cref="IUnitOfWork"/> when injected.
         /// </summary>
         public ServiceLifetime UnitOfWorkLifetime { get; private set; }
+        
+        /// <summary>
+        /// Swallow exceptions thrown while committing or rolling back a transaction. NOTE: This is not recommended.
+        /// </summary>
+        public bool SwallowCommitExceptions { get; private set; }
 	}
 }
 

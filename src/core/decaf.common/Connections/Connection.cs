@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Threading.Tasks;
 using decaf.common.Logging;
 
 namespace decaf.common.Connections
@@ -22,7 +21,7 @@ namespace decaf.common.Connections
 		{
             this.logger = logger;
             this.connectionDetails = connectionDetails;
-            this.State = ConnectionState.Unknown;
+            State = ConnectionState.Unknown;
 		}
 
         /// <inheritdoc/>
@@ -31,15 +30,14 @@ namespace decaf.common.Connections
         /// <inheritdoc/>
         public void Close()
         {
-            if (this.dbConnection == null) return;
-            if (this.dbConnection.State == System.Data.ConnectionState.Open ||
-                this.dbConnection.State == System.Data.ConnectionState.Connecting ||
-                this.dbConnection.State == System.Data.ConnectionState.Fetching ||
-                this.dbConnection.State == System.Data.ConnectionState.Executing)
-            {
-                this.dbConnection.Close();
-                this.State = ConnectionState.Closed;
-            }
+            if (dbConnection == null) return;
+            if (dbConnection.State != System.Data.ConnectionState.Open &&
+                dbConnection.State != System.Data.ConnectionState.Connecting &&
+                dbConnection.State != System.Data.ConnectionState.Fetching &&
+                dbConnection.State != System.Data.ConnectionState.Executing) return;
+            
+            dbConnection.Close();
+            State = ConnectionState.Closed;
         }
 
         /// <inheritdoc/>
@@ -52,26 +50,26 @@ namespace decaf.common.Connections
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
-            this.dbConnection.Dispose();
+            dbConnection.Dispose();
         }
 
         /// <inheritdoc/>
         public void Open()
         {
-            if (this.dbConnection == null)
-                this.dbConnection = GetUnderlyingConnection();
+            if (dbConnection == null)
+                dbConnection = GetUnderlyingConnection();
 
-            if (this.dbConnection.State == System.Data.ConnectionState.Closed ||
-                this.dbConnection.State == System.Data.ConnectionState.Broken)
+            if (dbConnection.State == System.Data.ConnectionState.Closed ||
+                dbConnection.State == System.Data.ConnectionState.Broken)
             {
-                this.dbConnection.Open();
-                this.State = ConnectionState.Open;
+                dbConnection.Open();
+                State = ConnectionState.Open;
             }
         }
 
         /// <inheritdoc/>
         public string GetHash()
-            => this.connectionDetails.GetHash();
+            => connectionDetails.GetHash();
 
         /// <inheritdoc/>
         public abstract IDbConnection GetUnderlyingConnection();

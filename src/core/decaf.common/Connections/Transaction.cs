@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using decaf.common.Exceptions;
 using decaf.common.Logging;
 
 namespace decaf.common.Connections
@@ -7,11 +8,11 @@ namespace decaf.common.Connections
 	public abstract class Transaction : ITransactionInternal
 	{
         private readonly ILoggerProxy logger;
+        private readonly DecafOptions options;
         protected readonly IConnection connection;
-        protected readonly DecafOptions options;
-        protected IDbTransaction transaction;
+        private IDbTransaction transaction;
 
-		protected Transaction(
+        protected Transaction(
             Guid id,
             ILoggerProxy logger,
             IConnection connection,
@@ -21,26 +22,29 @@ namespace decaf.common.Connections
             this.logger = logger;
             this.connection = connection;
             this.options = options;
+            State = TransactionState.Created;
 
             this.logger.Debug($"ITransaction({Id}) :: Transaction created");
 		}
 
         /// <inheritdoc/>
-        public IConnection Connection => this.connection;
+        public IConnection Connection => connection;
 
         /// <inheritdoc/>
         public Guid Id { get; }
 
         /// <inheritdoc/>
-        bool ITransactionInternal.CloseConnectionOnCommitOrRollback => this.options.CloseConnectionOnCommitOrRollback;
+        bool ITransactionInternal.CloseConnectionOnCommitOrRollback => options.CloseConnectionOnCommitOrRollback;
 
         /// <inheritdoc/>
         public void Begin()
         {
-            if (this.transaction != null) return;
+            if (transaction != null) return;
 
-            this.logger.Debug($"ITransaction({Id}) :: Beginning Transaction");
-            this.transaction = GetUnderlyingTransaction();
+            logger.Debug($"ITransaction({Id}) :: Beginning Transaction");
+            if(!options.LazyInitialiseConnections)
+                transaction = GetUnderlyingTransaction();
+            State = TransactionState.Begun;
         }
 
         /// <inheritdoc/>
@@ -48,26 +52,40 @@ namespace decaf.common.Connections
         {
             try
             {
-                this.logger.Debug($"ITransaction({Id}) :: Committing Transaction");
-                this.transaction.Commit();
-                this.logger.Debug($"ITransaction({Id}) :: Commit SUCCEEDED");
+                if (options.LazyInitialiseConnections)
+                    Begin();
+                
+                logger.Debug($"ITransaction({Id}) :: Committing Transaction");
+                transaction?.Commit();
+                State = TransactionState.Committed;
+                logger.Debug($"ITransaction({Id}) :: Commit SUCCEEDED");
             }
             catch (Exception commitEx)
             {
                 try
                 {
-                    this.logger.Error(commitEx, $"ITransaction({Id}) :: Commit FAILED, attempting Rollback");
-                    this.transaction.Rollback();
-                    this.logger.Information($"ITransaction({Id}) :: Rollback SUCCEEDED");
+                    var ex = new CommitException(commitEx,
+                        $"Transaction {Id} Commit Failed. See inner exception for more information.");
+                    logger.Error(commitEx, $"ITransaction({Id}) :: Commit FAILED, attempting Rollback");
+                    State = TransactionState.CommitFailed;
+                    RollbackTransaction();
+                    throw ex;
                 }
                 catch (Exception rollbackEx)
                 {
-                    this.logger.Error(rollbackEx, $"ITransaction({Id}) :: Rollback FAILED");
+                    if (rollbackEx is CommitException)
+                        throw;
+                    
+                    var ex = new RollbackException(rollbackEx,
+                        $"Transaction {Id} Rollback Failed. See inner exception for more information.");
+                    logger.Error(rollbackEx, $"ITransaction({Id}) :: Rollback FAILED");
+                    State = TransactionState.RollbackFailed;
+                    throw ex;
                 }
             }
             finally
             {
-                this.logger.Debug($"ITransaction({Id}) :: Finished Commit Process");
+                logger.Debug($"ITransaction({Id}) :: Finished Commit Process");
             }
         }
 
@@ -81,26 +99,41 @@ namespace decaf.common.Connections
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
-            this.transaction = null;
+            transaction = null;
+            State = TransactionState.Disposed;
         }
 
+        private void RollbackTransaction()
+        {
+            logger.Debug($"ITransaction({Id}) :: Rolling back Transaction");
+            transaction?.Rollback();
+            logger.Debug($"ITransaction({Id}) :: Rollback SUCCEEDED");
+            State = TransactionState.RolledBack;
+        }
+        
         /// <inheritdoc/>
         public void Rollback()
         {
             try
             {
-                this.logger.Debug($"ITransaction({Id}) :: Rolling back Transaction");
-                this.transaction.Rollback();
-                this.logger.Debug($"ITransaction({Id}) :: Rollback SUCCEEDED");
+                RollbackTransaction();
+                State = TransactionState.RolledBack;
             }
             catch (Exception rollbackEx)
             {
-                this.logger.Error(rollbackEx, $"ITransaction({Id}) :: Rollback FAILED");
+                var ex = new RollbackException(rollbackEx,
+                    $"Transaction {Id} Rollback Failed. See inner exception for more information.");
+                logger.Error(rollbackEx, $"ITransaction({Id}) :: Rollback FAILED");
+                State = TransactionState.RollbackFailed;
+                throw ex;
             }
         }
 
         /// <inheritdoc/>
         public abstract IDbTransaction GetUnderlyingTransaction();
+
+        /// <inheritdoc/>
+        public TransactionState State { get; private set; }
     }
 }
 

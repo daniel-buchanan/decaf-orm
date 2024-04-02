@@ -15,7 +15,7 @@ namespace decaf.core_tests
         public SelectResultTests()
         {
             var services = new ServiceCollection();
-            services.AddDecafOrm(o =>
+            services.AddDecaf(o =>
             {
                 o.TrackUnitsOfWork();
                 o.OverrideDefaultLogLevel(LogLevel.Debug);
@@ -24,8 +24,8 @@ namespace decaf.core_tests
 
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetService<IDecaf>();
-            var transient = decaf.Begin();
-            this.query = transient.Query() as IQueryContainerInternal;
+            var transient = decaf.BuildUnit();
+            this.query = transient.GetQuery() as IQueryContainerInternal;
         }
 
         [Fact]

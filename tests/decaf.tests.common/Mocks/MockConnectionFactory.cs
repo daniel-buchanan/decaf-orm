@@ -2,18 +2,20 @@
 using System.Threading.Tasks;
 using decaf.common.Connections;
 using decaf.common.Logging;
+using decaf.db.common;
 
 namespace decaf.tests.common.Mocks
 {
     public class MockConnectionFactory : ConnectionFactory
     {
-        public MockConnectionFactory(ILoggerProxy logger) : base(logger)
-        {
-        }
+        private readonly MockDatabaseOptions dbOptions;
+
+        public MockConnectionFactory(IDatabaseOptions options, ILoggerProxy logger) : base(logger)
+            => this.dbOptions = options as MockDatabaseOptions ?? new MockDatabaseOptions();
 
         protected override Task<IConnection> ConstructConnectionAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default)
         {
-            var connection = (IConnection)new MockConnection(this.logger, connectionDetails);
+            var connection = (IConnection)new MockConnection(dbOptions, logger, connectionDetails);
             return Task.FromResult(connection);
         }
     }

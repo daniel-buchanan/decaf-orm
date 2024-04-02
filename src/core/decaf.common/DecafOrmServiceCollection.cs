@@ -19,7 +19,7 @@ namespace decaf.common
         /// <inheritdoc/>
         public IServiceCollection WithConnection<T>(T connectionDetails)
             where T : class, IConnectionDetails
-            => this.AddSingleton<T>(connectionDetails);
+            => this.AddSingleton<IConnectionDetails>(connectionDetails);
 
         /// <inheritdoc/>
         public IServiceCollection WithConnection<T>(
@@ -40,7 +40,7 @@ namespace decaf.common
             ServiceLifetime lifetime = ServiceLifetime.Singleton)
             where T : class, IConnectionDetails
         {
-            Add(new ServiceDescriptor(typeof(T), expression, lifetime));
+            Add(new ServiceDescriptor(typeof(IConnectionDetails), expression, lifetime));
             return this;
         }
 

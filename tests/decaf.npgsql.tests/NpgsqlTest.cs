@@ -20,6 +20,7 @@ namespace decaf.npgsql.tests
                     {
                         options.WithConnectionDetails(new NpgsqlConnectionDetails()
                         {
+                            Hostname = "localhost",
                             Authentication = new UsernamePasswordAuthentication("bob", "password")
                         });
                     })

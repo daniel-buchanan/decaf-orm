@@ -40,7 +40,8 @@ namespace decaf.common.Connections
 
             this.logger.Debug($"ITransactionFactory :: Creating new Transaction");
             var connection = await this.connectionFactory.GetConnectionAsync(connectionDetails, cancellationToken);
-            if(connection.State != ConnectionState.Open)
+            if(connection.State != ConnectionState.Open && 
+               !options.LazyInitialiseConnections)
                 connection.Open();
             
             transaction = await CreateTransactionAsync(connection, cancellationToken);

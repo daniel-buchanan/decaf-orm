@@ -48,7 +48,7 @@ namespace decaf.services
         /// Get the Transient required to begin a query.
         /// </summary>
         /// <returns>Returns a <see cref="IUnitOfWork"/>.</returns>
-        internal IUnitOfWork GetUnitOfWork() => this.unitOfWork ?? this.decaf.Begin();
+        internal IUnitOfWork GetUnitOfWork() => this.unitOfWork ?? this.decaf.BuildUnit();
 
         /// <summary>
         /// Execute the provided query.<br/>
@@ -69,7 +69,7 @@ namespace decaf.services
         protected async Task ExecuteQueryAsync(Func<IQueryContainer, CancellationToken, Task> method, CancellationToken cancellationToken = default)
         {
             var t = this.GetUnitOfWork();
-            using (var q = await t.QueryAsync(cancellationToken))
+            using (var q = await t.GetQueryAsync(cancellationToken))
             {
                 await method(q, cancellationToken);
             }
@@ -81,7 +81,7 @@ namespace decaf.services
         {
             T result;
             var t = this.GetUnitOfWork();
-            using (var q = await t.QueryAsync(cancellationToken))
+            using (var q = await t.GetQueryAsync(cancellationToken))
             {
                 result = await method(q, cancellationToken);
             }

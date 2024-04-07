@@ -21,7 +21,7 @@ namespace decaf.Implementation
         protected void FromQuery(Action<ISelectWithAlias> queryBuilder)
         {
             var context = SelectQueryContext.Create(this.query.AliasManager, this.query.HashProvider);
-            var query = this.query.UnitOfWork.Query() as IQueryContainerInternal;
+            var query = this.query.UnitOfWork.GetQuery() as IQueryContainerInternal;
             var select = Select.Create(context, query) as ISelectWithAlias;
 
             queryBuilder(select);

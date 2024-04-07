@@ -8,7 +8,7 @@ using decaf.common.Utilities;
 
 namespace decaf.common.Connections
 {
-    public class UnitOfWork : IUnitOfWorkExtended
+    public sealed class UnitOfWork : IUnitOfWorkExtended
     {
         private readonly IConnection connection;
         private readonly ITransactionInternal transaction;
@@ -18,6 +18,8 @@ namespace decaf.common.Connections
         private readonly DecafOptions options;
         private readonly IHashProvider hashProvider;
         private readonly List<IQueryContainer> queries;
+        private Func<Exception, bool> catchHandler;
+        private Action successHandler;
 
         private UnitOfWork(
             ITransaction transaction,
@@ -27,30 +29,33 @@ namespace decaf.common.Connections
             DecafOptions options,
             Action<Guid> notifyDisposed)
         {
-            this.connection = transaction.Connection;
+            connection = transaction.Connection;
             this.transaction = transaction as ITransactionInternal;
             this.sqlFactory = sqlFactory;
             this.logger = logger;
             this.options = options;
             this.hashProvider = hashProvider;
             this.notifyDisposed = notifyDisposed;
-            this.queries = new List<IQueryContainer>();
+            queries = new List<IQueryContainer>();
+            catchHandler = _ => true;
 
             Id = Guid.NewGuid();
             this.logger.Debug($"UnitOfWork({Id}) :: Created");
+            if(options.SwallowCommitExceptions)
+                logger.Warning($"UnitOfWork({Id}) :: Exceptions will be swallowed!");
         }
 
         /// <inheritdoc />
         public Guid Id { get; private set; }
 
         /// <inheritdoc />
-        IConnection IUnitOfWorkExtended.Connection => this.connection;
+        IConnection IUnitOfWorkExtended.Connection => connection;
 
         /// <inheritdoc />
-        ITransaction IUnitOfWorkExtended.Transaction => this.transaction;
+        ITransaction IUnitOfWorkExtended.Transaction => transaction;
 
         /// <inheritdoc />
-        ISqlFactory IUnitOfWorkExtended.SqlFactory => this.sqlFactory;
+        ISqlFactory IUnitOfWorkExtended.SqlFactory => sqlFactory;
 
         public static IUnitOfWork Create(
             ITransaction transaction,
@@ -68,72 +73,189 @@ namespace decaf.common.Connections
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!disposing) return;
-            if (this.queries.Any(q => q.Status != QueryStatus.Executed))
+
+            if (transaction.State == TransactionState.Disposed ||
+                transaction.State == TransactionState.RolledBack)
             {
-                this.logger.Warning($"UnitOfWork({Id}) :: One or more queries have not been executed.");
+                logger.Warning($"UnitOfWork({Id}) :: Unable to commit, transaction is already in {transaction.State} state.");
+                return;
             }
 
+            Persist();
+
+            logger.Debug($"UnitOfWork({Id}) :: Disposed");
+            notifyDisposed(Id);
+        }
+
+        private void Persist()
+        {
+            if (queries.Any(q => q.Status != QueryStatus.Executed))
+            {
+                logger.Warning($"UnitOfWork({Id}) :: One or more queries have not been executed.");
+            }
+            
             try
             {
-                this.logger.Debug($"UnitOfWork({Id}) :: Committing Transaction");
-                this.transaction.Commit();
+                logger.Debug($"UnitOfWork({Id}) :: Committing Transaction");
+                transaction.Commit();
+                successHandler?.Invoke();
             }
             catch (Exception commitException)
             {
-                this.logger.Error(commitException, $"UnitOfWork({Id}) :: Committing Transaction Failed");
+                logger.Error(commitException, $"UnitOfWork({Id}) :: Committing Transaction Failed");
+                var reThrow = catchHandler?.Invoke(commitException);
                 try
                 {
-                    this.logger.Debug($"UnitOfWork({Id}) :: Rolling back Transaction");
-                    this.transaction.Rollback();
+                    logger.Debug($"UnitOfWork({Id}) :: Rolling back Transaction");
+                    transaction.Rollback();
+                    if (reThrow == true && !options.SwallowCommitExceptions) throw;
                 }
                 catch (Exception rollbackException)
                 {
-                    this.logger.Error(rollbackException, $"UnitOfWork({Id}) :: Rolling back Transaction Failed");
+                    logger.Error(rollbackException, $"UnitOfWork({Id}) :: Rolling back Transaction Failed");
+                    reThrow = catchHandler?.Invoke(rollbackException);
+                    if (reThrow == true && !options.SwallowCommitExceptions) throw;
                 }
             }
             finally
             {
-                if (this.transaction.CloseConnectionOnCommitOrRollback)
+                if (transaction.CloseConnectionOnCommitOrRollback)
                 {
-                    this.logger.Debug($"UnitOfWork({Id}) :: Closing Connection after Commit or Rollback");
-                    this.connection.Close();
+                    logger.Debug($"UnitOfWork({Id}) :: Closing Connection after Commit or Rollback");
+                    connection.Close();
                 }
             }
-
-            this.logger.Debug($"UnitOfWork({Id}) :: Disposed");
-            this.notifyDisposed(this.Id);
         }
 
         /// <inheritdoc />
-        public IQueryContainer Query()
-            => QueryAsync().WaitFor();
+        public IQueryContainer GetQuery()
+            => GetQueryAsync().WaitFor();
 
-        public Task<IQueryContainer> QueryAsync(CancellationToken cancellationToken = default)
+        /// <inheritdoc />
+        public IUnitOfWork Query(Action<IQueryContainer> method)
         {
-            var query = QueryContainer.Create(this, this.logger, this.hashProvider, this.options);
-            this.logger.Debug($"UnitOfWork({Id}) :: Creating new Query");
-            this.queries.Add(query);
+            var query = GetQuery();
+            try
+            {
+                method(query);
+                successHandler?.Invoke();
+            } 
+            catch (Exception e)
+            {
+                var reThrow = catchHandler?.Invoke(e);
+                if (reThrow == true && !options.SwallowCommitExceptions) throw;
+            }
+
+            return this;
+        }
+
+        /// <inheritdoc />
+        public Task<IQueryContainer> GetQueryAsync(CancellationToken cancellationToken = default)
+        {
+            transaction.Begin();
+            
+            var query = QueryContainer.Create(this, logger, hashProvider, options);
+            logger.Debug($"UnitOfWork({Id}) :: Creating new Query");
+            queries.Add(query);
             return Task.FromResult(query);
+        }
+
+        /// <inheritdoc />
+        public async Task<IUnitOfWork> QueryAsync(Func<IQueryContainer, Task> method, CancellationToken cancellationToken = default)
+        {
+            var query = await GetQueryAsync(cancellationToken);
+            try
+            {
+                await method(query);
+                successHandler?.Invoke();
+            }
+            catch (Exception e)
+            {
+                var reThrow = catchHandler?.Invoke(e);
+                if (reThrow == true && !options.SwallowCommitExceptions) throw;
+            }
+
+            return this;
+        }
+
+        /// <inheritdoc />
+        public IUnitOfWork OnException(Action<Exception> handler) 
+            => OnException(e =>
+            {
+                handler(e);
+                return false;
+            });
+
+        /// <inheritdoc />
+        public IUnitOfWork OnException(Func<Exception, bool> handler)
+        {
+            catchHandler = handler;
+            return this;
+        }
+
+        /// <inheritdoc />
+        public async Task<IUnitOfWork> OnExceptionAsync(Func<Exception, Task> handler, CancellationToken cancellationToken = default) 
+            => await OnExceptionAsync(async e =>
+            {
+                await handler(e);
+                return true;
+            }, cancellationToken);
+
+        /// <inheritdoc />
+        public Task<IUnitOfWork> OnExceptionAsync(Func<Exception, Task<bool>> handler, CancellationToken cancellationToken = default)
+        {
+            catchHandler = ex => handler(ex).WaitFor();
+            return Task.FromResult<IUnitOfWork>(this);
+        }
+
+        /// <inheritdoc />
+        public IUnitOfWork OnSuccess(Action handler)
+        {
+            return OnSuccessAsync(() =>
+            {
+                handler();
+                return Task.CompletedTask;
+            }).WaitFor();
+        }
+
+        /// <inheritdoc />
+        public Task<IUnitOfWork> OnSuccessAsync(Func<Task> handler, CancellationToken cancellationToken = default)
+        {
+            successHandler = () => handler().WaitFor(cancellationToken);
+            var uow = this as IUnitOfWork;
+            return Task.FromResult(uow);
+        }
+
+        /// <inheritdoc />
+        public IUnitOfWork PersistChanges() 
+            => PersistChangesAsync().WaitFor();
+
+        /// <inheritdoc />
+        public Task<IUnitOfWork> PersistChangesAsync(CancellationToken cancellationToken = default)
+        {
+            Persist();
+            var uow = this as IUnitOfWork;
+            return Task.FromResult(uow);
         }
 
         /// <inheritdoc />
         public void NotifyQueryDisposed(Guid queryId)
         {
-            var found = this.queries.FirstOrDefault(q => q.Id == queryId);
+            var found = queries.FirstOrDefault(q => q.Id == queryId);
             if (found == null)
             {
-                this.logger.Debug($"UnitOfWork({Id}) :: Cound not find query with Id - {queryId}");
+                logger.Debug($"UnitOfWork({Id}) :: Could not find query with Id - {queryId}");
                 return;
             }
 
-            this.queries.Remove(found);
+            queries.Remove(found);
 
-            if (this.queries.Count != 0) return;
+            if (queries.Count != 0) return;
 
-            this.Dispose();
+            Dispose();
         }
     }
 }

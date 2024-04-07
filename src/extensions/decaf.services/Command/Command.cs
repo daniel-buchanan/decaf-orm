@@ -130,7 +130,7 @@ namespace decaf.services
             {
                 var keyBatch = keysList.Skip(skip).Take(take);
 
-                using (var q = await t.QueryAsync(cancellationToken))
+                using (var q = await t.GetQueryAsync(cancellationToken))
                 {
                     var query = q.Delete();
                     var table = GetTableInfo<TEntity>(q);

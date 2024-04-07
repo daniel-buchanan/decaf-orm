@@ -12,7 +12,7 @@ namespace decaf.npgsql.tests
 		public NpgsqlTest(bool disableHeaderComments = true)
 		{
             services = new ServiceCollection();
-            services.AddDecafOrm(o =>
+            services.AddDecaf(o =>
             {
                 o.TrackUnitsOfWork()
                     .OverrideDefaultLogLevel(LogLevel.Debug)
@@ -20,9 +20,11 @@ namespace decaf.npgsql.tests
                     {
                         options.WithConnectionDetails(new NpgsqlConnectionDetails()
                         {
+                            Hostname = "localhost",
                             Authentication = new UsernamePasswordAuthentication("bob", "password")
                         });
-                    });
+                    })
+                    .LazyInitialiseConnections();
 
                 if(disableHeaderComments) o.DisableSqlHeaderComments();
             });

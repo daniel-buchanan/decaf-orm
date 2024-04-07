@@ -3,9 +3,18 @@ decaf is a "lite" ORM (Object Relational Mapper), designed to fill the void betw
 
 Unsurprisingly, Dapper forms the foundation of how decaf executes the queries that it builds against the database. This is because what decaf aims to excel at is formulating queries and giving the developer precise control over those queries *before* they are executed.
 
-**So what is decaf?**.  
+
+<a href="https://www.buymeacoffee.com/daniel.buchanan" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+
+**So what is decaf?**  
 decaf is so named because it's like coffee, but without the kick.  
 The aim has always been to provide a intuitive development experience that allows performant queries to be written, while not re-inventing the wheel for accessing the database and materialising objects.
+
+**Where can I get some?**  
+You can download Decaf using Nuget, all packages are published here: https://www.nuget.org/packages?q=decaf-orm  
+You could also - if you're really keen build from source.
+
 
 ### Status:
 **Build**  
@@ -52,6 +61,7 @@ There are several core concepts within decaf.
    More specifically, statements should either:  
    *a)* Make sense from a SQL statement as you would write it  
    *b)* Read as understandable English
+3. It should integrate seamlessly into the default Dependency Injection Pipeline.
    
 # Examples
 [Return to Top](#decaf)  
@@ -85,6 +95,12 @@ Extensions methods are provided for the built in .Net Dependency Injection frame
    });
    ```
 
+> **Note:** this documentation assumes a certain level of knowledge of dependency injection, specifically about the default
+> provider included with .Net from version 5 onwards.  
+> It is assumed that you know how to either create or configure the dependency injection for either:  
+> a) A WebAPI project  
+> b) A console application using bare metal `IServiceCollection` and `IServiceProvider`
+
 To configure a given database provider, works in a very similar way; insofar as that an extension method is provided on the `decafOptions` which allows for the configuration.  
 For example, with PostgreSQL:  
 ```csharp
@@ -97,29 +113,46 @@ services.AddDecaf(o => {
 ## Getting a Query
 [Return to Top](#decaf)  
 
-decaf's default configuration provides an `IUnitOfWOrk` service which is added to the service provider by default.  
-Once you have a `ITransient` created from the `IUnitOfWork`, you can begin to query it. Each query is managed by itself and executed seperately.  
+decaf's default configuration provides an `IUnitOfWorkFactory` factory which is added to the service provider by default.  
+Once you have an `IUnitOfWork` created from the `IUnitOfWorkFactory`, you can begin to query it. Each query is managed by itself and executed seperately.  
+You may also, at configuration time call `InjectUnitOfWorkAsScoped` or `InjectUnitOfWork` to inject an `IUnitOfWork` instance
+into the pipeline either as scoped, or with whatever lifetime you require.
 
-> It is worth noting that it is the `ITransient` instance that controls the commit/rollback of the transaction which is associated with any queries created from it.
+> It is worth noting that it is the `IUnitOfWork` instance that controls the commit/rollback of the transaction which is associated with any queries created from it.
 
 Once this is injected into your service, handler or other class it can be used in the following ways.
 
 **Disposable:**
 ```csharp
-using(var transient = this.uow.Begin())
+public class Example(IUnitOfWorkFactory factory)
 {
-  using(var query = transient.Query())
-  {
-    ...
-  }
+   public async Task DoStuff()
+   {
+       using var uow = await factory.CreateAsync();
+       uow.WithCatch((ex) => Console.Error.WriteLine(ex.Message))
+        .Query(q => ...)
+        .PersistChanges();
+   }
 }
 ```
 
+> **Note:** In the disposable case *all* queries are executed on exit of the disposable scope.
+
 **Non-Disposable:**
 ```csharp
-var transient = this.uow.Begin();
-var query = t.Query();
+public class Example(IUnitOfWorkFactory factory)
+{
+   public async Task DoStuff()
+   {
+       var uow = await factory.CreateAsync();
+       uow.WithCatch((ex) => Console.Error.WriteLine(ex.Message))
+        .Query(q => ...)
+        .PersistChanges();
+   }
+}
 ```
+
+> **Note:** using the "non-disposable" approach means that you need to call `PersistChanges` or `PersistChangesAsync` in order for any queries to be executed.
 
 ## Creating a Simple Query
 [Return to Top](#decaf)  

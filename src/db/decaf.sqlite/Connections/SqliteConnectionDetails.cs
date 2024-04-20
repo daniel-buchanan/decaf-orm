@@ -9,6 +9,13 @@ public class SqliteConnectionDetails :
     ConnectionDetails, 
     ISqliteConnectionDetails
 {
+    private const decimal DefaultVersion = 2;
+    
+    private bool? createNew;
+    private bool? inMemory;
+    private string? fullUri;
+    private decimal? version;
+    
     public SqliteConnectionDetails() { }
 
     public SqliteConnectionDetails(string connectionString) : base(connectionString) 
@@ -20,6 +27,9 @@ public class SqliteConnectionDetails :
         InMemory = options.InMemory;
         Version = options.Version;
     }
+
+    public static ISqliteConnectionDetails FromConnectionString(string connectionString)
+        => new SqliteConnectionDetails(connectionString);
     
     /// <summary>
     /// Not Implemented as only called from base, and calling method is overridden.
@@ -34,18 +44,69 @@ public class SqliteConnectionDetails :
     protected override string PortRegex => throw new NotImplementedException();
     protected override string DatabaseRegex => throw new NotImplementedException();
     protected override int DefaultPort => throw new NotImplementedException();
-    
-    public string? FullUri { get; private set; }
-    
-    public bool InMemory { get; private set; }
-    
-    public bool CreateNew { get; private set; }
 
-    public decimal Version { get; private set; }
+    public string? FullUri
+    {
+        get => fullUri ?? string.Empty;
+        set
+        {
+            if(!string.IsNullOrWhiteSpace(fullUri))
+            {
+                throw new ConnectionModificationException($"{nameof(FullUri)} cannot be modified once ConnectionDetails instance created");
+            }
+
+            fullUri = value;
+        }
+    }
+
+    public bool InMemory
+    {
+        get => inMemory ?? false;
+        set
+        {
+            if(inMemory != null)
+            {
+                throw new ConnectionModificationException($"{nameof(InMemory)} cannot be modified once ConnectionDetails instance created");
+            }
+
+            inMemory = value;
+        }
+    }
+
+    public bool CreateNew
+    {
+        get => createNew ?? false;
+        set
+        {
+            if(createNew != null)
+            {
+                throw new ConnectionModificationException($"{nameof(CreateNew)} cannot be modified once ConnectionDetails instance created");
+            }
+
+            createNew = value;
+        }
+    }
+
+    public decimal Version
+    {
+        get => version ?? DefaultVersion;
+        set
+        {
+            if(version != null)
+            {
+                throw new ConnectionModificationException($"{nameof(Version)} cannot be modified once ConnectionDetails instance created");
+            }
+
+            version = value;
+        }
+    }
 
     protected sealed override void ParseConnectionString(string input, Action<string> additionalParsing = null)
     {
-        var regex = new Regex(@"Data Source=([a-zA-Z0-9_\-\.:/]+);Version=([0-9\.]+);(New=True);");
+        if (string.IsNullOrWhiteSpace(input))
+            throw new ConnectionStringParsingException("Cannot parse NULL connection string.");
+        
+        var regex = new Regex(@"Data Source=([a-zA-Z0-9\\_\-\.\:\/]+);Version=([0-9\.]+);(New=True;)?");
         var match = regex.Match(input);
         if (!match.Success)
             throw new ConnectionStringParsingException("Cannot parse Connection String: " + input);
@@ -53,7 +114,7 @@ public class SqliteConnectionDetails :
         FullUri = match.Groups[1].Value;
         Version = decimal.Parse(match.Groups[2].Value);
         
-        if (match.Groups[3].Value == "New=True")
+        if (match.Groups[3].Value == "New=True;")
             CreateNew = true;
 
         if (FullUri == ":memory:")

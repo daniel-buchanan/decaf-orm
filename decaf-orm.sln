@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "decaf.state", "src\core\dec
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "decaf.sqlite", "src\db\decaf.sqlite\decaf.sqlite.csproj", "{51F3826D-FF3C-4357-81C4-5C6D2FE23AF5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "decaf.sqlite.tests", "tests\decaf.sqlite.tests\decaf.sqlite.tests.csproj", "{B45FFB72-C31C-4F0A-B705-2C2589647876}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -124,6 +126,10 @@ Global
 		{51F3826D-FF3C-4357-81C4-5C6D2FE23AF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51F3826D-FF3C-4357-81C4-5C6D2FE23AF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51F3826D-FF3C-4357-81C4-5C6D2FE23AF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B45FFB72-C31C-4F0A-B705-2C2589647876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B45FFB72-C31C-4F0A-B705-2C2589647876}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B45FFB72-C31C-4F0A-B705-2C2589647876}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B45FFB72-C31C-4F0A-B705-2C2589647876}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AF343303-15C8-4717-9767-6991C1350A83} = {EA0A3240-4A8A-43DB-A307-B5E4A380C779}
@@ -146,5 +152,6 @@ Global
 		{47963E1C-7616-4DB0-B9FC-3C9417A9DFA0} = {AF343303-15C8-4717-9767-6991C1350A83}
 		{C6B3F81E-2872-4EA3-914C-97673665A788} = {AF343303-15C8-4717-9767-6991C1350A83}
 		{51F3826D-FF3C-4357-81C4-5C6D2FE23AF5} = {72A6BDCD-0207-446D-BC0E-C33198FB1248}
+		{B45FFB72-C31C-4F0A-B705-2C2589647876} = {3B21659C-528B-4CA8-B094-9C29659F4569}
 	EndGlobalSection
 EndGlobal

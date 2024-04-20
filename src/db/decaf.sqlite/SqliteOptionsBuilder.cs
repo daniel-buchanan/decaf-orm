@@ -9,7 +9,12 @@ public class SqliteOptionsBuilder :
     /// <inheritdoc/>
     public override ISqliteOptionsBuilder WithConnectionString(string connectionString)
     {
-        ConfigureProperty(x => x.ConnectionDetails, new SqliteConnectionDetails(connectionString));
+        var connectionDetails = new SqliteConnectionDetails(connectionString);
+        ConfigureProperty(x => x.ConnectionDetails, connectionDetails);
+        ConfigureProperty(x => x.CreateNew, connectionDetails.CreateNew);
+        ConfigureProperty(x => x.DatabasePath, connectionDetails.FullUri);
+        ConfigureProperty(x => x.Version, connectionDetails.Version);
+        ConfigureProperty(x => x.InMemory, connectionDetails.InMemory);
         return this;
     }
 
@@ -37,6 +42,12 @@ public class SqliteOptionsBuilder :
     public ISqliteOptionsBuilder CreateNewDatabase()
     {
         ConfigureProperty(x => x.CreateNew, true);
+        return this;
+    }
+
+    public ISqliteOptionsBuilder UseQuotedIdentifiers()
+    {
+        ConfigureProperty(x => x.QuotedIdentifiers, true);
         return this;
     }
 }

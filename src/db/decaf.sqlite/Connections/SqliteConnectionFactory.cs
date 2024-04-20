@@ -5,7 +5,9 @@ namespace decaf.sqlite;
 
 public class SqliteConnectionFactory : ConnectionFactory
 {
-    public SqliteConnectionFactory(ILoggerProxy logger) : base(logger) { }
+    private readonly SqliteOptions options;
+    public SqliteConnectionFactory(ILoggerProxy logger, SqliteOptions options) : base(logger) 
+        => this.options = options;
 
     protected override Task<IConnection> ConstructConnectionAsync(
         IConnectionDetails connectionDetails, 

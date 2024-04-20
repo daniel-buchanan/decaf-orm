@@ -45,6 +45,62 @@ namespace decaf.sqlite.tests
             // Assert
             sqlFactory.Should().BeOfType<db.common.SqlFactory>();
         }
+        
+        [Fact]
+        public void CreateNewSet()
+        {
+            // Arrange
+            var builder = new SqliteOptionsBuilder();
+
+            // Act
+            builder.CreateNewDatabase();
+            var options = builder.Build();
+
+            // Assert
+            options.CreateNew.Should().BeTrue();
+        }
+        
+        [Fact]
+        public void DatabasePathSet()
+        {
+            // Arrange
+            const string path = "/Users/buchanand/MyDb.db";
+            var builder = new SqliteOptionsBuilder();
+
+            // Act
+            builder.WithFilePath(path);
+            var options = builder.Build();
+
+            // Assert
+            options.DatabasePath.Should().Be(path);
+        }
+        
+        [Fact]
+        public void DefaultVersionSet()
+        {
+            // Arrange
+            var builder = new SqliteOptionsBuilder();
+
+            // Act
+            var options = builder.Build();
+
+            // Assert
+            options.Version.Should().Be(3);
+        }
+        
+        [Fact]
+        public void VersionSet()
+        {
+            // Arrange
+            var builder = new SqliteOptionsBuilder();
+
+            // Act
+            builder.WithVersion(2);
+            var options = builder.Build();
+
+            // Assert
+            options.Version.Should().Be(2);
+        }
 
         [Fact]
         public void UseQuotedIdentifiersSet()

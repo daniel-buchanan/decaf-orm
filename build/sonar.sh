@@ -42,11 +42,18 @@ dotnet build --no-incremental decaf-orm.sln
     --merge-with "npgsql-merged.json" \
     -f=json \
     -o="sqlserver-merged.json"
+    
+./.coverlet/coverlet ./tests/decaf.sqlite.tests/bin/Debug/net7.0/decaf.sqlite.tests.dll \
+    --target "dotnet" \
+    --targetargs "test --no-build" \
+    --merge-with "sqlserver-merged.json" \
+    -f=json \
+    -o="sqlite-merged.json"
 
 ./.coverlet/coverlet ./tests/decaf.core.tests/bin/Debug/net7.0/decaf.core.tests.dll \
     --target "dotnet" \
     --targetargs "test --no-build" \
-    --merge-with "sqlserver-merged.json" \
+    --merge-with "sqlite-merged.json" \
     -f=opencover \
     -o="coverage.xml"
 

@@ -1,6 +1,7 @@
 using System.Data;
 using System.Data.SQLite;
 using decaf.common.Connections;
+using decaf.common.Exceptions;
 using decaf.common.Logging;
 
 namespace decaf.sqlite;
@@ -15,7 +16,9 @@ public class SqliteConnection : Connection, IConnection
 
     public override IDbConnection GetUnderlyingConnection()
     {
-        var details = this.connectionDetails as ISqliteConnectionDetails;
+        var details = connectionDetails as ISqliteConnectionDetails;
+        if (details is null) throw new MissingConnectionDetailsException("No ISqliteConnectionDetails found.");
+        
         return new SQLiteConnection(details.GetConnectionString());
     }
 }

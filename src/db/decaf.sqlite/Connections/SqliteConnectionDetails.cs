@@ -101,7 +101,7 @@ public class SqliteConnectionDetails :
         }
     }
 
-    protected sealed override void ParseConnectionString(string input, Action<string> additionalParsing = null)
+    protected sealed override void ParseConnectionString(string input, Action<string>? additionalParsing = null)
     {
         if (string.IsNullOrWhiteSpace(input))
             throw new ConnectionStringParsingException("Cannot parse NULL connection string.");

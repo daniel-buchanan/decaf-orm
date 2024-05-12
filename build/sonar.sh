@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+echo "SONAR_TOKEN=${SONAR_TOKEN}";
+
 ./.sonar/scanner/dotnet-sonarscanner begin \
     /k:"daniel-buchanan_pdq" \
     /o:"daniel-buchanan" \

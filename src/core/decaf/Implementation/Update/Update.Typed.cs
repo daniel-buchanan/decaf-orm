@@ -26,14 +26,14 @@ namespace decaf.Implementation
         public IUpdateSetFromQuery<T, TSource> From<TSource>(Action<ISelectWithAlias> query)
         {
             base.FromQuery(query);
-            return UpdateSetFromQueryTyped<T, TSource>.Create(this.query, this.context);
+            return UpdateSetFromQueryTyped<T, TSource>.Create(this.Query, this.Context);
         }
 
         /// <inheritdoc/>
         public IUpdateSet<T> Output(Expression<Func<T, object>> column)
         {
             var columnToOutput = GetDestinationColumn(column);
-            this.context.Output(state.Output.Create(columnToOutput, OutputSources.Updated));
+            this.Context.Output(state.Output.Create(columnToOutput, OutputSources.Updated));
             return this;
         }
 
@@ -42,7 +42,7 @@ namespace decaf.Implementation
         {
             var col = GetDestinationColumn(column);
             var source = state.ValueSources.Update.StaticValueSource.Create<TValue>(col, value);
-            this.context.Set(source);
+            this.Context.Set(source);
             return this;
         }
 
@@ -63,23 +63,23 @@ namespace decaf.Implementation
         /// <inheritdoc/>
         public IUpdateSet<T> Where(Expression<Func<T, bool>> expression)
         {
-            var where = this.context.Helpers().ParseWhere(expression);
-            this.context.Where(where);
+            var where = this.Context.Helpers().ParseWhere(expression);
+            this.Context.Where(where);
             return this;
         }
 
         /// <inheritdoc/>
         public IUpdateSet<T> Where(IWhere clause)
         {
-            this.context.Where(clause);
+            this.Context.Where(clause);
             return this;
         }
 
         private state.Column GetDestinationColumn(Expression expression)
         {
-            var internalContext = this.context as IQueryContextInternal;
+            var internalContext = this.Context as IQueryContextExtended;
             var columnName = internalContext.ExpressionHelper.GetMemberName(expression);
-            return state.Column.Create(columnName, this.context.Table);
+            return state.Column.Create(columnName, this.Context.Table);
         }
     }
 }

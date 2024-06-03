@@ -85,7 +85,7 @@ namespace decaf.sqlite.tests
             var options = builder.Build();
 
             // Assert
-            options.Version.Should().Be(3);
+            options.ReadOnly.Should().BeFalse();
         }
         
         [Fact]
@@ -95,11 +95,11 @@ namespace decaf.sqlite.tests
             var builder = new SqliteOptionsBuilder();
 
             // Act
-            builder.WithVersion(2);
+            builder.AsReadonly();
             var options = builder.Build();
 
             // Assert
-            options.Version.Should().Be(2);
+            options.ReadOnly.Should().BeTrue();
         }
 
         [Fact]
@@ -118,7 +118,6 @@ namespace decaf.sqlite.tests
 
         [Theory]
         [InlineData("")]
-        [InlineData("Data Source=localhost;")]
         [InlineData("Server=localhost,5432;")]
         [InlineData("Server=localhost,5432;Database=db;")]
         [InlineData("Server=localhost,5432;User ID=db;Password=db;")]
@@ -140,7 +139,7 @@ namespace decaf.sqlite.tests
         public void ValidConnectionString()
         {
             // Arrange
-            var connString = "Data Source=MyDb.db;Version=3;New=True;";
+            var connString = "Data Source=MyDb.db;Mode=ReadOnly;";
             var builder = new SqliteOptionsBuilder();
 
             // Act
@@ -149,8 +148,8 @@ namespace decaf.sqlite.tests
 
             // Assert
             options.DatabasePath.Should().Be("MyDb.db");
-            options.Version.Should().Be(3);
-            options.CreateNew.Should().BeTrue();
+            options.ReadOnly.Should().BeTrue();
+            options.CreateNew.Should().BeFalse();
         }
     }
 }

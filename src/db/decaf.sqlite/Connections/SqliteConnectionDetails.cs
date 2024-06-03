@@ -14,7 +14,7 @@ public class SqliteConnectionDetails :
     private bool? createNew;
     private bool? inMemory;
     private string? fullUri;
-    private decimal? version;
+    private bool? readOnly;
     
     public SqliteConnectionDetails() { }
 
@@ -25,7 +25,7 @@ public class SqliteConnectionDetails :
     {
         FullUri = options.DatabasePath;
         InMemory = options.InMemory;
-        Version = options.Version;
+        ReadOnly = options.ReadOnly;
     }
 
     public static ISqliteConnectionDetails FromConnectionString(string connectionString)
@@ -87,17 +87,17 @@ public class SqliteConnectionDetails :
         }
     }
 
-    public decimal Version
+    public bool ReadOnly
     {
-        get => version ?? DefaultVersion;
+        get => readOnly ?? false;
         set
         {
-            if(version != null)
+            if(readOnly != null)
             {
-                throw new ConnectionModificationException($"{nameof(Version)} cannot be modified once ConnectionDetails instance created");
+                throw new ConnectionModificationException($"{nameof(ReadOnly)} cannot be modified once ConnectionDetails instance created");
             }
 
-            version = value;
+            readOnly = value;
         }
     }
 
@@ -106,13 +106,27 @@ public class SqliteConnectionDetails :
         if (string.IsNullOrWhiteSpace(input))
             throw new ConnectionStringParsingException("Cannot parse NULL connection string.");
         
-        var regex = new Regex(@"Data Source=([a-zA-Z0-9\\_\-\.\:\/]+);Version=([0-9\.]+);(New=True;)?");
+        var regex = new Regex(@"Data Source=([a-zA-Z0-9\\_\-\.\:\/]+);(?:Mode=((?:[Rr]eadOnly){0,1}(?:[Rr]ead[Ww]rite){0,1}(?:[Rr]ead[Ww]rite[Cc]reate){0,1});){0,1}");
         var match = regex.Match(input);
         if (!match.Success)
             throw new ConnectionStringParsingException("Cannot parse Connection String: " + input);
 
         FullUri = match.Groups[1].Value;
-        Version = decimal.Parse(match.Groups[2].Value);
+
+        var mode = match.Groups[2].Value;
+        switch (mode.ToLower())
+        {
+            case "readonly":
+                ReadOnly = true;
+                break;
+            case "readwritecreate":
+                ReadOnly = false;
+                CreateNew = true;
+                break;
+            default:
+                ReadOnly = false;
+                break;
+        }
         
         if (match.Groups[3].Value == "New=True;")
             CreateNew = true;
@@ -131,9 +145,11 @@ public class SqliteConnectionDetails :
 
         var sb = new StringBuilder();
         sb.AppendFormat("Data Source={0};", FullUri);
-        sb.AppendFormat("Version={0};", Version);
-        if (CreateNew) sb.Append("New=True;");
+        if (ReadOnly && !CreateNew) sb.Append("Mode=ReadOnly;");
+        if (CreateNew && !ReadOnly) sb.Append("Mode=ReadWriteCreate;");
+        if (!CreateNew && !ReadOnly) sb.Append("Mode=ReadWrite;");
 
-        return Task.FromResult(sb.ToString());
+        var connectionString = sb.ToString();
+        return Task.FromResult(connectionString);
     }
 }

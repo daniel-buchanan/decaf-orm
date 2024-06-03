@@ -8,11 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
-    </ItemGroup>
-
-    <ItemGroup>
+      <ProjectReference Include="..\..\core\decaf\decaf.csproj" />
       <ProjectReference Include="..\decaf.db.common\decaf.db.common.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.4" />
+    </ItemGroup>
 </Project>

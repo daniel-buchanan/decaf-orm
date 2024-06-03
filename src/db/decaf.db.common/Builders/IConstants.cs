@@ -24,6 +24,7 @@ namespace decaf.db.common.Builders
         string Returning { get; }
         string Values { get; }
         string Limit { get; }
+        string ParameterPrefix { get; }
     }
 }
 

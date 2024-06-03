@@ -17,8 +17,9 @@ namespace decaf.common
         /// </summary>
         /// <param name="context"></param>
         /// <param name="template"></param>
+        /// <param name="includePrefix">Whether or not to include the prefix for the parameter.</param>
         /// <returns></returns>
-        object ParseParameters(IQueryContext context, SqlTemplate template);
+        object ParseParameters(IQueryContext context, SqlTemplate template, bool includePrefix = true);
     }
 }
 

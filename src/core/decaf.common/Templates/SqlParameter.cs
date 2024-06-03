@@ -1,20 +1,17 @@
-﻿using System;
-namespace decaf.common.Templates
+﻿namespace decaf.common.Templates;
+
+public class SqlParameter
 {
-	public class SqlParameter
+	private SqlParameter(string hash, string name)
 	{
-		private SqlParameter(string hash, string name)
-		{
-            Hash = hash;
-			Name = name;
-        }
-
-		public static SqlParameter Create(string hash, string name)
-			=> new SqlParameter(hash, name);
-
-		public string Hash { get; }
-
-		public string Name { get; }
+		Hash = hash;
+		Name = name;
 	}
-}
 
+	public static SqlParameter Create(string hash, string name)
+		=> new SqlParameter(hash, name);
+
+	public string Hash { get; }
+
+	public string Name { get; }
+}

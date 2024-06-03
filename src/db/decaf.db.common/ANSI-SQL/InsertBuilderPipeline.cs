@@ -5,32 +5,27 @@ using decaf.common.Templates;
 using decaf.common.Utilities;
 using decaf.db.common.Builders;
 using decaf.state;
-using decaf.db.common;
-using decaf.Exceptions;
 
 namespace decaf.db.common.ANSISQL
 {
     public abstract class InsertBuilderPipeline : db.common.Builders.InsertBuilderPipeline
     {
-        protected readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
-        protected readonly IValueParser valueParser;
-        protected readonly IBuilderPipeline<ISelectQueryContext> selectBuilder;
-        protected readonly IConstants constants;
+        protected readonly IQuotedIdentifierBuilder QuotedIdentifierBuilder;
+        protected readonly IValueParser ValueParser;
+        protected readonly IBuilderPipeline<ISelectQueryContext> SelectBuilder;
 
         protected InsertBuilderPipeline(
             DecafOptions options,
-            IHashProvider hashProvider,
-            db.common.Builders.IWhereBuilder whereBuilder,
+            IConstants constants,
+            IParameterManager parameterManager,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
             IValueParser valueParser,
-            IBuilderPipeline<ISelectQueryContext> selectBuilder,
-            IConstants constants)
-            : base(options, constants, hashProvider)
+            IBuilderPipeline<ISelectQueryContext> selectBuilder)
+            : base(options, constants, parameterManager)
         {
-            this.quotedIdentifierBuilder = quotedIdentifierBuilder;
-            this.valueParser = valueParser;
-            this.selectBuilder = selectBuilder;
-            this.constants = constants;
+            QuotedIdentifierBuilder = quotedIdentifierBuilder;
+            ValueParser = valueParser;
+            SelectBuilder = selectBuilder;
         }
 
         private void AppendItems<T>(ISqlBuilder sqlBuilder, T[] items, Action<ISqlBuilder, T> processMethod, bool appendNewLine = false)
@@ -39,7 +34,7 @@ namespace decaf.db.common.ANSISQL
             for (var i = 0; i < items.Length; i++)
             {
                 var delimiter = string.Empty;
-                if (i < lastItemIndex) delimiter = constants.Seperator;
+                if (i < lastItemIndex) delimiter = Constants.Seperator;
                 processMethod(sqlBuilder, items[i]);
                 sqlBuilder.Append(delimiter);
 
@@ -53,11 +48,11 @@ namespace decaf.db.common.ANSISQL
             var columns = input.Context.Columns.ToArray();
 
             input.Builder.PrependIndent();
-            input.Builder.Append(constants.OpeningParen);
+            input.Builder.Append(Constants.OpeningParen);
 
-            AppendItems(input.Builder, columns, (b, i) => this.quotedIdentifierBuilder.AddSelect(i, b));
+            AppendItems(input.Builder, columns, (b, i) => this.QuotedIdentifierBuilder.AddSelect(i, b));
 
-            input.Builder.Append(constants.ClosingParen);
+            input.Builder.Append(Constants.ClosingParen);
             input.Builder.DecreaseIndent();
             input.Builder.AppendLine();
         }
@@ -67,14 +62,14 @@ namespace decaf.db.common.ANSISQL
             if (!input.Context.Outputs.Any())
                 return;
 
-            input.Builder.AppendLine(constants.Returning);
+            input.Builder.AppendLine(Constants.Returning);
             input.Builder.IncreaseIndent();
             var outputs = input.Context.Outputs.ToArray();
 
-            AppendItems(input.Builder, outputs, (b, o) =>
+            AppendItems(input.Builder, outputs, (_, o) =>
             {
                 input.Builder.PrependIndent();
-                this.quotedIdentifierBuilder.AddOutput(o, input.Builder);
+                QuotedIdentifierBuilder.AddOutput(o, input.Builder);
             });
 
             input.Builder.DecreaseIndent();
@@ -86,7 +81,7 @@ namespace decaf.db.common.ANSISQL
             input.Builder.IncreaseIndent();
 
             input.Builder.PrependIndent();
-            this.quotedIdentifierBuilder.AddFromTable(input.Context.Target.Name, input.Builder);
+            this.QuotedIdentifierBuilder.AddFromTable(input.Context.Target.Name, input.Builder);
             input.Builder.AppendLine();
 
             input.Builder.DecreaseIndent();
@@ -107,8 +102,8 @@ namespace decaf.db.common.ANSISQL
             var source = context.Source as IInsertStaticValuesSource;
             var columns = context.Columns.ToArray();
 
-            sqlBuilder.AppendLine(constants.Values);
-            var values = source.Values?.ToArray();
+            sqlBuilder.AppendLine(Constants.Values);
+            var values = source?.Values?.ToArray();
 
             if (values == null) return;
 
@@ -123,20 +118,20 @@ namespace decaf.db.common.ANSISQL
         private void BuildValueClause(object[][] rows, int rowIndex, Column[] columns, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             sqlBuilder.PrependIndent();
-            sqlBuilder.Append(constants.OpeningParen);
+            sqlBuilder.Append(Constants.OpeningParen);
 
             var row = rows[rowIndex];
             
             for (var i = 0; i < row.Length; i++)
             {
                 var seperatorValue = i < (row.Length - 1) ?
-                    constants.Seperator :
+                    Constants.Seperator :
                     string.Empty;
 
                 row.TryGetValue(i, out var v);
                 if (!columns.TryGetValue(i, out var c))
                 {
-                    sqlBuilder.Append("{0}{0}{1}", constants.ValueQuote, seperatorValue);
+                    sqlBuilder.Append("{0}{0}{1}", Constants.ValueQuote, seperatorValue);
                     continue;
                 }
 
@@ -144,16 +139,16 @@ namespace decaf.db.common.ANSISQL
                 sqlBuilder.Append("{0}{1}", parameter.Name, seperatorValue);
             }
 
-            sqlBuilder.Append(constants.ClosingParen);
+            sqlBuilder.Append(Constants.ClosingParen);
             
             if(rowIndex < (rows.Length - 1))
-                sqlBuilder.Append(constants.Seperator);
+                sqlBuilder.Append(Constants.Seperator);
             
             sqlBuilder.AppendLine();
         }
 
         private void AddValuesFromQuery(IInsertQueryValuesSource source, IPipelineStageInput<IInsertQueryContext> input)
-            => selectBuilder.Execute(source.Query, input);
+            => SelectBuilder.Execute(source.Query, input);
     }
 }
 

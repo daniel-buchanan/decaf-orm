@@ -10,7 +10,7 @@ namespace decaf
         /// </summary>
         /// <param name="expression">The expression / lambda that defines the object structure returned.</param>
         /// <returns>(FluentApi) The ability to execute the query, see <see cref="IExecuteDynamic"/> for more information.</returns>
-        IExecuteDynamic Select(Expression<Func<ISelectColumnBuilder, dynamic>> expression);
+        IExecuteDynamic SelectDynamic(Expression<Func<ISelectColumnBuilder, dynamic>> expression);
 
         /// <summary>
         /// Select the result of the query as a strongly typed object

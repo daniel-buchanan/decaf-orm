@@ -26,7 +26,7 @@ namespace decaf.state.Utilities.Parsers
             this.valueParser = valueParser;
         }
 
-        public override IWhere Parse(Expression expression, IQueryContextInternal context)
+        public override IWhere Parse(Expression expression, IQueryContextExtended context)
         {
             ExpressionType nodeType;
             BinaryExpression binaryExpr;
@@ -73,7 +73,7 @@ namespace decaf.state.Utilities.Parsers
             return Or.Where(left, right);
         }
 
-        private IWhere Parse(Expression expression, IQueryContextInternal context, bool excludeAlias)
+        private IWhere Parse(Expression expression, IQueryContextExtended context, bool excludeAlias)
         {
             var earlyResult = this.callExpressionHelper.ParseExpression(expression, context);
             if (earlyResult != null) return earlyResult;

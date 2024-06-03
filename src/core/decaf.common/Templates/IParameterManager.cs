@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using decaf.common.Templates;
+﻿using System.Collections.Generic;
 
 namespace decaf.common.Templates
 {
@@ -12,7 +10,7 @@ namespace decaf.common.Templates
 
 		IEnumerable<SqlParameter> GetParameters();
 
-		Dictionary<string, object> GetParameterValues();
+		Dictionary<string, object> GetParameterValues(bool includePrefix = false);
 	}
 }
 

@@ -1,5 +1,8 @@
 using decaf.common.Options;
+using decaf.common.Templates;
 using decaf.db.common;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace decaf.sqlite;
 

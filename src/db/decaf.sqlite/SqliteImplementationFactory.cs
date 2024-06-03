@@ -21,6 +21,10 @@ public class SqliteImplementationFactory : DbImplementationFactory
         => typeof(SqliteValueParser);
 
     /// <inheritdoc/>
+    protected override Type TypeParser()
+        => typeof(SqliteTypeParser);
+
+    /// <inheritdoc/>
     protected override Type WhereBuilder()
         => typeof(Builders.WhereBuilder);
 
@@ -39,4 +43,22 @@ public class SqliteImplementationFactory : DbImplementationFactory
     /// <inheritdoc/>
     protected override Type UpdatePipeline()
         => typeof(Builders.UpdateBuilderPipeline);
+
+    /// <inheritdoc/>
+    protected override Type ParameterManager()
+        => typeof(SqliteParameterManager);
+
+    /// <inheritdoc/>
+    protected override Type CreateTablePipeline()
+        => typeof(Builders.CreateTableBuilderPipeline);
+
+    /// <inheritdoc/>
+    protected override Type AlterTablePipeline() => throw new NotImplementedException();
+
+    /// <inheritdoc/>
+    protected override Type DropTablePipeline() => throw new NotImplementedException();
+
+    /// <inheritdoc/>
+    protected override Type Constants() 
+        => typeof(Builders.Constants);
 }

@@ -7,7 +7,7 @@ using Xunit;
 
 namespace decaf.sqlite.tests
 {
-	public class ConnectionDetailstests : SqliteTest
+	public class ConnectionDetailsTests : SqliteTest
 	{
 		[Theory]
 		[MemberData(nameof(InvalidConnectionStrings))]
@@ -24,11 +24,12 @@ namespace decaf.sqlite.tests
 		[MemberData(nameof(ValidConnectionStrings))]
 		public void ValidConnectionStringPasses(
 			string path,
-			int version,
+			string mode,
+			bool readOnly,
 			bool isNew)
 		{
 			// Arrange
-			var connString = $"Data Source={path};Version={version};New={isNew};";
+			var connString = $"Data Source={path};Mode={mode};";
 
 			// Act
 			Func<ISqliteConnectionDetails> func = () => SqliteConnectionDetails.FromConnectionString(connString);
@@ -38,7 +39,7 @@ namespace decaf.sqlite.tests
 
 			var details = func();
 			details.FullUri.Should().Be(path);
-			details.Version.Should().Be(version);
+			details.ReadOnly.Should().Be(readOnly);
 			details.CreateNew.Should().Be(isNew);
 		}
 
@@ -62,9 +63,9 @@ namespace decaf.sqlite.tests
 		{
 			get
 			{
-				yield return new object[] { ":memory:", 1, true };
-                yield return new object[] { "C:\\MyDb.db", 2, false };
-                yield return new object[] { "/Users/myuser/Desktop/mydb.db", 3, true };
+				yield return new object[] { ":memory:", "ReadWriteCreate", false, true };
+                yield return new object[] { "C:\\MyDb.db", "ReadOnly", true, false };
+                yield return new object[] { "/Users/myuser/Desktop/mydb.db", "ReadWriteCreate", false, true };
             }
 		}
 	}

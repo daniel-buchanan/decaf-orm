@@ -1,4 +1,4 @@
-using decaf.common.Utilities;
+using decaf.common.Templates;
 using decaf.db.common.Builders;
 using decaf.state;
 
@@ -8,12 +8,12 @@ namespace decaf.sqlite.Builders
     {
         public UpdateBuilderPipeline(
             DecafOptions options,
-            IHashProvider hashProvider,
-            IWhereBuilder whereBuilder,
+            IConstants constants,
+            IParameterManager parameterManager,
+            db.common.Builders.IWhereBuilder whereBuilder,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
-            IBuilderPipeline<ISelectQueryContext> selectBuilder,
-            IConstants constants)
-            : base(options, hashProvider, whereBuilder, quotedIdentifierBuilder, selectBuilder, constants)
+            IBuilderPipeline<ISelectQueryContext> selectBuilder)
+            : base(options, constants, parameterManager, whereBuilder, quotedIdentifierBuilder, selectBuilder)
         {
         }
     }

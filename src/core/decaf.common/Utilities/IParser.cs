@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace decaf.common.Utilities
 {
-	internal interface IParser
+	public interface IParser
 	{
 		/// <summary>
         /// Parse a provided expression into a where clause.
@@ -11,7 +11,7 @@ namespace decaf.common.Utilities
         /// <param name="expression">The expression to parse.</param>
         /// <param name="context">The current query context</param>
         /// <returns>The parsed where clause.</returns>
-		IWhere Parse(Expression expression, IQueryContextInternal context);
+		IWhere Parse(Expression expression, IQueryContextExtended context);
 	}
 }
 

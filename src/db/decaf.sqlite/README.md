@@ -7,7 +7,7 @@ The package has two dependencies:
 
 Both of these packages are .Net Standard 2.0 only, and thus are usable across almost all .Net Core, .Net Framework and other .Net Standard projects.
 
-To use Npgsql:
+To use SQLite:
 ```csharp
 services.AddDecaf(o => o.UseSqlite(b => b.WithConnectionDetails(...)));
 ```  

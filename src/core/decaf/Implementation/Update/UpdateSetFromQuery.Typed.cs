@@ -20,8 +20,8 @@ namespace decaf.Implementation
         /// <inheritdoc/>
         public IUpdateSetFromQuery<TDestination, TSource> Output(Expression<Func<TDestination, object>> column)
         {
-            var columnToOutput = GetColumnFromExpression(column, this.context.Table);
-            this.context.Output(state.Output.Create(columnToOutput, OutputSources.Updated));
+            var columnToOutput = GetColumnFromExpression(column, this.Context.Table);
+            this.Context.Output(state.Output.Create(columnToOutput, OutputSources.Updated));
             return this;
         }
 
@@ -30,23 +30,23 @@ namespace decaf.Implementation
             Expression<Func<TDestination, object>> columnToUpdate,
             Expression<Func<TSource, object>> sourceColumn)
         {
-            var destination = GetColumnFromExpression(columnToUpdate, this.context.Table);
-            var source = GetColumnFromExpression(sourceColumn, this.context.Source);
-            this.context.Set(state.ValueSources.Update.QueryValueSource.Create(destination, source, this.context.Source));
+            var destination = GetColumnFromExpression(columnToUpdate, this.Context.Table);
+            var source = GetColumnFromExpression(sourceColumn, this.Context.Source);
+            this.Context.Set(state.ValueSources.Update.QueryValueSource.Create(destination, source, this.Context.Source));
             return this;
         }
 
         /// <inheritdoc/>
         public IUpdateSetFromQuery<TDestination, TSource> Where(Expression<Func<TDestination, TSource, bool>> expression)
         {
-            var where = this.context.Helpers().ParseWhere(expression);
-            this.context.Where(where);
+            var where = this.Context.Helpers().ParseWhere(expression);
+            this.Context.Where(where);
             return this;
         }
 
         private state.Column GetColumnFromExpression(Expression expression, IQueryTarget target)
         {
-            var internalContext = this.context as IQueryContextInternal;
+            var internalContext = this.Context as IQueryContextExtended;
             var columnName = internalContext.ExpressionHelper.GetMemberName(expression);
             return state.Column.Create(columnName, target);
         }

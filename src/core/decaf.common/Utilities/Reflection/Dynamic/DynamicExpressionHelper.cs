@@ -7,7 +7,7 @@ using decaf.common;
 
 namespace decaf.common.Utilities.Reflection.Dynamic
 {
-    internal class DynamicExpressionHelper : IDynamicExpressionHelper
+    public class DynamicExpressionHelper : IDynamicExpressionHelper
     {
         private readonly IExpressionHelper expressionHelper;
         private readonly ValueFunctionHelper callExpressionHelper;
@@ -21,7 +21,7 @@ namespace decaf.common.Utilities.Reflection.Dynamic
         }
 
         /// <inheritdoc/>
-        public IEnumerable<DynamicColumnInfo> GetProperties(Expression expr, IQueryContextInternal context)
+        public IEnumerable<DynamicColumnInfo> GetProperties(Expression expr, IQueryContextExtended context)
         {
             var expression = (LambdaExpression)expr;
 
@@ -66,7 +66,7 @@ namespace decaf.common.Utilities.Reflection.Dynamic
 
         private List<DynamicColumnInfo> GetPropertiesForConstant(
             LambdaExpression expression,
-            IQueryContextInternal context)
+            IQueryContextExtended context)
         {
             var results = new List<DynamicColumnInfo>();
             var constExpression = expression.Body as ConstantExpression;

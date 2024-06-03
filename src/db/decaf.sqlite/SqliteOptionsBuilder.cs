@@ -13,8 +13,9 @@ public class SqliteOptionsBuilder :
         ConfigureProperty(x => x.ConnectionDetails, connectionDetails);
         ConfigureProperty(x => x.CreateNew, connectionDetails.CreateNew);
         ConfigureProperty(x => x.DatabasePath, connectionDetails.FullUri);
-        ConfigureProperty(x => x.Version, connectionDetails.Version);
+        ConfigureProperty(x => x.ReadOnly, connectionDetails.ReadOnly);
         ConfigureProperty(x => x.InMemory, connectionDetails.InMemory);
+        ConfigureProperty(x => x.ConstructConnectionFromOptions, false);
         return this;
     }
 
@@ -22,6 +23,7 @@ public class SqliteOptionsBuilder :
     public ISqliteOptionsBuilder WithFilePath(string path)
     {
         ConfigureProperty(x => x.DatabasePath, path);
+        ConfigureProperty(x => x.ConstructConnectionFromOptions, true);
         return this;
     }
 
@@ -29,19 +31,22 @@ public class SqliteOptionsBuilder :
     public ISqliteOptionsBuilder InMemory()
     {
         ConfigureProperty(x => x.InMemory, true);
+        ConfigureProperty(x => x.ConstructConnectionFromOptions, true);
         return this;
     }
 
     /// <inheritdoc/>
-    public ISqliteOptionsBuilder WithVersion(decimal version)
+    public ISqliteOptionsBuilder AsReadonly()
     {
-        ConfigureProperty(x => x.Version, version);
+        ConfigureProperty(x => x.ReadOnly, true);
+        ConfigureProperty(x => x.ConstructConnectionFromOptions, true);
         return this;
     }
 
     public ISqliteOptionsBuilder CreateNewDatabase()
     {
         ConfigureProperty(x => x.CreateNew, true);
+        ConfigureProperty(x => x.ConstructConnectionFromOptions, true);
         return this;
     }
 

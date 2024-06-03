@@ -10,5 +10,5 @@ public interface ISqliteConnectionDetails : IConnectionDetails
     
     bool CreateNew { get; }
     
-    decimal Version { get; }
+    bool ReadOnly { get; }
 }

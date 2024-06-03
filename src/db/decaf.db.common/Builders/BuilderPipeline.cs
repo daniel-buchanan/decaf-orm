@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using decaf.common;
 using decaf.common.Templates;
-using decaf.common.Utilities;
 
 namespace decaf.db.common.Builders
 {
@@ -11,18 +10,18 @@ namespace decaf.db.common.Builders
 		where T : IQueryContext
 	{
         private readonly DecafOptions options;
-        private readonly IConstants constants;
-        private readonly IHashProvider hashProvider;
+        protected readonly IConstants Constants;
+        private readonly IParameterManager parameterManager;
         private readonly List<PipelineStage<T>> stages;
 
 		protected BuilderPipeline(
             DecafOptions options,
             IConstants constants,
-            IHashProvider hashProvider)
+            IParameterManager parameterManager)
 		{
             this.options = options;
-            this.constants = constants;
-            this.hashProvider = hashProvider;
+            this.Constants = constants;
+            this.parameterManager = parameterManager;
             this.stages = new List<PipelineStage<T>>();
 		}
 
@@ -39,8 +38,8 @@ namespace decaf.db.common.Builders
 
             if (this.options.IncludeHeaderCommentsInSql)
             {
-                input.Builder.AppendLine("{0} decaf :: query hash: {1}", this.constants.Comment, context.GetHash());
-                input.Builder.AppendLine("{0} decaf :: generated at: {1}", this.constants.Comment, DateTime.Now.ToString());
+                input.Builder.AppendLine("{0} decaf :: query hash: {1}", this.Constants.Comment, context.GetHash());
+                input.Builder.AppendLine("{0} decaf :: generated at: {1}", this.Constants.Comment, DateTime.Now.ToString());
             }
 
             foreach (var stage in this.stages)
@@ -56,13 +55,13 @@ namespace decaf.db.common.Builders
 
         public SqlTemplate Execute(T context)
         {
-            var input = PipelineStageInput.Create(this.hashProvider);
+            var input = PipelineStageInput.Create(parameterManager);
             return Execute(context, input);
         }
 
-        public IDictionary<string, object> GetParameterValues(T context)
+        public IDictionary<string, object> GetParameterValues(T context, bool includePrefix)
         {
-            var input = PipelineStageInput<T>.CreateNoOp(this.hashProvider, context);
+            var input = PipelineStageInput<T>.CreateNoOp(parameterManager, context);
             var filteredStages = this.stages.Where(s => s.ProvidesParameters);
 
             foreach (var s in filteredStages)
@@ -70,7 +69,7 @@ namespace decaf.db.common.Builders
                 s.Delegate.Invoke(input);
             }
 
-            return input.Parameters.GetParameterValues();
+            return input.Parameters.GetParameterValues(includePrefix);
         }
 
         private sealed class PipelineStage<TContext>

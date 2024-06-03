@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Reflection.Metadata;
 using decaf.common.Connections;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using decaf.tests.common.Models;
 using Xunit;
 
 namespace decaf.sqlite.tests
@@ -58,7 +56,7 @@ namespace decaf.sqlite.tests
             details.FullUri = "/Users/buchanand/MyDb.db";
 
             // Assert
-            details.GetConnectionString().Should().Be("Data Source=/Users/buchanand/MyDb.db;Version=2;New=True;");
+            details.GetConnectionString().Should().Be("Data Source=/Users/buchanand/MyDb.db;Mode=ReadWriteCreate;");
         }
         
         [Fact]
@@ -71,7 +69,7 @@ namespace decaf.sqlite.tests
             details.FullUri = "/Users/buchanand/MyDb.db";
 
             // Assert
-            details.GetConnectionString().Should().Be("Data Source=/Users/buchanand/MyDb.db;Version=2;");
+            details.GetConnectionString().Should().Be("Data Source=/Users/buchanand/MyDb.db;Mode=ReadWrite;");
         }
 
         [Fact]
@@ -84,7 +82,7 @@ namespace decaf.sqlite.tests
             details.InMemory = true;
 
             // Assert
-            details.GetConnectionString().Should().Be("Data Source=:memory:;Version=2;New=True;");
+            details.GetConnectionString().Should().Be("Data Source=:memory:;Mode=ReadWriteCreate;");
         }
     }
 }

@@ -1,7 +1,5 @@
-﻿using System;
-using decaf.common.Utilities;
+﻿using decaf.common.Templates;
 using decaf.state;
-using decaf.common.Templates;
 
 namespace decaf.db.common.Builders
 {
@@ -10,8 +8,8 @@ namespace decaf.db.common.Builders
         protected InsertBuilderPipeline(
             DecafOptions decafOptions,
             IConstants constants,
-            IHashProvider hashProvider)
-            : base(decafOptions, constants, hashProvider)
+            IParameterManager parameterManager)
+            : base(decafOptions, constants, parameterManager)
         {
             Add(AddInsert, providesParameters: false);
             Add(AddTable, providesParameters: false);
@@ -21,7 +19,7 @@ namespace decaf.db.common.Builders
         }
 
         private void AddInsert(IPipelineStageInput<IInsertQueryContext> input)
-            => input.Builder.AppendLine("{0} into", Constants.Insert);
+            => input.Builder.AppendLine("{0} into", Builders.Constants.Insert);
 
         protected abstract void AddTable(IPipelineStageInput<IInsertQueryContext> input);
 

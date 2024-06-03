@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <RootNamespace>decaf.playground</RootNamespace>
@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\core\decaf.common\decaf.common.csproj" />
+    <ProjectReference Include="..\..\src\db\decaf.sqlite\decaf.sqlite.csproj" />
     <ProjectReference Include="..\..\src\extensions\decaf.services\decaf.services.csproj" />
     <ProjectReference Include="..\..\src\core\decaf.state\decaf.state.csproj" />
     <ProjectReference Include="..\..\src\core\decaf\decaf.csproj" />

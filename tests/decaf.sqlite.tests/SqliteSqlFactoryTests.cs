@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using decaf.common;
 using decaf.common.Connections;
+using decaf.common.Templates;
 using decaf.common.Utilities;
 using decaf.services;
 using decaf.tests.common.Mocks;
@@ -37,7 +39,7 @@ namespace decaf.sqlite.tests
         public void TemplateParsingSucceeds()
         {
             // Arrange
-            var expected = "select\r\n  t.Id,\r\n  t.FirstName,\r\n  t.LastName,\r\n  t.Email,\r\n  t.AddressId,\r\n  t.CreatedAt\r\nfrom\r\n  Person as t\r\nwhere\r\n(t.Email = @p1)\r\n";
+            var expected = "select\r\n  t.Id,\r\n  t.FirstName,\r\n  t.LastName,\r\n  t.Email,\r\n  t.AddressId,\r\n  t.CreatedAt\r\nfrom\r\n  Person as t\r\nwhere\r\n(t.Email = :p1)\r\n";
             expected = expected.Replace("\r\n", Environment.NewLine);
             IQueryContext context = null;
             this.personService.OnBeforeExecution += (sender, args) =>
@@ -65,7 +67,7 @@ namespace decaf.sqlite.tests
             this.personService.Find(p => p.Email == "bob@bob.com");
 
             // Act
-            Action method = () => this.sqlFactory.ParseParameters(context, new common.Templates.SqlTemplate("", new List<common.Templates.SqlParameter>()));
+            Action method = () => this.sqlFactory.ParseParameters(context, new SqlTemplate("", new List<SqlParameter>()));
 
             // Assert
             method.Should().Throw<common.Exceptions.SqlTemplateMismatchException>();
@@ -84,11 +86,10 @@ namespace decaf.sqlite.tests
             var template = this.sqlFactory.ParseTemplate(context);
 
             // Act
-            var parameters = this.sqlFactory.ParseParameters(context, template);
+            var parameters = this.sqlFactory.ParseParameters(context, template, includePrefix: false);
 
             // Assert
-            var dict = parameters as DynamicDictionary;
-            dict.Should().BeEquivalentTo(DynamicDictionary.FromDictionary(new Dictionary<string, object>
+            parameters.Should().BeEquivalentTo(ParameterMapper.Map(new Dictionary<string, object>
             {
                 { "p1", "bob@bob.com" }
             }));
@@ -107,17 +108,17 @@ namespace decaf.sqlite.tests
             var template = this.sqlFactory.ParseTemplate(context);
 
             // Act
-            var parameters = this.sqlFactory.ParseParameters(context, template);
+            var parameters = this.sqlFactory.ParseParameters(context, template, includePrefix: false);
 
             // Assert
-            var dict = parameters as DynamicDictionary;
-            dict.Should().BeEquivalentTo(DynamicDictionary.FromDictionary(new Dictionary<string, object>
+            var expected = ParameterMapper.Map(new Dictionary<string, object>
             {
                 { "p1", 42 },
                 { "p2", ".com" },
                 { "p3", 0 },
                 { "p4", "abc" }
-            }));
+            }) as ExpandoObject;
+            parameters.Should().BeEquivalentTo(expected);
         }
 
         [Fact]
@@ -134,11 +135,10 @@ namespace decaf.sqlite.tests
             var template = this.sqlFactory.ParseTemplate(context);
 
             // Act
-            var parameters = this.sqlFactory.ParseParameters(context, template);
+            var parameters = this.sqlFactory.ParseParameters(context, template, includePrefix: false);
 
             // Assert
-            var dict = parameters as DynamicDictionary;
-            dict.Should().BeEquivalentTo(DynamicDictionary.FromDictionary(new Dictionary<string, object>
+            parameters.Should().BeEquivalentTo(ParameterMapper.Map(new Dictionary<string, object>
             {
                 { "p1", 1 },
                 { "p2", 2 },
@@ -159,11 +159,10 @@ namespace decaf.sqlite.tests
             var template = this.sqlFactory.ParseTemplate(context);
 
             // Act
-            var parameters = this.sqlFactory.ParseParameters(context, template);
+            var parameters = this.sqlFactory.ParseParameters(context, template, includePrefix: false);
 
             // Assert
-            var dict = parameters as DynamicDictionary;
-            dict.Should().BeEquivalentTo(DynamicDictionary.FromDictionary(new Dictionary<string, object>
+            parameters.Should().BeEquivalentTo(ParameterMapper.Map(new Dictionary<string, object>
             {
                 { "p1", "bob" }
             }));

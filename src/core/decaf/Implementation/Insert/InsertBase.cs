@@ -12,27 +12,27 @@ namespace decaf.Implementation
         protected InsertBase(IQueryContainerInternal query, IInsertQueryContext context)
             : base(query, context)
         {
-            this.query.SetContext(this.context);
+            this.Query.SetContext(this.Context);
         }
 
         protected void FromQuery(Action<ISelect> queryBuilder)
         {
-            var context = SelectQueryContext.Create(this.query.AliasManager, this.query.HashProvider);
-            var query = this.query.UnitOfWork.GetQuery() as IQueryContainerInternal;
+            var context = SelectQueryContext.Create(this.Query.AliasManager, this.Query.HashProvider);
+            var query = this.Query.UnitOfWork.GetQuery() as IQueryContainerInternal;
             var select = Select.Create(context, query);
 
             queryBuilder(select);
             var source = state.ValueSources.Insert.QueryValuesSource.Create(context);
-            this.context.From(source);
+            this.Context.From(source);
         }
 
         protected void AddValues<T>(T value)
         {
-            var internalContext = this.context as IQueryContextInternal;
+            var internalContext = this.Context as IQueryContextExtended;
             var properties = internalContext.ReflectionHelper.GetMemberDetails(value);
             var values = properties.Select(p => internalContext.ReflectionHelper.GetPropertyValue(value, p.NewName));
             var row = values.ToArray();
-            this.context.Value(row);
+            this.Context.Value(row);
         }
 
         protected void AddValues<T>(IEnumerable<T> values)
@@ -42,11 +42,11 @@ namespace decaf.Implementation
 
         protected void AddColumns(Expression expression)
         {
-            var properties = this.context.Helpers().GetPropertyInformation(expression);
+            var properties = this.Context.Helpers().GetPropertyInformation(expression);
             foreach (var p in properties)
             {
-                var target = this.context.QueryTargets.FirstOrDefault(t => t.Alias == p.Alias);
-                this.context.Column(state.Column.Create(p.Name, target, p.NewName));
+                var target = this.Context.QueryTargets.FirstOrDefault(t => t.Alias == p.Alias);
+                this.Context.Column(state.Column.Create(p.Name, target, p.NewName));
             }
         }
     }

@@ -16,7 +16,7 @@ namespace decaf.state.Utilities.Parsers
         {
         }
 
-        public override IWhere Parse(Expression expression, IQueryContextInternal context)
+        public override IWhere Parse(Expression expression, IQueryContextExtended context)
         {
             BinaryExpression binaryExpression = null;
             LambdaExpression lambdaExpression = null;
@@ -39,7 +39,7 @@ namespace decaf.state.Utilities.Parsers
             return null;
         }
 
-        private bool ParseAndOr(BinaryExpression binaryExpression, IQueryContextInternal context, out IWhere result)
+        private bool ParseAndOr(BinaryExpression binaryExpression, IQueryContextExtended context, out IWhere result)
         {
             result = null;
             if (binaryExpression == null) return false;
@@ -70,7 +70,7 @@ namespace decaf.state.Utilities.Parsers
         private bool ParseLambdaClause(
             Expression expression,
             BinaryExpression binaryExpression,
-            IQueryContextInternal context,
+            IQueryContextExtended context,
             out IWhere result)
         {
             result = null;

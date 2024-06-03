@@ -44,7 +44,7 @@ namespace decaf.core_tests
             Type functionType)
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
 
             // Act
@@ -73,7 +73,7 @@ namespace decaf.core_tests
         public void ParseContainsExpressionSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Person, bool>> expression = (p) => p.FirstName.Contains("smith");
 
@@ -94,7 +94,7 @@ namespace decaf.core_tests
         public void ParseNotContainsExpressionSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Person, bool>> expression = (p) => !p.FirstName.Contains("smith");
 
@@ -117,7 +117,7 @@ namespace decaf.core_tests
         public void ParseContainsEqualsFalseExpressionSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Person, bool>> expression = (p) => p.FirstName.Contains("smith") == false;
 
@@ -140,7 +140,7 @@ namespace decaf.core_tests
         public void ParseTrimEqualsValueExpressionSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Person, bool>> expression = (p) => p.FirstName.Trim() == "bob";
 

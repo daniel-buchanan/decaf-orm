@@ -49,8 +49,7 @@ namespace decaf.common.Connections
 
             return transaction;
         }
-
-        /// <inheritdoc/>
+        
         protected abstract Task<ITransaction> CreateTransactionAsync(IConnection connection, CancellationToken cancellationToken = default);
     }
 }

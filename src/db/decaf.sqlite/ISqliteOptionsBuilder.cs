@@ -22,12 +22,10 @@ public interface ISqliteOptionsBuilder :
     ISqliteOptionsBuilder InMemory();
 
     /// <summary>
-    /// Specify a particular version of SQLite to use.
-    /// If not provided this will default to version 3.
+    /// Connect as read only
     /// </summary>
-    /// <param name="version">The version to of SQLite use.</param>
     /// <returns></returns>
-    ISqliteOptionsBuilder WithVersion(decimal version);
+    ISqliteOptionsBuilder AsReadonly();
 
     /// <summary>
     /// Whether or not a new database should be created.

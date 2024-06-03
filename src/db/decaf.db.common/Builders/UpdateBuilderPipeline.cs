@@ -1,4 +1,4 @@
-﻿using decaf.common.Utilities;
+﻿using decaf.common.Templates;
 using decaf.state;
 
 namespace decaf.db.common.Builders
@@ -8,8 +8,8 @@ namespace decaf.db.common.Builders
         protected UpdateBuilderPipeline(
             DecafOptions decafOptions,
             IConstants constants,
-            IHashProvider hashProvider)
-            : base(decafOptions, constants, hashProvider)
+            IParameterManager parameterManager)
+            : base(decafOptions, constants, parameterManager)
         {
             Add(AddUpdate, providesParameters: false);
             Add(AddTable, providesParameters: false);
@@ -19,7 +19,7 @@ namespace decaf.db.common.Builders
         }
 
         private void AddUpdate(IPipelineStageInput<IUpdateQueryContext> input)
-            => input.Builder.AppendLine("{0}", Constants.Update);
+            => input.Builder.AppendLine("{0}", Builders.Constants.Update);
 
         protected abstract void AddTable(IPipelineStageInput<IUpdateQueryContext> input);
 

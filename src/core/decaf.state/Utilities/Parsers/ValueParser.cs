@@ -20,7 +20,7 @@ namespace decaf.state.Utilities.Parsers
             this.callExpressionHelper = callExpressionHelper;
         }
 
-        public override IWhere Parse(Expression expression, IQueryContextInternal context)
+        public override IWhere Parse(Expression expression, IQueryContextExtended context)
         {
             var earlyResult = callExpressionHelper.ParseExpression(expression, context);
             if (earlyResult != null) return earlyResult;
@@ -77,7 +77,7 @@ namespace decaf.state.Utilities.Parsers
             return convertedValue;
         }
 
-        private ValueResult ParseMemberExpression(Expression expression, IQueryContextInternal context)
+        private ValueResult ParseMemberExpression(Expression expression, IQueryContextExtended context)
         {
             var memberExpression = expression as MemberExpression;
             if (memberExpression == null) return null;
@@ -99,7 +99,7 @@ namespace decaf.state.Utilities.Parsers
             return new ValueResult(field, target, val, valType, op);
         }
 
-        private ValueResult ParseBinaryExpression(Expression expression, IQueryContextInternal context)
+        private ValueResult ParseBinaryExpression(Expression expression, IQueryContextExtended context)
         {
             BinaryExpression operation;
             if (expression.NodeType == ExpressionType.Lambda)

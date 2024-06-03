@@ -24,6 +24,8 @@ namespace decaf.db.common
 		Func<IConfiguration, IConnectionDetails> ConnectionDetailsConfigurationFactory { get; }
 
         IConnectionDetails GetConnectionDetails(IServiceProvider provider);
-    }
+        
+        bool IncludeParameterPrefix { get; }
+	}
 }
 

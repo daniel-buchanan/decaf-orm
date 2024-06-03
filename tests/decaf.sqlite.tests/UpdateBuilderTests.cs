@@ -23,7 +23,7 @@ namespace decaf.sqlite.tests
         public void SimpleUpdateSucceeds()
         {
             // Arrange
-            var expected = "update\\r\\n  users\\r\\nset\\r\\n  sub = @p1\\r\\nwhere\\r\\n(\\r\\n  (id = @p2)\\r\\n)\\r\\n";
+            var expected = "update\\r\\n  users\\r\\nset\\r\\n  sub = :p1\\r\\nwhere\\r\\n(\\r\\n  (id = :p2)\\r\\n)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var idValue = Guid.NewGuid();
 
@@ -46,7 +46,7 @@ namespace decaf.sqlite.tests
         public void MultipleUpdateSucceeds()
         {
             // Arrange
-            var expected = "update\\r\\n  users\\r\\nset\\r\\n  sub = @p1,\\r\\n  name = @p2\\r\\nwhere\\r\\n(\\r\\n  (id = @p3)\\r\\n)\\r\\n";
+            var expected = "update\\r\\n  users\\r\\nset\\r\\n  sub = :p1,\\r\\n  name = :p2\\r\\nwhere\\r\\n(\\r\\n  (id = :p3)\\r\\n)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var idValue = Guid.NewGuid();
 

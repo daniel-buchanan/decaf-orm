@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
-using System.Linq;
-using decaf.common.Utilities;
-using System.Threading;
 using decaf.common;
+using decaf.common.Utilities;
 
 namespace decaf.Implementation
 {
-    internal abstract class Execute<TContext> :
+    public abstract class Execute<TContext> :
         ExecuteBase<TContext>,
         IExecute
         where TContext: IQueryContext
@@ -27,7 +27,7 @@ namespace decaf.Implementation
 
         /// <inheritdoc/>
         public async Task<IEnumerable<T>> AsEnumerableAsync<T>(CancellationToken cancellationToken = default)
-            => await ExecuteAsync((s, p, c, t, ct) => c.QueryAsync<T>(s, p, t), cancellationToken);
+            => await ExecuteAsync((s, p, c, t, _) => c.QueryAsync<T>(s, p, t), cancellationToken);
 
         /// <inheritdoc/>
         public IEnumerable<dynamic> AsEnumerable()
@@ -35,7 +35,7 @@ namespace decaf.Implementation
 
         /// <inheritdoc/>
         public async Task<IEnumerable<dynamic>> AsEnumerableAsync(CancellationToken cancellationToken = default)
-            => await ExecuteAsync((s, p, c, t, ct) => c.QueryAsync(s, p, t), cancellationToken);
+            => await ExecuteAsync((s, p, c, t, _) => c.QueryAsync(s, p, t), cancellationToken);
 
         /// <inheritdoc/>
         public T First<T>()
@@ -43,7 +43,7 @@ namespace decaf.Implementation
 
         /// <inheritdoc/>
         public async Task<T> FirstAsync<T>(CancellationToken cancellationToken = default)
-            => await ExecuteAsync((s, p, c, t, ct) => c.QueryFirstAsync<T>(s, p, t), cancellationToken);
+            => await ExecuteAsync((s, p, c, t, _) => c.QueryFirstAsync<T>(s, p, t), cancellationToken);
 
         /// <inheritdoc/>
         public dynamic First()
@@ -51,7 +51,7 @@ namespace decaf.Implementation
 
         /// <inheritdoc/>
         public async Task<dynamic> FirstAsync(CancellationToken cancellationToken = default)
-            => await ExecuteAsync((s, p, c, t, ct) => c.QueryFirstAsync(s, p, t), cancellationToken);
+            => await ExecuteAsync((s, p, c, t, _) => c.QueryFirstAsync(s, p, t), cancellationToken);
 
         /// <inheritdoc/>
         public T FirstOrDefault<T>()
@@ -59,7 +59,7 @@ namespace decaf.Implementation
 
         /// <inheritdoc/>
         public async Task<T> FirstOrDefaultAsync<T>(CancellationToken cancellationToken = default)
-            => await ExecuteAsync((s, p, c, t, ct) => c.QueryFirstOrDefaultAsync<T>(s, p, t), cancellationToken);
+            => await ExecuteAsync((s, p, c, t, _) => c.QueryFirstOrDefaultAsync<T>(s, p, t), cancellationToken);
 
         /// <inheritdoc/>
         public dynamic FirstOrDefault()
@@ -67,7 +67,7 @@ namespace decaf.Implementation
 
         /// <inheritdoc/>
         public async Task<dynamic> FirstOrDefaultAsync(CancellationToken cancellationToken = default)
-            => await ExecuteAsync((s, p, c, t, ct) => c.QueryFirstOrDefaultAsync(s, p, t), cancellationToken);
+            => await ExecuteAsync((s, p, c, t, _) => c.QueryFirstOrDefaultAsync(s, p, t), cancellationToken);
 
         /// <inheritdoc/>
         public T Single<T>()
@@ -75,7 +75,7 @@ namespace decaf.Implementation
 
         /// <inheritdoc/>
         public async Task<T> SingleAsync<T>(CancellationToken cancellationToken = default)
-            => await ExecuteAsync((s, p, c, t, ct) => c.QuerySingleAsync<T>(s, p, t), cancellationToken);
+            => await ExecuteAsync((s, p, c, t, _) => c.QuerySingleAsync<T>(s, p, t), cancellationToken);
 
         /// <inheritdoc/>
         public dynamic Single()
@@ -83,7 +83,7 @@ namespace decaf.Implementation
 
         /// <inheritdoc/>
         public async Task<dynamic> SingleAsync(CancellationToken cancellationToken = default)
-            => await ExecuteAsync((s, p, c, t, ct) => c.QuerySingleAsync(s, p, t), cancellationToken);
+            => await ExecuteAsync((s, p, c, t, _) => c.QuerySingleAsync(s, p, t), cancellationToken);
 
         /// <inheritdoc/>
         public T SingleOrDefault<T>()
@@ -91,7 +91,7 @@ namespace decaf.Implementation
 
         /// <inheritdoc/>
         public async Task<T> SingleOrDefaultAsync<T>(CancellationToken cancellationToken = default)
-            => await ExecuteAsync((s, p, c, t, ct) => c.QuerySingleOrDefaultAsync<T>(s, p, t), cancellationToken);
+            => await ExecuteAsync((s, p, c, t, _) => c.QuerySingleOrDefaultAsync<T>(s, p, t), cancellationToken);
 
         /// <inheritdoc/>
         public dynamic SingleOrDefault()
@@ -99,7 +99,7 @@ namespace decaf.Implementation
 
         /// <inheritdoc/>
         public async Task<dynamic> SingleOrDefaultAsync(CancellationToken cancellationToken = default)
-            => await ExecuteAsync((s, p, c, t, ct) => c.QuerySingleOrDefaultAsync(s, p, t), cancellationToken);
+            => await ExecuteAsync((s, p, c, t, _) => c.QuerySingleOrDefaultAsync(s, p, t), cancellationToken);
 
         /// <inheritdoc/>
         public IList<T> ToList<T>()
@@ -119,7 +119,7 @@ namespace decaf.Implementation
 
         /// <inheritdoc/>
         public IExecute<T> Typed<T>()
-            => Execute<T, TContext>.Create(this.query, this.context);
+            => Execute<T, TContext>.Create(Query, Context);
 
         /// <inheritdoc/>
         void IExecute.Execute()
@@ -127,7 +127,7 @@ namespace decaf.Implementation
 
         /// <inheritdoc/>
         public async Task ExecuteAsync(CancellationToken cancellationToken = default)
-            => await ExecuteAsync((s, p, c, t, ct) => c.ExecuteAsync(s, p, t), cancellationToken);
+            => await ExecuteAsync((s, p, c, t, _) => c.ExecuteAsync(s, p, t), cancellationToken);
 
         /// <inheritdoc/>
         public new string GetSql()

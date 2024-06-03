@@ -23,7 +23,7 @@ namespace decaf.sqlite.tests
         public void InsertSucceeds()
         {
             // Arrange
-            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  (@p1,@p2)\\r\\n";
+            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  (:p1,:p2)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act
@@ -49,7 +49,7 @@ namespace decaf.sqlite.tests
         public void InsertWithOutputSucceeds()
         {
             // Arrange
-            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  (@p1,@p2)\\r\\nreturning\\r\\n  id\\r\\n";
+            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  (:p1,:p2)\\r\\nreturning\\r\\n  id\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act
@@ -80,7 +80,7 @@ namespace decaf.sqlite.tests
         public void InsertMultipleValuesSucceeds()
         {
             // Arrange
-            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  (@p1,@p2),\\r\\n  (@p3,@p2)\\r\\n";
+            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nvalues\\r\\n  (:p1,:p2),\\r\\n  (:p3,:p2)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act
@@ -107,7 +107,7 @@ namespace decaf.sqlite.tests
         public void InsertFromQuerySucceeds()
         {
             // Arrange
-            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nselect\\r\\n  t.first_name,\\r\\n  t.last_name\\r\\nfrom\\r\\n  temp as t\\r\\nwhere\\r\\n(t.id = @p1)\\r\\n";
+            var expected = "insert into\\r\\n  users\\r\\n  (first_name,last_name)\\r\\nselect\\r\\n  t.first_name,\\r\\n  t.last_name\\r\\nfrom\\r\\n  temp as t\\r\\nwhere\\r\\n(t.id = :p1)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act

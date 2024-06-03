@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using decaf.common.Utilities;
-using decaf.common.Templates;
 
 namespace decaf.common.Templates
 {
     public class ParameterManager : IParameterManager
     {
-        public const string ParameterPrefix = "@";
+        private const string DefaultPrefix = "@";
         private const string ParameterName = "p";
+        private string parameterPrefix;
 
         private readonly IHashProvider hashProvider;
 
@@ -25,6 +24,19 @@ namespace decaf.common.Templates
             this.parameterCount = 0;
         }
 
+        protected virtual string GetParameterPrefix()
+            => DefaultPrefix;
+
+        private string ParameterPrefix
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(parameterPrefix))
+                    parameterPrefix = GetParameterPrefix();
+                return parameterPrefix;
+            }
+        }
+        
         public static IParameterManager Create(IHashProvider hashProvider)
             => new ParameterManager(hashProvider);
 
@@ -56,12 +68,15 @@ namespace decaf.common.Templates
         public IEnumerable<SqlParameter> GetParameters()
             => this.parameters.Select(kp => kp.Value);
 
-        public Dictionary<string, object> GetParameterValues()
+        public Dictionary<string, object> GetParameterValues(bool includePrefix = false)
         {
             var result = new Dictionary<string, object>();
             foreach(var kp in this.parameters)
             {
-                var parameterName = kp.Value.Name.Replace(ParameterPrefix, string.Empty);
+                var parameterName = kp.Value.Name;
+                if (!includePrefix) 
+                    parameterName = parameterName.Replace(ParameterPrefix, string.Empty);
+                
                 result.Add(parameterName, this.parameterValues[kp.Key]);
             }
 

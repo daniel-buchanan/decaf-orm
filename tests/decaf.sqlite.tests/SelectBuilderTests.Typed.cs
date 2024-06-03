@@ -24,7 +24,7 @@ namespace decaf.sqlite.tests
         public void SimpleSelectSucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(u.Id = @p1)\\r\\n";
+            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(u.Id = :p1)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -71,7 +71,7 @@ namespace decaf.sqlite.tests
         public void SimpleSelectWithOrderBySucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(u.Id = @p1)\\r\\norder by\\r\\n  u.Id desc\\r\\n";
+            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(u.Id = :p1)\\r\\norder by\\r\\n  u.Id desc\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -96,7 +96,7 @@ namespace decaf.sqlite.tests
         public void SelectWithLikeSucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(u.Email like '%@p1%')\\r\\n";
+            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(u.Email like '%:p1%')\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -120,7 +120,7 @@ namespace decaf.sqlite.tests
         public void SelectWithStartsWithSucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(u.Email like '@p1%')\\r\\n";
+            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(u.Email like ':p1%')\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -144,7 +144,7 @@ namespace decaf.sqlite.tests
         public void SelectWithEndsWithSucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(u.Email like '%@p1')\\r\\n";
+            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(u.Email like '%:p1')\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -168,7 +168,7 @@ namespace decaf.sqlite.tests
         public void SelectWithMultipleConditionsSucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(\\r\\n  (u.Email like '%@p1')\\r\\n  and\\r\\n  (u.FirstName = @p2)\\r\\n)\\r\\n";
+            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(\\r\\n  (u.Email like '%:p1')\\r\\n  and\\r\\n  (u.FirstName = :p2)\\r\\n)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -192,7 +192,7 @@ namespace decaf.sqlite.tests
         public void SelectWithManyConditionsSucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(\\r\\n  (\\r\\n    (u.Id = @p1)\\r\\n    and\\r\\n    (u.Email like '%@p2')\\r\\n  )\\r\\n  and\\r\\n  (\\r\\n    (\\r\\n      not\\r\\n      (u.Id = @p3)\\r\\n    )\\r\\n    or\\r\\n    (u.Email like '%@p4')\\r\\n  )\\r\\n)\\r\\n";
+            var expected = "select\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\nwhere\\r\\n(\\r\\n  (\\r\\n    (u.Id = :p1)\\r\\n    and\\r\\n    (u.Email like '%:p2')\\r\\n  )\\r\\n  and\\r\\n  (\\r\\n    (\\r\\n      not\\r\\n      (u.Id = :p3)\\r\\n    )\\r\\n    or\\r\\n    (u.Email like '%:p4')\\r\\n  )\\r\\n)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -216,7 +216,7 @@ namespace decaf.sqlite.tests
         public void SelectWithSimpleJoinSucceeds()
         {
             // Arrange
-            var expected = "select\\r\\n  p.FirstName as fname,\\r\\n  p.LastName as lname,\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\njoin Person as p on\\r\\n  (p.Id = u.PersonId)\\r\\nwhere\\r\\n(u.Id = @p1)\\r\\n";
+            var expected = "select\\r\\n  p.FirstName as fname,\\r\\n  p.LastName as lname,\\r\\n  u.Email as email,\\r\\n  u.Id as id\\r\\nfrom\\r\\n  User as u\\r\\njoin Person as p on\\r\\n  (p.Id = u.PersonId)\\r\\nwhere\\r\\n(u.Id = :p1)\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Arrange
@@ -242,7 +242,7 @@ namespace decaf.sqlite.tests
         public void SelectFromQuerySucceeds()
         {
             // Arrange
-            var expected = "select\n  q.Id as id,\n  q.FirstName as name\nfrom\n  (\n    select\n      u.Id as id,\n      u.FirstName as name\n    from\n      User as u\n    where\n    (u.Id = @p1)\n  ) as q\nwhere\n(q.FirstName like '%@p2')\n";
+            var expected = "select\n  q.Id as id,\n  q.FirstName as name\nfrom\n  (\n    select\n      u.Id as id,\n      u.FirstName as name\n    from\n      User as u\n    where\n    (u.Id = :p1)\n  ) as q\nwhere\n(q.FirstName like '%:p2')\n";
             expected = expected.Replace("\n", Environment.NewLine);
 
             // Arrange

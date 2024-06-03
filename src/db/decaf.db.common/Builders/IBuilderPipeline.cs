@@ -50,8 +50,9 @@ namespace decaf.db.common.Builders
 		/// Get the Parameter values from the context as a dictionary.
 		/// </summary>
 		/// <param name="context">The context to parse.</param>
+		/// <param name="includePrefix">Whether or not to include the parameter prefix.</param>
 		/// <returns>The parameters from the context, as an <see cref="IDictionary{TKey,TValue}"/></returns>
-        IDictionary<string, object> GetParameterValues(T context);
+        IDictionary<string, object> GetParameterValues(T context, bool includePrefix);
 	}
 }
 

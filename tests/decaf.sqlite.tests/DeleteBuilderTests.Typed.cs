@@ -24,7 +24,7 @@ namespace decaf.sqlite.tests
         public void SimpleDeleteSucceeds()
         {
             // Arrange
-            var expected = "delete from\\r\\n  User as u\\r\\nwhere\\r\\n(u.Subject = @p1)\\r\\nreturning\\r\\n  Id\\r\\n";
+            var expected = "delete from\\r\\n  User as u\\r\\nwhere\\r\\n(u.Subject = :p1)\\r\\nreturning\\r\\n  Id\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -62,7 +62,7 @@ namespace decaf.sqlite.tests
         public void DeleteWithLikeSucceeds()
         {
             // Arrange
-            var expected = "delete from\\r\\n  User as u\\r\\nwhere\\r\\n(u.FirstName like '%@p1%')\\r\\nreturning\\r\\n  Id\\r\\n";
+            var expected = "delete from\\r\\n  User as u\\r\\nwhere\\r\\n(u.FirstName like '%:p1%')\\r\\nreturning\\r\\n  Id\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 
@@ -82,7 +82,7 @@ namespace decaf.sqlite.tests
         public void DeleteWithMultipleConditionsSucceeds()
         {
             // Arrange
-            var expected = "delete from\\r\\n  User as u0\\r\\nwhere\\r\\n(\\r\\n  (u0.FirstName like '@p1%')\\r\\n  and\\r\\n  (u0.Email like '%@p2')\\r\\n)\\r\\nreturning\\r\\n  Id,\\r\\n  Subject\\r\\n";
+            var expected = "delete from\\r\\n  User as u0\\r\\nwhere\\r\\n(\\r\\n  (u0.FirstName like ':p1%')\\r\\n  and\\r\\n  (u0.Email like '%:p2')\\r\\n)\\r\\nreturning\\r\\n  Id,\\r\\n  Subject\\r\\n";
             expected = expected.Replace("\\r\\n", Environment.NewLine);
             var subValue = Guid.NewGuid();
 

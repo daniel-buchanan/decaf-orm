@@ -1,29 +1,23 @@
-﻿using System;
-using System.Linq;
-using decaf.common.Utilities;
+﻿using System.Linq;
+using decaf.common.Templates;
 using decaf.db.common.Builders;
 using decaf.state;
-using decaf.common.Templates;
-using decaf.db.common;
-using decaf.state.QueryTargets;
 
 namespace decaf.db.common.ANSISQL
 {
     public abstract class DeleteBuilderPipeline : db.common.Builders.DeleteBuilderPipeline
     {
-        protected readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
-        protected readonly IConstants constants;
+        protected readonly IQuotedIdentifierBuilder QuotedIdentifierBuilder;
 
         protected DeleteBuilderPipeline(
             DecafOptions options,
-            IHashProvider hashProvider,
-            db.common.Builders.IWhereBuilder whereBuilder,
-            IQuotedIdentifierBuilder quotedIdentifierBuilder,
-            IConstants constants)
-            : base(options, constants, hashProvider, whereBuilder)
+            IConstants constants,
+            IParameterManager parameterManager,
+            IWhereBuilder whereBuilder,
+            IQuotedIdentifierBuilder quotedIdentifierBuilder)
+            : base(options, constants, parameterManager, whereBuilder)
         {
-            this.quotedIdentifierBuilder = quotedIdentifierBuilder;
-            this.constants = constants;
+            QuotedIdentifierBuilder = quotedIdentifierBuilder;
         }
 
         protected override void AddOutput(IPipelineStageInput<IDeleteQueryContext> input)
@@ -31,7 +25,7 @@ namespace decaf.db.common.ANSISQL
             if (!input.Context.Outputs.Any())
                 return;
 
-            input.Builder.AppendLine(constants.Returning);
+            input.Builder.AppendLine(Constants.Returning);
             input.Builder.IncreaseIndent();
 
             var index = 0;
@@ -40,10 +34,10 @@ namespace decaf.db.common.ANSISQL
             {
                 var delimiter = string.Empty;
                 if (index < noOutputs)
-                    delimiter = constants.Seperator;
+                    delimiter = Constants.Seperator;
 
                 input.Builder.PrependIndent();
-                this.quotedIdentifierBuilder.AddOutput(o, input.Builder);
+                this.QuotedIdentifierBuilder.AddOutput(o, input.Builder);
 
                 if (delimiter.Length > 0)
                     input.Builder.Append(delimiter);
@@ -61,7 +55,7 @@ namespace decaf.db.common.ANSISQL
             input.Builder.IncreaseIndent();
 
             input.Builder.PrependIndent();
-            this.quotedIdentifierBuilder.AddFromTable(input.Context.Table, input.Builder);
+            this.QuotedIdentifierBuilder.AddFromTable(input.Context.Table, input.Builder);
             input.Builder.AppendLine();
 
             input.Builder.DecreaseIndent();

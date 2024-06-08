@@ -9,8 +9,6 @@ public class SqliteConnectionDetails :
     ConnectionDetails, 
     ISqliteConnectionDetails
 {
-    private const decimal DefaultVersion = 2;
-    
     private bool? createNew;
     private bool? inMemory;
     private string? fullUri;

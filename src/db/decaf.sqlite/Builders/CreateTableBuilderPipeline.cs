@@ -37,7 +37,7 @@ public class CreateTableBuilderPipeline : db.common.Builders.CreateTableBuilderP
             var type = typeParser.Parse(items[i].Type);
             if (items[i].Type == typeof(int) &&
                 items[i].Name == pk?.Name)
-                type = type += " primary key";
+                type += " primary key";
             
             if (i < lastItemIndex) delimiter = Constants.Seperator;
             input.Builder.AppendLine("{0} {1} {2}{3}", 

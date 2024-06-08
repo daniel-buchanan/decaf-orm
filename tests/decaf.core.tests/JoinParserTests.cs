@@ -76,9 +76,6 @@ namespace decaf.core_tests
             match.Left.Name.Should().Be(nameof(Address.Id));
             match.Left.Source.Alias.Should().Be("a");
         }
-
-        private static Expression GetExpression<T>(Expression<Func<T, bool>> expression)
-            => (Expression)expression;
     }
 }
 

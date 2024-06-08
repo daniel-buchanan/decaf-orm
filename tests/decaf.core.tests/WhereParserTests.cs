@@ -249,8 +249,8 @@ namespace decaf.core_tests
             }
         }
 
-        private static Expression GetExpression<T>(Expression<Func<T, bool>> expression)
-            => (Expression)expression;
+        private static Expression<Func<T, bool>> GetExpression<T>(Expression<Func<T, bool>> expression)
+            => expression;
     }
 }
 

@@ -10,7 +10,7 @@ namespace decaf.sqlite.tests
 {
 	public class SqliteValueParserTests
 	{
-		private readonly IValueParser parser;
+		private readonly ValueParser parser;
 
 		public SqliteValueParserTests()
 		{

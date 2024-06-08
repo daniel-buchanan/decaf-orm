@@ -102,9 +102,10 @@ namespace decaf.Implementation
             var isMethod = typeof(ISelectColumnBuilder).GetMethods().FirstOrDefault(m => m.IsGenericMethod && m.GetParameters().Count() == 2);
 
             if(isMethod == null)
-            {
                 throw new ShouldNeverOccurException("The method .Is<T>(column, alias) could not be found on `ISelectColumnBuilder`, this should never happen!");
-            }    
+
+            if (properties is null)
+                throw new ShouldNeverOccurException($"No public properties found for type {typeof(T).Name}.");
 
             foreach (var p in properties)
             {

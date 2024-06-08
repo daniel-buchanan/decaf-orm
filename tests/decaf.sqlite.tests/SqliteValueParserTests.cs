@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using decaf.common.Utilities.Reflection;
 using decaf.db.common;
 using FluentAssertions;
-using decaf.state.Utilities;
 using Xunit;
 
 namespace decaf.sqlite.tests

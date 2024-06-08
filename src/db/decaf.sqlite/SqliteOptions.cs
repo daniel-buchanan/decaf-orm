@@ -20,13 +20,13 @@ public class SqliteOptions : DatabaseOptions
         return new SqliteConnectionDetails(this);
     }
 
-    public string? DatabasePath { get; private set; }
+    public string? DatabasePath { get; }
     
-    public bool InMemory { get; private set; }
+    public bool InMemory { get; }
     
-    public bool CreateNew { get; private set; }
+    public bool CreateNew { get; }
 
-    public bool ReadOnly { get; private set; }
+    public bool ReadOnly { get; }
     
-    public bool ConstructConnectionFromOptions { get; private set; }
+    public bool ConstructConnectionFromOptions { get; }
 }

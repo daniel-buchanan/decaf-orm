@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using decaf.common;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,9 +29,11 @@ public class LiveTests
         var decaf = provider.GetService<IDecaf>();
         var d = decaf.Query()
             .CreateTable()
-            .Named("test")
-            .WithColumns(c => c.Named("Id").AsType<int>())
-            .WithPrimaryKey(c => c.Named("Id"));
+            .Named(nameof(TempTbl))
+            .WithColumns(
+                c => c.Named(nameof(TempTbl.Id)).AsType<int>(),
+                c => c.Named(nameof(TempTbl.Name)).AsType<string>())
+            .WithPrimaryKey(c => c.Named(nameof(TempTbl.Id)));
         var sql = d.GetSql();
         d.Execute();
     }
@@ -44,12 +47,8 @@ public class LiveTests
         // Act
         var items = decaf.Query()
             .Select()
-            .From("test", "t")
-            .Select(b => new
-            {
-                Id = b.Is<int>("Id", "t")
-            })
-            .Dynamic()
+            .From<TempTbl>(t=> t)
+            .SelectAll<TempTbl>(t => t)
             .ToList();
         
         // Assert
@@ -61,23 +60,75 @@ public class LiveTests
     {
         // Arrange
         var decaf = provider.GetService<IDecaf>();
-        var q = decaf.Query().Insert().Into("test", "t").Columns(b => new
+        decaf.Query()
+            .Insert()
+            .Into<TempTbl>()
+            .Columns(b => new
             {
-                Id = b.Is<int>()
+                Id = b.Id,
+                Name = b.Name
             })
-            .Value(new
-            {
-                Id = 1
-            });
-        q.Execute();
+            .Value(new TempTbl() { Id = 1, Name = "Bob" })
+            .Execute();
 
         // Act
-        var result = decaf.Query().Select().From("test", "t")
-            .Where(b => b.Column("Id", "t").Is().EqualTo(1))
-            .SelectDynamic(b => new { Id = b.Is<int>("Id", "t") })
+        var result = decaf.Query()
+            .Select()
+            .From<TempTbl>(t=> t)
+            .SelectAll<TempTbl>(t => t)
             .FirstOrDefault();
 
         // Assert
         Assert.Equal(1, result.Id);
     }
+    
+    [Theory]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    [InlineData(1000)]
+    public void InsertedNRowsReturned(int n)
+    {
+        // Arrange
+        var items = GenerateItemsToInsert(n);
+        var decaf = provider.GetService<IDecaf>();
+        decaf.Query()
+            .Insert()
+            .Into<TempTbl>()
+            .Columns(b => new
+            {
+                Id = b.Id,
+                Name = b.Name
+            })
+            .Values(items)
+            .Execute();
+
+        // Act
+        var result = decaf.Query()
+            .Select()
+            .From<TempTbl>(t=> t)
+            .SelectAll<TempTbl>(t => t)
+            .ToList();
+
+        // Assert
+        result.Should().HaveCount(n);
+    }
+
+    private static IEnumerable<TempTbl> GenerateItemsToInsert(int n)
+    {
+        for(var i = 0; i < n; i++)
+        {
+            yield return new TempTbl()
+            {
+                Id = i + 1,
+                Name = $"Name={i}"
+            };
+        }
+    }
+}
+
+class TempTbl
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
 }

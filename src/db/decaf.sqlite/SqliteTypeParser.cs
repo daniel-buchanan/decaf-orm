@@ -15,7 +15,8 @@ public class SqliteTypeParser : ITypeParser
     {
         if (type == typeof(string))
             return "text";
-        if (type == typeof(int))
+        if (type == typeof(int) ||
+            type == typeof(long))
             return "integer";
         if (type == typeof(decimal) ||
             type == typeof(float) ||

@@ -3,7 +3,7 @@
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("decaf")]
 namespace decaf.state
 {
-	internal static class QueryFrameworkExtensions
+	public static class QueryFrameworkExtensions
 	{
 		/// <summary>
         /// Create an <see cref="IQueryContext"/> from an <see cref="IQuery"/>.
@@ -29,6 +29,9 @@ namespace decaf.state
 
 			if (queryContextType.IsAssignableFrom(typeof(IUpdateQueryContext)))
 				return (T)UpdateQueryContext.Create(internalQuery.AliasManager, internalQuery.HashProvider);
+
+			if (queryContextType.IsAssignableFrom(typeof(ICreateTableQueryContext)))
+				return (T)CreateTableQueryContext.Create(internalQuery.AliasManager, internalQuery.HashProvider);
 
 			return default(T);
         }

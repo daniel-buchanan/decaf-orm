@@ -5,7 +5,7 @@ using decaf.common;
 
 namespace decaf.common
 {
-	internal interface IQueryContextInternal : IQueryContext
+	public interface IQueryContextExtended : IQueryContext
 	{
 		/// <summary>
         /// The <see cref="IExpressionHelper"/> which provides helper methods for
@@ -65,7 +65,7 @@ namespace decaf.common
         IQueryTarget GetQueryTarget(string alias);
     }
 
-    internal interface IQueryParsers
+    public interface IQueryParsers
     {
         IParser Join { get; }
 

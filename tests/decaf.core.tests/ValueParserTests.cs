@@ -40,7 +40,7 @@ namespace decaf.core_tests
             Func<T> getValue)
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
 
             // Act
@@ -70,7 +70,7 @@ namespace decaf.core_tests
             Func<T> getValue)
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
 
             // Act
             var result = this.parser.Parse(expression, context);
@@ -171,8 +171,8 @@ namespace decaf.core_tests
             }
         }
 
-        private static Expression GetExpression<T>(Expression<Func<T, bool>> expression)
-            => (Expression)expression;
+        private static Expression<Func<T, bool>> GetExpression<T>(Expression<Func<T, bool>> expression)
+            => expression;
     }
 }
 

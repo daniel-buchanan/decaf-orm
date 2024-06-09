@@ -11,7 +11,7 @@ using decaf.state.Utilities.Parsers;
 
 namespace decaf.state
 {
-    internal abstract class QueryContext : IQueryContextInternal
+    public abstract class QueryContext : IQueryContextExtended
     {
         private readonly IExpressionHelper expressionHelper;
         private readonly IReflectionHelper reflectionHelper;
@@ -52,26 +52,26 @@ namespace decaf.state
         public IReadOnlyCollection<IQueryTarget> QueryTargets => this.queryTargets;
 
         /// <inheritdoc/>
-        IExpressionHelper IQueryContextInternal.ExpressionHelper => this.expressionHelper;
+        IExpressionHelper IQueryContextExtended.ExpressionHelper => this.expressionHelper;
 
         /// <inheritdoc/>
-        IReflectionHelper IQueryContextInternal.ReflectionHelper => this.reflectionHelper;
+        IReflectionHelper IQueryContextExtended.ReflectionHelper => this.reflectionHelper;
 
         /// <inheritdoc/>
-        IQueryParsers IQueryContextInternal.Parsers => this.parserHolder;
+        IQueryParsers IQueryContextExtended.Parsers => this.parserHolder;
 
         /// <inheritdoc/>
-        IAliasManager IQueryContextInternal.AliasManager => this.aliasManager;
+        IAliasManager IQueryContextExtended.AliasManager => this.aliasManager;
 
         /// <inheritdoc/>
-        IDynamicExpressionHelper IQueryContextInternal.DynamicExpressionHelper => this.dynamicExpressionHelper;
+        IDynamicExpressionHelper IQueryContextExtended.DynamicExpressionHelper => this.dynamicExpressionHelper;
 
         /// <inheritdoc/>
-        void IQueryContextInternal.AddQueryTarget(IQueryTarget target)
+        void IQueryContextExtended.AddQueryTarget(IQueryTarget target)
             => this.queryTargets.Add(target);
 
         /// <inheritdoc/>
-        IQueryTarget IQueryContextInternal.GetQueryTarget(Expression expression)
+        IQueryTarget IQueryContextExtended.GetQueryTarget(Expression expression)
         {
             GetAliasAndTable(expression, out var alias, out var table);
             var managedAlias = this.aliasManager.FindByAssociation(table)?.FirstOrDefault()?.Name ?? alias;
@@ -81,15 +81,15 @@ namespace decaf.state
         }
 
         /// <inheritdoc/>
-        IQueryTarget IQueryContextInternal.GetQueryTarget(string alias)
+        IQueryTarget IQueryContextExtended.GetQueryTarget(string alias)
         {
             return this.queryTargets.FirstOrDefault(qt => qt.Alias == alias);
         }
 
         /// <inheritdoc/>
-        IQueryTarget IQueryContextInternal.AddQueryTarget(Expression expression)
+        IQueryTarget IQueryContextExtended.AddQueryTarget(Expression expression)
         {
-            var self = this as IQueryContextInternal;
+            var self = this as IQueryContextExtended;
             var existing = self.GetQueryTarget(expression);
             if (existing != null) return existing;
 

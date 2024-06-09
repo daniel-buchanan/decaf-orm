@@ -35,40 +35,40 @@ namespace decaf.Implementation
         /// <inheritdoc/>
         public IInsertInto Into(string table, string alias = null)
         {
-            var managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
-            var managedAlias = this.query.AliasManager.Add(alias, managedTable);
-            this.context.Into(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
+            var managedTable = this.Query.AliasManager.GetAssociation(alias) ?? table;
+            var managedAlias = this.Query.AliasManager.Add(alias, managedTable);
+            this.Context.Into(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
             return this;
         }
 
         /// <inheritdoc/>
         public IInsertInto<T> Into<T>()
         {
-            var table = this.context.Helpers().GetTableName<T>();
-            var alias = this.query.AliasManager.Add(null, table);
-            this.context.Into(state.QueryTargets.TableTarget.Create(table, alias));
+            var table = this.Context.Helpers().GetTableName<T>();
+            var alias = this.Query.AliasManager.Add(null, table);
+            this.Context.Into(state.QueryTargets.TableTarget.Create(table, alias));
 
-            return Insert<T>.Create(this.context, this.query);
+            return Insert<T>.Create(this.Context, this.Query);
         }
 
         /// <inheritdoc/>
         public IInsertInto<T> Into<T>(Expression<Func<T, object>> expression)
         {
-            var table = this.context.Helpers().GetTableName(expression);
-            var alias = this.context.Helpers().GetTableAlias(expression);
+            var table = this.Context.Helpers().GetTableName(expression);
+            var alias = this.Context.Helpers().GetTableAlias(expression);
 
-            var managedTable = this.query.AliasManager.GetAssociation(alias) ?? table;
-            var managedAlias = this.query.AliasManager.Add(alias, table);
+            var managedTable = this.Query.AliasManager.GetAssociation(alias) ?? table;
+            var managedAlias = this.Query.AliasManager.Add(alias, table);
 
-            this.context.Into(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
-            return Insert<T>.Create(this.context, this.query);
+            this.Context.Into(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
+            return Insert<T>.Create(this.Context, this.Query);
         }
 
         /// <inheritdoc/>
         public IInsertValues Output(string column)
         {
-            var col = state.Column.Create(column, this.context.Target);
-            this.context.Output(state.Output.Create(col, OutputSources.Inserted));
+            var col = state.Column.Create(column, this.Context.Target);
+            this.Context.Output(state.Output.Create(col, OutputSources.Inserted));
             return this;
         }
 

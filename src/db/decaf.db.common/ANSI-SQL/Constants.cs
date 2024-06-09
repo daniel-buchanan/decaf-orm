@@ -46,6 +46,7 @@ namespace decaf.db.common.ANSISQL
         public virtual string Values => "values";
 
         public virtual string Limit => "limit";
-    }
+        public virtual string ParameterPrefix => "@";
+	}
 }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using decaf.common.Options;
 using decaf.db.common;
 
@@ -11,7 +10,7 @@ namespace decaf.sqlserver
         /// 
         /// </summary>
         /// <param name="optionsBuilder"></param>
-        public static void UseNpgsql(this IDecafOptionsBuilder optionsBuilder)
+        public static void UseSqlServer(this IDecafOptionsBuilder optionsBuilder)
             => UseSqlServer(optionsBuilder, new SqlServerOptions());
 
         /// <summary>

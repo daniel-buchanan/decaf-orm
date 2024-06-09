@@ -6,7 +6,7 @@ using decaf.common.Utilities;
 [assembly:System.Runtime.CompilerServices.InternalsVisibleTo("decaf")]
 namespace decaf.common
 {
-	internal interface IQueryContainerInternal : IQueryContainer
+	public interface IQueryContainerInternal : IQueryContainer
 	{
 		/// <summary>
         /// Get the hash that represents this query.

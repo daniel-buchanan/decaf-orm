@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("decaf.state")]
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("decaf.core.tests")]
 namespace decaf.common.Utilities
 {
-    internal interface IAliasManager : IDisposable
+    public interface IAliasManager : IDisposable
     {
         /// <summary>
         /// Add an Alias, if none is provided one will be generated

@@ -1,7 +1,5 @@
-﻿using System;
-using decaf.common.Utilities;
+﻿using decaf.common.Templates;
 using decaf.state;
-using decaf.common.Templates;
 
 namespace decaf.db.common.Builders
 {
@@ -12,9 +10,9 @@ namespace decaf.db.common.Builders
         protected DeleteBuilderPipeline(
             DecafOptions options,
             IConstants constants,
-            IHashProvider hashProvider,
+            IParameterManager parameterManager,
             IWhereBuilder whereBuilder)
-            : base(options, constants, hashProvider)
+            : base(options, constants, parameterManager)
         {
             this.whereBuilder = whereBuilder;
 
@@ -25,7 +23,7 @@ namespace decaf.db.common.Builders
         }
 
         private void AddDelete(IPipelineStageInput<IDeleteQueryContext> input)
-            => input.Builder.AppendLine("{0} from", Constants.Delete);
+            => input.Builder.AppendLine("{0} from", Builders.Constants.Delete);
 
         protected abstract void AddTables(IPipelineStageInput<IDeleteQueryContext> input);
 

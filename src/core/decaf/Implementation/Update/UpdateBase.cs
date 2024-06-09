@@ -15,18 +15,18 @@ namespace decaf.Implementation
         protected UpdateBase(IQueryContainerInternal query, IUpdateQueryContext context)
             : base(query, context)
         {
-            this.query.SetContext(this.context);
+            this.Query.SetContext(this.Context);
         }
 
         protected void FromQuery(Action<ISelectWithAlias> queryBuilder)
         {
-            var context = SelectQueryContext.Create(this.query.AliasManager, this.query.HashProvider);
-            var query = this.query.UnitOfWork.GetQuery() as IQueryContainerInternal;
+            var context = SelectQueryContext.Create(this.Query.AliasManager, this.Query.HashProvider);
+            var query = this.Query.UnitOfWork.GetQuery() as IQueryContainerInternal;
             var select = Select.Create(context, query) as ISelectWithAlias;
 
             queryBuilder(select);
             var source = state.QueryTargets.SelectQueryTarget.Create(context, select.Alias);
-            this.context.From(source);
+            this.Context.From(source);
         }
 
         protected void SetValues<T>(IEnumerable<T> values)
@@ -36,7 +36,7 @@ namespace decaf.Implementation
 
         private void SetValues<T>(T value)
         {
-            var internalContext = this.context as IQueryContextInternal;
+            var internalContext = this.Context as IQueryContextExtended;
             var paramExpression = Expression.Parameter(typeof(T), "p");
             var constExpression = Expression.Constant(value);
             var valueExpression = Expression.Lambda(constExpression, paramExpression);
@@ -50,7 +50,7 @@ namespace decaf.Implementation
                 var p = props[i];
                 if (PropertyIsKey(value, p)) continue;
                 
-                var column = Column.Create(p.Name, this.context.Table);
+                var column = Column.Create(p.Name, this.Context.Table);
                 var v = p.Value;
                 var valueType = p.ValueType;
                 var defaultValue = DefaultValueHelper.Get(valueType);
@@ -59,7 +59,7 @@ namespace decaf.Implementation
                     continue;
 
                 var source = state.ValueSources.Update.StaticValueSource.Create(column, valueType, v);
-                this.context.Set(source);
+                this.Context.Set(source);
             }
         }
 

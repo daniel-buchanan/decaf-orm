@@ -29,7 +29,7 @@ namespace decaf.state
         /// <inheritdoc/>
         public void Update(ITableTarget target)
         {
-            var self = this as IQueryContextInternal;
+            var self = this as IQueryContextExtended;
             var existingTarget = self.QueryTargets.FirstOrDefault(q => q.Alias == target.Alias);
             if (existingTarget != null) return;
             self.AddQueryTarget(target);

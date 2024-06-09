@@ -1,9 +1,11 @@
 ﻿using System;
 using decaf.common;
 using decaf.common.Connections;
+using decaf.common.Templates;
 using decaf.db.common.Builders;
 using decaf.state;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace decaf.db.common
 {
@@ -15,12 +17,15 @@ namespace decaf.db.common
 			ConfigureService<ISqlFactory>(services, SqlFactory, ServiceLifetime.Singleton);
 			ConfigureService<IConnectionFactory>(services, ConnectionFactory);
 			ConfigureService<ITransactionFactory>(services, TransactionFactory);
+			ConfigureService<IParameterManager>(services, ParameterManager);
 
 			services.AddSingleton<IConnectionDetails>(options.GetConnectionDetails);
 			services.AddSingleton(options.GetType(), options);
 			services.AddSingleton<IDatabaseOptions>(options);
+			services.AddSingleton<IDatabaseOptionsExtensions>(options);
 
             ConfigureService<IValueParser>(services, ValueParser, ServiceLifetime.Singleton);
+            ConfigureService<ITypeParser>(services, TypeParser, ServiceLifetime.Singleton);
             ConfigureService<IConstants>(services, Constants, ServiceLifetime.Singleton);
             ConfigureService<IQuotedIdentifierBuilder>(services, QuotedIdentifierBuilder, ServiceLifetime.Singleton);
             ConfigureService<IWhereBuilder>(services, WhereBuilder, ServiceLifetime.Transient);
@@ -28,6 +33,7 @@ namespace decaf.db.common
             ConfigureService<IBuilderPipeline<IDeleteQueryContext>>(services, DeletePipeline, ServiceLifetime.Transient);
             ConfigureService<IBuilderPipeline<IInsertQueryContext>>(services, InsertPipeline, ServiceLifetime.Transient);
             ConfigureService<IBuilderPipeline<IUpdateQueryContext>>(services, UpdatePipeline, ServiceLifetime.Transient);
+	        ConfigureService<IBuilderPipeline<ICreateTableQueryContext>>(services, CreateTablePipeline, ServiceLifetime.Transient);
         }
 
 		/// <summary>
@@ -40,11 +46,13 @@ namespace decaf.db.common
 		/// <param name="instance">The instace for a <see cref="ServiceLifetime.Singleton"/> to be registered.</param>
 		private void ConfigureService<T>(
 			IServiceCollection services,
-			Func<Type> fetchType = null,
+			Func<Type> fetchType,
 			ServiceLifetime lifetime = ServiceLifetime.Scoped,
 			object instance = null)
 		{
             var implementationType = fetchType();
+            if(implementationType == null)
+	            return;
 
             ServiceDescriptor sd;
             if (lifetime == ServiceLifetime.Singleton && instance != null)
@@ -52,7 +60,7 @@ namespace decaf.db.common
             else
                 sd = new ServiceDescriptor(typeof(T), implementationType, lifetime);
 
-            services.Add(sd);
+            services.Replace(sd);
         }
 
 		/// <summary>
@@ -84,6 +92,12 @@ namespace decaf.db.common
 		/// </summary>
 		/// <returns></returns>
         protected abstract Type ValueParser();
+
+		/// <summary>
+		/// Get the type of the <see cref="ITypeParser" /> to configure.
+		/// </summary>
+		/// <returns></returns>
+		protected abstract Type TypeParser();
 
 		/// <summary>
 		/// Get the type of the <see cref="IConstants"/> to configure.
@@ -126,6 +140,18 @@ namespace decaf.db.common
         /// </summary>
         /// <returns></returns>
         protected abstract Type UpdatePipeline();
-    }
+
+        /// <summary>
+        /// Get the type of the <see cref="IParameterManager"/> to configure.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual Type ParameterManager() => typeof(ParameterManager);
+
+        protected abstract Type CreateTablePipeline();
+        
+        protected abstract Type AlterTablePipeline();
+        
+        protected abstract Type DropTablePipeline();
+	}
 }
 

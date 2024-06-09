@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using decaf;
 using decaf.common;
 using decaf.common.Connections;
+using decaf.sqlite;
 using decaf.tests.common.Mocks;
 using decaf.tests.common.Models;
 
@@ -13,7 +14,10 @@ services.AddDecaf(o =>
 {
     o.TrackUnitsOfWork()
         .OverrideDefaultLogLevel(LogLevel.Debug)
-        .UseMockDatabase();
+        .UseSqlite(o =>
+        {
+            o.InMemory();
+        });
 })
 .WithConnection<IConnectionDetails, MockConnectionDetails>();
 
@@ -24,6 +28,10 @@ Console.WriteLine("Hello, World!");
 var decaf = provider.GetService<IDecaf>();
 using (var q = decaf.Query())
 {
+    q.CreateTable()
+        .Named("users")
+        .WithColumns(c => c.Named("username").AsType<string>().IsNullable())
+        .WithPrimaryKey("users_idx", c => c.Named("id"));
     q.Select()
         .From("bob", "b")
         .Where(b =>

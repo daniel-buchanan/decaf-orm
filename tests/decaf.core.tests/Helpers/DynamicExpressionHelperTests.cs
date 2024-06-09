@@ -8,15 +8,14 @@ using decaf.common.Utilities.Reflection.Dynamic;
 using decaf.state;
 using decaf.tests.common.Models;
 using FluentAssertions;
-using decaf.state.Utilities;
 using Xunit;
 
 namespace decaf.core_tests.Helpers
 {
     public class DynamicExpressionHelperTests
     {
-        private readonly IDynamicExpressionHelper dynamicExpressionHelper;
-        private readonly IQueryContextInternal queryContext;
+        private readonly DynamicExpressionHelper dynamicExpressionHelper;
+        private readonly IQueryContextExtended queryContext;
 
         public DynamicExpressionHelperTests()
         {
@@ -26,7 +25,7 @@ namespace decaf.core_tests.Helpers
             var expressionHelper = new ExpressionHelper(reflectionHelper);
             var valueFunctionHelper = new ValueFunctionHelper(expressionHelper);
             this.dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, valueFunctionHelper);
-            this.queryContext = SelectQueryContext.Create(aliasManager, hashProvider) as IQueryContextInternal;
+            this.queryContext = SelectQueryContext.Create(aliasManager, hashProvider) as IQueryContextExtended;
         }
 
         [Fact]

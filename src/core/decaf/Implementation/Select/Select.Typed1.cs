@@ -28,20 +28,20 @@ namespace decaf.Implementation
         public ISelectFromTyped<T, T1> From<T1>()
         {
             AddFrom<T1>();
-            return SelectTyped<T, T1>.Create(this.context, this.query);
+            return SelectTyped<T, T1>.Create(Context, Query);
         }
 
         /// <inheritdoc/>
         public ISelectFromTyped<T, T1> From<T1>(Expression<Func<T1, T1>> expression)
         {
-            AddFrom<T1>(expression);
-            return SelectTyped<T, T1>.Create(this.context, this.query);
+            AddFrom(expression);
+            return SelectTyped<T, T1>.Create(Context, Query);
         }
 
         /// <inheritdoc/>
         public IGroupByThenTyped<T> GroupBy(Expression<Func<T, object>> builder)
         {
-            this.AddGroupBy(builder);
+            AddGroupBy(builder);
             return this;
         }
 
@@ -50,8 +50,8 @@ namespace decaf.Implementation
             Expression<Func<T, TDestination, bool>> joinExpression,
             JoinType type = JoinType.Default)
         {
-            this.AddJoin<T, TDestination>(joinExpression, type);
-            return SelectTyped<T, TDestination>.Create(this.context, this.query);
+            AddJoin<T, TDestination>(joinExpression, type);
+            return SelectTyped<T, TDestination>.Create(Context, Query);
         }
 
         /// <inheritdoc/>
@@ -60,8 +60,8 @@ namespace decaf.Implementation
             Expression<Func<T, TDestination, bool>> joinExpression,
             JoinType type = JoinType.Default)
         {
-            this.AddJoin<T, TDestination>(query, joinExpression, type);
-            return SelectTyped<T, TDestination>.Create(this.context, this.query);
+            AddJoin<T, TDestination>(query, joinExpression, type);
+            return SelectTyped<T, TDestination>.Create(Context, Query);
         }
 
         public ISelectFromTyped<T, TDestination> Join<TDestination>(Func<ISelectWithAlias, Expression<Func<T, TDestination, bool>>> query, JoinType type = JoinType.Default)
@@ -72,15 +72,15 @@ namespace decaf.Implementation
         /// <inheritdoc/>
         public IOrderByThenTyped<T> OrderBy(Expression<Func<T, object>> builder, SortOrder order = SortOrder.Ascending)
         {
-            this.AddOrderBy(builder, order);
+            AddOrderBy(builder, order);
             return this;
         }
 
         /// <inheritdoc/>
         public IExecute<TResult> SelectAll<TResult>(Expression<Func<TResult, object>> expression)
         {
-            base.AddAllColumns<TResult>(expression);
-            return Execute<TResult, ISelectQueryContext>.Create(this.query, this.context);
+            AddAllColumns(expression);
+            return Execute<TResult, ISelectQueryContext>.Create(Query, Context);
         }
 
         /// <inheritdoc/>
@@ -90,22 +90,22 @@ namespace decaf.Implementation
         /// <inheritdoc/>
         public IGroupByTyped<T> Where(Expression<Func<T, bool>> builder)
         {
-            this.AddWhere(builder);
+            AddWhere(builder);
             return this;
         }
 
         /// <inheritdoc/>
-        IExecuteDynamic ISelectColumnTyped<T>.Select(Expression<Func<T, dynamic>> expression)
+        IExecuteDynamic ISelectColumnTyped<T>.SelectDynamic(Expression<Func<T, dynamic>> expression)
         {
-            this.AddColumns(expression);
+            AddColumns(expression);
             return this;
         }
 
         /// <inheritdoc/>
         IExecute<TResult> ISelectColumnTyped<T>.Select<TResult>(Expression<Func<T, TResult>> expression)
         {
-            this.AddColumns(expression);
-            return Execute<TResult, ISelectQueryContext>.Create(this.query, this.context);
+            AddColumns(expression);
+            return Execute<TResult, ISelectQueryContext>.Create(Query, Context);
         }
 
         /// <inheritdoc/>

@@ -12,12 +12,12 @@ namespace decaf.state
 	{
 		public static IHelperExtensions Helpers(this IQueryContext context)
         {
-            var internalContext = (IQueryContextInternal)context;
+            var internalContext = (IQueryContextExtended)context;
 			return new HelperExtensions(internalContext);
         }
 
-        private static IQueryContextInternal ToInternal(this IQueryContext context)
-            => context as IQueryContextInternal;
+        private static IQueryContextExtended ToInternal(this IQueryContext context)
+            => context as IQueryContextExtended;
 
 		public static string GetTableName(
 			this IHelperExtensions self,

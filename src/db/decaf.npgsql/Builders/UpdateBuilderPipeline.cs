@@ -1,12 +1,6 @@
-﻿using System;
-using System.Linq;
-using decaf.common.Utilities;
+﻿using decaf.common.Templates;
 using decaf.db.common.Builders;
 using decaf.state;
-using decaf.common.Templates;
-using decaf.db.common;
-using decaf.Exceptions;
-using decaf.state.ValueSources.Update;
 
 namespace decaf.npgsql.Builders
 {
@@ -14,12 +8,12 @@ namespace decaf.npgsql.Builders
 	{
         public UpdateBuilderPipeline(
             DecafOptions options,
-            IHashProvider hashProvider,
+            IConstants constants,
+            IParameterManager parameterManager,
             db.common.Builders.IWhereBuilder whereBuilder,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
-            IBuilderPipeline<ISelectQueryContext> selectBuilder,
-            IConstants constants)
-            : base(options, hashProvider, whereBuilder, quotedIdentifierBuilder, selectBuilder, constants)
+            IBuilderPipeline<ISelectQueryContext> selectBuilder)
+            : base(options, constants, parameterManager, whereBuilder, quotedIdentifierBuilder, selectBuilder)
         {
         }
     }

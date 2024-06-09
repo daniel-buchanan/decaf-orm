@@ -9,7 +9,7 @@ namespace decaf.Implementation
     internal class Join : IJoinFrom, IJoinTo, IJoinConditions
     {
         private readonly ISelectFrom selectFrom;
-        private readonly IQueryContextInternal context;
+        private readonly IQueryContextExtended context;
         private readonly DecafOptions options;
         private readonly IQueryContainerInternal query;
         private readonly JoinType joinType;
@@ -25,7 +25,7 @@ namespace decaf.Implementation
             JoinType joinType)
         {
             this.selectFrom = selectFrom;
-            this.context = context as IQueryContextInternal;
+            this.context = context as IQueryContextExtended;
             this.options = options;
             this.query = query;
             this.joinType = joinType;

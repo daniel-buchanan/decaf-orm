@@ -23,7 +23,7 @@ namespace decaf.state.Utilities
             this.valueFunctionHelper = valueFunctionHelper;
         }
 
-        public IWhere ParseExpression(Expression expression, IQueryContextInternal context)
+        public IWhere ParseExpression(Expression expression, IQueryContextExtended context)
         {
             Expression expressionToParse;
             if (expression is LambdaExpression)
@@ -82,7 +82,7 @@ namespace decaf.state.Utilities
 
         private IWhere ParseBinaryExpression(
             Expression expression,
-            IQueryContextInternal context)
+            IQueryContextExtended context)
         {
             GetCallAndNonCallExpressions(
                 expression,
@@ -188,7 +188,7 @@ namespace decaf.state.Utilities
             }
         }
 
-        private IWhere ParseMethodAccessCall(Expression expression, IQueryContextInternal context)
+        private IWhere ParseMethodAccessCall(Expression expression, IQueryContextExtended context)
         {
             var callExpression = expression as MethodCallExpression;
             if (callExpression == null) return null;
@@ -204,7 +204,7 @@ namespace decaf.state.Utilities
             return result;
         }
 
-        private IWhere ParseVariableContainsAsValuesIn(MethodCallExpression call, IQueryContextInternal context)
+        private IWhere ParseVariableContainsAsValuesIn(MethodCallExpression call, IQueryContextExtended context)
         {
             var arg = call.Arguments[0];
             if (arg.NodeType != ExpressionType.MemberAccess) return null;

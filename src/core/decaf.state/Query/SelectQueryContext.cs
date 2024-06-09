@@ -64,7 +64,7 @@ namespace decaf.state
             var item = this.QueryTargets.FirstOrDefault(t => t.IsEquivalentTo(table));
             if (item != null) return;
 
-            var internalContext = this as IQueryContextInternal;
+            var internalContext = this as IQueryContextExtended;
             internalContext.AddQueryTarget(table);
         }
 

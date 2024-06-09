@@ -1,8 +1,6 @@
-﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("decaf.core.tests")]
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("decaf.state")]
-namespace decaf.common
+﻿namespace decaf.common
 {
-    internal class ManagedAlias
+    public class ManagedAlias
     {
         private ManagedAlias(string name, string relation)
         {

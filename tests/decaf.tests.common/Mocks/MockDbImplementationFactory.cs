@@ -29,8 +29,20 @@ namespace decaf.tests.common.Mocks
         protected override Type UpdatePipeline()
             => typeof(MockUpdatePipeline);
 
+        protected override Type CreateTablePipeline()
+            => null;
+
+        protected override Type AlterTablePipeline()
+            => null;
+
+        protected override Type DropTablePipeline()
+            => null;
+
         protected override Type ValueParser()
             => typeof(MockValueParser);
+
+        protected override Type TypeParser()
+            => typeof(MockTypeParser);
 
         protected override Type WhereBuilder()
             => typeof(MockWhereBuilder);

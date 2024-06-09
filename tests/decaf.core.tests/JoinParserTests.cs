@@ -37,7 +37,7 @@ namespace decaf.core_tests
         public void ParseSimpleJoinSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Person, Address, bool>> expression = (p, a) => p.AddressId == a.Id;
 
@@ -59,7 +59,7 @@ namespace decaf.core_tests
         public void ParseReverseSimpleJoinSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextInternal;
+            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Address, Person, bool>> expression = (a, p) => a.Id == p.AddressId;
 
@@ -76,9 +76,6 @@ namespace decaf.core_tests
             match.Left.Name.Should().Be(nameof(Address.Id));
             match.Left.Source.Alias.Should().Be("a");
         }
-
-        private static Expression GetExpression<T>(Expression<Func<T, bool>> expression)
-            => (Expression)expression;
     }
 }
 

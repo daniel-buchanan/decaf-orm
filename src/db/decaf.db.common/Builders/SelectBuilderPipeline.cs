@@ -1,4 +1,4 @@
-﻿using decaf.common.Utilities;
+﻿using decaf.common.Templates;
 using decaf.state;
 
 namespace decaf.db.common.Builders
@@ -10,9 +10,9 @@ namespace decaf.db.common.Builders
         protected SelectBuilderPipeline(
             DecafOptions options,
             IConstants constants,
-            IHashProvider hashProvider,
+            IParameterManager parameterManager,
             IWhereBuilder whereBuilder)
-            : base(options, constants, hashProvider)
+            : base(options, constants, parameterManager)
         {
             this.whereBuilder = whereBuilder;
 
@@ -33,7 +33,7 @@ namespace decaf.db.common.Builders
         protected abstract bool LimitBeforeGroupBy { get; }
 
         private void AddSelect(IPipelineStageInput<ISelectQueryContext> input)
-            => input.Builder.AppendLine(Constants.Select);
+            => input.Builder.AppendLine(Builders.Constants.Select);
 
         /// <summary>
         /// Add any selected columns to the query.

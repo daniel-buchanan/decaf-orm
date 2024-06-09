@@ -1,7 +1,5 @@
-﻿using System.Linq;
-using decaf.common.Utilities;
+﻿using decaf.common.Templates;
 using decaf.db.common.Builders;
-using decaf.state;
 
 namespace decaf.sqlserver.Builders
 {
@@ -9,11 +7,11 @@ namespace decaf.sqlserver.Builders
     {
         public DeleteBuilderPipeline(
             DecafOptions options,
-            IHashProvider hashProvider,
+            IConstants constants,
+            IParameterManager parameterManager,
             db.common.Builders.IWhereBuilder whereBuilder,
-            IQuotedIdentifierBuilder quotedIdentifierBuilder,
-            IConstants constants)
-            : base(options, hashProvider, whereBuilder, quotedIdentifierBuilder, constants)
+            IQuotedIdentifierBuilder quotedIdentifierBuilder)
+            : base(options, constants, parameterManager, whereBuilder, quotedIdentifierBuilder)
         {
         }
     }

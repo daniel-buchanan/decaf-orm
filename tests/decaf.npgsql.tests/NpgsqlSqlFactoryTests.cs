@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using decaf.common;
 using decaf.common.Connections;
+using decaf.common.Templates;
 using decaf.common.Utilities;
 using decaf.services;
 using decaf.tests.common.Mocks;
@@ -65,7 +66,7 @@ namespace decaf.npgsql.tests
             this.personService.Find(p => p.Email == "bob@bob.com");
 
             // Act
-            Action method = () => this.sqlFactory.ParseParameters(context, new common.Templates.SqlTemplate("", new List<common.Templates.SqlParameter>()));
+            Action method = () => this.sqlFactory.ParseParameters(context, new SqlTemplate("", new List<SqlParameter>()));
 
             // Assert
             method.Should().Throw<common.Exceptions.SqlTemplateMismatchException>();
@@ -84,11 +85,10 @@ namespace decaf.npgsql.tests
             var template = this.sqlFactory.ParseTemplate(context);
 
             // Act
-            var parameters = this.sqlFactory.ParseParameters(context, template);
+            var parameters = this.sqlFactory.ParseParameters(context, template, includePrefix: false);
 
             // Assert
-            var dict = parameters as DynamicDictionary;
-            dict.Should().BeEquivalentTo(DynamicDictionary.FromDictionary(new Dictionary<string, object>
+            parameters.Should().BeEquivalentTo(ParameterMapper.Map(new Dictionary<string, object>
             {
                 { "p1", "bob@bob.com" }
             }));
@@ -107,11 +107,10 @@ namespace decaf.npgsql.tests
             var template = this.sqlFactory.ParseTemplate(context);
 
             // Act
-            var parameters = this.sqlFactory.ParseParameters(context, template);
+            var parameters = this.sqlFactory.ParseParameters(context, template, includePrefix: false);
 
             // Assert
-            var dict = parameters as DynamicDictionary;
-            dict.Should().BeEquivalentTo(DynamicDictionary.FromDictionary(new Dictionary<string, object>
+            parameters.Should().BeEquivalentTo(ParameterMapper.Map(new Dictionary<string, object>
             {
                 { "p1", 42 },
                 { "p2", ".com" },
@@ -134,11 +133,10 @@ namespace decaf.npgsql.tests
             var template = this.sqlFactory.ParseTemplate(context);
 
             // Act
-            var parameters = this.sqlFactory.ParseParameters(context, template);
+            var parameters = this.sqlFactory.ParseParameters(context, template, includePrefix: false);
 
             // Assert
-            var dict = parameters as DynamicDictionary;
-            dict.Should().BeEquivalentTo(DynamicDictionary.FromDictionary(new Dictionary<string, object>
+            parameters.Should().BeEquivalentTo(ParameterMapper.Map(new Dictionary<string, object>
             {
                 { "p1", 1 },
                 { "p2", 2 },
@@ -159,11 +157,10 @@ namespace decaf.npgsql.tests
             var template = this.sqlFactory.ParseTemplate(context);
 
             // Act
-            var parameters = this.sqlFactory.ParseParameters(context, template);
+            var parameters = this.sqlFactory.ParseParameters(context, template, includePrefix: false);
 
             // Assert
-            var dict = parameters as DynamicDictionary;
-            dict.Should().BeEquivalentTo(DynamicDictionary.FromDictionary(new Dictionary<string, object>
+            parameters.Should().BeEquivalentTo(ParameterMapper.Map(new Dictionary<string, object>
             {
                 { "p1", "bob" }
             }));

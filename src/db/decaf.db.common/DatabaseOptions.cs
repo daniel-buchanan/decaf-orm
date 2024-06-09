@@ -3,7 +3,6 @@ using decaf.common.Connections;
 using decaf.db.common.Exceptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using decaf.common.Exceptions;
 
 namespace decaf.db.common
 {
@@ -20,6 +19,8 @@ namespace decaf.db.common
 
         /// <inheritdoc/>
         public bool QuotedIdentifiers { get; protected set; }
+        
+        public bool IncludeParameterPrefix { get; protected set; }
 
         /// <inheritdoc/>
         public IConnectionDetails GetConnectionDetails(IServiceProvider provider)

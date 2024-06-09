@@ -110,13 +110,23 @@ services.AddDecaf(o => {
 });
 ```
 
+Or, with SQLite:
+```csharp
+services.AddDecaf(o => {
+    o.UseSqlite(b => 
+        b.WithFilePath("/Users/dkb/Documents/mydb.db")
+         .AsReadOnly()
+    );
+});
+```
+
 ## Getting a Query
 [Return to Top](#decaf)  
 
-decaf's default configuration provides an `IUnitOfWorkFactory` factory which is added to the service provider by default.  
-Once you have an `IUnitOfWork` created from the `IUnitOfWorkFactory`, you can begin to query it. Each query is managed by itself and executed seperately.  
+decaf's default configuration provides an `IDecaf` factory which is added to the service provider by default.  
+Once you have an `IUnitOfWork` created from the `IDecaf`, you can begin to query it. Each query is managed by itself and executed seperately.  
 You may also, at configuration time call `InjectUnitOfWorkAsScoped` or `InjectUnitOfWork` to inject an `IUnitOfWork` instance
-into the pipeline either as scoped, or with whatever lifetime you require.
+into the pipeline either as scoped, or with whatever lifetime you require and using the default bound `IConnectionDetails`.
 
 > It is worth noting that it is the `IUnitOfWork` instance that controls the commit/rollback of the transaction which is associated with any queries created from it.
 
@@ -124,35 +134,85 @@ Once this is injected into your service, handler or other class it can be used i
 
 **Disposable:**
 ```csharp
-public class Example(IUnitOfWorkFactory factory)
+public class Example(IDecaf decaf)
 {
    public async Task DoStuff()
    {
-       using var uow = await factory.CreateAsync();
-       uow.WithCatch((ex) => Console.Error.WriteLine(ex.Message))
-        .Query(q => ...)
-        .PersistChanges();
+       using var unit = await decaf.BuildUnitAsync();
+       unit.OnException((ex) => Console.Error.WriteLine(ex.Message))
+           .Query(q => ...);
    }
 }
 ```
 
 > **Note:** In the disposable case *all* queries are executed on exit of the disposable scope.
+> The queries are executed in the order that they are provided. As such you do not need to call `PersistChanges()` or `PersistChangesAsync()`
 
 **Non-Disposable:**
 ```csharp
-public class Example(IUnitOfWorkFactory factory)
+public class Example(IDecaf decaf)
 {
    public async Task DoStuff()
    {
-       var uow = await factory.CreateAsync();
-       uow.WithCatch((ex) => Console.Error.WriteLine(ex.Message))
-        .Query(q => ...)
-        .PersistChanges();
+       var unit = await decaf.BuildUnitAsync();
+       unit.OnException((ex) => Console.Error.WriteLine(ex.Message))
+           .Query(q => ...)
+           .PersistChanges();
    }
 }
 ```
 
 > **Note:** using the "non-disposable" approach means that you need to call `PersistChanges` or `PersistChangesAsync` in order for any queries to be executed.
+
+## Error Handling
+There are several ways you can handle errors for the queries executed by decaf.  
+1. Using the provided `OnException` and `OnSuccess` methods - note there are also `async` versions of these methods.
+2. Manually wrapping the execution in a `try ... catch` 
+
+> **Note:** there is a relevant option in the decaf options (provided when adding to the `IServiceCollection`) which allows for commit exceptions to be swallowed.
+> If this is enabled then regardless of the behaviour of the `OnException` method, no exception will be thrown.
+
+
+### OnException
+The `OnException` and `OnExceptionAsync` methods provide a way to handle exceptions thrown by the query with your own error handling delegate.  
+There are in fact two versions of these methods:
+1. `OnException(Action<Exception> handler)`  
+   This takes a delegate (or lambda) which does... something with exception, it could just log it for example.  
+   It is worth noting with the usage of this method, is that any exceptions handled by your own delegate *will **not*** be re-thrown, so it is up to you to do anything you need to do.
+2. `OnException(Func<Exception, bool> handler)`  
+   This takes a function delegate (or lambda) which handles the exception **and** returns a `true` or `false` value.  
+   In this case, returning false is the same as using the above delegate which has no return type.  
+   If however, you return `true` from your handler, the exception will be re-thrown.
+
+**Example:**
+```csharp
+private void DoStuff()
+{
+    decaf.OnException(MyExceptionHandler);
+}
+
+private void MyExceptionHandler(Exception e)
+    => _logger.Error(e);
+```
+
+### OnSuccess
+The `OnSuccess`and `OnSuccessAsync` methods allow you to provide a delegate if you want to perform logic at the finish of the query.  
+This does not include any information from the query at this stage.
+ 
+**Example:**
+```csharp
+private void DoStuff()
+{
+    decaf.OnException(MyExceptionHandler)
+         .OnSuccess(MySuccessHandler);
+}
+
+private void MyExceptionHandler(Exception e)
+    => _logger.Error(e);
+
+private void MySuccessHandler()
+    => _logger.Information("query succeeded");
+```
 
 ## Creating a Simple Query
 [Return to Top](#decaf)  

@@ -6,6 +6,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <RootNamespace>decaf.playground</RootNamespace>
+    <LangVersion>12</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

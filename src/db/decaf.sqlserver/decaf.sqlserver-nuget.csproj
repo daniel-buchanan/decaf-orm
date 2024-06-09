@@ -8,6 +8,7 @@
     <PackageTags>ORM,SQL,Lite,SQL Server</PackageTags> 
     <Description>This package provides a SQL Server compliant implementation for decaf.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <LangVersion>12</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\"/>

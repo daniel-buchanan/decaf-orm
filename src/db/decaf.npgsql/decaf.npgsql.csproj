@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>decaf.npgsql</RootNamespace>
+    <LangVersion>12</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

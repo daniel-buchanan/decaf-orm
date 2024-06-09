@@ -8,6 +8,7 @@
     <PackageTags>ORM,SQL,Lite,Serilog</PackageTags> 
     <Description>This package enables the use of Serilog as the default logger for decaf</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <LangVersion>12</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\"/>

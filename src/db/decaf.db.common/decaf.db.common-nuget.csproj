@@ -8,6 +8,7 @@
     <PackageTags>ORM,SQL,Lite</PackageTags> 
     <Description>This package forms the core of the Decaf ORM Database Extensions.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <LangVersion>12</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\"/>

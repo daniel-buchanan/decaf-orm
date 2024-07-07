@@ -9,7 +9,6 @@ using Moq;
 using decaf.logging.serilog;
 using Serilog;
 using Xunit;
-using LoggerProxy = decaf.logging.serilog.LoggerProxy;
 using serilog_LoggerProxy = decaf.logging.serilog.LoggerProxy;
 
 namespace decaf.logging.tests;

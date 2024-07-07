@@ -1,13 +1,11 @@
 ﻿using System.Linq;
 using decaf.common;
 using decaf.common.Templates;
-using decaf.common.ValueFunctions;
 using decaf.db.common.Builders;
 using decaf.state.Conditionals;
 using StringContains = decaf.common.ValueFunctions.StringContains;
 using StringEndsWith = decaf.common.ValueFunctions.StringEndsWith;
 using StringStartsWith = decaf.common.ValueFunctions.StringStartsWith;
-using ValueFunctions = decaf.common.ValueFunctions;
 
 namespace decaf.db.common.ANSISQL
 {

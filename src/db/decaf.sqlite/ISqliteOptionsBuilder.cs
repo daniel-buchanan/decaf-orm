@@ -1,4 +1,3 @@
-using decaf.common.Options;
 using decaf.db.common;
 
 namespace decaf.sqlite;

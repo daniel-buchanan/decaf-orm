@@ -1,5 +1,4 @@
-﻿using System;
-namespace decaf.common
+﻿namespace decaf.common
 {
 	public interface IQueryTarget
     {

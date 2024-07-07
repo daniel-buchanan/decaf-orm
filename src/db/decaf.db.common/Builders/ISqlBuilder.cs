@@ -1,5 +1,4 @@
-﻿using System;
-namespace decaf.db.common.Builders
+﻿namespace decaf.db.common.Builders
 {
 	public interface ISqlBuilder
 	{

@@ -1,11 +1,7 @@
 using decaf.tests.common.Models;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using decaf.common;
-using decaf.state;
 using decaf.tests.common.Mocks;
-using decaf.db.common.ANSISQL;
 using Xunit;
 
 namespace decaf.services.tests.Query;

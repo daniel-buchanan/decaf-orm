@@ -1,6 +1,4 @@
-﻿using System;
-using decaf.common.Attributes;
-using decaf.state;
+﻿using decaf.common.Attributes;
 using decaf.common.Utilities.Reflection;
 
 namespace decaf.services
@@ -11,7 +9,7 @@ namespace decaf.services
     {
         protected Entity(string keyName)
         {
-            KeyMetadata = KeyMetadata<TKey>.Create(keyName);
+            KeyMetadata = services.KeyMetadata.Create<TKey>(keyName);
         }
 
         /// <inheritdoc/>
@@ -29,8 +27,8 @@ namespace decaf.services
         {
             KeyMetadata = new CompositeKey
             {
-                ComponentOne = KeyMetadata<TKey1>.Create(componentOne),
-                ComponentTwo = KeyMetadata<TKey2>.Create(componentTwo)
+                ComponentOne = services.KeyMetadata.Create<TKey1>(componentOne),
+                ComponentTwo = services.KeyMetadata.Create<TKey2>(componentTwo)
             };
         }
 
@@ -53,9 +51,9 @@ namespace decaf.services
         {
             KeyMetadata = new CompositeKeyTriple
             {
-                ComponentOne = KeyMetadata<TKey1>.Create(componentOne),
-                ComponentTwo = KeyMetadata<TKey2>.Create(componentTwo),
-                ComponentThree = KeyMetadata<TKey3>.Create(componentThree)
+                ComponentOne = services.KeyMetadata.Create<TKey1>(componentOne),
+                ComponentTwo = services.KeyMetadata.Create<TKey2>(componentTwo),
+                ComponentThree = services.KeyMetadata.Create<TKey3>(componentThree)
             };
         }
 

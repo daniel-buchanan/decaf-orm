@@ -2,7 +2,6 @@
 using decaf.common;
 using decaf.common.ValueFunctions;
 using decaf.state.Conditionals;
-using decaf.state;
 
 namespace decaf.Implementation
 {

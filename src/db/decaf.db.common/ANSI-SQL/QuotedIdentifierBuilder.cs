@@ -1,5 +1,4 @@
-﻿using System;
-using decaf.common;
+﻿using decaf.common;
 using decaf.db.common.Builders;
 using decaf.state;
 

@@ -10,7 +10,7 @@ namespace decaf.db.common.tests
 {
 	public class ParameterManagerTests
 	{
-		private readonly IParameterManager parameterManager;
+		private readonly ParameterManager parameterManager;
 
 		public ParameterManagerTests()
 		{

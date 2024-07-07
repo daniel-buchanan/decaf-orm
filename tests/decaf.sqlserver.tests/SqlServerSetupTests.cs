@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Reflection.Metadata;
 using decaf.common.Connections;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using decaf.tests.common.Models;
 using Xunit;
 
 namespace decaf.sqlserver.tests

@@ -1,6 +1,5 @@
 ﻿using System;
 using decaf.common.Options;
-using decaf.common;
 using decaf.db.common;
 
 namespace decaf.npgsql

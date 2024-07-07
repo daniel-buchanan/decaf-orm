@@ -5,7 +5,6 @@ using decaf.common.Connections;
 using decaf.common.Exceptions;
 using decaf.common.Logging;
 using decaf.common.Options;
-using decaf.common.Templates;
 using decaf.common.Utilities;
 using decaf.common.Utilities.Reflection;
 using Microsoft.Extensions.DependencyInjection;

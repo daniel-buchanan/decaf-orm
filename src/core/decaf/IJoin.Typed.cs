@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
 using decaf.state;
-using decaf.common;
 
 namespace decaf
 {

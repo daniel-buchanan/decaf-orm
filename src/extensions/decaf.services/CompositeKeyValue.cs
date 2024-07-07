@@ -1,5 +1,4 @@
-﻿using System;
-namespace decaf.services
+﻿namespace decaf.services
 {
     public static class CompositeKeyValue
     {

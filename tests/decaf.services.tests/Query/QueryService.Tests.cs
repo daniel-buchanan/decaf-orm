@@ -5,11 +5,8 @@ using decaf.state.Conditionals;
 using decaf.tests.common.Models;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using decaf.db.common.Builders;
 using decaf.tests.common.Mocks;
 using Xunit;
-using SelectBuilderPipeline = decaf.db.common.ANSISQL.SelectBuilderPipeline;
 
 namespace decaf.services.tests.Query
 {

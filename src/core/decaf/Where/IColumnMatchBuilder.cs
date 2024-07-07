@@ -1,5 +1,4 @@
-﻿using System;
-namespace decaf
+﻿namespace decaf
 {
     public interface IColumnMatchBuilder
     {

@@ -1,5 +1,4 @@
-﻿using System;
-namespace decaf.common.Connections
+﻿namespace decaf.common.Connections
 {
 	public enum ConnectionAuthenticationType
 	{

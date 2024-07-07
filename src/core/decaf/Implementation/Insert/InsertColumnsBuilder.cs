@@ -1,5 +1,4 @@
-﻿using System;
-namespace decaf.Implementation
+﻿namespace decaf.Implementation
 {
     public class InsertColumnBuilder : IInsertColumnBuilder
     {

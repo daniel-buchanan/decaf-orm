@@ -9,27 +9,26 @@ namespace decaf.services
         /// <param name="name">The name of the Key</param>
         /// <returns>A new instance of <see cref="KeyMetadata{T}"/> which implements <see cref="IKeyMetadata"/>.</returns>
         public static IKeyMetadata Create<T>(string name)
-            => KeyMetadata<T>.Create(name);
+            => new KeyMetadata<T>(name);
     }
 
     public class KeyMetadata<T> : IKeyMetadata
     {
-        private KeyMetadata(string name) => this.Name = name;
-
-        public KeyMetadata() { }
-
-        /// <summary>
-        /// Create a new instance of <see cref="KeyMetadata{T}"/>.
-        /// </summary>
-        /// <param name="name">The name of the Key</param>
-        /// <returns>A new instance of <see cref="KeyMetadata{T}"/> which implements <see cref="IKeyMetadata"/>.</returns>
-        public static IKeyMetadata Create(string name) => new KeyMetadata<T>(name);
+        internal KeyMetadata(string name)
+        {
+            if(string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(nameof(name), $"The {nameof(name)} argument MUST NOT be null or an empty string.");
+            this.Name = name;
+        }
 
         /// <inheritdoc/>
         public Type Type => typeof(T);
 
         /// <inheritdoc/>
         public string Name { get; set; }
+
+        public override string ToString()
+            => $"[{Type.Name}]{Name}";
     }
 }
 

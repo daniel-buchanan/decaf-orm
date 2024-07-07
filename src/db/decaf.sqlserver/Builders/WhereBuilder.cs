@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using decaf.db.common.Builders;
-using decaf.common;
-using decaf.state.Conditionals;
+﻿using decaf.db.common.Builders;
 
 namespace decaf.sqlserver.Builders
 {

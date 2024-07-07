@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using decaf.common.Connections;
 using decaf.common.Logging;
 using decaf.tests.common.Mocks;
 using FluentAssertions;
@@ -10,7 +9,7 @@ namespace decaf.core_tests.Connections
 {
     public class ConnectionTests
     {
-        private readonly IConnection connection;
+        private readonly MockConnection connection;
 
 
         public ConnectionTests()

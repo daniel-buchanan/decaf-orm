@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace decaf.tests.common.Models
+﻿namespace decaf.tests.common.Models
 {
     public class Result
     {

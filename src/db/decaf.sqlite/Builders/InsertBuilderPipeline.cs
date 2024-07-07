@@ -1,5 +1,4 @@
 using decaf.common.Templates;
-using decaf.common.Utilities;
 using decaf.db.common;
 using decaf.db.common.Builders;
 using decaf.state;

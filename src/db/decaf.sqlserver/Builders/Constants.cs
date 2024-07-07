@@ -1,5 +1,4 @@
-﻿using System;
-namespace decaf.sqlserver.Builders
+﻿namespace decaf.sqlserver.Builders
 {
 	public class Constants  : db.common.ANSISQL.Constants
 	{

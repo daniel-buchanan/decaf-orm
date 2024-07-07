@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using decaf.common;
 using decaf.common.Utilities;
 using decaf.Exceptions;
@@ -8,15 +7,10 @@ using decaf.Implementation;
 using decaf.state;
 using decaf.state.Conditionals;
 using FluentAssertions;
-using Moq;
-using decaf.common.Logging;
 using decaf.tests.common.Mocks;
 using Xunit;
-using decaf.services;
-using decaf.common.Connections;
 using decaf.common.Utilities.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using decaf.db.common;
 
 namespace decaf.core_tests
 {

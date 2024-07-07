@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using decaf.common.Utilities.Reflection.Dynamic;
 using Microsoft.CSharp.RuntimeBinder;
-using decaf.common;
 using decaf.common.Attributes;
 
 namespace decaf.common.Utilities.Reflection

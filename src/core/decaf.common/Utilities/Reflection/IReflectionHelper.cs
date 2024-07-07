@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Reflection;
 using decaf.common.Utilities.Reflection.Dynamic;
-using decaf.common;
 
 namespace decaf.common.Utilities.Reflection
 {

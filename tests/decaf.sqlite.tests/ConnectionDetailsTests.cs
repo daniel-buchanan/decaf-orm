@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using decaf.common.Connections;
 using decaf.common.Exceptions;
 using FluentAssertions;
 using Xunit;

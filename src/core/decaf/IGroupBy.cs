@@ -1,6 +1,4 @@
-﻿using decaf.common;
-
-namespace decaf
+﻿namespace decaf
 {
 	public interface IGroupBy : IOrderBy
 	{

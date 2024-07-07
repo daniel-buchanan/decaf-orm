@@ -1,7 +1,5 @@
-﻿using System;
-using decaf.tests.common.Models;
+﻿using decaf.tests.common.Models;
 using Xunit;
-using decaf.state;
 using FluentAssertions;
 using decaf.common.Utilities.Reflection;
 

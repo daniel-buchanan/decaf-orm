@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using decaf.common;
 using decaf.common.Utilities.Reflection.Dynamic;
-using decaf.state.Utilities;
 
 namespace decaf.state
 {

@@ -1,5 +1,4 @@
-﻿using System;
-using decaf.common.Templates;
+﻿using decaf.common.Templates;
 
 namespace decaf.common
 {

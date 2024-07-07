@@ -1,5 +1,4 @@
-﻿using System;
-using decaf.common;
+﻿using decaf.common;
 
 namespace decaf.state.QueryTargets
 {

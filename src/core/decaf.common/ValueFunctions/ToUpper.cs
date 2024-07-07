@@ -1,6 +1,4 @@
-﻿using decaf.common;
-
-namespace decaf.common.ValueFunctions
+﻿namespace decaf.common.ValueFunctions
 {
 	public class ToUpper : ValueFunction<string>
 	{

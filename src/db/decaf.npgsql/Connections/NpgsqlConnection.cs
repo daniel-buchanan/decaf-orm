@@ -1,8 +1,6 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using decaf.common.Connections;
 using decaf.common.Logging;
-using decaf.common;
 
 namespace decaf.npgsql
 {

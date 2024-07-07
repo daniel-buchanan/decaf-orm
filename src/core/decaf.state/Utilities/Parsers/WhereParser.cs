@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using decaf.common;
 using decaf.common.Utilities;
 using decaf.common.Utilities.Reflection;

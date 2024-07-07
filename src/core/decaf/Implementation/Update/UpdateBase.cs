@@ -6,7 +6,6 @@ using decaf.common;
 using decaf.common.Utilities.Reflection;
 using decaf.common.Utilities.Reflection.Dynamic;
 using decaf.state;
-using decaf.state.Utilities;
 
 namespace decaf.Implementation
 {

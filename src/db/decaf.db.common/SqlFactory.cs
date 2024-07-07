@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using decaf.common.Templates;
 using decaf.db.common.Builders;
 using decaf.state;

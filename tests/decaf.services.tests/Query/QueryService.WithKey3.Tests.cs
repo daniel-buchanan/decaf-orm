@@ -6,7 +6,6 @@ using decaf.tests.common.Models;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using decaf.tests.common.Mocks;
-using decaf.services;
 using Xunit;
 
 namespace decaf.services.tests.Query

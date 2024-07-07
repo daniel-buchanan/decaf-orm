@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
-using decaf.common.Connections;
 using decaf.tests.common.Mocks;
 using FluentAssertions;
-using decaf.common;
 using Xunit;
 
 namespace decaf.core_tests.Connections
 {
     public class ConnectionDetailsTests
     {
-        private readonly IConnectionDetails connectionDetails;
-
-        public ConnectionDetailsTests()
-        {
-            this.connectionDetails = new MockConnectionDetails();
-        }
+        private readonly MockConnectionDetails connectionDetails = new();
 
         [Fact]
         public void GetConnectionStringSucceeds()

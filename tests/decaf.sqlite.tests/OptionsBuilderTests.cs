@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using FluentAssertions;
-using System.Data;
 using decaf.common;
 using decaf.common.Connections;
 using decaf.common.Exceptions;

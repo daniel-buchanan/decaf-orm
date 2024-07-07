@@ -8,11 +8,7 @@ namespace decaf.core_tests.Helpers
 {
 	public class ReflectionHelperTests
 	{
-		private readonly IReflectionHelper reflectionHelper;
-		public ReflectionHelperTests()
-		{
-			this.reflectionHelper = new ReflectionHelper();
-		}
+		private readonly ReflectionHelper reflectionHelper = new();
 
 		[Fact]
 		public void GetPropertyValue_Dyanmic()

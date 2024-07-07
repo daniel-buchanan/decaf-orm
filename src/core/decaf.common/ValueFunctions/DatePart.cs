@@ -1,7 +1,4 @@
-﻿using System;
-using decaf.common;
-
-namespace decaf.common.ValueFunctions
+﻿namespace decaf.common.ValueFunctions
 {
 	public class DatePart : ValueFunction<int>
 	{

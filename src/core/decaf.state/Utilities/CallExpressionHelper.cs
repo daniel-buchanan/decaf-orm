@@ -6,7 +6,6 @@ using System.Reflection;
 using decaf.common;
 using decaf.common.Utilities.Reflection;
 using decaf.state.Conditionals;
-using decaf.common.ValueFunctions;
 
 namespace decaf.state.Utilities
 {

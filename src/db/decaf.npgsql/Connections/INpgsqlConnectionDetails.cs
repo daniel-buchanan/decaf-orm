@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using decaf.common.Connections;
-using decaf.common;
 
 namespace decaf.npgsql
 {

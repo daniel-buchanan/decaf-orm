@@ -1,5 +1,4 @@
 using System;
-using decaf.common;
 using decaf.common.Connections;
 using decaf.common.Logging;
 using decaf.tests.common.Mocks;

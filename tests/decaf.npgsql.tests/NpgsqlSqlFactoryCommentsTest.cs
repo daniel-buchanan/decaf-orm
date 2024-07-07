@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using decaf.common;
 using decaf.common.Connections;
 using decaf.services;
@@ -8,8 +6,6 @@ using decaf.tests.common.Mocks;
 using decaf.tests.common.Models;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using decaf.common.Utilities;
 using decaf.core_tests.Helpers;
 using Xunit;
 

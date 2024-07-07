@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using decaf.common.Connections;
-using decaf.common;
+﻿using decaf.common.Connections;
 
 namespace decaf.sqlserver
 {

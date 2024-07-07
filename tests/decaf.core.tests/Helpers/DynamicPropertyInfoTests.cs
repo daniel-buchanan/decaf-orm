@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using decaf.common;
 using decaf.common.Utilities.Reflection.Dynamic;
 using decaf.common.ValueFunctions;
 using decaf.tests.common.Models;
 using FluentAssertions;
-using decaf.state;
-using decaf.state.Utilities;
 using Xunit;
 
 namespace decaf.core_tests.Helpers

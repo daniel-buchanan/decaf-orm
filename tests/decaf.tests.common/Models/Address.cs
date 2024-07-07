@@ -1,5 +1,4 @@
-﻿using System;
-using decaf.services;
+﻿using decaf.services;
 
 namespace decaf.tests.common.Models
 {

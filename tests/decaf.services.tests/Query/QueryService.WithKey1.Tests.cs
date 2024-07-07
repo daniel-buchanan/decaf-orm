@@ -7,7 +7,6 @@ using decaf.tests.common.Models;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using decaf.tests.common.Mocks;
-using decaf.services;
 using Xunit;
 
 namespace decaf.services.tests.Query
@@ -141,7 +140,7 @@ namespace decaf.services.tests.Query
             };
 
             // Act
-            this.personService.Get(new[] { 42, 43 });
+            this.personService.Get(42, 43);
 
             // Assert
             context.Should().NotBeNull();

@@ -1,18 +1,12 @@
-﻿using System;
-using decaf.Implementation;
+﻿using decaf.Implementation;
 using FluentAssertions;
 using Xunit;
 
 namespace decaf.core_tests
 {
-	public class SelecColumnBuilderTests
+	public class SelectColumnBuilderTests
 	{
-        private readonly ISelectColumnBuilder builder;
-
-		public SelecColumnBuilderTests()
-		{
-			this.builder = new SelectColumnBuilder();
-		}
+        private readonly SelectColumnBuilder builder = new();
 
         [Fact]
 		public void IsReturnsNull()

@@ -5,13 +5,13 @@ namespace decaf.db.common.Builders
 {
     public abstract class SelectBuilderPipeline : BuilderPipeline<ISelectQueryContext>
 	{
-        private readonly IWhereBuilder whereBuilder;
+        private readonly db.common.Builders.IWhereBuilder whereBuilder;
 
         protected SelectBuilderPipeline(
             DecafOptions options,
             IConstants constants,
             IParameterManager parameterManager,
-            IWhereBuilder whereBuilder)
+            db.common.Builders.IWhereBuilder whereBuilder)
             : base(options, constants, parameterManager)
         {
             this.whereBuilder = whereBuilder;

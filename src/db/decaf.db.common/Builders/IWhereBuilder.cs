@@ -1,7 +1,5 @@
-﻿using System;
-using decaf.common;
+﻿using decaf.common;
 using decaf.common.Templates;
-using decaf.state;
 
 namespace decaf.db.common.Builders
 {

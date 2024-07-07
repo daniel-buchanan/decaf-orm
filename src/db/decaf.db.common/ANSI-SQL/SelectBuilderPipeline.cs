@@ -17,7 +17,7 @@ namespace decaf.db.common.ANSISQL
             IConstants constants,
             IParameterManager parameterManager,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
-            IWhereBuilder whereBuilder)
+            db.common.Builders.IWhereBuilder whereBuilder)
             : base(options, constants, parameterManager, whereBuilder)
         {
             this.WhereBuilder = whereBuilder;

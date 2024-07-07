@@ -12,7 +12,7 @@ To use SQLite:
 services.AddDecaf(o => o.UseSqlite(b => b.WithConnectionDetails(...)));
 ```  
 
-Ideally your `IConnectionDetails` would be injected already and you can re-use it, or coming from Configuration.
+Ideally your `IConnectionDetails` would be injected already so you don't need to use `WithConnectionDetails` or `WithConnectionString`.
 At present decaf does not support 'delayed resolution' of the `IConnectionDetails` and it will need to be passed in at the time you setup decaf.
 
 ### Status:

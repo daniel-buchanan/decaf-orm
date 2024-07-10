@@ -5,27 +5,23 @@ using decaf.state.Conditionals;
 using StringContains = decaf.common.ValueFunctions.StringContains;
 using StringEndsWith = decaf.common.ValueFunctions.StringEndsWith;
 using StringStartsWith = decaf.common.ValueFunctions.StringStartsWith;
-using IWhereBuilder = decaf.db.common.Builders.IWhereBuilder;
-using IQuotedIdentifierBuilder = decaf.db.common.Builders.IQuotedIdentifierBuilder;
-using IConstants = decaf.db.common.Builders.IConstants;
-using ISqlBuilder = decaf.db.common.Builders.ISqlBuilder;
 
 namespace decaf.db.common.ANSISQL
 {
-    public abstract class WhereBuilder : IWhereBuilder
+    public abstract class WhereBuilder : decaf.db.common.Builders.IWhereBuilder
     {
-        private readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
-        private readonly IConstants constants;
+        private readonly decaf.db.common.Builders.IQuotedIdentifierBuilder quotedIdentifierBuilder;
+        private readonly decaf.db.common.Builders.IConstants constants;
 
         protected WhereBuilder(
-            IQuotedIdentifierBuilder quotedIdentifierBuilder,
-            IConstants constants)
+            decaf.db.common.Builders.IQuotedIdentifierBuilder quotedIdentifierBuilder,
+            decaf.db.common.Builders.IConstants constants)
         {
             this.quotedIdentifierBuilder = quotedIdentifierBuilder;
             this.constants = constants;
         }
 
-        public void AddWhere(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        public void AddWhere(IWhere clause, decaf.db.common.Builders.ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             if (clause == null) return;
             sqlBuilder.AppendLine(constants.Where);
@@ -33,13 +29,13 @@ namespace decaf.db.common.ANSISQL
             AddWhere(clause, sqlBuilder, parameterManager, 0);
         }
 
-        public void AddJoin(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        public void AddJoin(IWhere clause, decaf.db.common.Builders.ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             if (clause == null) return;
             AddWhere(clause, sqlBuilder, parameterManager, 0);
         }
 
-        private void AddWhere(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
+        private void AddWhere(IWhere clause, decaf.db.common.Builders.ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
         {
             if (clause == null) return;
 
@@ -58,7 +54,7 @@ namespace decaf.db.common.ANSISQL
             sqlBuilder.AppendLine();
         }
 
-        private void AddClause(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        private void AddClause(IWhere clause, decaf.db.common.Builders.ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             sqlBuilder.PrependIndent();
             sqlBuilder.Append(constants.OpeningParen);
@@ -71,7 +67,7 @@ namespace decaf.db.common.ANSISQL
             sqlBuilder.Append(constants.ClosingParen);
         }
 
-        private void AddAndOrNot(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
+        private void AddAndOrNot(IWhere clause, decaf.db.common.Builders.ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
         {
             sqlBuilder.AppendLine(constants.OpeningParen);
 
@@ -84,7 +80,7 @@ namespace decaf.db.common.ANSISQL
             sqlBuilder.Append(constants.ClosingParen);
         }
 
-        private void AddAndOr(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
+        private void AddAndOr(IWhere clause, decaf.db.common.Builders.ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
         {
             string combinator = null;
             if (clause is And) combinator = constants.And;
@@ -107,7 +103,7 @@ namespace decaf.db.common.ANSISQL
             }
         }
 
-        private void AddNot(Not not, ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
+        private void AddNot(Not not, decaf.db.common.Builders.ISqlBuilder sqlBuilder, IParameterManager parameterManager, int level)
         {
             if (not == null) return;
             
@@ -118,7 +114,7 @@ namespace decaf.db.common.ANSISQL
             AddWhere(not.Item, sqlBuilder, parameterManager, level);
         }
 
-        private void AddColumn(IColumn column, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        private void AddColumn(IColumn column, decaf.db.common.Builders.ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             if(column.ValueFunction is StringContains ||
                column.ValueFunction is StringStartsWith ||
@@ -135,7 +131,7 @@ namespace decaf.db.common.ANSISQL
             sqlBuilder.Append(parameter.Name);
         }
 
-        private void AddLike(IColumn column, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        private void AddLike(IColumn column, decaf.db.common.Builders.ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             string value, format;
 
@@ -167,7 +163,7 @@ namespace decaf.db.common.ANSISQL
             sqlBuilder.Append(constants.ValueQuote);
         }
 
-        private void AddColumnMatch(ColumnMatch columnMatch, ISqlBuilder sqlBuilder)
+        private void AddColumnMatch(ColumnMatch columnMatch, decaf.db.common.Builders.ISqlBuilder sqlBuilder)
         {
             quotedIdentifierBuilder.AddColumn(columnMatch.Left, sqlBuilder);
 
@@ -177,7 +173,7 @@ namespace decaf.db.common.ANSISQL
             quotedIdentifierBuilder.AddColumn(columnMatch.Right, sqlBuilder);
         }
 
-        private void AddBetween(IBetween between, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        private void AddBetween(IBetween between, decaf.db.common.Builders.ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             var startParam = parameterManager.Add(ParameterWrapper.Create(between, "start"), between.Start);
             var endParam = parameterManager.Add(ParameterWrapper.Create(between, "end"), between.End);
@@ -186,7 +182,7 @@ namespace decaf.db.common.ANSISQL
             sqlBuilder.Append(" between {0} and {1}", startParam.Name, endParam.Name);
         }
 
-        private void AddInValues(IInValues inValues, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
+        private void AddInValues(IInValues inValues, decaf.db.common.Builders.ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
             quotedIdentifierBuilder.AddColumn(inValues.Column, sqlBuilder);
             sqlBuilder.AppendLine(" in {0}", constants.OpeningParen);

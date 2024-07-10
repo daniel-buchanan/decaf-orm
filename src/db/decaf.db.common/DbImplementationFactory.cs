@@ -28,7 +28,7 @@ namespace decaf.db.common
             ConfigureService<ITypeParser>(services, TypeParser, ServiceLifetime.Singleton);
             ConfigureService<IConstants>(services, Constants, ServiceLifetime.Singleton);
             ConfigureService<IQuotedIdentifierBuilder>(services, QuotedIdentifierBuilder, ServiceLifetime.Singleton);
-            ConfigureService<IWhereBuilder>(services, WhereBuilder, ServiceLifetime.Transient);
+            ConfigureService<IWhereClauseBuilder>(services, WhereBuilder, ServiceLifetime.Transient);
             ConfigureService<IBuilderPipeline<ISelectQueryContext>>(services, SelectPipeline, ServiceLifetime.Transient);
             ConfigureService<IBuilderPipeline<IDeleteQueryContext>>(services, DeletePipeline, ServiceLifetime.Transient);
             ConfigureService<IBuilderPipeline<IInsertQueryContext>>(services, InsertPipeline, ServiceLifetime.Transient);

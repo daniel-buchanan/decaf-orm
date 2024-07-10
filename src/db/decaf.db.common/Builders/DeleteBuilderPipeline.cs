@@ -5,13 +5,13 @@ namespace decaf.db.common.Builders
 {
 	public abstract class DeleteBuilderPipeline : BuilderPipeline<IDeleteQueryContext>
 	{
-        private readonly IWhereBuilder whereBuilder;
+        private readonly IWhereClauseBuilder whereBuilder;
 
         protected DeleteBuilderPipeline(
             DecafOptions options,
             IConstants constants,
             IParameterManager parameterManager,
-            IWhereBuilder whereBuilder)
+            IWhereClauseBuilder whereBuilder)
             : base(options, constants, parameterManager)
         {
             this.whereBuilder = whereBuilder;

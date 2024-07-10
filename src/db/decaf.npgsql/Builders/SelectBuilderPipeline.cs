@@ -12,7 +12,7 @@ namespace decaf.npgsql.Builders
             IConstants constants,
             IParameterManager parameterManager,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
-            db.common.Builders.IWhereBuilder whereBuilder)
+            IWhereClauseBuilder whereBuilder)
             : base(options, constants, parameterManager, quotedIdentifierBuilder, whereBuilder)
         {
         }

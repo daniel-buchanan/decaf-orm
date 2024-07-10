@@ -3,7 +3,7 @@ using decaf.common.Templates;
 
 namespace decaf.db.common.Builders
 {
-	public interface IWhereBuilder
+	public interface IWhereClauseBuilder
 	{
 		void AddWhere(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager);
 		void AddJoin(IWhere clause, ISqlBuilder sqlBuilder, IParameterManager parameterManager);

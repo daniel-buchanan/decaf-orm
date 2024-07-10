@@ -9,7 +9,7 @@ namespace decaf.db.common.ANSISQL
 {
 	public class UpdateBuilderPipeline : db.common.Builders.UpdateBuilderPipeline
 	{
-        protected readonly IWhereBuilder WhereBuilder;
+        protected readonly IWhereClauseBuilder WhereBuilder;
         protected readonly IQuotedIdentifierBuilder QuotedIdentifierBuilder;
         protected readonly IBuilderPipeline<ISelectQueryContext> SelectBuilder;
 
@@ -17,7 +17,7 @@ namespace decaf.db.common.ANSISQL
             DecafOptions options,
             IConstants constants,
             IParameterManager parameterManager,
-            IWhereBuilder whereBuilder,
+            IWhereClauseBuilder whereBuilder,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
             IBuilderPipeline<ISelectQueryContext> selectBuilder)
             : base(options, constants, parameterManager)

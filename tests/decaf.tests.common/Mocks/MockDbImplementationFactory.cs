@@ -45,6 +45,6 @@ namespace decaf.tests.common.Mocks
             => typeof(MockTypeParser);
 
         protected override Type WhereBuilder()
-            => typeof(MockWhereBuilder);
+            => typeof(MockWhereClauseBuilder);
     }
 }

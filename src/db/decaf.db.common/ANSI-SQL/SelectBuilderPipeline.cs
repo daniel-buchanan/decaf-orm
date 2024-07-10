@@ -8,7 +8,7 @@ namespace decaf.db.common.ANSISQL
     public class SelectBuilderPipeline : db.common.Builders.SelectBuilderPipeline
     {
         protected readonly IQuotedIdentifierBuilder QuotedIdentifierBuilder;
-        protected readonly IWhereBuilder WhereBuilder;
+        protected readonly IWhereClauseBuilder WhereBuilder;
 
         protected override bool LimitBeforeGroupBy => false;
 
@@ -17,7 +17,7 @@ namespace decaf.db.common.ANSISQL
             IConstants constants,
             IParameterManager parameterManager,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
-            IWhereBuilder whereBuilder)
+            IWhereClauseBuilder whereBuilder)
             : base(options, constants, parameterManager, whereBuilder)
         {
             WhereBuilder = whereBuilder;

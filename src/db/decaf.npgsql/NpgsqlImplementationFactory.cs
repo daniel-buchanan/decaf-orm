@@ -52,7 +52,7 @@ namespace decaf.npgsql
 
         /// <inheritdoc/>
         protected override Type WhereBuilder()
-            => typeof(Builders.WhereBuilder);
+            => typeof(Builders.WhereClauseBuilder);
     }
 }
 

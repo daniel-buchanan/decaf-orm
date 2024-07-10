@@ -10,7 +10,7 @@ namespace decaf.sqlite.Builders
             DecafOptions options,
             IConstants constants,
             IParameterManager parameterManager,
-            db.common.Builders.IWhereBuilder whereBuilder,
+            IWhereClauseBuilder whereBuilder,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
             IBuilderPipeline<ISelectQueryContext> selectBuilder)
             : base(options, constants, parameterManager, whereBuilder, quotedIdentifierBuilder, selectBuilder)

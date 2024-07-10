@@ -13,7 +13,7 @@ namespace decaf.db.common.ANSISQL
             DecafOptions options,
             IConstants constants,
             IParameterManager parameterManager,
-            IWhereBuilder whereBuilder,
+            IWhereClauseBuilder whereBuilder,
             IQuotedIdentifierBuilder quotedIdentifierBuilder)
             : base(options, constants, parameterManager, whereBuilder)
         {

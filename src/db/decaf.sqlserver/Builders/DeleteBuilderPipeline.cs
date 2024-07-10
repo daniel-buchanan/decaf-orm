@@ -9,7 +9,7 @@ namespace decaf.sqlserver.Builders
             DecafOptions options,
             IConstants constants,
             IParameterManager parameterManager,
-            db.common.Builders.IWhereBuilder whereBuilder,
+            IWhereClauseBuilder whereBuilder,
             IQuotedIdentifierBuilder quotedIdentifierBuilder)
             : base(options, constants, parameterManager, whereBuilder, quotedIdentifierBuilder)
         {

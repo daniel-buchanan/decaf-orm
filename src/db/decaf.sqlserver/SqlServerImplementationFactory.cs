@@ -54,7 +54,7 @@ namespace decaf.sqlserver
 
             /// <inheritdoc/>
             protected override Type WhereBuilder()
-                => typeof(Builders.WhereBuilder);
+                => typeof(Builders.WhereClauseBuilder);
 
             /// <inheritdoc/>
             protected override Type Constants()

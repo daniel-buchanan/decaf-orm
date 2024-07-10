@@ -1,11 +1,14 @@
 ﻿using System.Linq;
 using decaf.common;
 using decaf.common.Templates;
-using decaf.db.common.Builders;
 using decaf.state.Conditionals;
 using StringContains = decaf.common.ValueFunctions.StringContains;
 using StringEndsWith = decaf.common.ValueFunctions.StringEndsWith;
 using StringStartsWith = decaf.common.ValueFunctions.StringStartsWith;
+using IWhereBuilder = decaf.db.common.Builders.IWhereBuilder;
+using IQuotedIdentifierBuilder = decaf.db.common.Builders.IQuotedIdentifierBuilder;
+using IConstants = decaf.db.common.Builders.IConstants;
+using ISqlBuilder = decaf.db.common.Builders.ISqlBuilder;
 
 namespace decaf.db.common.ANSISQL
 {

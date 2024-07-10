@@ -22,8 +22,8 @@ namespace decaf.services
             Func<IUnitOfWork, IExecutionNotifiable> createQuery,
             Func<IUnitOfWork, IExecutionNotifiable> createCommand)
         {
-            this.query = createQuery(unitOfWork);
-            this.command = createCommand(unitOfWork);
+            query = createQuery(unitOfWork);
+            command = createCommand(unitOfWork);
         }
 
         /// <inheritdoc/>
@@ -31,20 +31,20 @@ namespace decaf.services
         {
             add
             {
-                this.query.OnBeforeExecution += value;
-                this.command.OnBeforeExecution += value;
+                query.OnBeforeExecution += value;
+                command.OnBeforeExecution += value;
             }
 
             remove
             {
-                this.query.OnBeforeExecution -= value;
-                this.command.OnBeforeExecution -= value;
+                query.OnBeforeExecution -= value;
+                command.OnBeforeExecution -= value;
             }
         }
 
-        protected T GetQuery<T>() where T : IQuery => (T)this.query;
+        protected T GetQuery<T>() where T : IQuery => (T)query;
 
-        protected T GetCommand<T>() where T : ICommand => (T)this.command;
+        protected T GetCommand<T>() where T : ICommand => (T)command;
     }
 }
 

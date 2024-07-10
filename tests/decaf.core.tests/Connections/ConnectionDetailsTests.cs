@@ -14,7 +14,7 @@ namespace decaf.core_tests.Connections
         public void GetConnectionStringSucceeds()
         {
             // Act
-            Action method = () => this.connectionDetails.GetConnectionString();
+            Action method = () => connectionDetails.GetConnectionString();
 
             // Assert
             method.Should().NotThrow<Exception>();
@@ -24,7 +24,7 @@ namespace decaf.core_tests.Connections
         public async Task GetConnectionStringAsyncSucceeds()
         {
             // Act
-            Func<Task<string>> method = () => this.connectionDetails.GetConnectionStringAsync();
+            Func<Task<string>> method = () => connectionDetails.GetConnectionStringAsync();
 
             // Assert
             await method.Should().NotThrowAsync<Exception>();

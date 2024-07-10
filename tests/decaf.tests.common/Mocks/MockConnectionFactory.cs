@@ -11,7 +11,7 @@ namespace decaf.tests.common.Mocks
         private readonly MockDatabaseOptions dbOptions;
 
         public MockConnectionFactory(IDatabaseOptions options, ILoggerProxy logger) : base(logger)
-            => this.dbOptions = options as MockDatabaseOptions ?? new MockDatabaseOptions();
+            => dbOptions = options as MockDatabaseOptions ?? new MockDatabaseOptions();
 
         protected override Task<IConnection> ConstructConnectionAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default)
         {

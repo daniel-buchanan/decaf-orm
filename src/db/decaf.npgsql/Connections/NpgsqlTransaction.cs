@@ -25,12 +25,12 @@ namespace decaf.npgsql
         /// <exception cref="InvalidConnectionException"></exception>
         public override IDbTransaction GetUnderlyingTransaction()
         {
-            var npgsqlConnection = this.connection as NpgsqlConnection;
+            var npgsqlConnection = connection as NpgsqlConnection;
             if (npgsqlConnection == null)
-                throw new InvalidConnectionException($"The provided connection for Transaction {this.Id} is not of the type \"NpgsqlConnection\"");
+                throw new InvalidConnectionException($"The provided connection for Transaction {Id} is not of the type \"NpgsqlConnection\"");
 
             return npgsqlConnection.GetUnderlyingConnection()
-                .BeginTransaction(this.npgsqlOptions.TransactionIsolationLevel);
+                .BeginTransaction(npgsqlOptions.TransactionIsolationLevel);
         }
     }
 }

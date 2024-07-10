@@ -126,7 +126,7 @@ namespace decaf.services
             var numKeys = keyList.Count;
             if (numKeys == 0) return Enumerable.Empty<TEntity>();
 
-            var t = this.GetUnitOfWork();
+            var t = GetUnitOfWork();
             const int take = 100;
             var skip = 0;
             var results = new List<TEntity>();
@@ -153,7 +153,7 @@ namespace decaf.services
                 skip += take;
             } while (skip < numKeys);
 
-            if (this.disposeOnExit) t.Dispose();
+            if (disposeOnExit) t.Dispose();
 
             return results;
         }

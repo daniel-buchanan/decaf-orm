@@ -13,8 +13,8 @@ namespace decaf.state
         private UpdateQueryContext(IAliasManager aliasManager, IHashProvider hashProvider)
             : base(aliasManager, QueryTypes.Update, hashProvider)
         {
-            this.sets = new List<IUpdateValueSource>();
-            this.outputs = new List<Output>();
+            sets = new List<IUpdateValueSource>();
+            outputs = new List<Output>();
         }
 
         /// <summary>
@@ -41,16 +41,16 @@ namespace decaf.state
         public void Where(IWhere where) => WhereClause = where;
 
         /// <inheritdoc/>
-        public void Output(Output output) => this.outputs.Add(output);
+        public void Output(Output output) => outputs.Add(output);
 
         /// <inheritdoc/>
-        public void Set(IUpdateValueSource value) => this.sets.Add(value);
+        public void Set(IUpdateValueSource value) => sets.Add(value);
 
         /// <inheritdoc/>
         public ITableTarget Table => QueryTargets.FirstOrDefault() as ITableTarget;
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<IUpdateValueSource> Updates => this.sets.AsReadOnly();
+        public IReadOnlyCollection<IUpdateValueSource> Updates => sets.AsReadOnly();
 
         /// <inheritdoc/>
         public IQueryTarget Source { get; private set; }
@@ -59,7 +59,7 @@ namespace decaf.state
         public IWhere WhereClause { get; private set; }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<Output> Outputs => this.outputs.AsReadOnly();
+        public IReadOnlyCollection<Output> Outputs => outputs.AsReadOnly();
     }
 }
 

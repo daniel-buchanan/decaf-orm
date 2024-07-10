@@ -29,21 +29,21 @@ namespace decaf.core_tests
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetService<IDecaf>();
             var transient = decaf.BuildUnit();
-            this.query = transient.GetQuery() as IQueryContainerInternal;
+            query = transient.GetQuery() as IQueryContainerInternal;
         }
 
         [Fact]
         public void SimpleDeleteSucceeds()
         {
             // Act
-            this.query
+            query
                 .Delete()
                 .From<Person>(p => p)
                 .Where(p => p.LastName.Contains("smith"))
                 .Output(p => p.Id);
 
             // Assert
-            var context = this.query.Context as IDeleteQueryContext;
+            var context = query.Context as IDeleteQueryContext;
             context.QueryTargets.Should().HaveCount(1);
             var where = context.WhereClause as IColumn;
             where.Should().NotBeNull();
@@ -56,13 +56,13 @@ namespace decaf.core_tests
         public void SimpleDeleteWithoutAliasSucceeds()
         {
             // Act
-            this.query
+            query
                 .Delete()
                 .From<Person>()
                 .Where(p => p.LastName.Contains("smith"));
 
             // Assert
-            var context = this.query.Context as IDeleteQueryContext;
+            var context = query.Context as IDeleteQueryContext;
             context.QueryTargets.Should().HaveCount(1);
             var where = context.WhereClause as IColumn;
             where.Should().NotBeNull();
@@ -75,16 +75,16 @@ namespace decaf.core_tests
         public void SimpleDeleteUnTypedSucceeds()
         {
             // Act
-            this.query
+            query
                 .Delete()
                 .From("person", "p")
                 .Where(b => b.Column("last_name", "p").Is().Like("smith"))
                 .Output("id");
 
             // Assert
-            var context = this.query.Context as IDeleteQueryContext;
+            var context = query.Context as IDeleteQueryContext;
             context.QueryTargets.Should().HaveCount(1);
-            var where = context.WhereClause as state.Conditionals.IColumn;
+            var where = context.WhereClause as IColumn;
             where.Should().NotBeNull();
             where.Details.Name.Should().Be("last_name");
             where.Details.Source.Alias.Should().Be("p");

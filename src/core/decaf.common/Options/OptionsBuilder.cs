@@ -15,7 +15,7 @@ namespace decaf.common.Options
         public OptionsBuilder()
         {
             var reflectionHelper = new ReflectionHelper();
-            this.expressionHelper = new ExpressionHelper(reflectionHelper);
+            expressionHelper = new ExpressionHelper(reflectionHelper);
         }
 
         /// <inheritdoc/>
@@ -51,7 +51,7 @@ namespace decaf.common.Options
         /// <param name="property">The property to configure.</param>
         /// <param name="value">The value to set the property to.</param>
         protected void ConfigureProperty<TValue>(string property, TValue value)
-            => this.values.Add(property, value);
+            => values.Add(property, value);
     }
 }
 

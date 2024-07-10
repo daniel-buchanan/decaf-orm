@@ -20,9 +20,9 @@ public class SqliteTransaction : Transaction
 
     public override IDbTransaction GetUnderlyingTransaction()
     {
-        var sqliteConnection = this.connection as SqliteConnection;
+        var sqliteConnection = connection as SqliteConnection;
         if (sqliteConnection == null)
-            throw new InvalidConnectionException($"The provided connection for Transaction {this.Id} is not of the type \"SQLiteConnection\"");
+            throw new InvalidConnectionException($"The provided connection for Transaction {Id} is not of the type \"SQLiteConnection\"");
 
         if (currentTransaction is not null)
             return currentTransaction;

@@ -15,8 +15,8 @@ public class CreateTable : Execute<ICreateTableQueryContext>, ICreateTable
         IQueryContainerInternal query) :
         base(query, context)
     {
-        this.Context = context;
-        this.Query.SetContext(this.Context);
+        Context = context;
+        Query.SetContext(Context);
     }
 
     public static CreateTable Create(

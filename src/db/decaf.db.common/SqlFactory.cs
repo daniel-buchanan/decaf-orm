@@ -31,38 +31,38 @@ namespace decaf.db.common
 
         /// <inheritdoc/>
         protected override IDictionary<string, object> ParseParameters(IInsertQueryContext context, bool includePrefix)
-            => this.insertBuilder.GetParameterValues(context, includePrefix);
+            => insertBuilder.GetParameterValues(context, includePrefix);
 
         /// <inheritdoc/>
         protected override IDictionary<string, object> ParseParameters(IDeleteQueryContext context, bool includePrefix)
-            => this.deleteBuilder.GetParameterValues(context, includePrefix);
+            => deleteBuilder.GetParameterValues(context, includePrefix);
 
         /// <inheritdoc/>
         protected override IDictionary<string, object> ParseParameters(IUpdateQueryContext context, bool includePrefix)
-            => this.updateBuilder.GetParameterValues(context, includePrefix);
+            => updateBuilder.GetParameterValues(context, includePrefix);
 
         /// <inheritdoc/>
         protected override IDictionary<string, object> ParseParameters(ISelectQueryContext context, bool includePrefix)
-            => this.selectBuilder.GetParameterValues(context, includePrefix);
+            => selectBuilder.GetParameterValues(context, includePrefix);
 
         /// <inheritdoc/>
         protected override SqlTemplate ParseQuery(IInsertQueryContext context)
-            => this.insertBuilder.Execute(context);
+            => insertBuilder.Execute(context);
 
         /// <inheritdoc/>
         protected override SqlTemplate ParseQuery(IDeleteQueryContext context)
-            => this.deleteBuilder.Execute(context);
+            => deleteBuilder.Execute(context);
 
         /// <inheritdoc/>
         protected override SqlTemplate ParseQuery(IUpdateQueryContext context)
-            => this.updateBuilder.Execute(context);
+            => updateBuilder.Execute(context);
 
         /// <inheritdoc/>
         protected override SqlTemplate ParseQuery(ISelectQueryContext context)
-            => this.selectBuilder.Execute(context);
+            => selectBuilder.Execute(context);
 
         protected override SqlTemplate ParseQuery(ICreateTableQueryContext context)
-            => this.createTableBuilder.Execute(context);
+            => createTableBuilder.Execute(context);
     }
 }
 

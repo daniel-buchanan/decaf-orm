@@ -28,48 +28,48 @@ namespace decaf.core_tests
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetService<IDecaf>();
             var transient = decaf.BuildUnit();
-            this.query = transient.GetQuery() as IQueryContainerInternal;
+            query = transient.GetQuery() as IQueryContainerInternal;
         }
 
         [Fact]
         public void SimpleSelectSucceeds()
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From<Person>(p => p)
                 .Join<Address>((p, a) => p.AddressId == a.Id)
                 .Where((p, a) => p.LastName.Contains("smith"));
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(2);
             context.Joins.Should().HaveCount(1);
-            context.WhereClause.Should().BeAssignableTo(typeof(state.Conditionals.IColumn));
+            context.WhereClause.Should().BeAssignableTo(typeof(IColumn));
         }
 
         [Fact]
         public void SimpleSelect2Succeeds()
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From<Person>(p => p)
                 .Join<Address>((p, a) => p.AddressId == a.Id)
                 .Where((p, a) => p.LastName.Contains("smith") && a.PostCode == "3216");
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(2);
             context.Joins.Should().HaveCount(1);
-            context.WhereClause.Should().BeAssignableTo(typeof(state.Conditionals.And));
+            context.WhereClause.Should().BeAssignableTo(typeof(And));
         }
 
         [Fact]
         public void SimpleSelectDateTimeSucceeds()
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From<Person>(p => p)
                 .Join<Address>((p, a) => p.AddressId == a.Id)
@@ -82,24 +82,24 @@ namespace decaf.core_tests
                 });
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(2);
             context.Joins.Should().HaveCount(1);
-            context.WhereClause.Should().BeAssignableTo(typeof(state.Conditionals.And));
+            context.WhereClause.Should().BeAssignableTo(typeof(And));
         }
 
         [Fact]
         public void SelectAllSucceeds()
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From<Person>(p => p)
                 .Where(p => p.Id == 42)
                 .SelectAll<Person>(p => p);
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(1);
             context.Columns.Should().Satisfy(
                 c => c.Name.Equals(nameof(Person.Id)),
@@ -114,14 +114,14 @@ namespace decaf.core_tests
         public void SelectWithTwoTablesSucceeds()
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From<Person>(p => p)
                 .From<Address>(a => a)
                 .Where((p, a) => p.LastName.Contains("smith"));
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(2);
             var where = context.WhereClause as IColumn;
             where.Should().NotBeNull();
@@ -134,14 +134,14 @@ namespace decaf.core_tests
         public void SelectWithTwoTablesNoAliasSucceeds()
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From<Person>()
                 .From<Address>()
                 .Where((p, a) => p.LastName.Contains("smith"));
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(2);
             var where = context.WhereClause as IColumn;
             where.Should().NotBeNull();
@@ -154,7 +154,7 @@ namespace decaf.core_tests
         public void SelectWithThreeTablesSucceeds()
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From<Person>(p => p)
                 .From<Address>(a => a)
@@ -162,7 +162,7 @@ namespace decaf.core_tests
                 .Where((p, a, u) => p.LastName.Contains("smith"));
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(3);
             var where = context.WhereClause as IColumn;
             where.Should().NotBeNull();
@@ -175,7 +175,7 @@ namespace decaf.core_tests
         public void SelectWithThreeTablesNoAliasSucceeds()
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From<Person>()
                 .From<Address>()
@@ -183,7 +183,7 @@ namespace decaf.core_tests
                 .Where((p, a, u) => p.LastName.Contains("smith"));
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(3);
             var where = context.WhereClause as IColumn;
             where.Should().NotBeNull();
@@ -196,7 +196,7 @@ namespace decaf.core_tests
         public void SelectWithFourTablesSucceeds()
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From<Person>(p => p)
                 .From<Address>(a => a)
@@ -205,7 +205,7 @@ namespace decaf.core_tests
                 .Where((p, a, u, n) => p.LastName.Contains("smith"));
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(4);
             var where = context.WhereClause as IColumn;
             where.Should().NotBeNull();
@@ -218,7 +218,7 @@ namespace decaf.core_tests
         public void SelectWithFourTablesNoAliasSucceeds()
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From<Person>()
                 .From<Address>()
@@ -227,7 +227,7 @@ namespace decaf.core_tests
                 .Where((p, a, u, n) => p.LastName.Contains("smith"));
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(4);
             var where = context.WhereClause as IColumn;
             where.Should().NotBeNull();
@@ -240,7 +240,7 @@ namespace decaf.core_tests
         public void SelectWithFiveTablesSucceeds()
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From<Person>(p => p)
                 .From<Address>(a => a)
@@ -250,7 +250,7 @@ namespace decaf.core_tests
                 .Where((p, a, u, n, an) => p.LastName.Contains("smith"));
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(5);
             var where = context.WhereClause as IColumn;
             where.Should().NotBeNull();
@@ -263,7 +263,7 @@ namespace decaf.core_tests
         public void SelectWithFiveTablesNoAliasSucceeds()
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From<Person>()
                 .From<Address>()
@@ -273,7 +273,7 @@ namespace decaf.core_tests
                 .Where((p, a, u, n, an) => p.LastName.Contains("smith"));
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(5);
             var where = context.WhereClause as IColumn;
             where.Should().NotBeNull();

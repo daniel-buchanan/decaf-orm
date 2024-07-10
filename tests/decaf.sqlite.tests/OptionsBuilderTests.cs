@@ -19,7 +19,7 @@ namespace decaf.sqlite.tests
 		public void TransactionFactorySet()
 		{
 			// Act
-			var transactionFactory = this.provider.GetService<ITransactionFactory>();
+			var transactionFactory = provider.GetService<ITransactionFactory>();
 
 			// Assert
 			transactionFactory.Should().BeOfType<SqliteTransactionFactory>();
@@ -29,7 +29,7 @@ namespace decaf.sqlite.tests
         public void ConnectionFactorySet()
         {
             // Act
-            var connectionFactory = this.provider.GetService<IConnectionFactory>();
+            var connectionFactory = provider.GetService<IConnectionFactory>();
 
             // Assert
             connectionFactory.Should().BeOfType<SqliteConnectionFactory>();
@@ -39,7 +39,7 @@ namespace decaf.sqlite.tests
         public void SqlFactorySet()
         {
             // Act
-            var sqlFactory = this.provider.GetService<ISqlFactory>();
+            var sqlFactory = provider.GetService<ISqlFactory>();
 
             // Assert
             sqlFactory.Should().BeOfType<db.common.SqlFactory>();

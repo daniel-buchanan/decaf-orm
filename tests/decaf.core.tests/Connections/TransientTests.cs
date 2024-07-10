@@ -21,14 +21,14 @@ namespace decaf.core_tests.Connections
             });
             services.AddScoped<IConnectionDetails, MockConnectionDetails>();
             var provider = services.BuildServiceProvider();
-            this.decaf = provider.GetService<IDecaf>();
+            decaf = provider.GetService<IDecaf>();
         }
 
         [Fact]
         public void CanGetTransientSucceeds()
         {
             // Act
-            Action method = () => this.decaf.BuildUnit();
+            Action method = () => decaf.BuildUnit();
 
             // Assert
             method.Should().NotThrow();
@@ -38,7 +38,7 @@ namespace decaf.core_tests.Connections
         public void NewTransientHasId()
         {
             // Act
-            var transient = this.decaf.BuildUnit();
+            var transient = decaf.BuildUnit();
 
             // Assert
             transient.Should().NotBeNull();
@@ -49,7 +49,7 @@ namespace decaf.core_tests.Connections
         public void CanGetConnectionSucceeds()
         {
             // Arrange
-            var transient = this.decaf.BuildUnit() as IUnitOfWorkExtended;
+            var transient = decaf.BuildUnit() as IUnitOfWorkExtended;
 
             // Act
             Func<IConnection> method = () => transient.Connection;
@@ -64,7 +64,7 @@ namespace decaf.core_tests.Connections
         public void CanGetTransactionSucceeds()
         {
             // Arrange
-            var transient = this.decaf.BuildUnit() as IUnitOfWorkExtended;
+            var transient = decaf.BuildUnit() as IUnitOfWorkExtended;
 
             // Act
             Func<ITransaction> method = () => transient.Transaction;
@@ -79,7 +79,7 @@ namespace decaf.core_tests.Connections
         public void NotifyQueryDisposed_UnknownQueryDoesNothing()
         {
             // Arrange
-            var transient = this.decaf.BuildUnit() as IUnitOfWorkExtended;
+            var transient = decaf.BuildUnit() as IUnitOfWorkExtended;
 
             // Act
             transient.NotifyQueryDisposed(Guid.Empty);

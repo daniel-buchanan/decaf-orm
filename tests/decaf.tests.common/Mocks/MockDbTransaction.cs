@@ -14,12 +14,12 @@ namespace decaf.tests.common.Mocks
         {
             this.options = options;
             this.connection = connection;
-            this.isolationLevel = il;
+            isolationLevel = il;
         }
 
-        public override IsolationLevel IsolationLevel => this.isolationLevel;
+        public override IsolationLevel IsolationLevel => isolationLevel;
 
-        protected override DbConnection DbConnection => this.connection;
+        protected override DbConnection DbConnection => connection;
 
         public override void Commit()
         {

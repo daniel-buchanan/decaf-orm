@@ -9,7 +9,7 @@ namespace decaf.common
 
 		protected Where()
         {
-			this.children = new List<IWhere>();
+			children = new List<IWhere>();
         }
 
 		protected Where(params IWhere[] children)
@@ -17,7 +17,7 @@ namespace decaf.common
 			this.children = children?.ToList() ?? new List<IWhere>();
         }
 
-		public IReadOnlyCollection<IWhere> Children => this.children.AsReadOnly();
+		public IReadOnlyCollection<IWhere> Children => children.AsReadOnly();
 	}
 }
 

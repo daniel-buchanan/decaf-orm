@@ -17,14 +17,14 @@ namespace decaf.core_tests
 		{
 			var aliasManager = AliasManager.Create();
             var hashProvider = new HashProvider();
-			this.context = DeleteQueryContext.Create(aliasManager, hashProvider);
+			context = DeleteQueryContext.Create(aliasManager, hashProvider);
 		}
 
         [Fact]
         public void QueryTypeIsDelete()
         {
             // Act
-            var queryType = this.context.Kind;
+            var queryType = context.Kind;
 
             // Assert
             queryType.Should().Be(QueryTypes.Delete);
@@ -34,7 +34,7 @@ namespace decaf.core_tests
         public void IdIsCreatedAndNotEmpty()
         {
             // Act
-            var id = this.context.Id;
+            var id = context.Id;
 
             // Assert
             id.Should().NotBe(Guid.Empty);
@@ -45,10 +45,10 @@ namespace decaf.core_tests
         public void DeleteFromSucceeds(ITableTarget target)
         {
             // Act
-            this.context.From(target);
+            context.From(target);
 
             // Assert
-            this.context.QueryTargets.Count.Should().Be(1);
+            context.QueryTargets.Count.Should().Be(1);
         }
 
         [Theory]
@@ -56,13 +56,13 @@ namespace decaf.core_tests
         public void DeleteFromSameDoesNothing(ITableTarget target)
         {
             // Arrange
-            this.context.From(target);
+            context.From(target);
 
             // Act
-            this.context.From(target);
+            context.From(target);
 
             // Assert
-            this.context.QueryTargets.Count.Should().Be(1);
+            context.QueryTargets.Count.Should().Be(1);
         }
 
         [Fact]
@@ -73,10 +73,10 @@ namespace decaf.core_tests
             var clause = state.Conditionals.Column.Equals(column, 42);
 
             // Act
-            this.context.Where(clause);
+            context.Where(clause);
 
             // Assert
-            this.context.WhereClause.Should().NotBeNull();
+            context.WhereClause.Should().NotBeNull();
         }
 
         [Fact]
@@ -85,13 +85,13 @@ namespace decaf.core_tests
             // Arrange
             var from = TableTarget.Create("users", "u");
 
-            this.context.From(from);
+            context.From(from);
 
             // Act
-            this.context.Dispose();
+            context.Dispose();
 
             // Assert
-            this.context.QueryTargets.Count.Should().Be(0);
+            context.QueryTargets.Count.Should().Be(0);
         }
 
         [Fact]
@@ -100,13 +100,13 @@ namespace decaf.core_tests
             // Arrange
             var column = Column.Create("name", TableTarget.Create("users"));
             var clause = state.Conditionals.Column.Equals(column, 42);
-            this.context.Where(clause);
+            context.Where(clause);
 
             // Act
-            this.context.Dispose();
+            context.Dispose();
 
             // Assert
-            this.context.WhereClause.Should().BeNull();
+            context.WhereClause.Should().BeNull();
         }
 
         public static IEnumerable<object[]> TableTests

@@ -23,25 +23,25 @@ namespace decaf.core_tests
         {
             var reflectionHelper = new ReflectionHelper();
             var expressionHelper = new ExpressionHelper(reflectionHelper);
-            this.aliasManager = AliasManager.Create();
-            this.hashProvider = new HashProvider();
+            aliasManager = AliasManager.Create();
+            hashProvider = new HashProvider();
             var valueFunctionHelper = new ValueFunctionHelper(expressionHelper);
             var callExpressionHelper = new CallExpressionHelper(expressionHelper, valueFunctionHelper);
             var valueParser = new ValueParser(expressionHelper, callExpressionHelper, reflectionHelper);
             var joinParser = new JoinParser(expressionHelper, reflectionHelper);
-            this.parser = new JoinParser(expressionHelper, reflectionHelper);
+            parser = new JoinParser(expressionHelper, reflectionHelper);
         }
 
         [Fact]
         public void ParseSimpleJoinSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
+            var context = SelectQueryContext.Create(aliasManager, hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Person, Address, bool>> expression = (p, a) => p.AddressId == a.Id;
 
             // Act
-            var result = this.parser.Parse(expression, context);
+            var result = parser.Parse(expression, context);
 
             // Assert
             result.Should().NotBeNull();
@@ -58,12 +58,12 @@ namespace decaf.core_tests
         public void ParseReverseSimpleJoinSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
+            var context = SelectQueryContext.Create(aliasManager, hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Address, Person, bool>> expression = (a, p) => a.Id == p.AddressId;
 
             // Act
-            var result = this.parser.Parse(expression, context);
+            var result = parser.Parse(expression, context);
 
             // Assert
             result.Should().NotBeNull();

@@ -20,38 +20,38 @@ namespace decaf.Implementation
         /// <inheritdoc/>
         public IInsertValues<T> Columns(Expression<Func<T, dynamic>> columns)
         {
-            base.AddColumns(columns);
+            AddColumns(columns);
             return this;
         }
 
         /// <inheritdoc/>
         public IInsertValues<T> From(Action<ISelect> query)
         {
-            base.FromQuery(query);
+            FromQuery(query);
             return this;
         }
 
         /// <inheritdoc/>
         public IInsertValues<T> Output(Expression<Func<T, object>> column)
         {
-            var internalContext = this.Context as IQueryContextExtended;
+            var internalContext = Context as IQueryContextExtended;
             var columnName = internalContext.ExpressionHelper.GetMemberName(column);
-            var col = state.Column.Create(columnName, this.Context.Target);
-            this.Context.Output(state.Output.Create(col, OutputSources.Inserted));
+            var col = Column.Create(columnName, Context.Target);
+            Context.Output(state.Output.Create(col, OutputSources.Inserted));
             return this;
         }
 
         /// <inheritdoc/>
         public IInsertValues<T> Value(T value)
         {
-            base.AddValues(value);
+            AddValues(value);
             return this;
         }
 
         /// <inheritdoc/>
         public IInsertValues<T> Values(IEnumerable<T> values)
         {
-            base.AddValues(values);
+            AddValues(values);
             return this;
         }
     }

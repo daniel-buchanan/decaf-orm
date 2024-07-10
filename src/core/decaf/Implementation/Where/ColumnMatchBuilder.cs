@@ -39,11 +39,11 @@ namespace decaf.Implementation
         {
             var target = string.IsNullOrWhiteSpace(targetAlias) ?
                 null :
-                this.queryContext.QueryTargets.FirstOrDefault(t => t.Alias == targetAlias);
+                queryContext.QueryTargets.FirstOrDefault(t => t.Alias == targetAlias);
             var right = state.Column.Create(name, target);
-            var clause = state.Conditionals.Column.Equals(this.left, this.@operator, right);
-            if (this.notEquals) this.builder.AddClause(Not.This(clause));
-            else this.builder.AddClause(clause);
+            var clause = state.Conditionals.Column.Equals(left, @operator, right);
+            if (notEquals) builder.AddClause(Not.This(clause));
+            else builder.AddClause(clause);
         }
     }
 }

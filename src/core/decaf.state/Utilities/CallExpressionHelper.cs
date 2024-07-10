@@ -67,7 +67,7 @@ namespace decaf.state.Utilities
                 var constant = binaryExpression.Left as ConstantExpression ??
                                binaryExpression.Right as ConstantExpression;
                 var result = ParseMethodAccessCall(call, context);
-                var constantValue = (bool)this.expressionHelper.GetValue(constant);
+                var constantValue = (bool)expressionHelper.GetValue(constant);
 
                 if (binaryExpression.NodeType == ExpressionType.NotEqual ||
                     !constantValue)
@@ -96,17 +96,17 @@ namespace decaf.state.Utilities
             var memberExpression = callExpr.Object as MemberExpression ??
                                    callExpr.Arguments.First() as MemberExpression;
 
-            var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(expression);
-            var fieldName = this.expressionHelper.GetMemberName(memberExpression);
+            var op = expressionHelper.ConvertExpressionTypeToEqualityOperator(expression);
+            var fieldName = expressionHelper.GetMemberName(memberExpression);
             var target = context.GetQueryTarget(memberExpression);
-            var col = state.Column.Create(fieldName, target);
+            var col = Column.Create(fieldName, target);
 
             IWhere result = null;
             var invertResult = op == EqualityOperator.NotEquals;
 
             if (nonCallExpr.NodeType == ExpressionType.Constant)
             {
-                var value = this.expressionHelper.GetValue(nonCallExpr);
+                var value = expressionHelper.GetValue(nonCallExpr);
 
                 if(value is bool)
                 {
@@ -132,9 +132,9 @@ namespace decaf.state.Utilities
 
             if (nonCallExpr.NodeType == ExpressionType.MemberAccess)
             {
-                var fieldB = this.expressionHelper.GetMemberName(nonCallExpr);
+                var fieldB = expressionHelper.GetMemberName(nonCallExpr);
                 var targetB = context.GetQueryTarget(nonCallExpr);
-                var colB = state.Column.Create(fieldB, targetB);
+                var colB = Column.Create(fieldB, targetB);
                 result = Conditionals.Column.Equals(col, op, valueFunction, colB);
             }
 
@@ -142,9 +142,9 @@ namespace decaf.state.Utilities
             {
                 var rightCallExpr = nonCallExpr as MethodCallExpression;
                 var rightBody = rightCallExpr?.Object;
-                var fieldB = this.expressionHelper.GetMemberName(rightBody);
+                var fieldB = expressionHelper.GetMemberName(rightBody);
                 var targetB = context.GetQueryTarget(rightBody);
-                var colB = state.Column.Create(fieldB, targetB);
+                var colB = Column.Create(fieldB, targetB);
                 valueFunction = valueFunctionHelper.ParseFunction(rightCallExpr);
 
                 result = Conditionals.Column.Equals(col, op, valueFunction, colB);
@@ -229,10 +229,10 @@ namespace decaf.state.Utilities
 
             // get values
             var valueMember = valueAccessExp as MemberExpression;
-            object values = this.expressionHelper.GetValue(valueMember);
+            object values = expressionHelper.GetValue(valueMember);
 
             // get alias and field name
-            var fieldName = this.expressionHelper.GetMemberName(memberAccessExp);
+            var fieldName = expressionHelper.GetMemberName(memberAccessExp);
 
             // setup arguments
             var typeArgs = new[] { memberAccessExp.Type };
@@ -241,7 +241,7 @@ namespace decaf.state.Utilities
             var inputType = inputGenericType.MakeGenericType(typeArgs);
             var input = Activator.CreateInstance(inputType, values);
             var target = context.GetQueryTarget(memberAccessExp);
-            var col = state.Column.Create(fieldName, target);
+            var col = Column.Create(fieldName, target);
 
             var parameters = new object[] { col, input };
             var enumerableGenericType = typeof(IEnumerable<>);

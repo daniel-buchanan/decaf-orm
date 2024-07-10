@@ -17,7 +17,7 @@ namespace decaf.state
 			: base(aliasManager, QueryTypes.Delete, hashProvider)
         {
 			WhereClause = null;
-            this.outputs = new List<Output>();
+            outputs = new List<Output>();
         }
 
 		/// <inheritdoc/>
@@ -27,12 +27,12 @@ namespace decaf.state
 		public IWhere WhereClause { get; private set; }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<Output> Outputs => this.outputs.AsReadOnly();
+        public IReadOnlyCollection<Output> Outputs => outputs.AsReadOnly();
 
         /// <inheritdoc/>
         public void From(ITableTarget target)
         {
-            var item = this.QueryTargets.FirstOrDefault(t => t.IsEquivalentTo(target));
+            var item = QueryTargets.FirstOrDefault(t => t.IsEquivalentTo(target));
             if (item != null) return;
 
             var internalContext = this as IQueryContextExtended;
@@ -48,7 +48,7 @@ namespace decaf.state
         /// <inheritdoc/>
         public void Output(Output output)
         {
-            this.outputs.Add(output);
+            outputs.Add(output);
         }
 
         /// <summary>

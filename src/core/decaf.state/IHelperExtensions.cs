@@ -16,7 +16,7 @@ namespace decaf.state
             this.context = context;    
         }
 
-        public IQueryContext Context => this.context;
+        public IQueryContext Context => context;
     }
 }
 

@@ -17,14 +17,14 @@ namespace decaf.core_tests.Connections
             var logger = new DefaultLoggerProxy(new DecafOptions(), new StdOutputWrapper());
             var connectionDetails = new MockConnectionDetails();
             var dbOptions = new MockDatabaseOptions();
-            this.connection = new MockConnection(dbOptions, logger, connectionDetails);
+            connection = new MockConnection(dbOptions, logger, connectionDetails);
         }
 
         [Fact]
         public void GetHashSucceeds()
         {
             // Act
-            var hash = this.connection.GetHash();
+            var hash = connection.GetHash();
 
             // Assert
             hash.Should().NotBeNull();
@@ -34,7 +34,7 @@ namespace decaf.core_tests.Connections
         public void GetUnderlyingConnectionSucceeds()
         {
             // Act
-            var conn = this.connection.GetUnderlyingConnection();
+            var conn = connection.GetUnderlyingConnection();
 
             // Assert
             conn.Should().NotBeNull();
@@ -44,7 +44,7 @@ namespace decaf.core_tests.Connections
         public void GetUnderlyingConnectionAsSucceeds()
         {
             // Act
-            var conn = this.connection.GetUnderlyingConnectionAs<IDbConnection>();
+            var conn = connection.GetUnderlyingConnectionAs<IDbConnection>();
 
             // Assert
             conn.Should().NotBeNull();
@@ -55,35 +55,35 @@ namespace decaf.core_tests.Connections
         public void OpenResultsInStateOpen()
         {
             // Act
-            this.connection.Open();
+            connection.Open();
 
             // Assert
-            this.connection.State.Should().Be(common.Connections.ConnectionState.Open);
+            connection.State.Should().Be(common.Connections.ConnectionState.Open);
         }
 
         [Fact]
         public void CloseResultsInStateClosed ()
         {
             // Act
-            this.connection.Open();
-            this.connection.Close();
+            connection.Open();
+            connection.Close();
 
             // Assert
-            this.connection.State.Should().Be(common.Connections.ConnectionState.Closed);
+            connection.State.Should().Be(common.Connections.ConnectionState.Closed);
         }
 
         [Fact]
         public void DefaultConnectionStateIsUnknown()
         {
             // Assert
-            this.connection.State.Should().Be(common.Connections.ConnectionState.Unknown);
+            connection.State.Should().Be(common.Connections.ConnectionState.Unknown);
         }
 
         [Fact]
         public void DisposeSucceeds()
         {
             // Act
-            Action method = () => this.connection.Dispose();
+            Action method = () => connection.Dispose();
 
             // Assert
             method.Should().NotThrow<ObjectDisposedException>();

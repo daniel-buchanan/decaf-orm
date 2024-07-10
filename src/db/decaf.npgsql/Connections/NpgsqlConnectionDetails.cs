@@ -20,7 +20,7 @@ namespace decaf.npgsql
         private readonly List<string> schemasToSearch;
 
         public NpgsqlConnectionDetails() : base()
-            => this.schemasToSearch = new List<string>();
+            => schemasToSearch = new List<string>();
 
         private NpgsqlConnectionDetails(string connectionString)
             : base(connectionString)
@@ -69,7 +69,7 @@ namespace decaf.npgsql
 
         /// <inheritdoc/>
         public IReadOnlyCollection<string> SchemasToSearch
-            => this.schemasToSearch.AsReadOnly();
+            => schemasToSearch.AsReadOnly();
 
         /// <inheritdoc/>
         protected override int DefaultPort => 5432;
@@ -83,7 +83,7 @@ namespace decaf.npgsql
             if (schemasToSearch.Any(s => s.ToLower() == schema.ToLower()))
                 return;
 
-            this.schemasToSearch.Add(schema);
+            schemasToSearch.Add(schema);
         }
 
         /// <inheritdoc/>
@@ -107,15 +107,15 @@ namespace decaf.npgsql
             }
 
             var sb = new StringBuilder();
-            sb.AppendFormat("Host={0};", this.Hostname);
-            sb.AppendFormat("Port={0};", this.Port);
-            sb.AppendFormat("Database={0};", this.DatabaseName);
+            sb.AppendFormat("Host={0};", Hostname);
+            sb.AppendFormat("Port={0};", Port);
+            sb.AppendFormat("Database={0};", DatabaseName);
             sb.AppendFormat("Username={0};", username);
             sb.AppendFormat("Password={0};", password);
 
-            if (this.schemasToSearch.Any())
+            if (schemasToSearch.Any())
             {
-                var schemas = string.Join(",", this.schemasToSearch);
+                var schemas = string.Join(",", schemasToSearch);
                 sb.AppendFormat("Search Path={0};", schemas);
             }
             

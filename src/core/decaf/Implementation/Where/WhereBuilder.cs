@@ -16,10 +16,10 @@ namespace decaf.Implementation
 
 		private WhereBuilder(ClauseHandling clauseHandling, IQueryContext queryContext)
 		{
-            this.clauseHandlingBehaviour = ClauseHandlingBehaviour.CreateClauseHandler(this);
-            this.defaultClauseHandling = clauseHandling;
+            clauseHandlingBehaviour = ClauseHandlingBehaviour.CreateClauseHandler(this);
+            defaultClauseHandling = clauseHandling;
             this.queryContext = queryContext;
-            this.clauses = new List<IWhere>();
+            clauses = new List<IWhere>();
 		}
 
         internal static IWhereBuilder Create(DecafOptions options, IQueryContext queryContext)
@@ -31,25 +31,25 @@ namespace decaf.Implementation
         /// <inheritdoc />
         public IWhereBuilder And(Action<IWhereBuilder> builder)
         {
-            var b = Create(this.defaultClauseHandling, this.queryContext) as IWhereBuilderInternal;
+            var b = Create(defaultClauseHandling, queryContext) as IWhereBuilderInternal;
             b.ClauseHandling.DefaultToAnd();
             builder(b);
 
-            this.clauses.Add(b.GetClauses().First());
+            clauses.Add(b.GetClauses().First());
             return this;
         }
 
         /// <inheritdoc />
-        public IClauseHandlingBehaviour ClauseHandling => this.clauseHandlingBehaviour;
+        public IClauseHandlingBehaviour ClauseHandling => clauseHandlingBehaviour;
 
-        ClauseHandling IWhereBuilderInternal.DefaultClauseHandling => this.defaultClauseHandling;
+        ClauseHandling IWhereBuilderInternal.DefaultClauseHandling => defaultClauseHandling;
 
         /// <inheritdoc />
         public IColumnWhereBuilder Column(string name, string targetAlias = null)
         {
             var target = string.IsNullOrWhiteSpace(targetAlias) ?
                 null :
-                this.queryContext.QueryTargets.FirstOrDefault(t => t.Alias == targetAlias);
+                queryContext.QueryTargets.FirstOrDefault(t => t.Alias == targetAlias);
             var c = state.Column.Create(name, target);
             return ColumnWhereBuilder.Create(queryContext, this, c);
         }
@@ -57,25 +57,25 @@ namespace decaf.Implementation
         /// <inheritdoc />
         public IWhereBuilder Or(Action<IWhereBuilder> builder)
         {
-            var b = Create(this.defaultClauseHandling, this.queryContext) as IWhereBuilderInternal;
+            var b = Create(defaultClauseHandling, queryContext) as IWhereBuilderInternal;
             b.ClauseHandling.DefaultToOr();
             builder(b);
 
-            this.clauses.Add(b.GetClauses().First());
+            clauses.Add(b.GetClauses().First());
             return this;
         }
 
         /// <inheritdoc />
-        void IWhereBuilderInternal.AddClause(IWhere item) => this.clauses.Add(item);
+        void IWhereBuilderInternal.AddClause(IWhere item) => clauses.Add(item);
 
         /// <inheritdoc />
         IEnumerable<IWhere> IWhereBuilderInternal.GetClauses()
         {
-            if (this.defaultClauseHandling == common.ClauseHandling.And)
-                return new[] { state.Conditionals.And.Where(this.clauses) };
+            if (defaultClauseHandling == common.ClauseHandling.And)
+                return new[] { state.Conditionals.And.Where(clauses) };
 
-            if (this.defaultClauseHandling == common.ClauseHandling.Or)
-                return new[] { state.Conditionals.Or.Where(this.clauses) };
+            if (defaultClauseHandling == common.ClauseHandling.Or)
+                return new[] { state.Conditionals.Or.Where(clauses) };
 
             throw new WhereBuildFailedException();
         }
@@ -92,11 +92,11 @@ namespace decaf.Implementation
 
             /// <inheritdoc />
             public void DefaultToAnd()
-                => this.builder.defaultClauseHandling = common.ClauseHandling.And;
+                => builder.defaultClauseHandling = common.ClauseHandling.And;
 
             /// <inheritdoc />
             public void DefaultToOr()
-                => this.builder.defaultClauseHandling = common.ClauseHandling.Or;
+                => builder.defaultClauseHandling = common.ClauseHandling.Or;
         }
     }
 }

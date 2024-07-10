@@ -27,7 +27,7 @@ namespace decaf.common
             IConnectionDetails connectionDetails)
             : this(logger, unitOfWorkFactory)
         {
-            this.injectedConnectionDetails = connectionDetails;
+            injectedConnectionDetails = connectionDetails;
         }
 
         private IUnitOfWork GetUnitOfWork(IConnectionDetails connectionDetails = null)
@@ -37,18 +37,18 @@ namespace decaf.common
             IConnectionDetails connectionDetails = null,
             CancellationToken cancellationToken = default)
         {
-            if (this.injectedConnectionDetails == null &&
+            if (injectedConnectionDetails == null &&
                connectionDetails == null)
             {
-                this.logger.Error("ConnectionDetails could not be found, either not injected or provided to method");
+                logger.Error("ConnectionDetails could not be found, either not injected or provided to method");
                 throw new MissingConnectionDetailsException("ConnectionDetails were not injected or provided. Please ensure that either method is used.");
             }
 
             IConnectionDetails connectionDetailsToUse;
             if (connectionDetails != null) connectionDetailsToUse = connectionDetails;
-            else connectionDetailsToUse = this.injectedConnectionDetails;
+            else connectionDetailsToUse = injectedConnectionDetails;
 
-            return await this.unitOfWorkFactory.CreateAsync(connectionDetailsToUse, cancellationToken);
+            return await unitOfWorkFactory.CreateAsync(connectionDetailsToUse, cancellationToken);
         }
 
         /// <inheritdoc/>

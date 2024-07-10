@@ -31,7 +31,7 @@ public class SerilogTests
             .WithConnection<IConnectionDetails, MockConnectionDetails>();
 
         logger = new Mock<ILogger>();
-        services.AddScoped<ILogger>(p => logger.Object);
+        services.AddScoped<ILogger>(_ => logger.Object);
         provider = services.BuildServiceProvider();
     }
     

@@ -29,7 +29,7 @@ namespace decaf.core_tests
 
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetService<IDecaf>();
-            this.unitOfWork = decaf.BuildUnit();
+            unitOfWork = decaf.BuildUnit();
         }
 
         [Theory]
@@ -37,7 +37,7 @@ namespace decaf.core_tests
         public void ServicesShouldNotBeNull<T>(Func<IUnitOfWork, T> method)
         {
             // Act
-            var result = method(this.unitOfWork);
+            var result = method(unitOfWork);
 
             // Assert
             result.Should().NotBeNull();

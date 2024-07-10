@@ -25,14 +25,14 @@ namespace decaf.core_tests
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetService<IDecaf>();
             var transient = decaf.BuildUnit();
-            this.query = transient.GetQuery() as IQueryContainerInternal;
+            query = transient.GetQuery() as IQueryContainerInternal;
         }
 
         [Fact]
         public void ParseDynamicSucceeds()
         {
             // Arrange
-            var interim = this.query.Select()
+            var interim = query.Select()
                 .From("users", "u")
                 .Where(b =>
                 {
@@ -59,7 +59,7 @@ namespace decaf.core_tests
         public void ParseConcreteSucceeds()
         {
             // Arrange
-            var interim = this.query.Select()
+            var interim = query.Select()
                 .From("users", "u")
                 .Where(b =>
                 {
@@ -86,7 +86,7 @@ namespace decaf.core_tests
         public void ParseConcreteWithExtensionsSucceeds()
         {
             // Arrange
-            var interim = this.query.Select()
+            var interim = query.Select()
                 .From<Person>(p => p)
                 .Where(p => p.FirstName.Contains("smith"));
 
@@ -109,7 +109,7 @@ namespace decaf.core_tests
         public void ParseConcreteWithSubstringSucceeds()
         {
             // Arrange
-            var interim = this.query.Select()
+            var interim = query.Select()
                 .From<Person>(p => p)
                 .Where(p => p.FirstName.Contains("smith"));
 

@@ -23,14 +23,14 @@ namespace decaf.sqlserver
         protected override Task<ITransaction> CreateTransactionAsync(IConnection connection, CancellationToken cancellationToken = default)
         {
             var transactionId = Guid.NewGuid();
-            this.logger.Debug($"NpgsqlTransactionFactory :: Creating Transaction with Id: {transactionId}");
+            logger.Debug($"NpgsqlTransactionFactory :: Creating Transaction with Id: {transactionId}");
 
             var sqlServerTransaction = new SqlServerTransaction(
                 transactionId,
-                this.logger,
+                logger,
                 connection,
-                this.options,
-                this.npgsqlOptions);
+                options,
+                npgsqlOptions);
 
             var transaction = sqlServerTransaction as ITransaction;
             return Task.FromResult(transaction);

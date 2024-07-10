@@ -48,7 +48,7 @@ namespace decaf.services
         /// Get the Transient required to begin a query.
         /// </summary>
         /// <returns>Returns a <see cref="IUnitOfWork"/>.</returns>
-        internal IUnitOfWork GetUnitOfWork() => this.unitOfWork ?? this.decaf.BuildUnit();
+        internal IUnitOfWork GetUnitOfWork() => unitOfWork ?? decaf.BuildUnit();
 
         /// <summary>
         /// Execute the provided query.<br/>
@@ -56,7 +56,7 @@ namespace decaf.services
         /// </summary>
         /// <param name="method">The <see cref="Action{IQuery}"/> defining the query.</param>
         protected void ExecuteQuery(Action<IQueryContainer> method)
-            => ExecuteQueryAsync((q, c) => { method(q); return Task.CompletedTask; }).WaitFor();
+            => ExecuteQueryAsync((q, _) => { method(q); return Task.CompletedTask; }).WaitFor();
 
         /// <summary>
         /// Execute the provided query.<br/>
@@ -64,11 +64,11 @@ namespace decaf.services
         /// </summary>
         /// <param name="method">The <see cref="Action{IQuery, T}"/> defining the query.</param>
         protected T ExecuteQuery<T>(Func<IQueryContainer, T> method)
-            => ExecuteQueryAsync((q, c) => Task.FromResult(method(q))).WaitFor();
+            => ExecuteQueryAsync((q, _) => Task.FromResult(method(q))).WaitFor();
 
         protected async Task ExecuteQueryAsync(Func<IQueryContainer, CancellationToken, Task> method, CancellationToken cancellationToken = default)
         {
-            var t = this.GetUnitOfWork();
+            var t = GetUnitOfWork();
             using (var q = await t.GetQueryAsync(cancellationToken))
             {
                 await method(q, cancellationToken);
@@ -80,7 +80,7 @@ namespace decaf.services
         protected async Task<T> ExecuteQueryAsync<T>(Func<IQueryContainer, CancellationToken, Task<T>> method, CancellationToken cancellationToken = default)
         {
             T result;
-            var t = this.GetUnitOfWork();
+            var t = GetUnitOfWork();
             using (var q = await t.GetQueryAsync(cancellationToken))
             {
                 result = await method(q, cancellationToken);

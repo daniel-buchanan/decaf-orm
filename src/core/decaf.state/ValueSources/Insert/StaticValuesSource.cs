@@ -16,14 +16,14 @@ namespace decaf.state.ValueSources.Insert
 
 		public int Width { get; private set; }
 
-		public IReadOnlyCollection<object[]> Values => this.values.AsReadOnly();
+		public IReadOnlyCollection<object[]> Values => values.AsReadOnly();
 
 		public void AddValue(object[] value)
         {
 			if (value == null) throw new ArgumentNullException(nameof(value), "The values MUST be provided when adding to a StaticValueSource.");
 			if (value.Length < Width || value.Length > Width) throw new ArgumentOutOfRangeException(nameof(value), $"The values provided MUST have {Width} values in the tuple.");
 
-			this.values.Add(value);
+			values.Add(value);
         }
 
         public static StaticValuesSource Create(int width) => new StaticValuesSource(width);

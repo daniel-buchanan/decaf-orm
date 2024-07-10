@@ -16,13 +16,13 @@ public class SqliteTransactionFactory : TransactionFactory
         CancellationToken cancellationToken = default)
     {
         var transactionId = Guid.NewGuid();
-        this.logger.Debug($"SqliteTransactionFactory :: Creating Transaction with Id: {transactionId}");
+        logger.Debug($"SqliteTransactionFactory :: Creating Transaction with Id: {transactionId}");
 
         var sqliteTransaction = new SqliteTransaction(
             transactionId,
-            this.logger,
+            logger,
             connection,
-            this.options);
+            options);
 
         var transaction = sqliteTransaction as ITransaction;
         return Task.FromResult(transaction);

@@ -41,56 +41,56 @@ namespace decaf.Implementation
         /// <inheritdoc/>
         public IJoinTo From(string name, string alias, string schema = null)
         {
-            var managedTable = this.context.AliasManager.GetAssociation(alias) ?? name;
-            var managedAlias = this.context.AliasManager.Add(alias, managedTable);
-            var existingTarget = this.context.QueryTargets.FirstOrDefault(t => t.Alias == managedAlias);
+            var managedTable = context.AliasManager.GetAssociation(alias) ?? name;
+            var managedAlias = context.AliasManager.Add(alias, managedTable);
+            var existingTarget = context.QueryTargets.FirstOrDefault(t => t.Alias == managedAlias);
             if(existingTarget == null)
             {
                 existingTarget = TableTarget.Create(managedTable, managedAlias, schema);
-                this.context.AddQueryTarget(existingTarget);
+                context.AddQueryTarget(existingTarget);
             }
-            this.left = existingTarget;
+            left = existingTarget;
             return this;
         }
 
         /// <inheritdoc/>
         public ISelectFrom On(Action<IWhereBuilder> builder)
         {
-            var b = WhereBuilder.Create(this.options, this.context) as IWhereBuilderInternal;
+            var b = WhereBuilder.Create(options, context) as IWhereBuilderInternal;
             builder(b);
 
-            var selectContext = this.context as ISelectQueryContext;
+            var selectContext = context as ISelectQueryContext;
             var conditions = b.GetClauses().First();
-            var join = state.Join.Create(this.left, this.right, this.joinType, conditions);
+            var join = state.Join.Create(left, right, joinType, conditions);
             selectContext.Join(join);
 
-            return this.selectFrom;
+            return selectFrom;
         }
 
         /// <inheritdoc/>
         public IJoinConditions To(string name, string alias, string schema = null)
         {
-            var managedTable = this.context.AliasManager.GetAssociation(alias) ?? name;
-            var managedAlias = this.context.AliasManager.Add(alias, managedTable);
-            var existingTarget = this.context.QueryTargets.FirstOrDefault(t => t.Alias == managedAlias);
+            var managedTable = context.AliasManager.GetAssociation(alias) ?? name;
+            var managedAlias = context.AliasManager.Add(alias, managedTable);
+            var existingTarget = context.QueryTargets.FirstOrDefault(t => t.Alias == managedAlias);
             if (existingTarget == null)
             {
                 existingTarget = TableTarget.Create(managedTable, managedAlias, schema);
-                this.context.AddQueryTarget(existingTarget);
+                context.AddQueryTarget(existingTarget);
             }
-            this.right = existingTarget;
+            right = existingTarget;
             return this;
         }
 
         /// <inheritdoc/>
         public IJoinConditions To(Action<ISelectWithAlias> query)
         {
-            var selectContext = SelectQueryContext.Create(this.context.AliasManager, this.query.HashProvider);
+            var selectContext = SelectQueryContext.Create(context.AliasManager, this.query.HashProvider);
             var selectQuery = QueryContainer.Create(this.query) as IQueryContainerInternal;
             var select = Select.Create(selectContext, selectQuery);
             query(select);
             
-            this.right = SelectQueryTarget.Create(selectContext, select.Alias);
+            right = SelectQueryTarget.Create(selectContext, select.Alias);
             return this;
         }
     }

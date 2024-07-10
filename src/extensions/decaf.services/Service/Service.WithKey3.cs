@@ -58,15 +58,15 @@ namespace decaf.services
 
         /// <inheritdoc/>
         public Task<TEntity> GetAsync(TKey1 key1, TKey2 key2, TKey3 key3, CancellationToken cancellationToken = default)
-            => this.Query.GetAsync(key1, key2, key3, cancellationToken);
+            => Query.GetAsync(key1, key2, key3, cancellationToken);
 
         /// <inheritdoc/>
         public Task<IEnumerable<TEntity>> GetAsync(ICompositeKeyValue<TKey1, TKey2, TKey3>[] keys, CancellationToken cancellationToken = default)
-            => this.Query.GetAsync(keys, cancellationToken);
+            => Query.GetAsync(keys, cancellationToken);
 
         /// <inheritdoc/>
         public Task<IEnumerable<TEntity>> GetAsync(IEnumerable<ICompositeKeyValue<TKey1, TKey2, TKey3>> keys, CancellationToken cancellationToken = default)
-            => this.Query.GetAsync(keys, cancellationToken);
+            => Query.GetAsync(keys, cancellationToken);
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, TKey1 key1, TKey2 key2, TKey3 key3)
@@ -81,23 +81,23 @@ namespace decaf.services
 
         /// <inheritdoc/>
         public async Task UpdateAsync(TEntity toUpdate, CancellationToken cancellationToken = default)
-            => await this.Command.UpdateAsync(toUpdate, cancellationToken);
+            => await Command.UpdateAsync(toUpdate, cancellationToken);
 
         /// <inheritdoc/>
         public async Task UpdateAsync(dynamic toUpdate, TKey1 key1, TKey2 key2, TKey3 key3, CancellationToken cancellationToken = default)
-            => await this.Command.UpdateAsync(toUpdate, key1, key2, key3, cancellationToken);
+            => await Command.UpdateAsync(toUpdate, key1, key2, key3, cancellationToken);
 
         /// <inheritdoc/>
         public async Task DeleteAsync(TKey1 key1, TKey2 key2, TKey3 key3, CancellationToken cancellationToken = default)
-            => await this.Command.DeleteAsync(key1, key2, key3, cancellationToken);
+            => await Command.DeleteAsync(key1, key2, key3, cancellationToken);
 
         /// <inheritdoc/>
         public async Task DeleteAsync(ICompositeKeyValue<TKey1, TKey2, TKey3>[] keys, CancellationToken cancellationToken = default)
-            => await this.Command.DeleteAsync(keys, cancellationToken);
+            => await Command.DeleteAsync(keys, cancellationToken);
 
         /// <inheritdoc/>
         public async Task DeleteAsync(IEnumerable<ICompositeKeyValue<TKey1, TKey2, TKey3>> keys, CancellationToken cancellationToken = default)
-            => await this.Command.DeleteAsync(keys, cancellationToken);
+            => await Command.DeleteAsync(keys, cancellationToken);
     }
 }
 

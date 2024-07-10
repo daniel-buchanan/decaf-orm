@@ -10,7 +10,7 @@ namespace decaf.common.Attributes
 
         public IgnoreColumnForAttribute(QueryTypes toIgnore)
         {
-            this.QueryType = toIgnore;
+            QueryType = toIgnore;
         }
     }
 }

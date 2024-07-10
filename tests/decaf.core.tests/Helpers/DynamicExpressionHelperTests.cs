@@ -24,8 +24,8 @@ namespace decaf.core_tests.Helpers
             var reflectionHelper = new ReflectionHelper();
             var expressionHelper = new ExpressionHelper(reflectionHelper);
             var valueFunctionHelper = new ValueFunctionHelper(expressionHelper);
-            this.dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, valueFunctionHelper);
-            this.queryContext = SelectQueryContext.Create(aliasManager, hashProvider) as IQueryContextExtended;
+            dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, valueFunctionHelper);
+            queryContext = SelectQueryContext.Create(aliasManager, hashProvider) as IQueryContextExtended;
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace decaf.core_tests.Helpers
             });
 
             // Act
-            var properties = this.dynamicExpressionHelper.GetProperties(func, this.queryContext);
+            var properties = dynamicExpressionHelper.GetProperties(func, queryContext);
 
             // Assert
             properties.Should().HaveCount(2);
@@ -58,7 +58,7 @@ namespace decaf.core_tests.Helpers
             });
 
             // Act
-            var properties = this.dynamicExpressionHelper.GetProperties(func, this.queryContext);
+            var properties = dynamicExpressionHelper.GetProperties(func, queryContext);
 
             // Assert
             properties.Should().HaveCount(2);
@@ -78,7 +78,7 @@ namespace decaf.core_tests.Helpers
             });
 
             // Act
-            var properties = this.dynamicExpressionHelper.GetProperties(func, this.queryContext);
+            var properties = dynamicExpressionHelper.GetProperties(func, queryContext);
 
             // Assert
             properties.Should().HaveCount(3);
@@ -92,7 +92,7 @@ namespace decaf.core_tests.Helpers
         public void ParseExpressionDynamicSucceeds(Expression expression, IEnumerable<DynamicColumnInfo> expected)
         {
             // Act
-            var results = this.dynamicExpressionHelper.GetProperties(expression, this.queryContext);
+            var results = dynamicExpressionHelper.GetProperties(expression, queryContext);
 
             // Assert
             results.Should().BeEquivalentTo(expected);

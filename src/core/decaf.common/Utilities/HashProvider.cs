@@ -29,7 +29,7 @@ namespace decaf.common.Utilities
 	{
         private readonly SHA256 hashAlgorithm;
 
-		public HashProvider() => this.hashAlgorithm = SHA256.Create();
+		public HashProvider() => hashAlgorithm = SHA256.Create();
 
         public static IHashProvider Create() => new HashProvider();
 
@@ -37,7 +37,7 @@ namespace decaf.common.Utilities
         public string GetHash<T>(T input)
         {
             var json = JsonConvert.SerializeObject(input);
-            var hash = this.hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(json));
+            var hash = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(json));
 
             return Convert.ToBase64String(hash);
         }
@@ -46,9 +46,9 @@ namespace decaf.common.Utilities
         public string GetHash<T>(T input, object appendix)
         {
             var json = JsonConvert.SerializeObject(input);
-            var hashBytes = this.hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(json));
+            var hashBytes = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(json));
             json = JsonConvert.SerializeObject(appendix);
-            var appendixHashBytes = this.hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(json));
+            var appendixHashBytes = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(json));
 
             var hash = Convert.ToBase64String(hashBytes);
             var appendixHash = Convert.ToBase64String(appendixHashBytes);

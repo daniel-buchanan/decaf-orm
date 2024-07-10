@@ -17,10 +17,10 @@ namespace decaf
 
         private IServiceCollection Add(ServiceLifetime lifetime)
         {
-            this.services.Add(new ServiceDescriptor(typeof(IService<TEntity, TKey1, TKey2, TKey3>), typeof(Service<TEntity, TKey1, TKey2, TKey3>), lifetime));
-            this.services.Add(new ServiceDescriptor(typeof(IQuery<TEntity, TKey1, TKey2, TKey3>), typeof(Query<TEntity, TKey1, TKey2, TKey3>), lifetime));
-            this.services.Add(new ServiceDescriptor(typeof(ICommand<TEntity, TKey1, TKey2, TKey3>), typeof(Command<TEntity, TKey1, TKey2, TKey3>), lifetime));
-            return this.services;
+            services.Add(new ServiceDescriptor(typeof(IService<TEntity, TKey1, TKey2, TKey3>), typeof(Service<TEntity, TKey1, TKey2, TKey3>), lifetime));
+            services.Add(new ServiceDescriptor(typeof(IQuery<TEntity, TKey1, TKey2, TKey3>), typeof(Query<TEntity, TKey1, TKey2, TKey3>), lifetime));
+            services.Add(new ServiceDescriptor(typeof(ICommand<TEntity, TKey1, TKey2, TKey3>), typeof(Command<TEntity, TKey1, TKey2, TKey3>), lifetime));
+            return services;
         }
 
         /// <inheritdoc/>

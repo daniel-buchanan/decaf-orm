@@ -9,7 +9,7 @@ using StringStartsWith = decaf.common.ValueFunctions.StringStartsWith;
 
 namespace decaf.db.common.ANSISQL
 {
-    public abstract class WhereBuilder : db.common.Builders.IWhereBuilder
+    public abstract class WhereBuilder : IWhereBuilder
     {
         private readonly IQuotedIdentifierBuilder quotedIdentifierBuilder;
         private readonly IConstants constants;
@@ -127,7 +127,7 @@ namespace decaf.db.common.ANSISQL
 
             var parameter = parameterManager.Add(column, column.Value);
             var op = column.EqualityOperator.ToOperatorString();
-            this.quotedIdentifierBuilder.AddColumn(column.Details, sqlBuilder);
+            quotedIdentifierBuilder.AddColumn(column.Details, sqlBuilder);
             sqlBuilder.Append(" {0} ", op);
             sqlBuilder.Append(parameter.Name);
         }
@@ -158,7 +158,7 @@ namespace decaf.db.common.ANSISQL
 
             var parameter = parameterManager.Add(column, value);
 
-            this.quotedIdentifierBuilder.AddColumn(column.Details, sqlBuilder);
+            quotedIdentifierBuilder.AddColumn(column.Details, sqlBuilder);
             sqlBuilder.Append(" {0} {1}", constants.Like, constants.ValueQuote);
             sqlBuilder.Append(format, parameter.Name);
             sqlBuilder.Append(constants.ValueQuote);
@@ -166,12 +166,12 @@ namespace decaf.db.common.ANSISQL
 
         private void AddColumnMatch(ColumnMatch columnMatch, ISqlBuilder sqlBuilder)
         {
-            this.quotedIdentifierBuilder.AddColumn(columnMatch.Left, sqlBuilder);
+            quotedIdentifierBuilder.AddColumn(columnMatch.Left, sqlBuilder);
 
             var op = columnMatch.EqualityOperator.ToOperatorString();
             sqlBuilder.Append(" {0} ", op);
 
-            this.quotedIdentifierBuilder.AddColumn(columnMatch.Right, sqlBuilder);
+            quotedIdentifierBuilder.AddColumn(columnMatch.Right, sqlBuilder);
         }
 
         private void AddBetween(IBetween between, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
@@ -179,13 +179,13 @@ namespace decaf.db.common.ANSISQL
             var startParam = parameterManager.Add(ParameterWrapper.Create(between, "start"), between.Start);
             var endParam = parameterManager.Add(ParameterWrapper.Create(between, "end"), between.End);
 
-            this.quotedIdentifierBuilder.AddColumn(between.Column, sqlBuilder);
+            quotedIdentifierBuilder.AddColumn(between.Column, sqlBuilder);
             sqlBuilder.Append(" between {0} and {1}", startParam.Name, endParam.Name);
         }
 
         private void AddInValues(IInValues inValues, ISqlBuilder sqlBuilder, IParameterManager parameterManager)
         {
-            this.quotedIdentifierBuilder.AddColumn(inValues.Column, sqlBuilder);
+            quotedIdentifierBuilder.AddColumn(inValues.Column, sqlBuilder);
             sqlBuilder.AppendLine(" in {0}", constants.OpeningParen);
             sqlBuilder.IncreaseIndent();
 

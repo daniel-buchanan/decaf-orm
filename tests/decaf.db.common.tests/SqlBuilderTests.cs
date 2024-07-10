@@ -11,7 +11,7 @@ namespace decaf.db.common.tests
 
 		public SqlBuilderTests()
 		{
-			this.sqlBuilder = SqlBuilder.Create() as SqlBuilder;
+			sqlBuilder = SqlBuilder.Create() as SqlBuilder;
 		}
 
 		[Fact]
@@ -20,7 +20,7 @@ namespace decaf.db.common.tests
 			// Arrange
 
 			// Act
-			var ending = this.sqlBuilder.LineEnding;
+			var ending = sqlBuilder.LineEnding;
 
 			// Assert
 			ending.Should().Be(Environment.NewLine);
@@ -45,10 +45,10 @@ namespace decaf.db.common.tests
 
             // Act
             for (var i = 0; i < indentLevel; i++)
-                this.sqlBuilder.IncreaseIndent();
+                sqlBuilder.IncreaseIndent();
 
-            this.sqlBuilder.PrependIndent();
-            var sql = this.sqlBuilder.GetSql();
+            sqlBuilder.PrependIndent();
+            var sql = sqlBuilder.GetSql();
 
             // Assert
             sql.Should().HaveLength(indent.Length * indentLevel);
@@ -72,14 +72,14 @@ namespace decaf.db.common.tests
 
             // Act
             for (var i = 0; i < indentLevel; i++)
-                this.sqlBuilder.IncreaseIndent();
+                sqlBuilder.IncreaseIndent();
 
 
             for (var i = 0; i < indentLevel; i++)
-                this.sqlBuilder.DecreaseIndent();
+                sqlBuilder.DecreaseIndent();
 
-            this.sqlBuilder.PrependIndent();
-            var sql = this.sqlBuilder.GetSql();
+            sqlBuilder.PrependIndent();
+            var sql = sqlBuilder.GetSql();
 
             // Assert
             sql.Should().HaveLength(0);
@@ -97,9 +97,9 @@ namespace decaf.db.common.tests
             var expected = prefix + toAppend;
 
             // Act
-            this.sqlBuilder.Append(prefix);
-            this.sqlBuilder.Append(toAppend);
-            var sql = this.sqlBuilder.GetSql();
+            sqlBuilder.Append(prefix);
+            sqlBuilder.Append(toAppend);
+            var sql = sqlBuilder.GetSql();
 
             // Assert
             sql.Should().Be(expected);

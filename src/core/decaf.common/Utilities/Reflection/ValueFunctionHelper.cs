@@ -49,21 +49,21 @@ namespace decaf.common.Utilities.Reflection
         private IValueFunction ParseContains(MethodCallExpression expression)
         {
             var arg = expression.Arguments[0];
-            var value = this.expressionHelper.GetValue(arg) as string;
+            var value = expressionHelper.GetValue(arg) as string;
             return StringContains.Create(value);
         }
 
         private IValueFunction ParseStartsWith(MethodCallExpression expression)
         {
             var arg = expression.Arguments[0];
-            var value = this.expressionHelper.GetValue(arg) as string;
+            var value = expressionHelper.GetValue(arg) as string;
             return StringStartsWith.Create(value);
         }
 
         private IValueFunction ParseEndsWith(MethodCallExpression expression)
         {
             var arg = expression.Arguments[0];
-            var value = this.expressionHelper.GetValue(arg) as string;
+            var value = expressionHelper.GetValue(arg) as string;
             return StringEndsWith.Create(value);
         }
 
@@ -71,7 +71,7 @@ namespace decaf.common.Utilities.Reflection
         {
             var arguments = expression.Arguments;
             var datePartExpression = arguments[1];
-            var dp = (common.DatePart)this.expressionHelper.GetValue(datePartExpression);
+            var dp = (DatePart)expressionHelper.GetValue(datePartExpression);
             return ValueFunctions.DatePart.Create(dp);
         }
 
@@ -82,10 +82,10 @@ namespace decaf.common.Utilities.Reflection
             Expression lengthExpression = null;
             if (arguments.Count > 1) lengthExpression = arguments[1];
 
-            var startValue = (int)this.expressionHelper.GetValue(startExpression);
+            var startValue = (int)expressionHelper.GetValue(startExpression);
             if (lengthExpression != null)
             {
-                var lengthValue = (int)this.expressionHelper.GetValue(lengthExpression);
+                var lengthValue = (int)expressionHelper.GetValue(lengthExpression);
                 return Substring.Create(startValue, lengthValue);
             }
 

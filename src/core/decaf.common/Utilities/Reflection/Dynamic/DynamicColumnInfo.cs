@@ -99,9 +99,9 @@ namespace decaf.common.Utilities.Reflection.Dynamic
 
         public static bool operator ==(DynamicColumnInfo left, DynamicColumnInfo right)
         {
-            if (object.ReferenceEquals(left, null))
+            if (ReferenceEquals(left, null))
             {
-                return object.ReferenceEquals(right, null);
+                return ReferenceEquals(right, null);
             }
             return left.Equals(right);
         }

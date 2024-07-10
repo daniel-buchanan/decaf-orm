@@ -27,7 +27,7 @@ namespace decaf.services.tests.Query
             services.AddDecafService<Address, int, int>().AsScoped();
 
             var provider = services.BuildServiceProvider();
-            this.addressService = provider.GetService<IService<Address, int, int>>();
+            addressService = provider.GetService<IService<Address, int, int>>();
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace decaf.services.tests.Query
             // Act
             Action method = () =>
             {
-                this.addressService.All();
+                addressService.All();
             };
 
             // Assert
@@ -50,13 +50,13 @@ namespace decaf.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.addressService.OnBeforeExecution += (sender, args) =>
+            addressService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.addressService.All();
+            addressService.All();
 
             // Assert
             context.Should().NotBeNull();
@@ -80,13 +80,13 @@ namespace decaf.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.addressService.OnBeforeExecution += (sender, args) =>
+            addressService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.addressService.Find(p => p.Id == 42);
+            addressService.Find(p => p.Id == 42);
 
             // Assert
             context.Should().NotBeNull();
@@ -113,13 +113,13 @@ namespace decaf.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.addressService.OnBeforeExecution += (sender, args) =>
+            addressService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.addressService.Get(1, 42);
+            addressService.Get(1, 42);
 
             // Assert
             context.Should().NotBeNull();
@@ -136,7 +136,7 @@ namespace decaf.services.tests.Query
                 c => c.Name.Equals(nameof(Address.PostCode)),
                 c => c.Name.Equals(nameof(Address.Region)),
                 c => c.Name.Equals(nameof(Address.Country)));
-            var where = selectContext.WhereClause as state.Conditionals.And;
+            var where = selectContext.WhereClause as And;
             where.Children.Should().HaveCount(2);
         }
 
@@ -145,14 +145,14 @@ namespace decaf.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.addressService.OnBeforeExecution += (sender, args) =>
+            addressService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
             var key = CompositeKeyValue.Create(42, 43);
 
             // Act
-            this.addressService.Get(new[] { CompositeKeyValue.Create(42, 43) });
+            addressService.Get(new[] { CompositeKeyValue.Create(42, 43) });
 
             // Assert
             context.Should().NotBeNull();
@@ -181,14 +181,14 @@ namespace decaf.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.addressService.OnBeforeExecution += (sender, args) =>
+            addressService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
             var key = CompositeKeyValue.Create(42, 43);
 
             // Act
-            this.addressService.Get(new List<ICompositeKeyValue<int, int>> { key });
+            addressService.Get(new List<ICompositeKeyValue<int, int>> { key });
 
             // Assert
             context.Should().NotBeNull();

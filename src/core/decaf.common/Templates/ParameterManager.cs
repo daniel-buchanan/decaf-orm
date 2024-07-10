@@ -19,9 +19,9 @@ namespace decaf.common.Templates
         public ParameterManager(IHashProvider hashProvider)
         {
             this.hashProvider = hashProvider;
-            this.parameters = new Dictionary<string, SqlParameter>();
-            this.parameterValues = new Dictionary<string, object>();
-            this.parameterCount = 0;
+            parameters = new Dictionary<string, SqlParameter>();
+            parameterValues = new Dictionary<string, object>();
+            parameterCount = 0;
         }
 
         protected virtual string GetParameterPrefix()
@@ -42,42 +42,42 @@ namespace decaf.common.Templates
 
         public SqlParameter Add<T>(T state, object value)
         {
-            var hash = this.hashProvider.GetHash(state, value);
-            var existing = this.parameters.TryGetValue(hash, out var existingParameter);
+            var hash = hashProvider.GetHash(state, value);
+            var existing = parameters.TryGetValue(hash, out var existingParameter);
             if (existing) return existingParameter;
 
             var parameterNumber = parameterCount + 1;
 
             var parameterName = $"{ParameterPrefix}{ParameterName}{parameterNumber}";
             var newParameter = SqlParameter.Create(hash, parameterName);
-            this.parameters.Add(hash, newParameter);
-            this.parameterValues.Add(hash, value);
+            parameters.Add(hash, newParameter);
+            parameterValues.Add(hash, value);
 
-            this.parameterCount++;
+            parameterCount++;
 
             return newParameter;
         }
 
         public void Clear()
         {
-            this.parameters.Clear();
-            this.parameterValues.Clear();
-            this.parameterCount = 0;
+            parameters.Clear();
+            parameterValues.Clear();
+            parameterCount = 0;
         }
 
         public IEnumerable<SqlParameter> GetParameters()
-            => this.parameters.Select(kp => kp.Value);
+            => parameters.Select(kp => kp.Value);
 
         public Dictionary<string, object> GetParameterValues(bool includePrefix = false)
         {
             var result = new Dictionary<string, object>();
-            foreach(var kp in this.parameters)
+            foreach(var kp in parameters)
             {
                 var parameterName = kp.Value.Name;
                 if (!includePrefix) 
                     parameterName = parameterName.Replace(ParameterPrefix, string.Empty);
                 
-                result.Add(parameterName, this.parameterValues[kp.Key]);
+                result.Add(parameterName, parameterValues[kp.Key]);
             }
 
             return result;

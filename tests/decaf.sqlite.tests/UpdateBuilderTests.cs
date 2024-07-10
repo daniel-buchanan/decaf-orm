@@ -16,7 +16,7 @@ namespace decaf.sqlite.tests
 
             var decaf = provider.GetService<IDecaf>();
             var transient = decaf.BuildUnit();
-            this.query = transient.GetQuery() as IQueryContainer;
+            query = transient.GetQuery() as IQueryContainer;
         }
 
         [Fact]
@@ -28,7 +28,7 @@ namespace decaf.sqlite.tests
             var idValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Update()
+            var q = query.Update()
                 .Table("users")
                 .Set(new
                 {
@@ -51,7 +51,7 @@ namespace decaf.sqlite.tests
             var idValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Update()
+            var q = query.Update()
                 .Table("users")
                 .Set(new
                 {
@@ -76,7 +76,7 @@ namespace decaf.sqlite.tests
             var idValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Update()
+            var q = query.Update()
                 .Table("users")
                 .From(sq =>
                 {

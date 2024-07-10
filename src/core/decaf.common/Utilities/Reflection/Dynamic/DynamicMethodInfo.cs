@@ -26,9 +26,9 @@ namespace decaf.common.Utilities.Reflection.Dynamic
 
         public override Type DeclaringType => typeof(DynamicObject);
 
-        public override string Name => this.name;
+        public override string Name => name;
 
-        public override Type ReflectedType => this.reflectedType;
+        public override Type ReflectedType => reflectedType;
 
         public override MethodInfo GetBaseDefinition() => this;
 
@@ -38,7 +38,7 @@ namespace decaf.common.Utilities.Reflection.Dynamic
 
         public override MethodImplAttributes GetMethodImplementationFlags() => MethodImplAttributes.Managed;
 
-        public override ParameterInfo[] GetParameters() => this.parameters;
+        public override ParameterInfo[] GetParameters() => parameters;
 
         public override object Invoke(object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture)
             => base.Invoke(obj, parameters);

@@ -33,20 +33,20 @@ namespace decaf.core_tests
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetService<IDecaf>();
             var transient = decaf.BuildUnit();
-            this.query = transient.GetQuery() as IQueryContainerInternal;
+            query = transient.GetQuery() as IQueryContainerInternal;
         }
 
         [Fact]
         public void SimpleSelectSucceeds()
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From<Person>(p => p)
                 .Where(p => p.LastName.Contains("smith"));
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(1);
             var where = context.WhereClause as IColumn;
             where.Should().NotBeNull();
@@ -59,7 +59,7 @@ namespace decaf.core_tests
         public void SimpleJoinSucceeds()
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From("users", "u")
                 .Join()
@@ -75,7 +75,7 @@ namespace decaf.core_tests
                 });
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(2);
             context.Joins.Should().HaveCount(1);
             var whereClause = context.WhereClause as IColumn;
@@ -86,17 +86,17 @@ namespace decaf.core_tests
         public void SimpleSelectWithJoinSucceeds()
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From<Person>(p => p)
                 .Join<Address>((p, a) => p.AddressId == a.Id)
                 .Where((p, a) => p.LastName.Contains("smith") && a.PostCode == "3216");
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(2);
             context.Joins.Should().HaveCount(1);
-            context.WhereClause.Should().BeAssignableTo(typeof(state.Conditionals.And));
+            context.WhereClause.Should().BeAssignableTo(typeof(And));
         }
 
         [Theory]
@@ -104,7 +104,7 @@ namespace decaf.core_tests
         public void SimpleSelectDateTimeSucceeds(Expression<Func<Person, Address, Result>> selectExpression)
         {
             // Act
-            this.query
+            query
                 .Select()
                 .From<Person>(p => p)
                 .Join<Address>((p, a) => p.AddressId == a.Id)
@@ -112,10 +112,10 @@ namespace decaf.core_tests
                 .Select(selectExpression);
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(2);
             context.Joins.Should().HaveCount(1);
-            context.WhereClause.Should().BeAssignableTo(typeof(state.Conditionals.And));
+            context.WhereClause.Should().BeAssignableTo(typeof(And));
         }
 
         [Fact]
@@ -124,14 +124,14 @@ namespace decaf.core_tests
             // Arrange
 
             // Act
-            this.query
+            query
                 .Select()
                 .From("person", "p")
                 .Where(b => b.Column("id", "p").Is().EqualTo(42))
                 .SelectAll<Person>("p");
 
             // Assert
-            var context = this.query.Context as ISelectQueryContext;
+            var context = query.Context as ISelectQueryContext;
             context.QueryTargets.Should().HaveCount(1);
             context.Columns.Should().Satisfy(
                 c => c.Name.Equals(nameof(Person.Id)),
@@ -150,7 +150,7 @@ namespace decaf.core_tests
             // Act
             Action method = () =>
             {
-                this.query.Select()
+                query.Select()
                     .From("users", "u")
                     .Where(b => b.Column("name", "p").Is().StartsWith("bob"))
                     .Select(b => new

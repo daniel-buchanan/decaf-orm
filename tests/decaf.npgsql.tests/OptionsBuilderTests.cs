@@ -20,7 +20,7 @@ namespace decaf.npgsql.tests
 		public void TransactionFactorySet()
 		{
 			// Act
-			var transactionFactory = this.provider.GetService<ITransactionFactory>();
+			var transactionFactory = provider.GetService<ITransactionFactory>();
 
 			// Assert
 			transactionFactory.Should().BeOfType<NpgsqlTransactionFactory>();
@@ -30,7 +30,7 @@ namespace decaf.npgsql.tests
         public void ConnectionFactorySet()
         {
             // Act
-            var connectionFactory = this.provider.GetService<IConnectionFactory>();
+            var connectionFactory = provider.GetService<IConnectionFactory>();
 
             // Assert
             connectionFactory.Should().BeOfType<NpgsqlConnectionFactory>();
@@ -40,7 +40,7 @@ namespace decaf.npgsql.tests
         public void SqlFactorySet()
         {
             // Act
-            var sqlFactory = this.provider.GetService<ISqlFactory>();
+            var sqlFactory = provider.GetService<ISqlFactory>();
 
             // Assert
             sqlFactory.Should().BeOfType<db.common.SqlFactory>();

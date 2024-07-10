@@ -13,7 +13,7 @@ namespace decaf.core_tests
 
 		public AliasManagerTests()
 		{
-			this.aliasManager = AliasManager.Create();
+			aliasManager = AliasManager.Create();
 		}
 
         [Theory]
@@ -23,7 +23,7 @@ namespace decaf.core_tests
 			// Arrange
 
 			// Act
-			var addedAlias = this.aliasManager.Add(alias, name);
+			var addedAlias = aliasManager.Add(alias, name);
 
 			// Assert
 			addedAlias.Should().BeEquivalentTo(expected);
@@ -35,10 +35,10 @@ namespace decaf.core_tests
 		{
 			// Arrange
 			var expectedAlias = ManagedAlias.Create(expected, name);
-			this.aliasManager.Add(alias, name);
+			aliasManager.Add(alias, name);
 
 			// Act
-			var aliases = this.aliasManager.All();
+			var aliases = aliasManager.All();
 
 			// Assert
 			aliases.Should().ContainSingle();
@@ -51,10 +51,10 @@ namespace decaf.core_tests
 		{
 			// Arrange
 			var expectedAlias = ManagedAlias.Create(expected, name);
-			this.aliasManager.Add(alias, name);
+			aliasManager.Add(alias, name);
 
 			// Act
-			var foundAlias = this.aliasManager.FindByAssociation(name);
+			var foundAlias = aliasManager.FindByAssociation(name);
 
 			// Assert
 			foundAlias.Should().ContainSingle();

@@ -12,38 +12,38 @@ namespace decaf.tests.common.Mocks
 
         public MockDbParameterCollection()
         {
-            this.underlyingList = new List<MockDbParameter>();
+            underlyingList = new List<MockDbParameter>();
         }
 
-        public override int Count => this.underlyingList.Count;
+        public override int Count => underlyingList.Count;
 
         public override object SyncRoot => null;
 
         public override int Add(object value)
         {
-            this.underlyingList.Add(new MockDbParameter()
+            underlyingList.Add(new MockDbParameter()
             {
                 Value = value
             });
-            return this.underlyingList.Count;
+            return underlyingList.Count;
         }
 
         public override void AddRange(Array values)
         {
             foreach(var v in values)
             {
-                this.underlyingList.Add(new MockDbParameter()
+                underlyingList.Add(new MockDbParameter()
                 {
                     Value = v
                 });
             }
         }
 
-        public override void Clear() => this.underlyingList.Clear();
+        public override void Clear() => underlyingList.Clear();
 
-        public override bool Contains(object value) => this.underlyingList.Any(p => p.Value == value);
+        public override bool Contains(object value) => underlyingList.Any(p => p.Value == value);
 
-        public override bool Contains(string value) => this.underlyingList.Any(p => p.ParameterName == value);
+        public override bool Contains(string value) => underlyingList.Any(p => p.ParameterName == value);
 
         public override void CopyTo(Array array, int index)
         {
@@ -55,44 +55,44 @@ namespace decaf.tests.common.Mocks
                     Value = v
                 });
             }
-            this.underlyingList.InsertRange(index, items);
+            underlyingList.InsertRange(index, items);
         }
 
-        public override IEnumerator GetEnumerator() => this.underlyingList.GetEnumerator();
+        public override IEnumerator GetEnumerator() => underlyingList.GetEnumerator();
 
-        public override int IndexOf(object value) => this.underlyingList.FindIndex(p => p.Value == value);
+        public override int IndexOf(object value) => underlyingList.FindIndex(p => p.Value == value);
 
-        public override int IndexOf(string parameterName) => this.underlyingList.FindIndex(p => p.ParameterName == parameterName);
+        public override int IndexOf(string parameterName) => underlyingList.FindIndex(p => p.ParameterName == parameterName);
 
-        public override void Insert(int index, object value) => this.underlyingList.Insert(index, new MockDbParameter()
+        public override void Insert(int index, object value) => underlyingList.Insert(index, new MockDbParameter()
         {
             Value = value
         });
 
-        public override void Remove(object value) => this.underlyingList.RemoveAll(p => p.Value == value);
+        public override void Remove(object value) => underlyingList.RemoveAll(p => p.Value == value);
 
-        public override void RemoveAt(int index) => this.underlyingList.RemoveAt(index);
+        public override void RemoveAt(int index) => underlyingList.RemoveAt(index);
 
-        public override void RemoveAt(string parameterName) => this.underlyingList.RemoveAll(p => p.ParameterName == parameterName);
+        public override void RemoveAt(string parameterName) => underlyingList.RemoveAll(p => p.ParameterName == parameterName);
 
         protected override DbParameter GetParameter(int index)
         {
-            return this.underlyingList[index];
+            return underlyingList[index];
         }
 
         protected override DbParameter GetParameter(string parameterName)
         {
-            return this.underlyingList.FirstOrDefault(p => p.ParameterName == parameterName);
+            return underlyingList.FirstOrDefault(p => p.ParameterName == parameterName);
         }
 
         protected override void SetParameter(int index, DbParameter value)
         {
-            this.underlyingList[index] = value as MockDbParameter;
+            underlyingList[index] = value as MockDbParameter;
         }
 
         protected override void SetParameter(string parameterName, DbParameter value)
         {
-            var index = this.underlyingList.FindIndex(p => p.ParameterName == parameterName);
+            var index = underlyingList.FindIndex(p => p.ParameterName == parameterName);
             SetParameter(index, value);
         }
     }

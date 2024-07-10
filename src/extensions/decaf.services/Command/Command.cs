@@ -176,7 +176,7 @@ namespace decaf.services
             Expression<Func<TEntity, bool>> expression,
             CancellationToken cancellationToken = default)
         {
-            await ExecuteQueryAsync(async (q, c) =>
+            await ExecuteQueryAsync(async (q, _) =>
             {
                 var query = q.Delete()
                     .From<TEntity>()

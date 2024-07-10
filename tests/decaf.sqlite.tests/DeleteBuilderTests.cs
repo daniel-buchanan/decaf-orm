@@ -16,7 +16,7 @@ namespace decaf.sqlite.tests
 
             var decaf = provider.GetService<IDecaf>();
             var transient = decaf.BuildUnit();
-            this.query = transient.GetQuery() as IQueryContainer;
+            query = transient.GetQuery() as IQueryContainer;
         }
 
         [Fact]
@@ -28,7 +28,7 @@ namespace decaf.sqlite.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Delete()
+            var q = query.Delete()
                 .From("users", "u")
                 .Where(b => b.Column("sub", "u").Is().EqualTo(subValue))
                 .Output("id");
@@ -46,7 +46,7 @@ namespace decaf.sqlite.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Delete()
+            var q = query.Delete()
                 .From("users", "u")
                 .Where(b => b.Column("sub", "u").Is().EqualTo(subValue));
 
@@ -66,7 +66,7 @@ namespace decaf.sqlite.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Delete()
+            var q = query.Delete()
                 .From("users", "u")
                 .Where(b => b.Column("sub", "u").Is().Like("bob"))
                 .Output("id");
@@ -86,7 +86,7 @@ namespace decaf.sqlite.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Delete()
+            var q = query.Delete()
                 .From("users", "u")
                 .Where(b => b.Column("sub", "u").Is().StartsWith("bob"))
                 .Output("id");
@@ -106,7 +106,7 @@ namespace decaf.sqlite.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Delete()
+            var q = query.Delete()
                 .From("users", "u")
                 .Where(b => b.Column("sub", "u").Is().EndsWith("bob"))
                 .Output("id");
@@ -126,7 +126,7 @@ namespace decaf.sqlite.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Delete()
+            var q = query.Delete()
                 .From("users", "u")
                 .Where(b =>
                 {

@@ -23,8 +23,8 @@ namespace decaf.tests.common.Mocks
 
         public override IDbTransaction GetUnderlyingTransaction()
         {
-            var conn = this.Connection.GetUnderlyingConnection() as DbConnection;
-            return new MockDbTransaction(dbOptions, conn, System.Data.IsolationLevel.Serializable);
+            var conn = Connection.GetUnderlyingConnection() as DbConnection;
+            return new MockDbTransaction(dbOptions, conn, IsolationLevel.Serializable);
         }
     }
 }

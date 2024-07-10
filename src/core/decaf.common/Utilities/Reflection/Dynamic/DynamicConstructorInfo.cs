@@ -13,10 +13,10 @@ namespace decaf.common.Utilities.Reflection.Dynamic
         public DynamicConstructorInfo(IEnumerable<DynamicColumnInfo> columns, Type declaringType)
         {
             this.declaringType = declaringType;
-            this.paramters = new List<ParameterInfo>();
+            paramters = new List<ParameterInfo>();
             foreach(var c in columns)
             {
-                this.paramters.Add(new DynamicParameterInfo(c.NewName, c.ValueType));
+                paramters.Add(new DynamicParameterInfo(c.NewName, c.ValueType));
             }
         }
 
@@ -24,7 +24,7 @@ namespace decaf.common.Utilities.Reflection.Dynamic
 
         public override RuntimeMethodHandle MethodHandle => throw new NotImplementedException();
 
-        public override Type DeclaringType => this.declaringType;
+        public override Type DeclaringType => declaringType;
 
         public override string Name => "Default";
 
@@ -36,7 +36,7 @@ namespace decaf.common.Utilities.Reflection.Dynamic
 
         public override MethodImplAttributes GetMethodImplementationFlags() => MethodImplAttributes.Managed;
 
-        public override ParameterInfo[] GetParameters() => this.paramters.ToArray();
+        public override ParameterInfo[] GetParameters() => paramters.ToArray();
 
         public override object Invoke(BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture)
         {

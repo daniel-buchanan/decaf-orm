@@ -15,7 +15,7 @@ namespace decaf.db.common.tests
 		public ParameterManagerTests()
 		{
             var hashProvider = new HashProvider();
-			this.parameterManager = new ParameterManager(hashProvider);
+			parameterManager = new ParameterManager(hashProvider);
 		}
 
 		[Fact]
@@ -26,7 +26,7 @@ namespace decaf.db.common.tests
 			var state = Column.Equals<int>(decaf.state.Column.Create("id", source), 42);
 
 			// Act
-			Action method = () => this.parameterManager.Add(state, 42);
+			Action method = () => parameterManager.Add(state, 42);
 
 			// Assert
 			method.Should().NotThrow();
@@ -40,11 +40,11 @@ namespace decaf.db.common.tests
             var state = Column.Equals<int>(decaf.state.Column.Create("id", source), 42);
 
             // Act
-            this.parameterManager.Add(state, 42);
-            this.parameterManager.Add(state, 42);
+            parameterManager.Add(state, 42);
+            parameterManager.Add(state, 42);
 
 			// Assert
-			this.parameterManager.GetParameters().Should().HaveCount(1);
+			parameterManager.GetParameters().Should().HaveCount(1);
         }
 
         [Fact]
@@ -55,10 +55,10 @@ namespace decaf.db.common.tests
             var state = Column.Equals<int>(decaf.state.Column.Create("id", source), 42);
 
             // Act
-            this.parameterManager.Add(state, 42);
+            parameterManager.Add(state, 42);
 
             // Assert
-            this.parameterManager.GetParameters().Should().Satisfy(p => p.Name == "@p1");
+            parameterManager.GetParameters().Should().Satisfy(p => p.Name == "@p1");
         }
 
         [Fact]
@@ -70,11 +70,11 @@ namespace decaf.db.common.tests
             var state2 = Column.Equals<int>(state.Column.Create("member_id", source), 63);
 
             // Act
-            this.parameterManager.Add(state1, 42);
-            this.parameterManager.Add(state2, 63);
+            parameterManager.Add(state1, 42);
+            parameterManager.Add(state2, 63);
 
             // Assert
-            this.parameterManager.GetParameters()
+            parameterManager.GetParameters()
                 .Should().Satisfy(
                     p => p.Name == "@p1",
                     p => p.Name == "@p2");
@@ -89,9 +89,9 @@ namespace decaf.db.common.tests
             var state2 = Column.Equals<int>(state.Column.Create("id", source), 42);
 
             // Act
-            var result1 = this.parameterManager.Add(state1, 42);
-            this.parameterManager.Clear();
-            var result2 = this.parameterManager.Add(state2, 42);
+            var result1 = parameterManager.Add(state1, 42);
+            parameterManager.Clear();
+            var result2 = parameterManager.Add(state2, 42);
 
             // Assert
             result1.Hash.Should().BeEquivalentTo(result2.Hash);
@@ -104,15 +104,15 @@ namespace decaf.db.common.tests
             var source = TableTarget.Create("users", "u");
             var state1 = Column.Equals<int>(state.Column.Create("id", source), 42);
             var state2 = Column.Equals<int>(state.Column.Create("member_id", source), 63);
-            this.parameterManager.Add(state1, 42);
-            this.parameterManager.Add(state2, 63);
+            parameterManager.Add(state1, 42);
+            parameterManager.Add(state2, 63);
 
             // Act
-            this.parameterManager.Clear();
+            parameterManager.Clear();
 
             // Assert
-            this.parameterManager.GetParameters().Should().HaveCount(0);
-            this.parameterManager.GetParameterValues().Should().HaveCount(0);
+            parameterManager.GetParameters().Should().HaveCount(0);
+            parameterManager.GetParameterValues().Should().HaveCount(0);
         }
     }
 }

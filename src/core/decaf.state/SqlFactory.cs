@@ -16,7 +16,7 @@ public abstract class SqlFactory : ISqlFactory
     {
         SqlTemplate template;
         var key = context.GetHash();
-        var existing = this.cache.TryGetValue(key, out template);
+        var existing = cache.TryGetValue(key, out template);
 
         if (existing) return template;
 
@@ -32,7 +32,7 @@ public abstract class SqlFactory : ISqlFactory
             template = ParseQuery(createTableContext);
 
         if (template == null) return null;
-        this.cache.Add(key, template);
+        cache.Add(key, template);
         return template;
     }
 

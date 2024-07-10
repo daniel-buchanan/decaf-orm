@@ -20,16 +20,16 @@ namespace decaf.sqlserver
         private bool isMarsEnabled;
 
         public SqlServerConnectionDetails() : base()
-            => this.isTrustedConnection = false;
+            => isTrustedConnection = false;
 
         private SqlServerConnectionDetails(string connectionString)
             : base(connectionString)
             => ParseConnectionString(connectionString, (c) =>
             {
                 if (c.Contains(MarsEnabled))
-                    this.isMarsEnabled = true;
+                    isMarsEnabled = true;
 
-                this.isTrustedConnection = c.Contains(TrustedConnection);
+                isTrustedConnection = c.Contains(TrustedConnection);
 
                 if (!c.Contains(UserId)) return;
                 
@@ -76,11 +76,11 @@ namespace decaf.sqlserver
 
         /// <inheritdoc/>
         public void EnableMars()
-            => this.isMarsEnabled = true;
+            => isMarsEnabled = true;
 
         /// <inheritdoc/>
         public void IsTrustedConnection()
-            => this.isTrustedConnection = true;
+            => isTrustedConnection = true;
 
         /// <inheritdoc/>
         protected override async Task<string> ConstructConnectionStringAsync(CancellationToken cancellationToken = default)
@@ -100,10 +100,10 @@ namespace decaf.sqlserver
             }
 
             var sb = new StringBuilder();
-            sb.AppendFormat("Server={0},{1};", this.Hostname, this.Port);
-            sb.AppendFormat("Database={0};", this.DatabaseName);
+            sb.AppendFormat("Server={0},{1};", Hostname, Port);
+            sb.AppendFormat("Database={0};", DatabaseName);
 
-            if (this.isTrustedConnection)
+            if (isTrustedConnection)
                 sb.AppendFormat("{0};", TrustedConnection);
             else
             {
@@ -111,7 +111,7 @@ namespace decaf.sqlserver
                 sb.AppendFormat("Password={0};", password);
             }
 
-            if (this.isMarsEnabled)
+            if (isMarsEnabled)
                 sb.AppendFormat("{0};", MarsEnabled);
             
             return sb.ToString();

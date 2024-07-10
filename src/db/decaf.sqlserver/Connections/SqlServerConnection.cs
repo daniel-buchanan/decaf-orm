@@ -15,7 +15,7 @@ namespace decaf.sqlserver
 
         public override IDbConnection GetUnderlyingConnection()
         {
-            var details = this.connectionDetails as ISqlServerConnectionDetails;
+            var details = connectionDetails as ISqlServerConnectionDetails;
             return new Microsoft.Data.SqlClient.SqlConnection(details.GetConnectionString());
         }
     }

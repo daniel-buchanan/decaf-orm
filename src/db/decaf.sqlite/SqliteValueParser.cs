@@ -21,7 +21,7 @@ namespace decaf.sqlite
         /// <inheritdoc/>
         public override bool ValueNeedsQuoting(Type type)
         {
-            var underlyingType = this.reflectionHelper.GetUnderlyingType(type);
+            var underlyingType = reflectionHelper.GetUnderlyingType(type);
 
             if (underlyingType == typeof(bool)) return true;
             else if (underlyingType == typeof(byte[])) return true;

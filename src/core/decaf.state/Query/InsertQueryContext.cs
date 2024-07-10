@@ -24,24 +24,24 @@ namespace decaf.state
 
         /// <inheritdoc/>
         public ITableTarget Target
-            => this.QueryTargets.FirstOrDefault() as ITableTarget;
+            => QueryTargets.FirstOrDefault() as ITableTarget;
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<Column> Columns => this.columns.AsReadOnly();
+        public IReadOnlyCollection<Column> Columns => columns.AsReadOnly();
 
         /// <inheritdoc/>
         public IInsertValuesSource Source { get; private set; }
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<Output> Outputs => this.outputs.AsReadOnly();
+        public IReadOnlyCollection<Output> Outputs => outputs.AsReadOnly();
 
         /// <inheritdoc/>
         public void Column(Column column)
         {
-            var item = this.columns.FirstOrDefault(c => c.IsEquivalentTo(column));
+            var item = columns.FirstOrDefault(c => c.IsEquivalentTo(column));
             if (item != null) return;
 
-            this.columns.Add(column);
+            columns.Add(column);
         }
 
         /// <inheritdoc/>
@@ -50,7 +50,7 @@ namespace decaf.state
         /// <inheritdoc/>
         public void Into(ITableTarget target)
         {
-            var item = this.QueryTargets.FirstOrDefault(t => t.IsEquivalentTo(target));
+            var item = QueryTargets.FirstOrDefault(t => t.IsEquivalentTo(target));
             if (item != null) return;
 
             var internalContext = this as IQueryContextExtended;
@@ -58,7 +58,7 @@ namespace decaf.state
         }
 
         /// <inheritdoc/>
-        public void Output(Output output) => this.outputs.Add(output);
+        public void Output(Output output) => outputs.Add(output);
 
         /// <inheritdoc/>
         public void Value(object[] value)
@@ -69,7 +69,7 @@ namespace decaf.state
 
             if (staticValueSource == null)
             {
-                staticValueSource = state.ValueSources.Insert.StaticValuesSource.Create(value.Length);
+                staticValueSource = ValueSources.Insert.StaticValuesSource.Create(value.Length);
                 Source = staticValueSource;
             }
 

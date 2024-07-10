@@ -14,7 +14,7 @@ namespace decaf.npgsql
 
         protected override Task<IConnection> ConstructConnectionAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default)
         {
-            var conn = new NpgsqlConnection(this.logger, connectionDetails);
+            var conn = new NpgsqlConnection(logger, connectionDetails);
             return Task.FromResult(conn as IConnection);
         }
     }

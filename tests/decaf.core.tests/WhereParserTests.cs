@@ -25,13 +25,13 @@ namespace decaf.core_tests
         {
             var reflectionHelper = new ReflectionHelper();
             var expressionHelper = new ExpressionHelper(reflectionHelper);
-            this.aliasManager = AliasManager.Create();
-            this.hashProvider = new HashProvider();
+            aliasManager = AliasManager.Create();
+            hashProvider = new HashProvider();
             var valueFunctionHelper = new ValueFunctionHelper(expressionHelper);
             var callExpressionHelper = new CallExpressionHelper(expressionHelper, valueFunctionHelper);
             var valueParser = new ValueParser(expressionHelper, callExpressionHelper, reflectionHelper);
             var joinParser = new JoinParser(expressionHelper, reflectionHelper);
-            this.parser = new WhereParser(expressionHelper, reflectionHelper, callExpressionHelper, joinParser, valueParser);
+            parser = new WhereParser(expressionHelper, reflectionHelper, callExpressionHelper, joinParser, valueParser);
         }
 
         [Theory]
@@ -44,11 +44,11 @@ namespace decaf.core_tests
             Type functionType)
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
+            var context = SelectQueryContext.Create(aliasManager, hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
 
             // Act
-            var result = this.parser.Parse(expression, context);
+            var result = parser.Parse(expression, context);
 
             // Assert
             var col = result as IColumn;
@@ -73,12 +73,12 @@ namespace decaf.core_tests
         public void ParseContainsExpressionSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
+            var context = SelectQueryContext.Create(aliasManager, hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Person, bool>> expression = (p) => p.FirstName.Contains("smith");
 
             // Act
-            var result = this.parser.Parse(expression, context);
+            var result = parser.Parse(expression, context);
 
             // Assert
             var col = result as IColumn;
@@ -94,12 +94,12 @@ namespace decaf.core_tests
         public void ParseNotContainsExpressionSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
+            var context = SelectQueryContext.Create(aliasManager, hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Person, bool>> expression = (p) => !p.FirstName.Contains("smith");
 
             // Act
-            var result = this.parser.Parse(expression, context);
+            var result = parser.Parse(expression, context);
 
             // Assert
             var inversion = result as Not;
@@ -117,12 +117,12 @@ namespace decaf.core_tests
         public void ParseContainsEqualsFalseExpressionSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
+            var context = SelectQueryContext.Create(aliasManager, hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Person, bool>> expression = (p) => p.FirstName.Contains("smith") == false;
 
             // Act
-            var result = this.parser.Parse(expression, context);
+            var result = parser.Parse(expression, context);
 
             // Assert
             var inversion = result as Not;
@@ -140,12 +140,12 @@ namespace decaf.core_tests
         public void ParseTrimEqualsValueExpressionSucceeds()
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
+            var context = SelectQueryContext.Create(aliasManager, hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
             Expression<Func<Person, bool>> expression = (p) => p.FirstName.Trim() == "bob";
 
             // Act
-            var result = this.parser.Parse(expression, context);
+            var result = parser.Parse(expression, context);
 
             // Assert
             var col = result as IColumn;

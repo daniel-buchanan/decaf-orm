@@ -28,14 +28,14 @@ namespace decaf.state
         {
             Id = Guid.NewGuid();
             Kind = kind;
-            this.queryTargets = new List<IQueryTarget>();
-            this.reflectionHelper = new ReflectionHelper();
-            this.expressionHelper = new ExpressionHelper(this.reflectionHelper);
-            var valueFunctionHelper = new ValueFunctionHelper(this.expressionHelper);
-            this.dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, valueFunctionHelper);
+            queryTargets = new List<IQueryTarget>();
+            reflectionHelper = new ReflectionHelper();
+            expressionHelper = new ExpressionHelper(reflectionHelper);
+            var valueFunctionHelper = new ValueFunctionHelper(expressionHelper);
+            dynamicExpressionHelper = new DynamicExpressionHelper(expressionHelper, valueFunctionHelper);
             this.aliasManager = aliasManager;
-            var callExpressionHelper = new CallExpressionHelper(this.expressionHelper, valueFunctionHelper);
-            this.parserHolder = new ParserHolder(expressionHelper, reflectionHelper, callExpressionHelper);
+            var callExpressionHelper = new CallExpressionHelper(expressionHelper, valueFunctionHelper);
+            parserHolder = new ParserHolder(expressionHelper, reflectionHelper, callExpressionHelper);
             this.hashProvider = hashProvider;
         }
 
@@ -46,44 +46,44 @@ namespace decaf.state
         public QueryTypes Kind { get; private set; }
 
         /// <inheritdoc/>
-        public string GetHash() => this.hashProvider.GetHash(this);
+        public string GetHash() => hashProvider.GetHash(this);
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<IQueryTarget> QueryTargets => this.queryTargets;
+        public IReadOnlyCollection<IQueryTarget> QueryTargets => queryTargets;
 
         /// <inheritdoc/>
-        IExpressionHelper IQueryContextExtended.ExpressionHelper => this.expressionHelper;
+        IExpressionHelper IQueryContextExtended.ExpressionHelper => expressionHelper;
 
         /// <inheritdoc/>
-        IReflectionHelper IQueryContextExtended.ReflectionHelper => this.reflectionHelper;
+        IReflectionHelper IQueryContextExtended.ReflectionHelper => reflectionHelper;
 
         /// <inheritdoc/>
-        IQueryParsers IQueryContextExtended.Parsers => this.parserHolder;
+        IQueryParsers IQueryContextExtended.Parsers => parserHolder;
 
         /// <inheritdoc/>
-        IAliasManager IQueryContextExtended.AliasManager => this.aliasManager;
+        IAliasManager IQueryContextExtended.AliasManager => aliasManager;
 
         /// <inheritdoc/>
-        IDynamicExpressionHelper IQueryContextExtended.DynamicExpressionHelper => this.dynamicExpressionHelper;
+        IDynamicExpressionHelper IQueryContextExtended.DynamicExpressionHelper => dynamicExpressionHelper;
 
         /// <inheritdoc/>
         void IQueryContextExtended.AddQueryTarget(IQueryTarget target)
-            => this.queryTargets.Add(target);
+            => queryTargets.Add(target);
 
         /// <inheritdoc/>
         IQueryTarget IQueryContextExtended.GetQueryTarget(Expression expression)
         {
             GetAliasAndTable(expression, out var alias, out var table);
-            var managedAlias = this.aliasManager.FindByAssociation(table)?.FirstOrDefault()?.Name ?? alias;
-            managedAlias = this.aliasManager.Add(managedAlias, table);
+            var managedAlias = aliasManager.FindByAssociation(table)?.FirstOrDefault()?.Name ?? alias;
+            managedAlias = aliasManager.Add(managedAlias, table);
 
-            return this.queryTargets.FirstOrDefault(t => t.Alias == managedAlias);
+            return queryTargets.FirstOrDefault(t => t.Alias == managedAlias);
         }
 
         /// <inheritdoc/>
         IQueryTarget IQueryContextExtended.GetQueryTarget(string alias)
         {
-            return this.queryTargets.FirstOrDefault(qt => qt.Alias == alias);
+            return queryTargets.FirstOrDefault(qt => qt.Alias == alias);
         }
 
         /// <inheritdoc/>
@@ -125,20 +125,20 @@ namespace decaf.state
             {
                 var paramExpr = expression as ParameterExpression;
                 alias = paramExpr.Name;
-                table = this.reflectionHelper.GetTableName(paramExpr.Type);
+                table = reflectionHelper.GetTableName(paramExpr.Type);
                 return;
             }
 
             if (expression is MemberExpression)
             {
                 var memberExpr = expression as MemberExpression;
-                alias = this.expressionHelper.GetParameterName(exprAlias);
-                table = this.reflectionHelper.GetTableName(memberExpr.Member.DeclaringType);
+                alias = expressionHelper.GetParameterName(exprAlias);
+                table = reflectionHelper.GetTableName(memberExpr.Member.DeclaringType);
                 return;
             }
 
-            alias = this.expressionHelper.GetParameterName(exprAlias);
-            table = this.reflectionHelper.GetTableName(exprTable.Type);
+            alias = expressionHelper.GetParameterName(exprAlias);
+            table = reflectionHelper.GetTableName(exprTable.Type);
         }
 
         /// <inheritdoc/>
@@ -149,7 +149,7 @@ namespace decaf.state
         }
 
         protected virtual void Dispose(bool disposing)
-            => this.queryTargets.DisposeAll();
+            => queryTargets.DisposeAll();
     }
 }
 

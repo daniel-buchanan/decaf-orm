@@ -11,28 +11,28 @@ namespace decaf.core_tests
         [Fact]
 		public void IsReturnsNull()
         {
-			var value = this.builder.Is("name");
+			var value = builder.Is("name");
 			value.Should().BeNull();
         }
 
         [Fact]
         public void IsWithAliasReturnsNull()
         {
-            var value = this.builder.Is("name", "p");
+            var value = builder.Is("name", "p");
             value.Should().BeNull();
         }
 
         [Fact]
         public void IsGenericReturnsNull()
         {
-            var value = this.builder.Is<string>("name");
+            var value = builder.Is<string>("name");
             value.Should().BeNull();
         }
 
         [Fact]
         public void IsGenericWithAliasReturnsNull()
         {
-            var value = this.builder.Is<string>("name", "p");
+            var value = builder.Is<string>("name", "p");
             value.Should().BeNull();
         }
     }

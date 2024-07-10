@@ -12,7 +12,7 @@ namespace decaf.common.Attributes
 
         public TableNameAttribute(string name)
         {
-            this.Name = name;
+            Name = name;
         }
     }
 }

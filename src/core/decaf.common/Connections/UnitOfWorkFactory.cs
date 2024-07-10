@@ -26,7 +26,7 @@ namespace decaf.common.Connections
             ISqlFactory sqlFactory,
             IHashProvider hashProvider)
 		{
-            this.tracker = new List<IUnitOfWork>();
+            tracker = new List<IUnitOfWork>();
             this.options = options;
             this.logger = logger;
             this.transactionFactory = transactionFactory;
@@ -43,7 +43,7 @@ namespace decaf.common.Connections
             IConnectionDetails connectionDetails) : 
             this(options, logger, transactionFactory, sqlFactory, hashProvider)
         {
-            this.providedConnectionDetails = connectionDetails;
+            providedConnectionDetails = connectionDetails;
         }
 
         /// <inheritdoc/>
@@ -55,26 +55,26 @@ namespace decaf.common.Connections
         /// <inheritdoc/>
         public async Task<IUnitOfWork> CreateAsync(CancellationToken cancellationToken = default)
         {
-            if (this.providedConnectionDetails == null)
+            if (providedConnectionDetails == null)
                 throw new MissingConnectionDetailsException("No connection details found.");
-            return await CreateAsync(this.providedConnectionDetails, cancellationToken);
+            return await CreateAsync(providedConnectionDetails, cancellationToken);
         }
 
         /// <inheritdoc/>
         public async Task<IUnitOfWork> CreateAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default)
         {
-            this.logger.Debug("UnitOfWorkFactory :: Getting Transaction");
-            var transaction = await this.transactionFactory.GetAsync(connectionDetails, cancellationToken);
+            logger.Debug("UnitOfWorkFactory :: Getting Transaction");
+            var transaction = await transactionFactory.GetAsync(connectionDetails, cancellationToken);
             var uow = UnitOfWork.Create(
                 transaction,
-                this.sqlFactory,
-                this.logger,
-                this.hashProvider,
-                this.options,
+                sqlFactory,
+                logger,
+                hashProvider,
+                options,
                 NotifyUnitOfWorkDisposed);
-            this.logger.Debug($"UnitOfWorkFactory :: UnitOfWork ({uow.Id}) Tracked");
+            logger.Debug($"UnitOfWorkFactory :: UnitOfWork ({uow.Id}) Tracked");
 
-            if(this.options.TrackUnitsOfWork) this.tracker.Add(uow);
+            if(options.TrackUnitsOfWork) tracker.Add(uow);
 
             return uow;
         }
@@ -82,29 +82,29 @@ namespace decaf.common.Connections
         /// <inheritdoc/>
         public void Dispose()
         {
-            if (!this.options.TrackUnitsOfWork) return;
+            if (!options.TrackUnitsOfWork) return;
 
-            this.logger.Debug($"UnitOfWorkFactory :: Disposing Resources, {this.tracker.Count} UnitOfWorks");
+            logger.Debug($"UnitOfWorkFactory :: Disposing Resources, {tracker.Count} UnitOfWorks");
             tracker.Clear();
         }
 
         private void NotifyUnitOfWorkDisposed(Guid id)
         {
-            if (!this.options.TrackUnitsOfWork) return;
+            if (!options.TrackUnitsOfWork) return;
 
-            var uow = this.tracker.FirstOrDefault(t => t.Id == id);
+            var uow = tracker.FirstOrDefault(t => t.Id == id);
             if (uow == null)
             {
-                this.logger.Debug($"UnitOfWorkFactory :: Notified UnitOfWork ({id}) disposed, but was not tracked");
+                logger.Debug($"UnitOfWorkFactory :: Notified UnitOfWork ({id}) disposed, but was not tracked");
                 return;
             }
 
-            this.logger.Debug($"UnitOfWorkFactory :: Notified UnitOfWork({id}) disposed, tracking removed");
-            this.tracker.Remove(uow);
+            logger.Debug($"UnitOfWorkFactory :: Notified UnitOfWork({id}) disposed, tracking removed");
+            tracker.Remove(uow);
         }
 
         /// <inheritdoc/>
         void IUnitOfWorkFactoryInternal.NotifyUnitOfWorkDisposed(Guid id)
-            => this.NotifyUnitOfWorkDisposed(id);
+            => NotifyUnitOfWorkDisposed(id);
     }
 }

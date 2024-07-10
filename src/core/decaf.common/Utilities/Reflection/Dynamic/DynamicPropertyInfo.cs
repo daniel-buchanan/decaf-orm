@@ -23,11 +23,11 @@ namespace decaf.common.Utilities.Reflection.Dynamic
 
         public override bool CanWrite => true;
 
-        public override Type PropertyType => this.propertyType;
+        public override Type PropertyType => propertyType;
 
-        public override Type DeclaringType => this.declaringType;
+        public override Type DeclaringType => declaringType;
 
-        public override string Name => this.name;
+        public override string Name => name;
 
         public override Type ReflectedType => PropertyType;
 
@@ -37,12 +37,12 @@ namespace decaf.common.Utilities.Reflection.Dynamic
 
         public override object[] GetCustomAttributes(Type attributeType, bool inherit) => new object[] { };
 
-        public override MethodInfo GetGetMethod(bool nonPublic) => new DynamicMethodInfo($"get_{this.name}", this.propertyType);
+        public override MethodInfo GetGetMethod(bool nonPublic) => new DynamicMethodInfo($"get_{name}", propertyType);
 
         public override ParameterInfo[] GetIndexParameters() => new ParameterInfo[] { };
 
         public override MethodInfo GetSetMethod(bool nonPublic)
-            => new DynamicMethodInfo($"set_{this.name}", this.propertyType, new DynamicParameterInfo("value", this.propertyType));
+            => new DynamicMethodInfo($"set_{name}", propertyType, new DynamicParameterInfo("value", propertyType));
 
         public override object GetValue(object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture)
         {

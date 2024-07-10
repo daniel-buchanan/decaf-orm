@@ -26,7 +26,7 @@ namespace decaf.services.tests.Command
             services.AddDecafService<Person, int>().AsScoped();
 
             var provider = services.BuildServiceProvider();
-            this.personService = provider.GetService<IService<Person, int>>();
+            personService = provider.GetService<IService<Person, int>>();
         }
 
         [Fact]
@@ -34,13 +34,13 @@ namespace decaf.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.Add(new Person
+            personService.Add(new Person
             {
                 Email = "bob@bob.com"
             });
@@ -56,13 +56,13 @@ namespace decaf.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.Add(new Person
+            personService.Add(new Person
             {
                 Email = "bob@bob.com"
             },
@@ -84,13 +84,13 @@ namespace decaf.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.Add(new List<Person> {
+            personService.Add(new List<Person> {
                 new Person
                 {
                     Email = "bob@bob.com"
@@ -114,14 +114,14 @@ namespace decaf.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
             var items = Enumerable.Empty<Person>();
 
             // Act
-            var results = this.personService.Add(items);
+            var results = personService.Add(items);
 
             // Assert
             results.Should().BeEmpty();
@@ -132,13 +132,13 @@ namespace decaf.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.Update(new
+            personService.Update(new
             {
                 Email = "smith@bob.com"
             }, p => p.Email == "bob@bob.com");
@@ -160,13 +160,13 @@ namespace decaf.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.Update(new Person
+            personService.Update(new Person
             {
                 Id = 36,
                 Email = "smith@bob.com"
@@ -189,14 +189,14 @@ namespace decaf.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
             const int key = 42;
 
             // Act
-            this.personService.Delete(key);
+            personService.Delete(key);
 
             // Assert
             context.Should().NotBeNull();

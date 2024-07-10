@@ -16,7 +16,7 @@ namespace decaf.sqlite.tests
 
             var decaf = provider.GetService<IDecaf>();
             var transient = decaf.BuildUnit();
-            this.query = transient.GetQuery() as IQueryContainer;
+            query = transient.GetQuery() as IQueryContainer;
         }
 
         [Fact]
@@ -28,7 +28,7 @@ namespace decaf.sqlite.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From("users", "u")
                 .Where(b =>
                 {
@@ -53,7 +53,7 @@ namespace decaf.sqlite.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From("users", "u")
                 .Where(b =>
                 {
@@ -80,7 +80,7 @@ namespace decaf.sqlite.tests
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From("users", "u")
                 .Where(b =>
                 {
@@ -108,7 +108,7 @@ namespace decaf.sqlite.tests
             var end = DateTime.Now;
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From("users", "u")
                 .Where(b =>
                 {
@@ -135,7 +135,7 @@ namespace decaf.sqlite.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From("users", "u")
                 .Where(b =>
                 {
@@ -163,7 +163,7 @@ namespace decaf.sqlite.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From("users", "u")
                 .Where(b =>
                 {
@@ -190,7 +190,7 @@ namespace decaf.sqlite.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From("users", "u")
                 .Where(b =>
                 {
@@ -217,7 +217,7 @@ namespace decaf.sqlite.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From("users", "u")
                 .Where(b =>
                 {
@@ -244,7 +244,7 @@ namespace decaf.sqlite.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From("users", "u")
                 .Where(b =>
                 {
@@ -275,7 +275,7 @@ namespace decaf.sqlite.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From("users", "u")
                 .Where(b =>
                 {
@@ -310,7 +310,7 @@ namespace decaf.sqlite.tests
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Arrange
-            var q = this.query.Select()
+            var q = query.Select()
                 .From("users", "u")
                 .Join().From("users", "u").To("roles", "r").On(c =>
                 {
@@ -341,7 +341,7 @@ namespace decaf.sqlite.tests
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Arrange
-            var q = this.query.Select()
+            var q = query.Select()
                 .From(q =>
                 {
                     q.From("users", "u")

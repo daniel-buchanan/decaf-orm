@@ -18,8 +18,8 @@ namespace decaf.db.common
         /// <inheritdoc/>
         public T FromString<T>(string value)
         {
-            var isNullable = this.reflectionHelper.IsNullableType<T>();
-            var underlyingType = this.reflectionHelper.GetUnderlyingType<T>();
+            var isNullable = reflectionHelper.IsNullableType<T>();
+            var underlyingType = reflectionHelper.GetUnderlyingType<T>();
 
             if (isNullable && value == null) return default(T);
             if (string.IsNullOrWhiteSpace(value)) return default(T);
@@ -65,7 +65,7 @@ namespace decaf.db.common
         /// <inheritdoc/>
         public string ToString(object value, Type type)
         {
-            var underlyingType = this.reflectionHelper.GetUnderlyingType(type);
+            var underlyingType = reflectionHelper.GetUnderlyingType(type);
 
             if (value == null) return string.Empty;
 

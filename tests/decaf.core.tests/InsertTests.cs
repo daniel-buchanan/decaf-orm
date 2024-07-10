@@ -28,14 +28,14 @@ namespace decaf.core_tests
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetService<IDecaf>();
             var transient = decaf.BuildUnit();
-            this.query = transient.GetQuery() as IQueryContainerInternal;
+            query = transient.GetQuery() as IQueryContainerInternal;
         }
 
         [Fact]
         public void SimpleInsertSucceeds()
         {
             // Act
-            this.query.Insert()
+            query.Insert()
                 .Into("users")
                 .Columns(b => new
                 {
@@ -52,7 +52,7 @@ namespace decaf.core_tests
                 .Output("id");
 
             // Assert
-            var context = this.query.Context as IInsertQueryContext;
+            var context = query.Context as IInsertQueryContext;
             context.Should().NotBeNull();
             context.Target.Name.Should().Be("users");
             context.Columns.Count.Should().Be(3);
@@ -80,7 +80,7 @@ namespace decaf.core_tests
             };
 
             // Act
-            this.query.Insert()
+            query.Insert()
                 .Into("users")
                 .Columns(b => new
                 {
@@ -91,7 +91,7 @@ namespace decaf.core_tests
                 .Values(objects);
 
             // Assert
-            var context = this.query.Context as IInsertQueryContext;
+            var context = query.Context as IInsertQueryContext;
             context.Should().NotBeNull();
             context.Target.Name.Should().Be("users");
             context.Columns.Count.Should().Be(3);
@@ -118,7 +118,7 @@ namespace decaf.core_tests
             };
 
             // Act
-            this.query.Insert()
+            query.Insert()
                 .Into("users", "b")
                 .Columns(b => new
                 {
@@ -129,7 +129,7 @@ namespace decaf.core_tests
                 .From(fromQuery);
 
             // Assert
-            var context = this.query.Context as IInsertQueryContext;
+            var context = query.Context as IInsertQueryContext;
             context.Should().NotBeNull();
             context.Target.Name.Should().Be("users");
             context.Columns.Count.Should().Be(3);
@@ -142,7 +142,7 @@ namespace decaf.core_tests
         public void SimpleTypedInsertSucceeds()
         {
             // Act
-            this.query.Insert()
+            query.Insert()
                 .Into<Person>()
                 .Columns(p => new
                 {
@@ -163,7 +163,7 @@ namespace decaf.core_tests
                 .Output(p => p.Id);
 
             // Assert
-            var context = this.query.Context as IInsertQueryContext;
+            var context = query.Context as IInsertQueryContext;
             context.Should().NotBeNull();
             context.Target.Name.Should().Be(nameof(Person));
             context.Columns.Count.Should().Be(5);
@@ -197,7 +197,7 @@ namespace decaf.core_tests
             };
 
             // Act
-            this.query.Insert()
+            query.Insert()
                 .Into<Person>()
                 .Columns(p => new
                 {
@@ -210,7 +210,7 @@ namespace decaf.core_tests
                 .Values(objects);
 
             // Assert
-            var context = this.query.Context as IInsertQueryContext;
+            var context = query.Context as IInsertQueryContext;
             context.Should().NotBeNull();
             context.Target.Name.Should().Be(nameof(Person));
             context.Columns.Count.Should().Be(5);
@@ -237,7 +237,7 @@ namespace decaf.core_tests
             };
 
             // Act
-            this.query.Insert()
+            query.Insert()
                 .Into<Person>()
                 .Columns(p => new
                 {
@@ -248,7 +248,7 @@ namespace decaf.core_tests
                 .From(fromQuery);
 
             // Assert
-            var context = this.query.Context as IInsertQueryContext;
+            var context = query.Context as IInsertQueryContext;
             context.Should().NotBeNull();
             context.Target.Name.Should().Be(nameof(Person));
             context.Columns.Count.Should().Be(3);

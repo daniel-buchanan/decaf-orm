@@ -18,7 +18,7 @@ namespace decaf.common.Connections
         /// <param name="logger">The logger to Use.</param>
         protected ConnectionFactory(ILoggerProxy logger)
         {
-            this.connections = new Dictionary<string, IConnection>();
+            connections = new Dictionary<string, IConnection>();
             this.logger = logger;
         }
 
@@ -32,7 +32,7 @@ namespace decaf.common.Connections
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
-            this.connections = null;
+            connections = null;
         }
 
         /// <inheritdoc/>
@@ -53,8 +53,8 @@ namespace decaf.common.Connections
             if (connectionDetails == null)
                 throw new ArgumentNullException(nameof(connectionDetails), $"The {nameof(connectionDetails)} cannot be null, it MUST be provided when creating a connection.");
 
-            if (this.connections == null)
-                this.connections = new Dictionary<string, IConnection>();
+            if (connections == null)
+                connections = new Dictionary<string, IConnection>();
         }
 
         private async Task<IConnection> GetOrCreateConnectionAsync(
@@ -69,22 +69,22 @@ namespace decaf.common.Connections
             }
             catch (Exception e)
             {
-                this.logger.Error(e, "Error Getting connection Hash");
+                logger.Error(e, "Error Getting connection Hash");
                 throw;
             }
 
-            if (this.connections.TryGetValue(hash, out var conn)) return conn;
+            if (connections.TryGetValue(hash, out var conn)) return conn;
 
             try
             {
                 var connection = await ConstructConnectionAsync(connectionDetails, cancellationToken);
-                this.connections.Add(hash, connection);
+                connections.Add(hash, connection);
 
                 return connection;
             }
             catch (Exception e)
             {
-                this.logger.Error(e, $"An error occurred attempting to get the connection.");
+                logger.Error(e, $"An error occurred attempting to get the connection.");
                 throw;
             }
         }

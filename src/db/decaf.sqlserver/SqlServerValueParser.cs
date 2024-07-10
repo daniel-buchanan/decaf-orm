@@ -23,7 +23,7 @@ namespace decaf.sqlserver
         /// <inheritdoc/>
         public override bool ValueNeedsQuoting(Type type)
         {
-            var underlyingType = this.reflectionHelper.GetUnderlyingType(type);
+            var underlyingType = reflectionHelper.GetUnderlyingType(type);
 
             if (underlyingType == typeof(bool)) return false;
             else if (underlyingType == typeof(byte[])) return false;

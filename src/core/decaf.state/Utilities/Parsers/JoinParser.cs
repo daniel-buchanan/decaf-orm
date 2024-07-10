@@ -109,7 +109,7 @@ namespace decaf.state.Utilities.Parsers
 
             var leftTarget = context.AddQueryTarget(leftParam);
             var leftField = reflectionHelper.GetFieldName(leftExpression.Member);
-            var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(operation.NodeType);
+            var op = expressionHelper.ConvertExpressionTypeToEqualityOperator(operation.NodeType);
             var rightTarget = context.AddQueryTarget(rightParam);
             var rightField = reflectionHelper.GetFieldName(rightExpression.Member);
 

@@ -28,25 +28,25 @@ namespace decaf.core_tests
             var transient = decaf.BuildUnit();
             var query = transient.GetQuery() as IQueryContainerInternal;
             var sqlFactory = provider.GetService<ISqlFactory>();
-            this.context = query.CreateContext<ISelectQueryContext>();
-            this.execute = new InheritedExecutor<ISelectQueryContext>(query, this.context);
+            context = query.CreateContext<ISelectQueryContext>();
+            execute = new InheritedExecutor<ISelectQueryContext>(query, context);
         }
 
         [Fact]
         public void DynamicReturnsSelf()
         {
             // Act
-            var dyn = this.execute.Dynamic();
+            var dyn = execute.Dynamic();
 
             // Assert
-            dyn.Should().Be(this.execute);
+            dyn.Should().Be(execute);
         }
 
         [Fact]
         public void AsEnumerableDoesntThrow()
         {
             // Act
-            Action method = () => this.execute.AsEnumerable();
+            Action method = () => execute.AsEnumerable();
 
             // Assert
             method.Should().NotThrow();
@@ -56,7 +56,7 @@ namespace decaf.core_tests
         public async Task AsEnumerableAsyncDoesntThrow()
         {
             // Act
-            Func<Task<IEnumerable<dynamic>>> method = () => this.execute.AsEnumerableAsync();
+            Func<Task<IEnumerable<dynamic>>> method = () => execute.AsEnumerableAsync();
 
             // Assert
             await method.Should().NotThrowAsync();
@@ -66,7 +66,7 @@ namespace decaf.core_tests
         public void AsEnumerableTypedDoesntThrow()
         {
             // Act
-            Action method = () => this.execute.AsEnumerable<Person>();
+            Action method = () => execute.AsEnumerable<Person>();
 
             // Assert
             method.Should().NotThrow();
@@ -76,7 +76,7 @@ namespace decaf.core_tests
         public async Task AsEnumerableTypedAsyncDoesntThrow()
         {
             // Act
-            Func<Task<IEnumerable<Person>>> method = () => this.execute.AsEnumerableAsync<Person>();
+            Func<Task<IEnumerable<Person>>> method = () => execute.AsEnumerableAsync<Person>();
 
             // Assert
             await method.Should().NotThrowAsync();
@@ -86,7 +86,7 @@ namespace decaf.core_tests
         public void ToListDoesntThrow()
         {
             // Act
-            Action method = () => this.execute.ToList();
+            Action method = () => execute.ToList();
 
             // Assert
             method.Should().NotThrow();
@@ -96,7 +96,7 @@ namespace decaf.core_tests
         public async Task ToListAsyncDoesntThrow()
         {
             // Act
-            Func<Task<IList<dynamic>>> method = () => this.execute.ToListAsync();
+            Func<Task<IList<dynamic>>> method = () => execute.ToListAsync();
 
             // Assert
             await method.Should().NotThrowAsync();
@@ -106,7 +106,7 @@ namespace decaf.core_tests
         public void ToListTypedDoesntThrow()
         {
             // Act
-            Action method = () => this.execute.ToList<Person>();
+            Action method = () => execute.ToList<Person>();
 
             // Assert
             method.Should().NotThrow();
@@ -116,7 +116,7 @@ namespace decaf.core_tests
         public async Task ToListTypedAsyncDoesntThrow()
         {
             // Act
-            Func<Task<IList<Person>>> method = () => this.execute.ToListAsync<Person>();
+            Func<Task<IList<Person>>> method = () => execute.ToListAsync<Person>();
 
             // Assert
             await method.Should().NotThrowAsync();
@@ -126,7 +126,7 @@ namespace decaf.core_tests
         public void ExecuteDoesntThrow()
         {
             // Act
-            Action method = () => this.execute.Execute();
+            Action method = () => execute.Execute();
 
             // Assert
             method.Should().NotThrow();
@@ -136,7 +136,7 @@ namespace decaf.core_tests
         public async Task ExecuteAsyncDoesntThrow()
         {
             // Act
-            Func<Task> method = () => this.execute.ExecuteAsync();
+            Func<Task> method = () => execute.ExecuteAsync();
 
             // Assert
             await method.Should().NotThrowAsync();
@@ -146,7 +146,7 @@ namespace decaf.core_tests
         public void FirstDoesThrow()
         {
             // Act
-            Action method = () => this.execute.First();
+            Action method = () => execute.First();
 
             // Assert
             method.Should().Throw<Exception>();
@@ -156,7 +156,7 @@ namespace decaf.core_tests
         public async Task FirstAsyncDoesThrow()
         {
             // Act
-            Func<Task> method = () => this.execute.FirstAsync();
+            Func<Task> method = () => execute.FirstAsync();
 
             // Assert
             await method.Should().ThrowAsync<Exception>();
@@ -166,7 +166,7 @@ namespace decaf.core_tests
         public void FirstTypedDoesThrow()
         {
             // Act
-            Action method = () => this.execute.First<Person>();
+            Action method = () => execute.First<Person>();
 
             // Assert
             method.Should().Throw<Exception>();
@@ -176,7 +176,7 @@ namespace decaf.core_tests
         public async Task FirstTypedAsyncDoesThrow()
         {
             // Act
-            Func<Task> method = () => this.execute.FirstAsync<Person>();
+            Func<Task> method = () => execute.FirstAsync<Person>();
 
             // Assert
             await method.Should().ThrowAsync<Exception>();
@@ -186,7 +186,7 @@ namespace decaf.core_tests
         public void FirstOrDefaultDoesntThrow()
         {
             // Act
-            Action method = () => this.execute.FirstOrDefault();
+            Action method = () => execute.FirstOrDefault();
 
             // Assert
             method.Should().NotThrow();
@@ -196,7 +196,7 @@ namespace decaf.core_tests
         public async Task FirstOrDefaultAsyncDoesntThrow()
         {
             // Act
-            Func<Task> method = () => this.execute.FirstOrDefaultAsync();
+            Func<Task> method = () => execute.FirstOrDefaultAsync();
 
             // Assert
             await method.Should().NotThrowAsync();
@@ -206,7 +206,7 @@ namespace decaf.core_tests
         public void FirstOrDefaultTypedDoesntThrow()
         {
             // Act
-            Action method = () => this.execute.FirstOrDefault<Person>();
+            Action method = () => execute.FirstOrDefault<Person>();
 
             // Assert
             method.Should().NotThrow();
@@ -216,7 +216,7 @@ namespace decaf.core_tests
         public async Task FirstOrDefaultTypedAsyncDoesntThrow()
         {
             // Act
-            Func<Task> method = () => this.execute.FirstOrDefaultAsync<Person>();
+            Func<Task> method = () => execute.FirstOrDefaultAsync<Person>();
 
             // Assert
             await method.Should().NotThrowAsync();
@@ -226,7 +226,7 @@ namespace decaf.core_tests
         public void SingleDoesThrow()
         {
             // Act
-            Action method = () => this.execute.Single();
+            Action method = () => execute.Single();
 
             // Assert
             method.Should().Throw<Exception>();
@@ -236,7 +236,7 @@ namespace decaf.core_tests
         public async Task SingleAsyncDoesThrow()
         {
             // Act
-            Func<Task> method = () => this.execute.SingleAsync();
+            Func<Task> method = () => execute.SingleAsync();
 
             // Assert
             await method.Should().ThrowAsync<Exception>();
@@ -246,7 +246,7 @@ namespace decaf.core_tests
         public void SingleTypedDoesThrow()
         {
             // Act
-            Action method = () => this.execute.Single<Person>();
+            Action method = () => execute.Single<Person>();
 
             // Assert
             method.Should().Throw<Exception>();
@@ -256,7 +256,7 @@ namespace decaf.core_tests
         public async Task SingleTypedAsyncDoesThrow()
         {
             // Act
-            Func<Task> method = () => this.execute.SingleAsync<Person>();
+            Func<Task> method = () => execute.SingleAsync<Person>();
 
             // Assert
             await method.Should().ThrowAsync<Exception>();
@@ -266,7 +266,7 @@ namespace decaf.core_tests
         public void SingleOrDefaultDoesntThrow()
         {
             // Act
-            Action method = () => this.execute.SingleOrDefault();
+            Action method = () => execute.SingleOrDefault();
 
             // Assert
             method.Should().NotThrow();
@@ -276,7 +276,7 @@ namespace decaf.core_tests
         public async Task SingleOrDefaultAsyncDoesntThrow()
         {
             // Act
-            Func<Task> method = () => this.execute.SingleOrDefaultAsync();
+            Func<Task> method = () => execute.SingleOrDefaultAsync();
 
             // Assert
             await method.Should().NotThrowAsync();
@@ -286,7 +286,7 @@ namespace decaf.core_tests
         public void SingleOrDefaultTypedDoesntThrow()
         {
             // Act
-            Action method = () => this.execute.SingleOrDefault<Person>();
+            Action method = () => execute.SingleOrDefault<Person>();
 
             // Assert
             method.Should().NotThrow();
@@ -296,7 +296,7 @@ namespace decaf.core_tests
         public async Task SingleOrDefaultTypedAsyncDoesntThrow()
         {
             // Act
-            Func<Task> method = () => this.execute.SingleOrDefaultAsync<Person>();
+            Func<Task> method = () => execute.SingleOrDefaultAsync<Person>();
 
             // Assert
             await method.Should().NotThrowAsync();

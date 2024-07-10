@@ -29,21 +29,21 @@ namespace decaf.core_tests
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetService<IDecaf>();
             var transient = decaf.BuildUnit();
-            this.query = transient.GetQuery() as IQueryContainerInternal;
+            query = transient.GetQuery() as IQueryContainerInternal;
         }
 
         [Fact]
         public void SimpleTypedUpdateSucceeds()
         {
             // Act
-            this.query
+            query
                 .Update()
                 .Table<Person>()
                 .Set(p => p.Email, "bob@bob.com")
                 .Where(p => p.Id == 42);
 
             // Assert
-            var context = this.query.Context as IUpdateQueryContext;
+            var context = query.Context as IUpdateQueryContext;
             context.QueryTargets.Should().HaveCount(1);
             context.Updates.Should().HaveCount(1);
             var upd = context.Updates.First() as StaticValueSource;
@@ -60,7 +60,7 @@ namespace decaf.core_tests
         public void SimpleTypedUpdateWithAliasSucceeds()
         {
             // Act
-            this.query
+            query
                 .Update()
                 .Table<Person>(p => p)
                 .Set(p => p.Email, "bob@bob.com")
@@ -68,7 +68,7 @@ namespace decaf.core_tests
                 .Output(p => p.Id);
 
             // Assert
-            var context = this.query.Context as IUpdateQueryContext;
+            var context = query.Context as IUpdateQueryContext;
             context.QueryTargets.Should().HaveCount(1);
             context.Updates.Should().HaveCount(1);
             var where = context.WhereClause as IColumn;
@@ -82,7 +82,7 @@ namespace decaf.core_tests
         public void SimpleTypedUpdateWithConcreteSetSucceeds()
         {
             // Act
-            this.query
+            query
                 .Update()
                 .Table<Person>(p => p)
                 .Set(new Person
@@ -92,7 +92,7 @@ namespace decaf.core_tests
                 .Where(p => p.Id == 42);
 
             // Assert
-            var context = this.query.Context as IUpdateQueryContext;
+            var context = query.Context as IUpdateQueryContext;
             context.QueryTargets.Should().HaveCount(1);
             context.Updates.Should().HaveCount(1);
             var where = context.WhereClause as IColumn;
@@ -106,7 +106,7 @@ namespace decaf.core_tests
         public void SimpleUpdateSucceeds()
         {
             // Act
-            this.query
+            query
                 .Update()
                 .Table("users", "u")
                 .Set(new
@@ -116,7 +116,7 @@ namespace decaf.core_tests
                 .Where(b => b.Column("Id", "u").Is().EqualTo(42));
 
             // Assert
-            var context = this.query.Context as IUpdateQueryContext;
+            var context = query.Context as IUpdateQueryContext;
             context.QueryTargets.Should().HaveCount(1);
             context.Updates.Should().HaveCount(1);
             var and = context.WhereClause as And;
@@ -132,14 +132,14 @@ namespace decaf.core_tests
         public void SimpleUpdateWithTypedSetSucceeds()
         {
             // Act
-            this.query
+            query
                 .Update()
                 .Table("users", "u")
                 .Set("created_at", DateTime.Now)
                 .Where(b => b.Column("Id", "u").Is().EqualTo(42));
 
             // Assert
-            var context = this.query.Context as IUpdateQueryContext;
+            var context = query.Context as IUpdateQueryContext;
             context.QueryTargets.Should().HaveCount(1);
             context.Updates.Should().HaveCount(1);
             var and = context.WhereClause as And;
@@ -155,7 +155,7 @@ namespace decaf.core_tests
         public void SimpleUpdateFromQuerySucceeds()
         {
             // Act
-            this.query
+            query
                 .Update()
                 .Table("users", "u")
                 .From(b =>
@@ -172,7 +172,7 @@ namespace decaf.core_tests
                 .Output("id");
 
             // Assert
-            var context = this.query.Context as IUpdateQueryContext;
+            var context = query.Context as IUpdateQueryContext;
             context.QueryTargets.Should().HaveCount(1);
             context.Updates.Should().HaveCount(1);
             var and = context.WhereClause as And;
@@ -188,7 +188,7 @@ namespace decaf.core_tests
         public void SimpleTypedUpdateFromQUerySucceeds()
         {
             // Act
-            this.query
+            query
                 .Update()
                 .Table<User>(u => u)
                 .From<Person>(b =>
@@ -206,7 +206,7 @@ namespace decaf.core_tests
                 .Output(u => u.Id);
 
             // Assert
-            var context = this.query.Context as IUpdateQueryContext;
+            var context = query.Context as IUpdateQueryContext;
             context.QueryTargets.Should().HaveCount(1);
             context.Updates.Should().HaveCount(1);
             var where = context.WhereClause as IColumn;

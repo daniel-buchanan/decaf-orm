@@ -26,7 +26,7 @@ namespace decaf.services.tests.Query
             services.AddDecafService<Person>().AsScoped();
 
             var provider = services.BuildServiceProvider();
-            this.personService = provider.GetService<IService<Person>>();
+            personService = provider.GetService<IService<Person>>();
         }
 
         [Fact]
@@ -37,7 +37,7 @@ namespace decaf.services.tests.Query
             // Act
             Action method = () =>
             {
-                this.personService.All();
+                personService.All();
             };
 
             // Assert
@@ -49,13 +49,13 @@ namespace decaf.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.All();
+            personService.All();
 
             // Assert
             context.Should().NotBeNull();
@@ -75,13 +75,13 @@ namespace decaf.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.Find(p => p.Id == 42);
+            personService.Find(p => p.Id == 42);
 
             // Assert
             context.Should().NotBeNull();
@@ -126,7 +126,7 @@ namespace decaf.services.tests.Query
             // Arrange
             personService.Add(new Person() { Id = 42 });
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
@@ -134,7 +134,7 @@ namespace decaf.services.tests.Query
             // Act
             try
             {
-                this.personService.Single(p => p.Id == 42);
+                personService.Single(p => p.Id == 42);
             }
             catch
             {
@@ -162,13 +162,13 @@ namespace decaf.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.SingleOrDefault(p => p.Id == 42);
+            personService.SingleOrDefault(p => p.Id == 42);
 
             // Assert
             context.Should().NotBeNull();
@@ -191,7 +191,7 @@ namespace decaf.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
@@ -199,7 +199,7 @@ namespace decaf.services.tests.Query
             // Act
             try
             {
-                this.personService.First(p => p.Id == 42);
+                personService.First(p => p.Id == 42);
             }
             catch
             {
@@ -227,13 +227,13 @@ namespace decaf.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.FirstOrDefault(p => p.Id == 42);
+            personService.FirstOrDefault(p => p.Id == 42);
 
             // Assert
             context.Should().NotBeNull();
@@ -256,13 +256,13 @@ namespace decaf.services.tests.Query
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.personService.Update(new
+            personService.Update(new
             {
                 FirstName = "bob"
             },

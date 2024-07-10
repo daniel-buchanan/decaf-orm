@@ -23,9 +23,9 @@ namespace decaf.common.Utilities.Reflection
                 case ExpressionType.Convert:
                     return ConvertAccess.GetName(expression, this);
                 case ExpressionType.MemberAccess:
-                    return MemberAccess.GetName(expression, this.reflectionHelper);
+                    return MemberAccess.GetName(expression, reflectionHelper);
                 case ExpressionType.Constant:
-                    return MemberAccess.GetName(expression, this.reflectionHelper);
+                    return MemberAccess.GetName(expression, reflectionHelper);
                 case ExpressionType.Call:
                     {
                         var call = (MethodCallExpression)expression;
@@ -37,7 +37,7 @@ namespace decaf.common.Utilities.Reflection
                     }
                 case ExpressionType.Lambda:
                     var body = ((LambdaExpression)expression).Body;
-                    return this.GetMemberName(body);
+                    return GetMemberName(body);
             }
 
             // if not found, return null

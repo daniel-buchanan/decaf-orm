@@ -19,11 +19,11 @@ namespace decaf.common.Utilities.Reflection.Dynamic
 
         public override Type DeclaringType => typeof(DynamicObject);
 
-        public override MemberTypes MemberType => this.memberType;
+        public override MemberTypes MemberType => memberType;
 
-        public override string Name => this.name;
+        public override string Name => name;
 
-        public override Type ReflectedType => this.reflectedType;
+        public override Type ReflectedType => reflectedType;
 
         public override object[] GetCustomAttributes(bool inherit) => new object[] { };
 

@@ -28,7 +28,7 @@ namespace decaf.state.Utilities.Parsers
             var valueResult = ParseMemberExpression(expression, context);
             if (valueResult == null) valueResult = ParseBinaryExpression(expression, context);
             
-            var col = state.Column.Create(valueResult.Field, valueResult.Table);
+            var col = Column.Create(valueResult.Field, valueResult.Table);
 
             var isNotEquals = valueResult.Operator == EqualityOperator.NotEquals;
             if (isNotEquals)
@@ -83,15 +83,15 @@ namespace decaf.state.Utilities.Parsers
             if (memberExpression == null) return null;
 
             var val = Parse(expression, context);
-            var valType = this.expressionHelper.GetMemberType(expression);
-            var field = this.expressionHelper.GetMemberName(expression);
+            var valType = expressionHelper.GetMemberType(expression);
+            var field = expressionHelper.GetMemberName(expression);
             var op = EqualityOperator.Equals;
 
             var target = context.GetQueryTarget(memberExpression);
             if (target == null)
             {
-                var table = this.reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
-                var alias = this.expressionHelper.GetParameterName(expression);
+                var table = reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
+                var alias = expressionHelper.GetParameterName(expression);
                 target = QueryTargets.TableTarget.Create(table, alias);
                 context.AddQueryTarget(target);
             }
@@ -112,7 +112,7 @@ namespace decaf.state.Utilities.Parsers
                 operation = expression as BinaryExpression;
             }
 
-            var op = this.expressionHelper.ConvertExpressionTypeToEqualityOperator(operation.NodeType);
+            var op = expressionHelper.ConvertExpressionTypeToEqualityOperator(operation.NodeType);
             Expression valueExpression = null;
             MemberExpression memberExpression = null;
 
@@ -130,15 +130,15 @@ namespace decaf.state.Utilities.Parsers
             if (valueExpression == null || memberExpression == null)
                 return null;
 
-            var field = this.expressionHelper.GetMemberName(memberExpression);
-            var value = this.expressionHelper.GetValue(valueExpression);
-            var valueType = this.expressionHelper.GetMemberType(valueExpression);
+            var field = expressionHelper.GetMemberName(memberExpression);
+            var value = expressionHelper.GetValue(valueExpression);
+            var valueType = expressionHelper.GetMemberType(valueExpression);
 
             var target = context.GetQueryTarget(memberExpression);
             if(target == null)
             {
-                var alias = this.expressionHelper.GetParameterName(memberExpression);
-                var table = this.reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
+                var alias = expressionHelper.GetParameterName(memberExpression);
+                var table = reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
                 target = QueryTargets.TableTarget.Create(table, alias);
                 context.AddQueryTarget(target);
             }

@@ -21,54 +21,54 @@ namespace decaf.Implementation
         /// <inheritdoc/>
         public IInsertValues Columns(Expression<Func<IInsertColumnBuilder, dynamic>> columns)
         {
-            base.AddColumns(columns);
+            AddColumns(columns);
             return this;
         }
 
         /// <inheritdoc/>
         public IInsertValues From(Action<ISelect> query)
         {
-            base.FromQuery(query);
+            FromQuery(query);
             return this;
         }
 
         /// <inheritdoc/>
         public IInsertInto Into(string table, string alias = null)
         {
-            var managedTable = this.Query.AliasManager.GetAssociation(alias) ?? table;
-            var managedAlias = this.Query.AliasManager.Add(alias, managedTable);
-            this.Context.Into(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
+            var managedTable = Query.AliasManager.GetAssociation(alias) ?? table;
+            var managedAlias = Query.AliasManager.Add(alias, managedTable);
+            Context.Into(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
             return this;
         }
 
         /// <inheritdoc/>
         public IInsertInto<T> Into<T>()
         {
-            var table = this.Context.Helpers().GetTableName<T>();
-            var alias = this.Query.AliasManager.Add(null, table);
-            this.Context.Into(state.QueryTargets.TableTarget.Create(table, alias));
+            var table = Context.Helpers().GetTableName<T>();
+            var alias = Query.AliasManager.Add(null, table);
+            Context.Into(state.QueryTargets.TableTarget.Create(table, alias));
 
-            return Insert<T>.Create(this.Context, this.Query);
+            return Insert<T>.Create(Context, Query);
         }
 
         /// <inheritdoc/>
         public IInsertInto<T> Into<T>(Expression<Func<T, object>> expression)
         {
-            var table = this.Context.Helpers().GetTableName(expression);
-            var alias = this.Context.Helpers().GetTableAlias(expression);
+            var table = Context.Helpers().GetTableName(expression);
+            var alias = Context.Helpers().GetTableAlias(expression);
 
-            var managedTable = this.Query.AliasManager.GetAssociation(alias) ?? table;
-            var managedAlias = this.Query.AliasManager.Add(alias, table);
+            var managedTable = Query.AliasManager.GetAssociation(alias) ?? table;
+            var managedAlias = Query.AliasManager.Add(alias, table);
 
-            this.Context.Into(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
-            return Insert<T>.Create(this.Context, this.Query);
+            Context.Into(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
+            return Insert<T>.Create(Context, Query);
         }
 
         /// <inheritdoc/>
         public IInsertValues Output(string column)
         {
-            var col = state.Column.Create(column, this.Context.Target);
-            this.Context.Output(state.Output.Create(col, OutputSources.Inserted));
+            var col = Column.Create(column, Context.Target);
+            Context.Output(state.Output.Create(col, OutputSources.Inserted));
             return this;
         }
 
@@ -78,7 +78,7 @@ namespace decaf.Implementation
         /// <inheritdoc/>
         public IInsertValues Values(IEnumerable<dynamic> values)
         {
-            base.AddValues(values);
+            AddValues(values);
             return this;
         }
     }

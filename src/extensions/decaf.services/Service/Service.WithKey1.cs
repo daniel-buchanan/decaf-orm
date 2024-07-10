@@ -60,15 +60,15 @@ namespace decaf.services
 
         /// <inheritdoc/>
         public Task<TEntity> GetAsync(TKey key, CancellationToken cancellationToken = default)
-            => this.Query.GetAsync(key, cancellationToken);
+            => Query.GetAsync(key, cancellationToken);
 
         /// <inheritdoc/>
         public Task<IEnumerable<TEntity>> GetAsync(TKey[] keys, CancellationToken cancellationToken = default)
-            => this.Query.GetAsync(keys, cancellationToken);
+            => Query.GetAsync(keys, cancellationToken);
 
         /// <inheritdoc/>
         public Task<IEnumerable<TEntity>> GetAsync(IEnumerable<TKey> keys, CancellationToken cancellationToken = default)
-            => this.Query.GetAsync(keys, cancellationToken);
+            => Query.GetAsync(keys, cancellationToken);
 
         /// <inheritdoc/>
         public void Update(dynamic toUpdate, TKey key)
@@ -83,23 +83,23 @@ namespace decaf.services
 
         /// <inheritdoc/>
         public async Task UpdateAsync(TEntity item, CancellationToken cancellationToken = default)
-            => await this.Command.UpdateAsync(item, cancellationToken);
+            => await Command.UpdateAsync(item, cancellationToken);
 
         /// <inheritdoc/>
         public async Task UpdateAsync(dynamic toUpdate, TKey key, CancellationToken cancellationToken = default)
-            => await this.Command.UpdateAsync(toUpdate, key, cancellationToken);
+            => await Command.UpdateAsync(toUpdate, key, cancellationToken);
 
         /// <inheritdoc/>
         public async Task DeleteAsync(TKey key, CancellationToken cancellationToken = default)
-            => await this.Command.DeleteAsync(key, cancellationToken);
+            => await Command.DeleteAsync(key, cancellationToken);
 
         /// <inheritdoc/>
         public async Task DeleteAsync(TKey[] keys, CancellationToken cancellationToken = default)
-            => await this.Command.DeleteAsync(keys, cancellationToken);
+            => await Command.DeleteAsync(keys, cancellationToken);
 
         /// <inheritdoc/>
         public async Task DeleteAsync(IEnumerable<TKey> keys, CancellationToken cancellationToken = default)
-            => await this.Command.DeleteAsync(keys, cancellationToken);
+            => await Command.DeleteAsync(keys, cancellationToken);
     }
 }
 

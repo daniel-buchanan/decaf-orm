@@ -15,7 +15,7 @@ namespace decaf.npgsql
 
         public override IDbConnection GetUnderlyingConnection()
         {
-            var details = this.connectionDetails as INpgsqlConnectionDetails;
+            var details = connectionDetails as INpgsqlConnectionDetails;
             return new Npgsql.NpgsqlConnection(details.GetConnectionString());
         }
     }

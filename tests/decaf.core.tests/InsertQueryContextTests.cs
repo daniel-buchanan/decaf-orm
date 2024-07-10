@@ -18,14 +18,14 @@ namespace decaf.core_tests
 		{
 			var aliasManager = AliasManager.Create();
             var hashProvider = new HashProvider();
-			this.context = InsertQueryContext.Create(aliasManager, hashProvider);
+			context = InsertQueryContext.Create(aliasManager, hashProvider);
 		}
 
         [Fact]
         public void QueryTypeIsInsert()
         {
             // Act
-            var queryType = this.context.Kind;
+            var queryType = context.Kind;
 
             // Assert
             queryType.Should().Be(QueryTypes.Insert);
@@ -35,7 +35,7 @@ namespace decaf.core_tests
         public void IdIsCreatedAndNotEmpty()
         {
             // Act
-            var id = this.context.Id;
+            var id = context.Id;
 
             // Assert
             id.Should().NotBe(Guid.Empty);
@@ -46,10 +46,10 @@ namespace decaf.core_tests
 		public void AddColumnSucceeds(Column column)
         {
 			// Act
-			this.context.Column(column);
+			context.Column(column);
 
 			// Assert
-			this.context.Columns.Count.Should().Be(1);
+			context.Columns.Count.Should().Be(1);
         }
 
         [Theory]
@@ -57,13 +57,13 @@ namespace decaf.core_tests
         public void AddExistingColumnDoesNothing(Column column)
         {
             // Arrange
-            this.context.Column(column);
+            context.Column(column);
 
             // Act
-            this.context.Column(column);
+            context.Column(column);
 
             // Assert
-            this.context.Columns.Count.Should().Be(1);
+            context.Columns.Count.Should().Be(1);
         }
 
         [Theory]
@@ -71,10 +71,10 @@ namespace decaf.core_tests
         public void InsertIntoSucceeds(ITableTarget target)
         {
             // Act
-            this.context.Into(target);
+            context.Into(target);
 
             // Assert
-            this.context.QueryTargets.Count.Should().Be(1);
+            context.QueryTargets.Count.Should().Be(1);
         }
 
         [Theory]
@@ -82,14 +82,14 @@ namespace decaf.core_tests
         public void InsertIntoSameDoesNothing(ITableTarget target)
         {
             // Arrange
-            this.context.Into(target);
+            context.Into(target);
 
             // Act
-            this.context.Into(target);
+            context.Into(target);
 
             // Assert
-            this.context.Target.Should().Be(target);
-            this.context.QueryTargets.Count.Should().Be(1);
+            context.Target.Should().Be(target);
+            context.QueryTargets.Count.Should().Be(1);
         }
 
         [Fact]
@@ -99,24 +99,24 @@ namespace decaf.core_tests
             var values = new object[] { "hello", "world", 42 };
 
             // Act
-            this.context.Value(values);
+            context.Value(values);
 
             // Assert
-            this.context.Source.Should().BeAssignableTo<IInsertStaticValuesSource>();
+            context.Source.Should().BeAssignableTo<IInsertStaticValuesSource>();
         }
 
         [Fact]
         public void AddValuesAfterSettingSourceToQueryDoesNothing()
         {
             // Arrange
-            this.context.From(QueryValuesSource.Create(null));
+            context.From(QueryValuesSource.Create(null));
             var values = new object[] { "hello", "world", 42 };
 
             // Act
-            this.context.Value(values);
+            context.Value(values);
 
             // Assert
-            this.context.Source.Should().BeAssignableTo<QueryValuesSource>();
+            context.Source.Should().BeAssignableTo<QueryValuesSource>();
         }
 
         public static IEnumerable<object[]> ColumnTests

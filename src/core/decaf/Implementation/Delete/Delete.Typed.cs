@@ -14,7 +14,7 @@ namespace decaf.Implementation
             IQueryContainerInternal query)
             : base(query, context)
         {
-            this.Context = context;
+            Context = context;
         }
 
         public static IDeleteFrom<T> Create(
@@ -25,18 +25,18 @@ namespace decaf.Implementation
         /// <inheritdoc/>
         public IDeleteFrom<T> Output(Expression<Func<T, object>> column)
         {
-            var internalContext = this.Context as IQueryContextExtended;
+            var internalContext = Context as IQueryContextExtended;
             var columnName = internalContext.ExpressionHelper.GetMemberName(column);
-            var col = state.Column.Create(columnName, this.Context.Table);
-            this.Context.Output(state.Output.Create(col, OutputSources.Deleted));
+            var col = Column.Create(columnName, Context.Table);
+            Context.Output(state.Output.Create(col, OutputSources.Deleted));
             return this;
         }
 
         /// <inheritdoc />
         public IDeleteFrom<T> Where(Expression<Func<T, bool>> whereExpression)
         {
-            var clause = this.Context.Helpers().ParseWhere(whereExpression);
-            this.Context.Where(clause);
+            var clause = Context.Helpers().ParseWhere(whereExpression);
+            Context.Where(clause);
             return this;
         }
     }

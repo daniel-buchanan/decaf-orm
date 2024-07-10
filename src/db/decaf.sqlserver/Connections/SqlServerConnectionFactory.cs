@@ -14,7 +14,7 @@ namespace decaf.sqlserver
 
         protected override Task<IConnection> ConstructConnectionAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default)
         {
-            var conn = new SqlServerConnection(this.logger, connectionDetails);
+            var conn = new SqlServerConnection(logger, connectionDetails);
             return Task.FromResult(conn as IConnection);
         }
     }

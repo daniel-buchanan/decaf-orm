@@ -16,14 +16,14 @@ namespace decaf.core_tests
         {
             var aliasManager = AliasManager.Create();
             var hashProvider = new HashProvider();
-            this.context = UpdateQueryContext.Create(aliasManager, hashProvider);
+            context = UpdateQueryContext.Create(aliasManager, hashProvider);
         }
 
         [Fact]
         public void QueryTypeIsUpdate()
         {
             // Act
-            var queryType = this.context.Kind;
+            var queryType = context.Kind;
 
             // Assert
             queryType.Should().Be(QueryTypes.Update);
@@ -33,7 +33,7 @@ namespace decaf.core_tests
         public void IdIsCreatedAndNotEmpty()
         {
             // Act
-            var id = this.context.Id;
+            var id = context.Id;
 
             // Assert
             id.Should().NotBe(Guid.Empty);
@@ -46,11 +46,11 @@ namespace decaf.core_tests
             var target = TableTarget.Create("users", "u");
 
             // Act
-            this.context.Update(target);
+            context.Update(target);
 
             // Assert
-            this.context.Table.Should().NotBeNull();
-            this.context.Table.Should().Be(target);
+            context.Table.Should().NotBeNull();
+            context.Table.Should().Be(target);
         }
 
         [Fact]
@@ -60,11 +60,11 @@ namespace decaf.core_tests
             var target = SelectQueryTarget.Create(null, "a");
 
             // Act
-            this.context.From(target);
+            context.From(target);
 
             // Assert
-            this.context.Source.Should().NotBeNull();
-            this.context.Source.Should().Be(target);
+            context.Source.Should().NotBeNull();
+            context.Source.Should().Be(target);
         }
 
         [Fact]
@@ -75,10 +75,10 @@ namespace decaf.core_tests
             var value = state.ValueSources.Update.StaticValueSource.Create(column, typeof(string), "bob@bob.com");
 
             // Act
-            this.context.Set(value);
+            context.Set(value);
 
             // Assert
-            this.context.Updates.Should().HaveCount(1);
+            context.Updates.Should().HaveCount(1);
         }
 
         [Fact]
@@ -89,10 +89,10 @@ namespace decaf.core_tests
             var output = Output.Create(column, OutputSources.Updated);
 
             // Act
-            this.context.Output(output);
+            context.Output(output);
 
             // Assert
-            this.context.Outputs.Should().HaveCount(1);
+            context.Outputs.Should().HaveCount(1);
         }
 
         [Fact]
@@ -103,10 +103,10 @@ namespace decaf.core_tests
             var clause = state.Conditionals.Column.Equals(column, 42);
 
             // Act
-            this.context.Where(clause);
+            context.Where(clause);
 
             // Assert
-            this.context.WhereClause.Should().NotBeNull();
+            context.WhereClause.Should().NotBeNull();
         }
     }
 }

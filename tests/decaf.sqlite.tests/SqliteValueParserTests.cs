@@ -13,7 +13,7 @@ namespace decaf.sqlite.tests
 
 		public SqliteValueParserTests()
 		{
-			this.parser = new SqliteValueParser(new ReflectionHelper());
+			parser = new SqliteValueParser(new ReflectionHelper());
 		}
 
 		[Theory]

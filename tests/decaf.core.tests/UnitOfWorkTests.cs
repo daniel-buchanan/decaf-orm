@@ -191,7 +191,7 @@ public class UnitOfWorkTests : CoreTestBase
         // Act
         Action method = () => unit
             .Query(q => q.Select().From<User>().Where(u => u.Id != 42))
-            .OnException(e =>
+            .OnException(_ =>
             {
                 exceptionHandled = true;
             })
@@ -212,7 +212,7 @@ public class UnitOfWorkTests : CoreTestBase
         // Act
         Action method = () => unit
             .Query(q => q.Select().From<User>().Where(u => u.Id != 42))
-            .OnException(e => { })
+            .OnException(_ => { })
             .PersistChanges()
             .Dispose();
 
@@ -231,7 +231,7 @@ public class UnitOfWorkTests : CoreTestBase
         // Act
         Action method = () => unit
             .Query(q => q.Select().From<User>().Where(u => u.Id != 42))
-            .OnException(e => { })
+            .OnException(_ => { })
             .PersistChanges();
 
         // Assert

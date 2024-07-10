@@ -18,7 +18,7 @@ namespace decaf.services
         {
             if(string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name), $"The {nameof(name)} argument MUST NOT be null or an empty string.");
-            this.Name = name;
+            Name = name;
         }
 
         /// <inheritdoc/>

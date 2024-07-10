@@ -74,7 +74,7 @@ namespace decaf.state.Utilities.Parsers
 
         private IWhere Parse(Expression expression, IQueryContextExtended context, bool excludeAlias)
         {
-            var earlyResult = this.callExpressionHelper.ParseExpression(expression, context);
+            var earlyResult = callExpressionHelper.ParseExpression(expression, context);
             if (earlyResult != null) return earlyResult;
 
             BinaryExpression binaryExpr = null;
@@ -82,7 +82,7 @@ namespace decaf.state.Utilities.Parsers
             if (!(expression is MemberExpression))
                 binaryExpr = expression as BinaryExpression;
 
-            if (binaryExpr == null) return this.valueParser.Parse(expression, context);
+            if (binaryExpr == null) return valueParser.Parse(expression, context);
 
             IWhere left, right;
 
@@ -112,18 +112,18 @@ namespace decaf.state.Utilities.Parsers
             var leftType = leftExpression.NodeType;
             var rightType = rightExpression.NodeType;
 
-            var leftParam = this.expressionHelper.GetParameterName(leftExpression);
-            var rightParam = this.expressionHelper.GetParameterName(rightExpression);
+            var leftParam = expressionHelper.GetParameterName(leftExpression);
+            var rightParam = expressionHelper.GetParameterName(rightExpression);
             var bothMemberAccess = leftType == ExpressionType.MemberAccess &&
                                     rightType == ExpressionType.MemberAccess;
             var bothHaveParam = !string.IsNullOrWhiteSpace(leftParam) &&
                                 !string.IsNullOrWhiteSpace(rightParam);
 
             if (bothMemberAccess && bothHaveParam)
-                return this.joinParser.Parse(binaryExpr, context);
+                return joinParser.Parse(binaryExpr, context);
 
             // failing that parse a value clause
-            return this.valueParser.Parse(binaryExpr, context);
+            return valueParser.Parse(binaryExpr, context);
         }
 	}
 }

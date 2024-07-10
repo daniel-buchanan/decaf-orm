@@ -5,13 +5,13 @@ namespace decaf.db.common.Builders
 {
     public abstract class SelectBuilderPipeline : BuilderPipeline<ISelectQueryContext>
 	{
-        private readonly db.common.Builders.IWhereBuilder whereBuilder;
+        private readonly IWhereBuilder whereBuilder;
 
         protected SelectBuilderPipeline(
             DecafOptions options,
             IConstants constants,
             IParameterManager parameterManager,
-            db.common.Builders.IWhereBuilder whereBuilder)
+            IWhereBuilder whereBuilder)
             : base(options, constants, parameterManager)
         {
             this.whereBuilder = whereBuilder;
@@ -72,7 +72,7 @@ namespace decaf.db.common.Builders
         protected abstract void AddLimit(IPipelineStageInput<ISelectQueryContext> input);
 
         private void AddWhere(IPipelineStageInput<ISelectQueryContext> input)
-            => this.whereBuilder.AddWhere(input.Context.WhereClause, input.Builder, input.Parameters);
+            => whereBuilder.AddWhere(input.Context.WhereClause, input.Builder, input.Parameters);
 
     }
 }

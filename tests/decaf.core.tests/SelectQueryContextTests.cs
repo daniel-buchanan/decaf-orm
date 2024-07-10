@@ -17,14 +17,14 @@ namespace decaf.core_tests
 		{
 			var aliasManager = AliasManager.Create();
             var hashProvider = new HashProvider();
-			this.context = SelectQueryContext.Create(aliasManager, hashProvider);
+			context = SelectQueryContext.Create(aliasManager, hashProvider);
 		}
 
         [Fact]
         public void QueryTypeIsSelect()
         {
             // Act
-            var queryType = this.context.Kind;
+            var queryType = context.Kind;
 
             // Assert
             queryType.Should().Be(QueryTypes.Select);
@@ -34,7 +34,7 @@ namespace decaf.core_tests
         public void IdIsCreatedAndNotEmpty()
         {
             // Act
-            var id = this.context.Id;
+            var id = context.Id;
 
             // Assert
             id.Should().NotBe(Guid.Empty);
@@ -45,10 +45,10 @@ namespace decaf.core_tests
 		public void AddColumnSucceeds(Column column)
         {
 			// Act
-			this.context.Select(column);
+			context.Select(column);
 
 			// Assert
-			this.context.Columns.Count.Should().Be(1);
+			context.Columns.Count.Should().Be(1);
         }
 
         [Theory]
@@ -56,13 +56,13 @@ namespace decaf.core_tests
         public void AddExistingColumnDoesNothing(Column column)
         {
             // Arrange
-            this.context.Select(column);
+            context.Select(column);
 
             // Act
-            this.context.Select(column);
+            context.Select(column);
 
             // Assert
-            this.context.Columns.Count.Should().Be(1);
+            context.Columns.Count.Should().Be(1);
         }
 
         [Theory]
@@ -70,10 +70,10 @@ namespace decaf.core_tests
         public void SelectFromSucceeds(ITableTarget target)
         {
             // Act
-            this.context.From(target);
+            context.From(target);
 
             // Assert
-            this.context.QueryTargets.Count.Should().Be(1);
+            context.QueryTargets.Count.Should().Be(1);
         }
 
         [Theory]
@@ -81,13 +81,13 @@ namespace decaf.core_tests
         public void SelectFromSameDoesNothing(ITableTarget target)
         {
             // Arrange
-            this.context.From(target);
+            context.From(target);
 
             // Act
-            this.context.From(target);
+            context.From(target);
 
             // Assert
-            this.context.QueryTargets.Count.Should().Be(1);
+            context.QueryTargets.Count.Should().Be(1);
         }
 
         [Fact]
@@ -97,10 +97,10 @@ namespace decaf.core_tests
             var group = GroupBy.Create("name", TableTarget.Create("users", "u"));
 
             // Act
-            this.context.GroupBy(group);
+            context.GroupBy(group);
 
             // Assert
-            this.context.GroupByClauses.Count.Should().Be(1);
+            context.GroupByClauses.Count.Should().Be(1);
         }
 
         [Fact]
@@ -110,11 +110,11 @@ namespace decaf.core_tests
             var group = GroupBy.Create("name", TableTarget.Create("users", "u"));
 
             // Act
-            this.context.GroupBy(group);
-            this.context.GroupBy(group);
+            context.GroupBy(group);
+            context.GroupBy(group);
 
             // Assert
-            this.context.GroupByClauses.Count.Should().Be(1);
+            context.GroupByClauses.Count.Should().Be(1);
         }
 
         [Fact]
@@ -124,10 +124,10 @@ namespace decaf.core_tests
             var order = OrderBy.Create("name", TableTarget.Create("users", "u"), SortOrder.Ascending);
 
             // Act
-            this.context.OrderBy(order);
+            context.OrderBy(order);
 
             // Assert
-            this.context.OrderByClauses.Count.Should().Be(1);
+            context.OrderByClauses.Count.Should().Be(1);
         }
 
         [Fact]
@@ -137,11 +137,11 @@ namespace decaf.core_tests
             var order = OrderBy.Create("name", TableTarget.Create("users", "u"), SortOrder.Ascending);
 
             // Act
-            this.context.OrderBy(order);
-            this.context.OrderBy(order);
+            context.OrderBy(order);
+            context.OrderBy(order);
 
             // Assert
-            this.context.OrderByClauses.Count.Should().Be(1);
+            context.OrderByClauses.Count.Should().Be(1);
         }
 
         [Fact]
@@ -152,10 +152,10 @@ namespace decaf.core_tests
             var clause = state.Conditionals.Column.Equals(column, 42);
 
             // Act
-            this.context.Where(clause);
+            context.Where(clause);
 
             // Assert
-            this.context.WhereClause.Should().NotBeNull();
+            context.WhereClause.Should().NotBeNull();
         }
 
         [Theory]
@@ -163,10 +163,10 @@ namespace decaf.core_tests
         public void AddJoinSucceeds(Join join)
         {
             // Act
-            this.context.Join(join);
+            context.Join(join);
 
             // Assert
-            this.context.Joins.Count.Should().Be(1);
+            context.Joins.Count.Should().Be(1);
         }
 
         [Fact]
@@ -178,11 +178,11 @@ namespace decaf.core_tests
             var join = Join.Create(from, to, JoinType.Default, null);
 
             // Act
-            this.context.Join(join);
-            this.context.Join(join);
+            context.Join(join);
+            context.Join(join);
 
             // Assert
-            this.context.Joins.Count.Should().Be(1);
+            context.Joins.Count.Should().Be(1);
         }
 
         [Fact]
@@ -193,13 +193,13 @@ namespace decaf.core_tests
             var to = TableTarget.Create("accounts", "a");
             var join = Join.Create(from, to, JoinType.Default, null);
 
-            this.context.Join(join);
+            context.Join(join);
 
             // Act
-            this.context.Dispose();
+            context.Dispose();
 
             // Assert
-            this.context.Joins.Count.Should().Be(0);
+            context.Joins.Count.Should().Be(0);
         }
 
         [Fact]
@@ -208,13 +208,13 @@ namespace decaf.core_tests
             // Arrange
             var from = TableTarget.Create("users", "u");
 
-            this.context.From(from);
+            context.From(from);
 
             // Act
-            this.context.Dispose();
+            context.Dispose();
 
             // Assert
-            this.context.QueryTargets.Count.Should().Be(0);
+            context.QueryTargets.Count.Should().Be(0);
         }
 
         [Fact]
@@ -223,13 +223,13 @@ namespace decaf.core_tests
             // Arrange
             var column = Column.Create("name", TableTarget.Create("users"));
             var clause = state.Conditionals.Column.Equals(column, 42);
-            this.context.Where(clause);
+            context.Where(clause);
 
             // Act
-            this.context.Dispose();
+            context.Dispose();
 
             // Assert
-            this.context.WhereClause.Should().BeNull();
+            context.WhereClause.Should().BeNull();
         }
 
         [Fact]
@@ -237,13 +237,13 @@ namespace decaf.core_tests
         {
             // Arrange
             var order = OrderBy.Create("name", TableTarget.Create("users"), SortOrder.Ascending);
-            this.context.OrderBy(order);
+            context.OrderBy(order);
 
             // Act
-            this.context.Dispose();
+            context.Dispose();
 
             // Assert
-            this.context.OrderByClauses.Count.Should().Be(0);
+            context.OrderByClauses.Count.Should().Be(0);
         }
 
         [Fact]
@@ -251,13 +251,13 @@ namespace decaf.core_tests
         {
             // Arrange
             var group = GroupBy.Create("name", TableTarget.Create("users"));
-            this.context.GroupBy(group);
+            context.GroupBy(group);
 
             // Act
-            this.context.Dispose();
+            context.Dispose();
 
             // Assert
-            this.context.GroupByClauses.Count.Should().Be(0);
+            context.GroupByClauses.Count.Should().Be(0);
         }
 
         public static IEnumerable<object[]> ColumnTests

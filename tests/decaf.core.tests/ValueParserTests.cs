@@ -24,11 +24,11 @@ namespace decaf.core_tests
         {
             var reflectionHelper = new ReflectionHelper();
             var expressionHelper = new ExpressionHelper(reflectionHelper);
-            this.aliasManager = AliasManager.Create();
-            this.hashProvider = new HashProvider();
+            aliasManager = AliasManager.Create();
+            hashProvider = new HashProvider();
             var valueFunctionHelper = new ValueFunctionHelper(expressionHelper);
             var callExpressionHelper = new CallExpressionHelper(expressionHelper, valueFunctionHelper);
-            this.parser = new ValueParser(expressionHelper, callExpressionHelper, reflectionHelper);
+            parser = new ValueParser(expressionHelper, callExpressionHelper, reflectionHelper);
         }
 
         [Theory]
@@ -40,11 +40,11 @@ namespace decaf.core_tests
             Func<T> getValue)
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
+            var context = SelectQueryContext.Create(aliasManager, hashProvider) as IQueryContextExtended;
             context.AddQueryTarget(state.QueryTargets.TableTarget.Create(nameof(Person), "p"));
 
             // Act
-            var result = this.parser.Parse(expression, context);
+            var result = parser.Parse(expression, context);
 
             // Assert
             var col = result as IColumn;
@@ -70,10 +70,10 @@ namespace decaf.core_tests
             Func<T> getValue)
         {
             // Arrange
-            var context = SelectQueryContext.Create(this.aliasManager, this.hashProvider) as IQueryContextExtended;
+            var context = SelectQueryContext.Create(aliasManager, hashProvider) as IQueryContextExtended;
 
             // Act
-            var result = this.parser.Parse(expression, context);
+            var result = parser.Parse(expression, context);
 
             // Assert
             var col = result as IColumn;

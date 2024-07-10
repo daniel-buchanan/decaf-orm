@@ -8,7 +8,7 @@ namespace decaf.db.common.ANSISQL
     public class SelectBuilderPipeline : db.common.Builders.SelectBuilderPipeline
     {
         protected readonly IQuotedIdentifierBuilder QuotedIdentifierBuilder;
-        protected readonly db.common.Builders.IWhereBuilder WhereBuilder;
+        protected readonly IWhereBuilder WhereBuilder;
 
         protected override bool LimitBeforeGroupBy => false;
 
@@ -17,11 +17,11 @@ namespace decaf.db.common.ANSISQL
             IConstants constants,
             IParameterManager parameterManager,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
-            db.common.Builders.IWhereBuilder whereBuilder)
+            IWhereBuilder whereBuilder)
             : base(options, constants, parameterManager, whereBuilder)
         {
-            this.WhereBuilder = whereBuilder;
-            this.QuotedIdentifierBuilder = quotedIdentifierBuilder;
+            WhereBuilder = whereBuilder;
+            QuotedIdentifierBuilder = quotedIdentifierBuilder;
         }
 
         protected override void AddColumns(IPipelineStageInput<ISelectQueryContext> input)
@@ -35,7 +35,7 @@ namespace decaf.db.common.ANSISQL
                 input.Builder.PrependIndent();
                 var delimiter = string.Empty;
                 if (i < lastColumnIndex) delimiter = Constants.Seperator;
-                this.QuotedIdentifierBuilder.AddSelect(columns[i], input.Builder);
+                QuotedIdentifierBuilder.AddSelect(columns[i], input.Builder);
                 input.Builder.Append(delimiter);
                 input.Builder.AppendLine();
             }
@@ -92,14 +92,14 @@ namespace decaf.db.common.ANSISQL
             input.Builder.AppendLine();
 
             input.Builder.IncreaseIndent();
-            this.WhereBuilder.AddJoin(j.Conditions, input.Builder, input.Parameters);
+            WhereBuilder.AddJoin(j.Conditions, input.Builder, input.Parameters);
             input.Builder.DecreaseIndent();
         }
 
         private void AddFromTable(ITableTarget target, IPipelineStageInput<ISelectQueryContext> input)
         {
             input.Builder.PrependIndent();
-            this.QuotedIdentifierBuilder.AddFromTable(target, input.Builder);
+            QuotedIdentifierBuilder.AddFromTable(target, input.Builder);
         }
 
         private void AddFromQuery(ISelectQueryTarget target, IPipelineStageInput<ISelectQueryContext> input)
@@ -108,7 +108,7 @@ namespace decaf.db.common.ANSISQL
             input.Builder.IncreaseIndent();
             Execute(target.Context, input);
             input.Builder.DecreaseIndent();
-            this.QuotedIdentifierBuilder.AddClosingFromQuery(target.Alias, input.Builder);
+            QuotedIdentifierBuilder.AddClosingFromQuery(target.Alias, input.Builder);
         }
 
         protected override void AddOrderBy(IPipelineStageInput<ISelectQueryContext> input)
@@ -127,7 +127,7 @@ namespace decaf.db.common.ANSISQL
                     delimiter = ",";
 
                 input.Builder.PrependIndent();
-                this.QuotedIdentifierBuilder.AddOrderBy(clauses[i], input.Builder);
+                QuotedIdentifierBuilder.AddOrderBy(clauses[i], input.Builder);
                 input.Builder.Append(delimiter);
                 input.Builder.AppendLine();
             }
@@ -150,7 +150,7 @@ namespace decaf.db.common.ANSISQL
                 if (i < lastClauseIndex)
                     delimiter = Constants.Seperator;
 
-                this.QuotedIdentifierBuilder.AddGroupBy(clauses[i], input.Builder);
+                QuotedIdentifierBuilder.AddGroupBy(clauses[i], input.Builder);
                 input.Builder.AppendLine(delimiter);
             }
 

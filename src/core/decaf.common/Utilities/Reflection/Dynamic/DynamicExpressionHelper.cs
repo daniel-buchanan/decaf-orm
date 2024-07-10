@@ -107,8 +107,8 @@ namespace decaf.common.Utilities.Reflection.Dynamic
                 if (!TryGetColumnDetails(a, out var info))
                 {
                     info = DynamicColumnInfo.Empty();
-                    var val = this.expressionHelper.GetValue(a);
-                    var valueType = this.expressionHelper.GetMemberType(a);
+                    var val = expressionHelper.GetValue(a);
+                    var valueType = expressionHelper.GetMemberType(a);
                     info.SetValue(val);
                     info.SetValueType(valueType);
                 }
@@ -237,8 +237,8 @@ namespace decaf.common.Utilities.Reflection.Dynamic
             if (memberExpression == null) return false;
 
             var parameterExpression = memberExpression.Expression as ParameterExpression;
-            var column = this.expressionHelper.GetMemberName(memberExpression);
-            var alias = this.expressionHelper.GetParameterName(memberExpression);
+            var column = expressionHelper.GetMemberName(memberExpression);
+            var alias = expressionHelper.GetParameterName(memberExpression);
             var type = parameterExpression.Type;
             info = DynamicColumnInfo.Create(name: column, alias: alias, type: type, function: function);
 
@@ -265,7 +265,7 @@ namespace decaf.common.Utilities.Reflection.Dynamic
 
             memberExpression = argument as MemberExpression;
 
-            var parsed = this.callExpressionHelper.ParseFunction(methodCallExpression);
+            var parsed = callExpressionHelper.ParseFunction(methodCallExpression);
             if (parsed == null) return;
 
             function = parsed;

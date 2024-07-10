@@ -29,12 +29,12 @@ namespace decaf.core_tests
             });
             var provider = services.BuildServiceProvider();
             var decaf = provider.GetRequiredService<IDecaf>();
-            this.options = provider.GetRequiredService<DecafOptions>();
+            options = provider.GetRequiredService<DecafOptions>();
             var query = decaf.Query();
             var aliasManager = AliasManager.Create();
             var hashProvider = new HashProvider();
-            this.context = SelectQueryContext.Create(aliasManager, hashProvider);
-            this.select = Select.Create(this.context, query);
+            context = SelectQueryContext.Create(aliasManager, hashProvider);
+            select = Select.Create(context, query);
         }
 
         [Theory]
@@ -56,7 +56,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var and = this.context.WhereClause as And;
+            var and = context.WhereClause as And;
             and.Should().NotBeNull();
             and.Children.Should().HaveCount(2);
         }
@@ -80,7 +80,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var or = this.context.WhereClause as Or;
+            var or = context.WhereClause as Or;
             or.Should().NotBeNull();
             or.Children.Should().HaveCount(2);
         }
@@ -100,7 +100,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var column = this.context.WhereClause as IColumn;
+            var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Value.Should().Be(value);
@@ -123,7 +123,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var column = this.context.WhereClause as IColumn;
+            var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -147,7 +147,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var inversion = this.context.WhereClause as Not;
+            var inversion = context.WhereClause as Not;
             inversion.Should().NotBeNull();
             var column = inversion.Item as IColumn;
             column.Should().NotBeNull();
@@ -174,7 +174,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var column = this.context.WhereClause as IColumn;
+            var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -199,7 +199,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var inversion = this.context.WhereClause as Not;
+            var inversion = context.WhereClause as Not;
             inversion.Should().NotBeNull();
             var column = inversion.Item as IColumn;
             column.Should().NotBeNull();
@@ -226,7 +226,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var column = this.context.WhereClause as IColumn;
+            var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -251,7 +251,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var inversion = this.context.WhereClause as Not;
+            var inversion = context.WhereClause as Not;
             inversion.Should().NotBeNull();
             var column = inversion.Item as IColumn;
             column.Should().NotBeNull();
@@ -278,7 +278,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var column = this.context.WhereClause as IColumn;
+            var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -303,7 +303,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var column = this.context.WhereClause as IColumn;
+            var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -328,7 +328,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var column = this.context.WhereClause as IBetween;
+            var column = context.WhereClause as IBetween;
             column.Should().NotBeNull();
             column.Column.Name.Should().Be("name");
             column.Column.Source.Alias.Should().Be("p");
@@ -353,7 +353,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var inversion = this.context.WhereClause as Not;
+            var inversion = context.WhereClause as Not;
             inversion.Should().NotBeNull();
             var column = inversion.Item as IBetween;
             column.Should().NotBeNull();
@@ -380,7 +380,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var column = this.context.WhereClause as IInValues;
+            var column = context.WhereClause as IInValues;
             column.Should().NotBeNull();
             column.Column.Name.Should().Be("name");
             column.Column.Source.Alias.Should().Be("p");
@@ -408,7 +408,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var column = this.context.WhereClause as IInValues;
+            var column = context.WhereClause as IInValues;
             column.Should().NotBeNull();
             column.Column.Name.Should().Be("name");
             column.Column.Source.Alias.Should().Be("p");
@@ -436,7 +436,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var column = this.context.WhereClause as IInValues;
+            var column = context.WhereClause as IInValues;
             column.Should().NotBeNull();
             column.Column.Name.Should().Be("name");
             column.Column.Source.Alias.Should().Be("p");
@@ -459,7 +459,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var column = this.context.WhereClause as IColumn;
+            var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -483,7 +483,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var column = this.context.WhereClause as IColumn;
+            var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -507,7 +507,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var column = this.context.WhereClause as IColumn;
+            var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
             column.Details.Name.Should().Be("name");
             column.Details.Source.Alias.Should().Be("p");
@@ -531,7 +531,7 @@ namespace decaf.core_tests
             });
 
             // Assert
-            var inversion = this.context.WhereClause as Not;
+            var inversion = context.WhereClause as Not;
             inversion.Should().NotBeNull();
             var column = inversion.Item as IColumn;
             column.Should().NotBeNull();
@@ -582,7 +582,7 @@ namespace decaf.core_tests
         public void NoClauseHandlingShouldThrowException()
         {
             // Arrange
-            this.options.SetProperty(o => o.DefaultClauseHandling, ClauseHandling.Unspecified);
+            options.SetProperty(o => o.DefaultClauseHandling, ClauseHandling.Unspecified);
             select.From("person", "p");
 
             // Act

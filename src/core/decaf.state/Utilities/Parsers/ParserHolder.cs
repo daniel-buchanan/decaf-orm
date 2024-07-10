@@ -15,16 +15,16 @@ namespace decaf.state.Utilities.Parsers
 			IReflectionHelper reflectionHelper,
 			CallExpressionHelper callExpressionHelper)
 		{
-			this.value = new ValueParser(expressionHelper, callExpressionHelper, reflectionHelper);
-            this.join = new JoinParser(expressionHelper, reflectionHelper);
-            this.where = new WhereParser(expressionHelper, reflectionHelper, callExpressionHelper, this.join, this.value);
+			value = new ValueParser(expressionHelper, callExpressionHelper, reflectionHelper);
+            join = new JoinParser(expressionHelper, reflectionHelper);
+            where = new WhereParser(expressionHelper, reflectionHelper, callExpressionHelper, join, value);
         }
 
-		IParser IQueryParsers.Join => this.join;
+		IParser IQueryParsers.Join => join;
 
-		IParser IQueryParsers.Where => this.where;
+		IParser IQueryParsers.Where => where;
 
-		IParser IQueryParsers.Value => this.value;
+		IParser IQueryParsers.Value => value;
     }
 }
 

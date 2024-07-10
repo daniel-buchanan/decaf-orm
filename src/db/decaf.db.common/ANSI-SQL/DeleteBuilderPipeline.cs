@@ -13,7 +13,7 @@ namespace decaf.db.common.ANSISQL
             DecafOptions options,
             IConstants constants,
             IParameterManager parameterManager,
-            db.common.Builders.IWhereBuilder whereBuilder,
+            IWhereBuilder whereBuilder,
             IQuotedIdentifierBuilder quotedIdentifierBuilder)
             : base(options, constants, parameterManager, whereBuilder)
         {
@@ -37,7 +37,7 @@ namespace decaf.db.common.ANSISQL
                     delimiter = Constants.Seperator;
 
                 input.Builder.PrependIndent();
-                this.QuotedIdentifierBuilder.AddOutput(o, input.Builder);
+                QuotedIdentifierBuilder.AddOutput(o, input.Builder);
 
                 if (delimiter.Length > 0)
                     input.Builder.Append(delimiter);
@@ -55,7 +55,7 @@ namespace decaf.db.common.ANSISQL
             input.Builder.IncreaseIndent();
 
             input.Builder.PrependIndent();
-            this.QuotedIdentifierBuilder.AddFromTable(input.Context.Table, input.Builder);
+            QuotedIdentifierBuilder.AddFromTable(input.Context.Table, input.Builder);
             input.Builder.AppendLine();
 
             input.Builder.DecreaseIndent();

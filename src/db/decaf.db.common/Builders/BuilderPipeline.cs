@@ -20,29 +20,29 @@ namespace decaf.db.common.Builders
             IParameterManager parameterManager)
 		{
             this.options = options;
-            this.Constants = constants;
+            Constants = constants;
             this.parameterManager = parameterManager;
-            this.stages = new List<PipelineStage<T>>();
+            stages = new List<PipelineStage<T>>();
 		}
 
         protected void Add(Action<IPipelineStageInput<T>> delegateMethod, bool providesParameters, bool? condition = null)
         {
             if (condition != null && condition == false) return;
 
-            this.stages.Add(PipelineStage<T>.Create(delegateMethod, providesParameters));
+            stages.Add(PipelineStage<T>.Create(delegateMethod, providesParameters));
         }
 
         public SqlTemplate Execute(T context, IPipelineStageInput input)
         {
             var newInput = PipelineStageInput<T>.Create(input.Parameters, input.Builder, context);
 
-            if (this.options.IncludeHeaderCommentsInSql)
+            if (options.IncludeHeaderCommentsInSql)
             {
-                input.Builder.AppendLine("{0} decaf :: query hash: {1}", this.Constants.Comment, context.GetHash());
-                input.Builder.AppendLine("{0} decaf :: generated at: {1}", this.Constants.Comment, DateTime.Now.ToString());
+                input.Builder.AppendLine("{0} decaf :: query hash: {1}", Constants.Comment, context.GetHash());
+                input.Builder.AppendLine("{0} decaf :: generated at: {1}", Constants.Comment, DateTime.Now.ToString());
             }
 
-            foreach (var stage in this.stages)
+            foreach (var stage in stages)
             {
                 stage.Delegate.Invoke(newInput);
             }
@@ -62,7 +62,7 @@ namespace decaf.db.common.Builders
         public IDictionary<string, object> GetParameterValues(T context, bool includePrefix)
         {
             var input = PipelineStageInput<T>.CreateNoOp(parameterManager, context);
-            var filteredStages = this.stages.Where(s => s.ProvidesParameters);
+            var filteredStages = stages.Where(s => s.ProvidesParameters);
 
             foreach (var s in filteredStages)
             {

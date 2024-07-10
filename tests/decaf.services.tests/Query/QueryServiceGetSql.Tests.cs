@@ -22,7 +22,7 @@ public class QueryServiceGetSql_Tests
         services.AddDecafService<Person, int>().AsScoped();
 
         var provider = services.BuildServiceProvider();
-        this.personService = provider.GetService<IService<Person, int>>();
+        personService = provider.GetService<IService<Person, int>>();
     }
 
     [Fact]

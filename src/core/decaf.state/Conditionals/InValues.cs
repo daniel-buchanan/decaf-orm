@@ -28,12 +28,12 @@ namespace decaf.state.Conditionals
 
         public state.Column Column { get; private set; }
 
-        public IReadOnlyCollection<T> ValueSet => this.values.AsReadOnly();
+        public IReadOnlyCollection<T> ValueSet => values.AsReadOnly();
 
         IReadOnlyCollection<object> IInValues.GetValues()
         {
             var result = new List<object>();
-            foreach (var o in this.values)
+            foreach (var o in values)
                 result.Add(o);
             return result.AsReadOnly();
         }
@@ -41,7 +41,7 @@ namespace decaf.state.Conditionals
 
         public override Type ValueType { get; protected set; }
 
-        public int CountValues => this.values.Count;
+        public int CountValues => values.Count;
     }
 }
 

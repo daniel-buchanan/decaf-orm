@@ -16,8 +16,8 @@ namespace decaf.Implementation
             IQueryContainerInternal query)
             : base(query, context)
         {
-            this.Context = context;
-            this.Query.SetContext(this.Context);
+            Context = context;
+            Query.SetContext(Context);
         }
 
         public static Delete Create(
@@ -28,8 +28,8 @@ namespace decaf.Implementation
         /// <inheritdoc />
         public IDeleteFrom From(string name, string alias = null, string schema = null)
         {
-            var managedTable = this.Query.AliasManager.GetAssociation(alias) ?? name;
-            var managedAlias = this.Query.AliasManager.Add(alias, name);
+            var managedTable = Query.AliasManager.GetAssociation(alias) ?? name;
+            var managedAlias = Query.AliasManager.Add(alias, name);
             Context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias, schema));
             return this;
         }
@@ -37,37 +37,37 @@ namespace decaf.Implementation
         /// <inheritdoc />
         public IDeleteFrom<T> From<T>(Expression<Func<T, T>> aliasExpression)
         {
-            var table = this.Context.Helpers().GetTableName(aliasExpression);
-            var alias = this.Context.Helpers().GetTableAlias(aliasExpression);
+            var table = Context.Helpers().GetTableName(aliasExpression);
+            var alias = Context.Helpers().GetTableAlias(aliasExpression);
 
-            var managedTable = this.Query.AliasManager.GetAssociation(alias) ?? table;
-            var managedAlias = this.Query.AliasManager.Add(alias, table);
+            var managedTable = Query.AliasManager.GetAssociation(alias) ?? table;
+            var managedAlias = Query.AliasManager.Add(alias, table);
 
-            this.Context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
-            return Delete<T>.Create(this.Context, this.Query);
+            Context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
+            return Delete<T>.Create(Context, Query);
         }
 
         /// <inheritdoc />
         public IDeleteFrom<T> From<T>()
         {
-            var table = this.Context.Helpers().GetTableName<T>();
-            var alias = this.Query.AliasManager.Add(null, table);
-            this.Context.From(state.QueryTargets.TableTarget.Create(table, alias));
-            return Delete<T>.Create(this.Context, this.Query);
+            var table = Context.Helpers().GetTableName<T>();
+            var alias = Query.AliasManager.Add(null, table);
+            Context.From(state.QueryTargets.TableTarget.Create(table, alias));
+            return Delete<T>.Create(Context, Query);
         }
 
         /// <inheritdoc />
         public IDeleteFrom Output(string column)
         {
-            var col = state.Column.Create(column, this.Context.Table);
-            this.Context.Output(state.Output.Create(col, OutputSources.Deleted));
+            var col = Column.Create(column, Context.Table);
+            Context.Output(state.Output.Create(col, OutputSources.Deleted));
             return this;
         }
 
         /// <inheritdoc />
         public IDeleteFrom Where(Action<IWhereBuilder> builder)
         {
-            var b = WhereBuilder.Create(this.Query.Options, this.Context) as IWhereBuilderInternal;
+            var b = WhereBuilder.Create(Query.Options, Context) as IWhereBuilderInternal;
             builder(b);
             var clause = b.GetClauses().First();
             if ((clause is state.Conditionals.And ||
@@ -77,7 +77,7 @@ namespace decaf.Implementation
                 clause = clause.Children.First();
             }
 
-            this.Context.Where(clause);
+            Context.Where(clause);
             return this;
         }
     }

@@ -23,9 +23,9 @@ namespace decaf.Implementation
             TContext context,
             ISqlFactory sqlFactory)
 		{
-            this.Query = query as IQueryContainerInternal;
-            this.Context = context;
-            this.SqlFactory = sqlFactory;
+            Query = query as IQueryContainerInternal;
+            Context = context;
+            SqlFactory = sqlFactory;
 		}
 
         protected IDbTransaction GetTransaction()
@@ -51,8 +51,8 @@ namespace decaf.Implementation
             Func<string, object, IDbConnection, IDbTransaction, CancellationToken, Task<T>> func,
             CancellationToken cancellationToken = default)
         {
-            var template = this.SqlFactory.ParseTemplate(this.Context);
-            var parameters = this.SqlFactory.ParseParameters(this.Context, template, includePrefix: false);
+            var template = SqlFactory.ParseTemplate(Context);
+            var parameters = SqlFactory.ParseParameters(Context, template, includePrefix: false);
             var connection = GetConnection();
             var transaction = GetTransaction();
 
@@ -62,15 +62,15 @@ namespace decaf.Implementation
         /// <inheritdoc/>
         public string GetSql()
         {
-            var template = this.SqlFactory.ParseTemplate(this.Context);
+            var template = SqlFactory.ParseTemplate(Context);
             return template.Sql;
         }
 
         /// <inheritdoc/>
         public Dictionary<string, object> GetSqlParameters()
         {
-            var template = this.SqlFactory.ParseTemplate(this.Context);
-            var parameters = this.SqlFactory.ParseParameters(Context, template, includePrefix: false) as ExpandoObject;
+            var template = SqlFactory.ParseTemplate(Context);
+            var parameters = SqlFactory.ParseParameters(Context, template, includePrefix: false) as ExpandoObject;
             return ParameterMapper.Unmap(parameters);
         }
     }

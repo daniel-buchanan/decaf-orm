@@ -23,7 +23,7 @@ namespace decaf.tests.common.Mocks
 
         protected override Task<ITransaction> CreateTransactionAsync(IConnection connection, CancellationToken cancellationToken = default)
         {
-            var transaction = (ITransaction)new MockTransaction(Guid.NewGuid(), dbOptions, this.logger, connection, options);
+            var transaction = (ITransaction)new MockTransaction(Guid.NewGuid(), dbOptions, logger, connection, options);
             return Task.FromResult(transaction);
         }
     }

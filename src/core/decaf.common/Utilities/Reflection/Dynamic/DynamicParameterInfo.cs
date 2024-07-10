@@ -14,9 +14,9 @@ namespace decaf.common.Utilities.Reflection.Dynamic
             this.parameterType = parameterType;
         }
 
-        public override string Name => this.name;
+        public override string Name => name;
 
-        public override Type ParameterType => this.parameterType;
+        public override Type ParameterType => parameterType;
     }
 }
 

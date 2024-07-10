@@ -26,7 +26,7 @@ namespace decaf.services.tests.Command
             services.AddDecafService<AddressNote, int, int, int>().AsScoped();
 
             var provider = services.BuildServiceProvider();
-            this.addressNoteService = provider.GetService<IService<AddressNote, int, int, int>>();
+            addressNoteService = provider.GetService<IService<AddressNote, int, int, int>>();
         }
 
         [Fact]
@@ -34,13 +34,13 @@ namespace decaf.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.addressNoteService.OnBeforeExecution += (sender, args) =>
+            addressNoteService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.addressNoteService.Add(new AddressNote
+            addressNoteService.Add(new AddressNote
             {
                 PersonId = 1,
                 Id = 42,
@@ -59,13 +59,13 @@ namespace decaf.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.addressNoteService.OnBeforeExecution += (sender, args) =>
+            addressNoteService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.addressNoteService.Add(new AddressNote
+            addressNoteService.Add(new AddressNote
             {
                 PersonId = 1,
                 Id = 42,
@@ -91,13 +91,13 @@ namespace decaf.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.addressNoteService.OnBeforeExecution += (sender, args) =>
+            addressNoteService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.addressNoteService.Add(new List<AddressNote> {
+            addressNoteService.Add(new List<AddressNote> {
                 new AddressNote
                 {
                     PersonId = 1,
@@ -126,14 +126,14 @@ namespace decaf.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.addressNoteService.OnBeforeExecution += (sender, args) =>
+            addressNoteService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
             var items = Enumerable.Empty<AddressNote>();
 
             // Act
-            var results = this.addressNoteService.Add(items);
+            var results = addressNoteService.Add(items);
 
             // Assert
             results.Should().BeEmpty();
@@ -144,13 +144,13 @@ namespace decaf.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.addressNoteService.OnBeforeExecution += (sender, args) =>
+            addressNoteService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.addressNoteService.Update(new
+            addressNoteService.Update(new
             {
                 Value = "Auckland"
             }, p => p.Value == "3216");
@@ -172,13 +172,13 @@ namespace decaf.services.tests.Command
         {
             // Arrange
             IQueryContext context = null;
-            this.addressNoteService.OnBeforeExecution += (sender, args) =>
+            addressNoteService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.addressNoteService.Update(new AddressNote
+            addressNoteService.Update(new AddressNote
             {
                 Id = 36,
                 PersonId = 12,
@@ -204,13 +204,13 @@ namespace decaf.services.tests.Command
             // Arrange
             // Arrange
             IQueryContext context = null;
-            this.addressNoteService.OnBeforeExecution += (sender, args) =>
+            addressNoteService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
 
             // Act
-            this.addressNoteService.Delete(42, 43, 44);
+            addressNoteService.Delete(42, 43, 44);
 
             // Assert
             context.Should().NotBeNull();

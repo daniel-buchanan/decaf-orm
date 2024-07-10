@@ -18,19 +18,19 @@ namespace decaf.sqlserver
             SqlServerOptions npgsqlOptions)
             : base(id, logger, connection, options)
         {
-            this.sqlServerOptions = npgsqlOptions;
+            sqlServerOptions = npgsqlOptions;
         }
 
         /// <inheritdoc/>
         /// <exception cref="InvalidConnectionException"></exception>
         public override IDbTransaction GetUnderlyingTransaction()
         {
-            var sqlConnection = this.connection as SqlServerConnection;
+            var sqlConnection = connection as SqlServerConnection;
             if (sqlConnection == null)
-                throw new InvalidConnectionException($"The provided connection for Transaction {this.Id} is not of the type \"NpgsqlConnection\"");
+                throw new InvalidConnectionException($"The provided connection for Transaction {Id} is not of the type \"NpgsqlConnection\"");
 
             return sqlConnection.GetUnderlyingConnection()
-                .BeginTransaction(this.sqlServerOptions.TransactionIsolationLevel);
+                .BeginTransaction(sqlServerOptions.TransactionIsolationLevel);
         }
     }
 }

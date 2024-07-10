@@ -30,7 +30,7 @@ namespace decaf.db.common.Builders
         protected abstract void AddOutput(IPipelineStageInput<IDeleteQueryContext> input);
 
         private void AddWhere(IPipelineStageInput<IDeleteQueryContext> input)
-            => this.whereBuilder.AddWhere(input.Context.WhereClause, input.Builder, input.Parameters);
+            => whereBuilder.AddWhere(input.Context.WhereClause, input.Builder, input.Parameters);
     }
 }
 

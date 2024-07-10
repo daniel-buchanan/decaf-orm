@@ -17,7 +17,7 @@ namespace decaf.npgsql.tests
 
             var decaf = provider.GetService<IDecaf>();
             var transient = decaf.BuildUnit();
-            this.query = transient.GetQuery() as IQueryContainer;
+            query = transient.GetQuery() as IQueryContainer;
         }
 
         [Fact]
@@ -29,7 +29,7 @@ namespace decaf.npgsql.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Delete()
+            var q = query.Delete()
                 .From<User>(u => u)
                 .Where(u => u.Subject == subValue)
                 .Output(u => u.Id);
@@ -47,7 +47,7 @@ namespace decaf.npgsql.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Delete()
+            var q = query.Delete()
                 .From<User>(u => u)
                 .Where(u => u.Subject == subValue);
 
@@ -67,7 +67,7 @@ namespace decaf.npgsql.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Delete()
+            var q = query.Delete()
                 .From<User>(u => u)
                 .Where(u => u.FirstName.Contains("bob"))
                 .Output(u => u.Id);
@@ -87,7 +87,7 @@ namespace decaf.npgsql.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Delete()
+            var q = query.Delete()
                 .From<User>()
                 .Where(u => u.FirstName.StartsWith("bob") && u.Email.EndsWith(".com"))
                 .Output(u => u.Id)

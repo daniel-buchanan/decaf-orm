@@ -20,47 +20,47 @@ namespace decaf.state
             IHashProvider hashProvider)
             : base(aliasManager, QueryTypes.Select, hashProvider)
 		{
-            this.columns = new List<Column>();
-            this.joins = new List<Join>();
-            this.orderByClauses = new List<OrderBy>();
-            this.groupByClauses = new List<GroupBy>();
+            columns = new List<Column>();
+            joins = new List<Join>();
+            orderByClauses = new List<OrderBy>();
+            groupByClauses = new List<GroupBy>();
 		}
 
         internal static ISelectQueryContext Create(IAliasManager aliasManager, IHashProvider hashProvider)
             => new SelectQueryContext(aliasManager, hashProvider);
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<Column> Columns => this.columns.AsReadOnly();
+        public IReadOnlyCollection<Column> Columns => columns.AsReadOnly();
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<Join> Joins => this.joins.AsReadOnly();
+        public IReadOnlyCollection<Join> Joins => joins.AsReadOnly();
 
         /// <inheritdoc/>
-        public IWhere WhereClause => this.where;
+        public IWhere WhereClause => where;
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<OrderBy> OrderByClauses => this.orderByClauses.AsReadOnly();
+        public IReadOnlyCollection<OrderBy> OrderByClauses => orderByClauses.AsReadOnly();
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<GroupBy> GroupByClauses => this.groupByClauses.AsReadOnly();
+        public IReadOnlyCollection<GroupBy> GroupByClauses => groupByClauses.AsReadOnly();
 
         /// <inheritdoc/>
-        public int? RowLimit => this.limit;
+        public int? RowLimit => limit;
 
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            this.columns.DisposeAll();
-            this.joins.DisposeAll();
-            this.orderByClauses.DisposeAll();
-            this.groupByClauses.DisposeAll();
-            this.where = null;
+            columns.DisposeAll();
+            joins.DisposeAll();
+            orderByClauses.DisposeAll();
+            groupByClauses.DisposeAll();
+            where = null;
         }
 
         /// <inheritdoc/>
         public void From(IQueryTarget table)
         {
-            var item = this.QueryTargets.FirstOrDefault(t => t.IsEquivalentTo(table));
+            var item = QueryTargets.FirstOrDefault(t => t.IsEquivalentTo(table));
             if (item != null) return;
 
             var internalContext = this as IQueryContextExtended;
@@ -70,39 +70,39 @@ namespace decaf.state
         /// <inheritdoc/>
         public void GroupBy(GroupBy groupBy)
         {
-            var item = this.groupByClauses.FirstOrDefault(c => c.IsEquivalentTo(groupBy));
+            var item = groupByClauses.FirstOrDefault(c => c.IsEquivalentTo(groupBy));
             if (item != null) return;
 
-            this.groupByClauses.Add(groupBy);
+            groupByClauses.Add(groupBy);
         }
 
         /// <inheritdoc/>
         public void Join(Join join)
         {
-            var existing = this.joins.FirstOrDefault(j => j.From.IsEquivalentTo(join.From) &&
+            var existing = joins.FirstOrDefault(j => j.From.IsEquivalentTo(join.From) &&
                 j.To.IsEquivalentTo(join.To));
 
             if (existing != null) return;
 
-            this.joins.Add(join);
+            joins.Add(join);
         }
 
         /// <inheritdoc/>
         public void OrderBy(OrderBy orderBy)
         {
-            var item = this.orderByClauses.FirstOrDefault(c => c.IsEquivalentTo(orderBy));
+            var item = orderByClauses.FirstOrDefault(c => c.IsEquivalentTo(orderBy));
             if (item != null) return;
 
-            this.orderByClauses.Add(orderBy);
+            orderByClauses.Add(orderBy);
         }
 
         /// <inheritdoc/>
         public void Select(Column column)
         {
-            var item = this.columns.FirstOrDefault(c => c.IsEquivalentTo(column));
+            var item = columns.FirstOrDefault(c => c.IsEquivalentTo(column));
             if (item != null) return;
 
-            this.columns.Add(column);
+            columns.Add(column);
         }
 
         /// <inheritdoc/>

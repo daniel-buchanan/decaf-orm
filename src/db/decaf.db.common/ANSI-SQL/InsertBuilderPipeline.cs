@@ -50,7 +50,7 @@ namespace decaf.db.common.ANSISQL
             input.Builder.PrependIndent();
             input.Builder.Append(Constants.OpeningParen);
 
-            AppendItems(input.Builder, columns, (b, i) => this.QuotedIdentifierBuilder.AddSelect(i, b));
+            AppendItems(input.Builder, columns, (b, i) => QuotedIdentifierBuilder.AddSelect(i, b));
 
             input.Builder.Append(Constants.ClosingParen);
             input.Builder.DecreaseIndent();
@@ -81,7 +81,7 @@ namespace decaf.db.common.ANSISQL
             input.Builder.IncreaseIndent();
 
             input.Builder.PrependIndent();
-            this.QuotedIdentifierBuilder.AddFromTable(input.Context.Target.Name, input.Builder);
+            QuotedIdentifierBuilder.AddFromTable(input.Context.Target.Name, input.Builder);
             input.Builder.AppendLine();
 
             input.Builder.DecreaseIndent();

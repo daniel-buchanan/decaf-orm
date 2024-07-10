@@ -21,13 +21,13 @@ namespace decaf.sqlserver.Builders
             if (!string.IsNullOrWhiteSpace(tableTarget.Alias))
                 format += "{0}{2}{0} {0}{3}{0}";
 
-            sqlBuilder.Append(format, base.quote, tableTarget.Schema, tableTarget.Name, tableTarget.Alias);
+            sqlBuilder.Append(format, quote, tableTarget.Schema, tableTarget.Name, tableTarget.Alias);
         }
 
         public override void AddClosingFromQuery(string alias, ISqlBuilder sqlBuilder)
         {
             sqlBuilder.PrependIndent();
-            sqlBuilder.Append("{0} {1}{2}{1}", constants.ClosingParen, this.quote, alias);
+            sqlBuilder.Append("{0} {1}{2}{1}", constants.ClosingParen, quote, alias);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace decaf.tests.common.Mocks
 
         protected override DbConnection DbConnection { get; set; }
 
-        protected override DbParameterCollection DbParameterCollection => this.parameters;
+        protected override DbParameterCollection DbParameterCollection => parameters;
 
         protected override DbTransaction DbTransaction { get; set; }
 

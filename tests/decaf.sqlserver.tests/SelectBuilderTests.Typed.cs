@@ -17,7 +17,7 @@ namespace decaf.sqlserver.tests
 
             var decaf = provider.GetService<IDecaf>();
             var transient = decaf.BuildUnit();
-            this.query = transient.GetQuery() as IQueryContainer;
+            query = transient.GetQuery() as IQueryContainer;
         }
 
         [Fact]
@@ -29,7 +29,7 @@ namespace decaf.sqlserver.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From<User>(u => u)
                 .Where(u => u.Id == 42)
                 .Select(u => new
@@ -51,7 +51,7 @@ namespace decaf.sqlserver.tests
             var idValue = 42;
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From<User>(u => u)
                 .Where(u => u.Id == idValue)
                 .Select(u => new
@@ -76,7 +76,7 @@ namespace decaf.sqlserver.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From<User>(u => u)
                 .Where(u => u.Id == 42)
                 .OrderBy(u => u.Id, SortOrder.Descending)
@@ -101,7 +101,7 @@ namespace decaf.sqlserver.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From<User>(u => u)
                 .Where(u => u.Email.Contains("bob"))
                 .Select(u => new
@@ -125,7 +125,7 @@ namespace decaf.sqlserver.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From<User>(u => u)
                 .Where(u => u.Email.StartsWith("bob"))
                 .Select(u => new
@@ -149,7 +149,7 @@ namespace decaf.sqlserver.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From<User>(u => u)
                 .Where(u => u.Email.EndsWith("bob"))
                 .Select(u => new
@@ -173,7 +173,7 @@ namespace decaf.sqlserver.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From<User>(u => u)
                 .Where(u => u.Email.EndsWith(".com") && u.FirstName == "Bob")
                 .Select(u => new
@@ -197,7 +197,7 @@ namespace decaf.sqlserver.tests
             var subValue = Guid.NewGuid();
 
             // Act
-            var q = this.query.Select()
+            var q = query.Select()
                 .From<User>(u => u)
                 .Where(u => u.Id == 42 && u.Email.EndsWith(".com") && (u.Id != 0 || u.Email.EndsWith("abc")))
                 .Select(u => new
@@ -220,7 +220,7 @@ namespace decaf.sqlserver.tests
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Arrange
-            var q = this.query.Select()
+            var q = query.Select()
                 .From<User>(u => u)
                 .Join<Person>((u, p) => p.Id == u.PersonId)
                 .Where((u, p) => u.Id == 42)
@@ -246,7 +246,7 @@ namespace decaf.sqlserver.tests
             expected = expected.Replace("\n", Environment.NewLine);
 
             // Arrange
-            var q = this.query.Select()
+            var q = query.Select()
                 .From<User>(q =>
                 {
                     q.From<User>(u => u)

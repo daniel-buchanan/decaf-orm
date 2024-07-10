@@ -10,7 +10,7 @@ namespace decaf.common.Attributes
 
         public RenameColumnAttribute(string name)
         {
-            this.Name = name;
+            Name = name;
         }
     }
 }

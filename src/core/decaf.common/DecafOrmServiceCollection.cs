@@ -27,7 +27,7 @@ namespace decaf.common
             ServiceLifetime lifetime = ServiceLifetime.Singleton)
             where T : class, IConnectionDetails, new()
             => WithConnection(
-                p =>
+                _ =>
                 {
                     var connectionDetails = new T();
                     builder(connectionDetails);

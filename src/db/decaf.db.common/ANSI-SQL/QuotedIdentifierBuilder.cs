@@ -15,30 +15,30 @@ namespace decaf.db.common.ANSISQL
         {
             this.constants = constants;
             if (options.QuotedIdentifiers)
-                this.quote = constants.ColumnQuote;
+                quote = constants.ColumnQuote;
         }
 
         public virtual void AddSelect(Column column, ISqlBuilder sqlBuilder)
         {
             if (!string.IsNullOrWhiteSpace(column.Source?.Alias))
-                sqlBuilder.Append("{0}{1}{0}.", this.quote, column.Source.Alias);
+                sqlBuilder.Append("{0}{1}{0}.", quote, column.Source.Alias);
 
             if (string.IsNullOrWhiteSpace(column.NewName))
-                sqlBuilder.Append("{0}{1}{0}", this.quote, column.Name);
+                sqlBuilder.Append("{0}{1}{0}", quote, column.Name);
             else
-                sqlBuilder.Append("{0}{1}{0} as {0}{2}{0}", this.quote, column.Name, column.NewName);
+                sqlBuilder.Append("{0}{1}{0} as {0}{2}{0}", quote, column.Name, column.NewName);
         }
 
         public virtual void AddColumn(Column column, ISqlBuilder sqlBuilder)
         {
             if (!string.IsNullOrWhiteSpace(column.Source?.Alias))
-                sqlBuilder.Append("{0}{1}{0}.", this.quote, column.Source.Alias);
+                sqlBuilder.Append("{0}{1}{0}.", quote, column.Source.Alias);
 
-            sqlBuilder.Append("{0}{1}{0}", this.quote, column.Name);
+            sqlBuilder.Append("{0}{1}{0}", quote, column.Name);
         }
 
         public virtual void AddOutput(Output output, ISqlBuilder sqlBuilder)
-            => sqlBuilder.Append("{0}{1}{0}", this.quote, output.Name);
+            => sqlBuilder.Append("{0}{1}{0}", quote, output.Name);
 
         public virtual void AddFromTable(ITableTarget tableTarget, ISqlBuilder sqlBuilder)
         {
@@ -50,18 +50,18 @@ namespace decaf.db.common.ANSISQL
             if (!string.IsNullOrWhiteSpace(tableTarget.Alias))
                 format = format + "{0}{2}{0} as {0}{3}{0}";
 
-            sqlBuilder.Append(format, this.quote, tableTarget.Schema, tableTarget.Name, tableTarget.Alias);
+            sqlBuilder.Append(format, quote, tableTarget.Schema, tableTarget.Name, tableTarget.Alias);
         }
 
         public virtual void AddFromTable(string table, ISqlBuilder sqlBuilder)
         {
-            sqlBuilder.Append("{0}{1}{0}", this.quote, table);
+            sqlBuilder.Append("{0}{1}{0}", quote, table);
         }
 
         public virtual void AddClosingFromQuery(string alias, ISqlBuilder sqlBuilder)
         {
             sqlBuilder.PrependIndent();
-            sqlBuilder.Append("{0} as {1}{2}{1}", constants.ClosingParen, this.quote, alias);
+            sqlBuilder.Append("{0} as {1}{2}{1}", constants.ClosingParen, quote, alias);
         }
 
         public virtual void AddOrderBy(OrderBy orderBy, ISqlBuilder sqlBuilder)
@@ -79,7 +79,7 @@ namespace decaf.db.common.ANSISQL
                 formatStr = "{1}" + formatStr;
             }
 
-            sqlBuilder.Append(formatStr, this.quote, alias, orderBy.Name, order);
+            sqlBuilder.Append(formatStr, quote, alias, orderBy.Name, order);
         }
 
         public virtual void AddGroupBy(GroupBy groupBy, ISqlBuilder sqlBuilder)
@@ -96,7 +96,7 @@ namespace decaf.db.common.ANSISQL
                 formatStr = "{1}" + formatStr;
             }
 
-            sqlBuilder.Append(formatStr, this.quote, alias, groupBy.Name);
+            sqlBuilder.Append(formatStr, quote, alias, groupBy.Name);
         }
     }
 }

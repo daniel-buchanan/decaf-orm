@@ -16,7 +16,7 @@ namespace decaf.sqlserver.tests
 
             var decaf = provider.GetService<IDecaf>();
             var transient = decaf.BuildUnit();
-            this.query = transient.GetQuery() as IQueryContainer;
+            query = transient.GetQuery() as IQueryContainer;
         }
 
         [Fact]
@@ -27,7 +27,7 @@ namespace decaf.sqlserver.tests
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act
-            var q = this.query.Insert()
+            var q = query.Insert()
                 .Into("users")
                 .Columns(c => new
                 {
@@ -53,7 +53,7 @@ namespace decaf.sqlserver.tests
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act
-            var q = this.query.Insert()
+            var q = query.Insert()
                 .Into("users")
                 .Columns(c => new
                 {
@@ -84,7 +84,7 @@ namespace decaf.sqlserver.tests
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act
-            var q = this.query.Insert()
+            var q = query.Insert()
                 .Into("users")
                 .Columns(c => new
                 {
@@ -111,7 +111,7 @@ namespace decaf.sqlserver.tests
             expected = expected.Replace("\\r\\n", Environment.NewLine);
 
             // Act
-            var q = this.query.Insert()
+            var q = query.Insert()
                 .Into("users")
                 .Columns(c => new
                 {
@@ -139,7 +139,7 @@ namespace decaf.sqlserver.tests
         public void GetValuesSucceeds()
         {
             // Act
-            var q = this.query.Insert()
+            var q = query.Insert()
                 .Into("users")
                 .Columns(c => new
                 {

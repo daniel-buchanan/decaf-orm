@@ -22,7 +22,7 @@ namespace decaf.common
 		{
 			this.logger = logger;
 			this.unitOfWork = unitOfWork as IUnitOfWorkExtended;
-			this.aliasManager = AliasManager.Create();
+			aliasManager = AliasManager.Create();
 			this.options = options;
 			this.hashProvider = hashProvider;
 
@@ -39,31 +39,31 @@ namespace decaf.common
 		public QueryStatus Status { get; private set; }
 
 		/// <inheritdoc/>
-		IAliasManager IQueryContainerInternal.AliasManager => this.aliasManager;
+		IAliasManager IQueryContainerInternal.AliasManager => aliasManager;
 
 		/// <inheritdoc/>
-		IUnitOfWork IQueryContainerInternal.UnitOfWork => this.unitOfWork;
+		IUnitOfWork IQueryContainerInternal.UnitOfWork => unitOfWork;
 
 		/// <inheritdoc/>
-		public IQueryContext Context => this.context;
+		public IQueryContext Context => context;
 
 		/// <inheritdoc/>
-		public void Discard() => this.Dispose();
+		public void Discard() => Dispose();
 
 		/// <inheritdoc/>
-		IHashProvider IQueryContainerInternal.HashProvider => this.hashProvider;
+		IHashProvider IQueryContainerInternal.HashProvider => hashProvider;
 
 		/// <inheritdoc/>
-		DecafOptions IQueryContainerInternal.Options => this.options;
+		DecafOptions IQueryContainerInternal.Options => options;
 
 		/// <inheritdoc/>
-		public ISqlFactory SqlFactory => this.unitOfWork.SqlFactory;
+		public ISqlFactory SqlFactory => unitOfWork.SqlFactory;
 
 		/// <inheritdoc/>
-		public ILoggerProxy Logger => this.logger;
+		public ILoggerProxy Logger => logger;
 
 		/// <inheritdoc/>
-		string IQueryContainerInternal.GetHash() => this.context.GetHash();
+		string IQueryContainerInternal.GetHash() => context.GetHash();
 
 		/// <summary>
 		/// 
@@ -101,9 +101,9 @@ namespace decaf.common
 		private void Dispose(bool disposing)
 		{
 			if (!disposing) return;
-			this.logger.Debug($"Query({Id} :: Disposing({disposing})");
-			this.aliasManager.Dispose();
-			this.unitOfWork.NotifyQueryDisposed(Id);
+			logger.Debug($"Query({Id} :: Disposing({disposing})");
+			aliasManager.Dispose();
+			unitOfWork.NotifyQueryDisposed(Id);
 		}
 	}
 }

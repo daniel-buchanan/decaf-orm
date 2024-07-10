@@ -24,13 +24,13 @@ namespace decaf.npgsql.tests
         {
             services.Replace<IConnectionFactory, MockConnectionFactory>();
             services.Replace<ITransactionFactory, MockTransactionFactory>();
-            services.AddScoped<IConnectionDetails>(s => new MockConnectionDetails());
+            services.AddScoped<IConnectionDetails>(_ => new MockConnectionDetails());
             services.AddDecafService<Person>().AsScoped();
 
             BuildServiceProvider();
 
-            this.sqlFactory = provider.GetService<ISqlFactory>();
-            this.personService = provider.GetService<IService<Person>>();
+            sqlFactory = provider.GetService<ISqlFactory>();
+            personService = provider.GetService<IService<Person>>();
         }
 
         [Fact]
@@ -40,14 +40,14 @@ namespace decaf.npgsql.tests
             var expected = "select\r\n  t.Id,\r\n  t.FirstName,\r\n  t.LastName,\r\n  t.Email,\r\n  t.AddressId,\r\n  t.CreatedAt\r\nfrom\r\n  Person as t\r\nwhere\r\n(t.Email = @p1)\r\n";
             expected = expected.Replace("\r\n", Environment.NewLine);
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
-            this.personService.Find(p => p.Email == "bob@bob.com");
+            personService.Find(p => p.Email == "bob@bob.com");
 
             // Act
-            var template = this.sqlFactory.ParseTemplate(context);
+            var template = sqlFactory.ParseTemplate(context);
 
             // Assert
             template.Sql.Should().Be(expected);
@@ -58,14 +58,14 @@ namespace decaf.npgsql.tests
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
-            this.personService.Find(p => p.Email == "bob@bob.com");
+            personService.Find(p => p.Email == "bob@bob.com");
 
             // Act
-            Action method = () => this.sqlFactory.ParseParameters(context, new SqlTemplate("", new List<SqlParameter>()));
+            Action method = () => sqlFactory.ParseParameters(context, new SqlTemplate("", new List<SqlParameter>()));
 
             // Assert
             method.Should().Throw<common.Exceptions.SqlTemplateMismatchException>();
@@ -76,15 +76,15 @@ namespace decaf.npgsql.tests
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
-            this.personService.Find(p => p.Email == "bob@bob.com");
-            var template = this.sqlFactory.ParseTemplate(context);
+            personService.Find(p => p.Email == "bob@bob.com");
+            var template = sqlFactory.ParseTemplate(context);
 
             // Act
-            var parameters = this.sqlFactory.ParseParameters(context, template, includePrefix: false);
+            var parameters = sqlFactory.ParseParameters(context, template, includePrefix: false);
 
             // Assert
             parameters.Should().BeEquivalentTo(ParameterMapper.Map(new Dictionary<string, object>
@@ -98,15 +98,15 @@ namespace decaf.npgsql.tests
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
-            this.personService.Find(u => u.Id == 42 && u.Email.EndsWith(".com") && (u.Id != 0 || u.Email.EndsWith("abc")));
-            var template = this.sqlFactory.ParseTemplate(context);
+            personService.Find(u => u.Id == 42 && u.Email.EndsWith(".com") && (u.Id != 0 || u.Email.EndsWith("abc")));
+            var template = sqlFactory.ParseTemplate(context);
 
             // Act
-            var parameters = this.sqlFactory.ParseParameters(context, template, includePrefix: false);
+            var parameters = sqlFactory.ParseParameters(context, template, includePrefix: false);
 
             // Assert
             parameters.Should().BeEquivalentTo(ParameterMapper.Map(new Dictionary<string, object>
@@ -123,16 +123,16 @@ namespace decaf.npgsql.tests
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
             var ids = new int[] { 1, 2, 3 };
-            this.personService.Find(p => ids.Contains(p.Id));
-            var template = this.sqlFactory.ParseTemplate(context);
+            personService.Find(p => ids.Contains(p.Id));
+            var template = sqlFactory.ParseTemplate(context);
 
             // Act
-            var parameters = this.sqlFactory.ParseParameters(context, template, includePrefix: false);
+            var parameters = sqlFactory.ParseParameters(context, template, includePrefix: false);
 
             // Assert
             parameters.Should().BeEquivalentTo(ParameterMapper.Map(new Dictionary<string, object>
@@ -148,15 +148,15 @@ namespace decaf.npgsql.tests
         {
             // Arrange
             IQueryContext context = null;
-            this.personService.OnBeforeExecution += (sender, args) =>
+            personService.OnBeforeExecution += (_, args) =>
             {
                 context = args.Context;
             };
-            this.personService.Find(p => p.Email.Contains("bob"));
-            var template = this.sqlFactory.ParseTemplate(context);
+            personService.Find(p => p.Email.Contains("bob"));
+            var template = sqlFactory.ParseTemplate(context);
 
             // Act
-            var parameters = this.sqlFactory.ParseParameters(context, template, includePrefix: false);
+            var parameters = sqlFactory.ParseParameters(context, template, includePrefix: false);
 
             // Assert
             parameters.Should().BeEquivalentTo(ParameterMapper.Map(new Dictionary<string, object>

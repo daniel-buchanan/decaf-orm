@@ -16,7 +16,7 @@ namespace decaf.common.Connections
         private IConnectionAuthentication authentication;
 
         protected ConnectionDetails()
-            => this.connectionString = null;
+            => connectionString = null;
 
         protected ConnectionDetails(string connectionString)
             => this.connectionString = connectionString;
@@ -98,15 +98,15 @@ namespace decaf.common.Connections
         /// <inheritdoc/>
         public string Hostname
         {
-            get => this.hostname ?? String.Empty;
+            get => hostname ?? String.Empty;
             set
             {
-                if(!string.IsNullOrWhiteSpace(this.hostname))
+                if(!string.IsNullOrWhiteSpace(hostname))
                 {
                     throw new ConnectionModificationException($"{nameof(Hostname)} cannot be modified once ConnectionDetails instance created");
                 }
 
-                this.hostname = value;
+                hostname = value;
             }
         }
 
@@ -120,12 +120,12 @@ namespace decaf.common.Connections
         {
             get
             {
-                if(this.port == null)
+                if(port == null)
                 {
-                    this.port = DefaultPort;
-                    return this.port.GetValueOrDefault();
+                    port = DefaultPort;
+                    return port.GetValueOrDefault();
                 }
-                return this.port.GetValueOrDefault();
+                return port.GetValueOrDefault();
             }
             set
             {
@@ -134,37 +134,37 @@ namespace decaf.common.Connections
                     throw new ConnectionModificationException($"{nameof(Port)} cannot be modified once ConnectionDetails instance created");
                 }
 
-                this.port = value;
+                port = value;
             }
         }
 
         /// <inheritdoc/>
         public string DatabaseName
         {
-            get => this.databaseName ?? String.Empty;
+            get => databaseName ?? String.Empty;
             set
             {
-                if (!string.IsNullOrWhiteSpace(this.databaseName))
+                if (!string.IsNullOrWhiteSpace(databaseName))
                 {
                     throw new ConnectionModificationException($"{nameof(DatabaseName)} cannot be modified once ConnectionDetails instance created");
                 }
 
-                this.databaseName = value;
+                databaseName = value;
             }
         }
 
         /// <inheritdoc/>
         public IConnectionAuthentication Authentication
         {
-            get => this.authentication;
+            get => authentication;
             set
             {
-                if (this.authentication != null)
+                if (authentication != null)
                 {
                     throw new ConnectionModificationException($"{nameof(Authentication)} cannot be modified once ConnectionDetails instance created");
                 }
 
-                this.authentication = value;
+                authentication = value;
             }
         }
 
@@ -178,10 +178,10 @@ namespace decaf.common.Connections
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
-            this.connectionString = null;
-            this.hostname = null;
-            this.port = null;
-            this.databaseName = null;
+            connectionString = null;
+            hostname = null;
+            port = null;
+            databaseName = null;
         }
 
         /// <inheritdoc/>
@@ -191,11 +191,11 @@ namespace decaf.common.Connections
         /// <inheritdoc/>
         public async Task<string> GetConnectionStringAsync(CancellationToken cancellationToken = default)
         {
-            if(!string.IsNullOrWhiteSpace(this.connectionString))
-                return this.connectionString;
+            if(!string.IsNullOrWhiteSpace(connectionString))
+                return connectionString;
 
-            this.connectionString = await ConstructConnectionStringAsync(cancellationToken);
-            return this.connectionString;
+            connectionString = await ConstructConnectionStringAsync(cancellationToken);
+            return connectionString;
         }
 
         /// <summary>

@@ -30,7 +30,7 @@ internal class CreateTableQueryContext : QueryContext, ICreateTableQueryContext
     public IEnumerable<IColumnDefinition> Columns => columns;
 
     public void AddColumns(params IColumnDefinition[] cols)
-        => this.columns.AddRange(cols);
+        => columns.AddRange(cols);
 
     public IEnumerable<IIndexDefinition> Indexes => indicies;
 

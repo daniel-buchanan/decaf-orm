@@ -39,8 +39,8 @@ namespace decaf.Implementation
             {
                 var table = Context.Helpers().GetTableName(expression);
                 var alias = Context.Helpers().GetTableAlias(expression);
-                managedTable = this.Query.AliasManager.GetAssociation(alias) ?? table;
-                managedAlias = this.Query.AliasManager.Add(alias, table);
+                managedTable = Query.AliasManager.GetAssociation(alias) ?? table;
+                managedAlias = Query.AliasManager.Add(alias, table);
             }
 
             Context.From(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
@@ -54,7 +54,7 @@ namespace decaf.Implementation
                 var target = GetQueryTargetByAlias(p.Alias);
                 if (target == null) target = GetQueryTargetByType(p.Type);
                 
-                Context.Select(state.Column.Create(p.Name, target, p.NewName));
+                Context.Select(Column.Create(p.Name, target, p.NewName));
             }
         }
 
@@ -66,7 +66,7 @@ namespace decaf.Implementation
 
         protected IQueryTarget GetQueryTargetByTable(string table)
         {
-            var alias = this.Query.AliasManager.FindByAssociation(table).FirstOrDefault();
+            var alias = Query.AliasManager.FindByAssociation(table).FirstOrDefault();
             if (alias == null) throw new TableNotFoundException(table);
 
             return GetQueryTargetByAlias(alias.Name);
@@ -74,7 +74,7 @@ namespace decaf.Implementation
 
         private IQueryTarget GetQueryTargetByAlias(string alias)
         {
-            var managedAlias = this.Query.AliasManager.GetAssociation(alias);
+            var managedAlias = Query.AliasManager.GetAssociation(alias);
             if (string.IsNullOrWhiteSpace(managedAlias))
                 throw new TableNotFoundException(alias ?? "\"No ALIAS Provided\"");
 

@@ -19,8 +19,8 @@ namespace decaf.Implementation
             IQueryContainerInternal query)
             : base(query, context)
         {
-            this.Context = context;
-            this.Query.SetContext(this.Context);
+            Context = context;
+            Query.SetContext(Context);
         }
 
         public static Update Create(
@@ -31,39 +31,39 @@ namespace decaf.Implementation
         /// <inheritdoc/>
         public IUpdateSetFromQuery From(Action<ISelectWithAlias> query)
         {
-            base.FromQuery(query);
+            FromQuery(query);
             return this;
         }
 
         /// <inheritdoc/>
         public IUpdateSet Output(string column)
         {
-            this.Context.Output(state.Output.Create(column, OutputSources.Updated));
+            Context.Output(state.Output.Create(column, OutputSources.Updated));
             return this;
         }
 
         /// <inheritdoc/>
         public IUpdateSet Set<T>(string column, T value)
         {
-            var col = Column.Create(column, this.Context.Table);
+            var col = Column.Create(column, Context.Table);
             var valueSource = StaticValueSource.Create(col, value);
-            this.Context.Set(valueSource);
+            Context.Set(valueSource);
             return this;
         }
 
         /// <inheritdoc/>
         public IUpdateSet Set(dynamic values)
         {
-            base.SetValues(new[] { values });
+            SetValues(new[] { values });
             return this;
         }
 
         /// <inheritdoc/>
         public IUpdateSetFromQuery Set(string columnToUpdate, string sourceColumn)
         {
-            var destination = Column.Create(columnToUpdate, this.Context.Table);
-            var source = Column.Create(sourceColumn, this.Context.Source);
-            this.Context.Set(QueryValueSource.Create(destination, source, this.Context.Source));
+            var destination = Column.Create(columnToUpdate, Context.Table);
+            var source = Column.Create(sourceColumn, Context.Source);
+            Context.Set(QueryValueSource.Create(destination, source, Context.Source));
             return this;
         }
 
@@ -71,49 +71,49 @@ namespace decaf.Implementation
         public IUpdateTable Table(string table, string alias = null)
         {
             var target = state.QueryTargets.TableTarget.Create(table, alias);
-            this.Context.Update(target);
+            Context.Update(target);
             return this;
         }
 
         /// <inheritdoc/>
         public IUpdateTable<T> Table<T>()
         {
-            var table = this.Context.Helpers().GetTableName<T>();
-            var alias = this.Query.AliasManager.Add(null, table);
-            this.Context.Update(state.QueryTargets.TableTarget.Create(table, alias));
-            return UpdateTyped<T>.Create(this.Context, this.Query);
+            var table = Context.Helpers().GetTableName<T>();
+            var alias = Query.AliasManager.Add(null, table);
+            Context.Update(state.QueryTargets.TableTarget.Create(table, alias));
+            return UpdateTyped<T>.Create(Context, Query);
         }
 
         /// <inheritdoc/>
         public IUpdateTable<T> Table<T>(Expression<Func<T, object>> expression)
         {
-            var table = this.Context.Helpers().GetTableName(expression);
-            var alias = this.Context.Helpers().GetTableAlias(expression);
+            var table = Context.Helpers().GetTableName(expression);
+            var alias = Context.Helpers().GetTableAlias(expression);
 
-            var managedTable = this.Query.AliasManager.GetAssociation(alias) ?? table;
-            var managedAlias = this.Query.AliasManager.Add(alias, table);
-            this.Context.Update(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
+            var managedTable = Query.AliasManager.GetAssociation(alias) ?? table;
+            var managedAlias = Query.AliasManager.Add(alias, table);
+            Context.Update(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
 
-            return UpdateTyped<T>.Create(this.Context, this.Query);
+            return UpdateTyped<T>.Create(Context, Query);
         }
 
         /// <inheritdoc/>
         public IUpdateTable<T> Table<T>(string alias)
         {
-            var table = this.Context.Helpers().GetTableName<T>();
-            var managedTable = this.Query.AliasManager.GetAssociation(alias) ?? table;
-            var managedAlias = this.Query.AliasManager.Add(alias, table);
-            this.Context.Update(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
+            var table = Context.Helpers().GetTableName<T>();
+            var managedTable = Query.AliasManager.GetAssociation(alias) ?? table;
+            var managedAlias = Query.AliasManager.Add(alias, table);
+            Context.Update(state.QueryTargets.TableTarget.Create(managedTable, managedAlias));
 
-            return UpdateTyped<T>.Create(this.Context, this.Query);
+            return UpdateTyped<T>.Create(Context, Query);
         }
 
         /// <inheritdoc/>
         public IUpdateSet Where(Action<IWhereBuilder> builder)
         {
-            var whereBuilder = WhereBuilder.Create(base.Query.Options, this.Context) as IWhereBuilderInternal;
+            var whereBuilder = WhereBuilder.Create(Query.Options, Context) as IWhereBuilderInternal;
             builder(whereBuilder);
-            this.Context.Where(whereBuilder.GetClauses().First());
+            Context.Where(whereBuilder.GetClauses().First());
             return this;
         }
 
@@ -121,21 +121,21 @@ namespace decaf.Implementation
         public IUpdateSet Where(IWhere clause)
         {
             if (clause == null) throw new ArgumentNullException(nameof(clause));
-            this.Context.Where(clause);
+            Context.Where(clause);
             return this;
         }
 
         /// <inheritdoc/>
         IUpdateSetFromQuery IUpdateSetFromQuery.Output(string column)
         {
-            this.Output(column);
+            Output(column);
             return this;
         }
 
         /// <inheritdoc/>
         IUpdateSetFromQuery IUpdateSetFromQuery.Where(Action<IWhereBuilder> builder)
         {
-            this.Where(builder);
+            Where(builder);
             return this;
         }
     }

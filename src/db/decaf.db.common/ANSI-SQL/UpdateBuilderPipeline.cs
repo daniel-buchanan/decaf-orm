@@ -9,7 +9,7 @@ namespace decaf.db.common.ANSISQL
 {
 	public class UpdateBuilderPipeline : db.common.Builders.UpdateBuilderPipeline
 	{
-        protected readonly db.common.Builders.IWhereBuilder WhereBuilder;
+        protected readonly IWhereBuilder WhereBuilder;
         protected readonly IQuotedIdentifierBuilder QuotedIdentifierBuilder;
         protected readonly IBuilderPipeline<ISelectQueryContext> SelectBuilder;
 
@@ -17,14 +17,14 @@ namespace decaf.db.common.ANSISQL
             DecafOptions options,
             IConstants constants,
             IParameterManager parameterManager,
-            db.common.Builders.IWhereBuilder whereBuilder,
+            IWhereBuilder whereBuilder,
             IQuotedIdentifierBuilder quotedIdentifierBuilder,
             IBuilderPipeline<ISelectQueryContext> selectBuilder)
             : base(options, constants, parameterManager)
         {
-            this.WhereBuilder = whereBuilder;
-            this.QuotedIdentifierBuilder = quotedIdentifierBuilder;
-            this.SelectBuilder = selectBuilder;
+            WhereBuilder = whereBuilder;
+            QuotedIdentifierBuilder = quotedIdentifierBuilder;
+            SelectBuilder = selectBuilder;
         }
 
         private void AppendItems<T>(
@@ -54,10 +54,10 @@ namespace decaf.db.common.ANSISQL
             input.Builder.IncreaseIndent();
             var outputs = input.Context.Outputs.ToArray();
 
-            AppendItems(input.Builder, outputs, (b, o) =>
+            AppendItems(input.Builder, outputs, (_, o) =>
             {
                 input.Builder.PrependIndent();
-                this.QuotedIdentifierBuilder.AddOutput(o, input.Builder);
+                QuotedIdentifierBuilder.AddOutput(o, input.Builder);
             });
 
             input.Builder.DecreaseIndent();
@@ -69,7 +69,7 @@ namespace decaf.db.common.ANSISQL
             input.Builder.IncreaseIndent();
 
             input.Builder.PrependIndent();
-            this.QuotedIdentifierBuilder.AddFromTable(input.Context.Table.Name, input.Builder);
+            QuotedIdentifierBuilder.AddFromTable(input.Context.Table.Name, input.Builder);
             input.Builder.AppendLine();
 
             input.Builder.DecreaseIndent();
@@ -112,7 +112,7 @@ namespace decaf.db.common.ANSISQL
                 input.Builder.IncreaseIndent();
                 AddValuesFromQuery(input.Context.Source as ISelectQueryTarget, input);
                 input.Builder.DecreaseIndent();
-                this.QuotedIdentifierBuilder.AddClosingFromQuery("x", input.Builder);
+                QuotedIdentifierBuilder.AddClosingFromQuery("x", input.Builder);
             }
         }
 
@@ -120,7 +120,7 @@ namespace decaf.db.common.ANSISQL
             => SelectBuilder.Execute(source.Context, input);
 
         protected override void AddWhere(IPipelineStageInput<IUpdateQueryContext> input)
-            => this.WhereBuilder.AddWhere(input.Context.WhereClause, input.Builder, input.Parameters);
+            => WhereBuilder.AddWhere(input.Context.WhereClause, input.Builder, input.Parameters);
     }
 }
 

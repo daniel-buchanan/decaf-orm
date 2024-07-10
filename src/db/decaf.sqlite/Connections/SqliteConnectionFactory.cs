@@ -13,7 +13,7 @@ public class SqliteConnectionFactory : ConnectionFactory
         IConnectionDetails connectionDetails, 
         CancellationToken cancellationToken = default)
     {
-        var conn = new SqliteConnection(this.logger, connectionDetails);
+        var conn = new SqliteConnection(logger, connectionDetails);
         return Task.FromResult(conn as IConnection);
     }
 }

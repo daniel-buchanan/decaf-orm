@@ -33,6 +33,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\core\decaf.common\decaf.common.csproj" />
+        <ProjectReference Include="..\..\src\core\decaf.ddl\decaf.ddl.csproj" />
         <ProjectReference Include="..\..\src\core\decaf.state\decaf.state.csproj" />
         <ProjectReference Include="..\..\src\core\decaf\decaf.csproj" />
         <ProjectReference Include="..\..\src\extensions\decaf.services\decaf.services.csproj" />

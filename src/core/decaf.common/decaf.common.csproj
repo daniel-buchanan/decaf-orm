@@ -21,7 +21,6 @@
     <None Remove="ValueFunctions\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Utilities\Reflection\" />
     <Folder Include="Utilities\Reflection\Dynamic\" />
     <Folder Include="ValueFunctions\" />
   </ItemGroup>

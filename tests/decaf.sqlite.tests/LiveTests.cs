@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using decaf.common;
+using decaf.ddl;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;

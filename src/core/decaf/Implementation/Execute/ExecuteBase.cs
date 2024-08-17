@@ -8,7 +8,7 @@ using decaf.common;
 using decaf.common.Connections;
 using decaf.common.Utilities;
 
-namespace decaf.Implementation
+namespace decaf.Implementation.Execute
 {
     public abstract class ExecuteBase<TContext> :
         IGetSql

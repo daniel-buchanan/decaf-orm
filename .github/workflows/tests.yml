@@ -56,8 +56,8 @@ jobs:
     uses: ./.github/workflows/test-run.yml
     secrets: inherit
     with:
-      job-name: decaf.core
-      test-project: tests/decaf.core.ddl.tests/decaf.core.ddl.tests.csproj
+      job-name: decaf.ddl
+      test-project: tests/decaf.ddl.tests/decaf.ddl.tests.csproj
 
   test-decafdb:
     needs: [check-paths]

@@ -2,7 +2,7 @@ using decaf.common.Templates;
 using decaf.db.common;
 using decaf.db.common.Builders;
 using decaf.state;
-using decaf.state.DDL;
+using decaf.state.Ddl.Definitions;
 
 namespace decaf.sqlite.Builders;
 

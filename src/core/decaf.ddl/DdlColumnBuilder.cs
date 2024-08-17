@@ -1,11 +1,17 @@
 using System;
 using System.Linq.Expressions;
-using decaf.state.DDL;
+using decaf.common.Utilities.Reflection;
+using decaf.state.Ddl.Definitions;
 
-namespace decaf.Implementation.Ddl;
+namespace decaf.ddl;
 
 public class DdlColumnBuilder : IDdlColumnBuilder
 {
+    private readonly IExpressionHelper _expressionHelper;
+    
+    public DdlColumnBuilder(IExpressionHelper expressionHelper) 
+        => _expressionHelper = expressionHelper;
+
     public string Name { get; private set; }
     public bool Nullable { get; private set; }
     public Type Type { get; private set; }
@@ -24,7 +30,8 @@ public class DdlColumnBuilder : IDdlColumnBuilder
 
     public IDdlColumnBuilder Named<T, TValue>(Expression<Func<T, TValue>> expression)
     {
-        throw new NotImplementedException();
+        Type = _expressionHelper.GetMemberType(expression);
+        return this;
     }
 
     public IDdlColumnBuilder IsNullable()
@@ -42,6 +49,12 @@ public class DdlColumnBuilder : IDdlColumnBuilder
     public IDdlColumnBuilder AsType(Type type)
     {
         Type = type;
+        return this;
+    }
+
+    public IDdlColumnBuilder AsType<T>(Expression<Func<T, object>> expression)
+    {
+        Type = _expressionHelper.GetMemberType(expression);
         return this;
     }
 

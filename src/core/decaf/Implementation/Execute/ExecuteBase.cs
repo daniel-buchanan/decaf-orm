@@ -14,8 +14,8 @@ namespace decaf.Implementation.Execute
         IGetSql
         where TContext: IQueryContext
 	{
-        internal readonly IQueryContainerInternal Query;
-        internal TContext Context;
+        protected readonly IQueryContainerInternal Query;
+        protected TContext Context;
         protected readonly ISqlFactory SqlFactory;
 
 		protected ExecuteBase(

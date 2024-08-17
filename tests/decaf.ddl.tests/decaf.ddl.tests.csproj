@@ -24,6 +24,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\core\decaf.common\decaf.common.csproj" />
       <ProjectReference Include="..\..\src\core\decaf.ddl\decaf.ddl.csproj" />
+      <ProjectReference Include="..\decaf.tests.common\decaf.tests.common.csproj" />
     </ItemGroup>
 
 </Project>

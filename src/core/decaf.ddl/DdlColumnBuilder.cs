@@ -30,6 +30,7 @@ public class DdlColumnBuilder : IDdlColumnBuilder
 
     public IDdlColumnBuilder Named<T, TValue>(Expression<Func<T, TValue>> expression)
     {
+        Name = _expressionHelper.GetMemberName(expression);
         Type = _expressionHelper.GetMemberType(expression);
         return this;
     }

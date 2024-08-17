@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace decaf.state.DDL;
+namespace decaf.state.Ddl.Definitions;
 
 public interface IPrimaryKeyDefinition
 {

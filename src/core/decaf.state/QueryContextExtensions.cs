@@ -5,6 +5,7 @@ using System.Reflection;
 using decaf.common;
 using decaf.common.Utilities.Reflection.Dynamic;
 
+[assembly:System.Runtime.CompilerServices.InternalsVisibleTo("decaf.ddl")]
 namespace decaf.state
 {
 	public static class QueryContextExtensions

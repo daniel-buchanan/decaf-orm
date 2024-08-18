@@ -27,8 +27,8 @@ public class AttributeHelper(IReflectionHelper reflectionHelper, IExpressionHelp
 
     public IPrimaryKeyDefinition GetPrimaryKey<T>()
     {
-        var components = GetComponents<T, PrimaryKeyComponentAttribute>();
-        return PrimaryKeyDefinition.Create(components.ToArray());
+        var name = $"pk_{typeof(T).Name}";
+        return GetPrimaryKey<T>(name);
     }
     
     public IPrimaryKeyDefinition GetPrimaryKey<T>(string name)

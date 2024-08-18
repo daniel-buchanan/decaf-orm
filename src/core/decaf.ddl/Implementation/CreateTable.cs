@@ -104,7 +104,7 @@ public class CreateTable : Execute<ICreateTableQueryContext>, ICreateTable
             cols.Add(builder.Build());
         }
 
-        var pk = PrimaryKeyDefinition.Create(cols.ToArray());
+        var pk = PrimaryKeyDefinition.Create(Context.Name, cols.ToArray());
         Context.AddPrimaryKey(pk);
 
         return this;

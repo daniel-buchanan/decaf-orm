@@ -27,8 +27,8 @@ public class AttributeHelper(IReflectionHelper reflectionHelper, IExpressionHelp
 
     public IPrimaryKeyDefinition GetPrimaryKey<T>()
     {
-        var name = $"pk_{typeof(T).Name}";
-        return GetPrimaryKey<T>(name);
+        var components = GetComponents<T, PrimaryKeyComponentAttribute>();
+        return PrimaryKeyDefinition.Create<T>(components.ToArray());
     }
     
     public IPrimaryKeyDefinition GetPrimaryKey<T>(string name)
@@ -44,7 +44,7 @@ public class AttributeHelper(IReflectionHelper reflectionHelper, IExpressionHelp
         var attrs = reflectionHelper.GetAttributes<T, IndexAttribute>();
         foreach (var a in attrs)
         {
-            var idx = a.Attribute as IndexAttribute;
+            if (a.Attribute is not IndexAttribute idx) continue;
             indexes.Add(IndexDefinition.Create(idx.Name, tbl, idx.Columns.ToArray()));
         }
 

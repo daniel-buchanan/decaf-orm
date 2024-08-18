@@ -5,29 +5,24 @@ namespace decaf.state.Ddl.Definitions;
 
 public class PrimaryKeyDefinition : IPrimaryKeyDefinition
 {
-    private PrimaryKeyDefinition(params IColumnDefinition[] columns)
-    {
-        Columns = columns;
-        Name = GenerateName(columns);
-    }
-
-    private PrimaryKeyDefinition(string name, params IColumnDefinition[] columns)
+    protected PrimaryKeyDefinition(string name, params IColumnDefinition[] columns)
     {
         Columns = columns;
         Name = name;
-        if (string.IsNullOrWhiteSpace(name)) Name = GenerateName(columns);
+        if (string.IsNullOrWhiteSpace(name)) Name = GenerateName(name, columns);
     }
 
-    private string GenerateName(IEnumerable<IColumnDefinition> columns)
+    private string GenerateName(string type, IEnumerable<IColumnDefinition> columns)
     {
-        var sb = new StringBuilder("pk");
+        var sb = new StringBuilder("pk_");
+        sb.Append(type);
         foreach (var c in columns)
             sb.AppendFormat("_{0}", c.Name);
         return sb.ToString();
     }
 
-    public static IPrimaryKeyDefinition Create(params IColumnDefinition[] columns)
-        => new PrimaryKeyDefinition(columns);
+    public static IPrimaryKeyDefinition Create<T>(params IColumnDefinition[] columns)
+        => new PrimaryKeyDefinition<T>(columns);
 
     public static IPrimaryKeyDefinition Create(string name, params IColumnDefinition[] columns)
         => new PrimaryKeyDefinition(name, columns);
@@ -38,3 +33,6 @@ public class PrimaryKeyDefinition : IPrimaryKeyDefinition
     /// <inheritdoc />
     public IEnumerable<IColumnDefinition> Columns { get; }
 }
+
+public class PrimaryKeyDefinition<T>(params IColumnDefinition[] columns)
+    : PrimaryKeyDefinition("pk_" + typeof(T).Name, columns), IPrimaryKeyDefinition<T>;

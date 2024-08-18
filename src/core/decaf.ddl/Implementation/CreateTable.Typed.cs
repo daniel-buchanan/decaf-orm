@@ -90,7 +90,7 @@ public class CreateTable<T> :
         var defs = columns
             .Select(ColumnDefinitionBuilder.Build)
             .ToArray();
-        Context.AddPrimaryKey(PrimaryKeyDefinition.Create(defs));
+        Context.AddPrimaryKey(PrimaryKeyDefinition.Create<T>(defs));
         return this;
     }
 

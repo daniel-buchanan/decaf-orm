@@ -14,3 +14,5 @@ public interface IIndexDefinition
     /// </summary>
     IEnumerable<IColumnDefinition> Columns { get; }
 }
+
+public interface IIndexDefinition<T> : IIndexDefinition;

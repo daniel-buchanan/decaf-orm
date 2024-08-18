@@ -14,3 +14,5 @@ public interface IPrimaryKeyDefinition
     /// </summary>
     IEnumerable<IColumnDefinition> Columns { get; }
 }
+
+public interface IPrimaryKeyDefinition<T> : IPrimaryKeyDefinition;

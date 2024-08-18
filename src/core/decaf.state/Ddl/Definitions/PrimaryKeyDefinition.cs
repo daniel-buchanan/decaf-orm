@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace decaf.state.Ddl.Definitions;
 
@@ -7,18 +7,11 @@ public class PrimaryKeyDefinition : IPrimaryKeyDefinition
 {
     protected PrimaryKeyDefinition(string name, params IColumnDefinition[] columns)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentNullException(nameof(name));
+        
         Columns = columns;
         Name = name;
-        if (string.IsNullOrWhiteSpace(name)) Name = GenerateName(name, columns);
-    }
-
-    private string GenerateName(string type, IEnumerable<IColumnDefinition> columns)
-    {
-        var sb = new StringBuilder("pk_");
-        sb.Append(type);
-        foreach (var c in columns)
-            sb.AppendFormat("_{0}", c.Name);
-        return sb.ToString();
     }
 
     public static IPrimaryKeyDefinition Create<T>(params IColumnDefinition[] columns)

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace decaf.state.Ddl.Definitions;
@@ -9,6 +11,13 @@ public class IndexDefinition : IIndexDefinition
 
     private IndexDefinition(string name, string table, params IColumnDefinition[] columns)
     {
+        if (string.IsNullOrWhiteSpace(table))
+            throw new ArgumentNullException(nameof(table));
+        
+        if (columns == null ||
+            !columns.Any())
+            throw new ArgumentNullException(nameof(columns));
+        
         Name = string.IsNullOrWhiteSpace(name)
             ? GenerateName(columns)
             : name;

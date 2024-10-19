@@ -34,6 +34,7 @@ namespace decaf.db.common
             ConfigureService<IBuilderPipeline<IInsertQueryContext>>(services, InsertPipeline, ServiceLifetime.Transient);
             ConfigureService<IBuilderPipeline<IUpdateQueryContext>>(services, UpdatePipeline, ServiceLifetime.Transient);
 	        ConfigureService<IBuilderPipeline<ICreateTableQueryContext>>(services, CreateTablePipeline, ServiceLifetime.Transient);
+	        ConfigureService<IBuilderPipeline<IDropTableQueryContext>>(services, DropTablePipeline, ServiceLifetime.Transient);
         }
 
 		/// <summary>

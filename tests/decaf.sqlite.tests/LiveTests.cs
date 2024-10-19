@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using decaf.common;
 using decaf.ddl;
 using FluentAssertions;
@@ -113,6 +114,35 @@ public class LiveTests
 
         // Assert
         result.Should().HaveCount(n);
+    }
+
+    [Fact]
+    public async Task DropTableSucceeds()
+    {
+        // Arrange
+        var decaf = provider.GetRequiredService<IDecaf>();
+        
+        // Act
+        await decaf.Query().DropTable().FromType<TempTbl>().ExecuteAsync();
+
+        // Assert
+        var success = false;
+        var unit = await decaf.BuildUnitAsync();
+        unit.OnSuccess(() => success = false);
+        unit.OnException(e =>
+        {
+            success = true;
+            return false;
+        });
+        unit.Query(q =>
+        {
+            q.Select()
+                .From<TempTbl>(t => t)
+                .SelectAll<TempTbl>(t => t)
+                .Execute();
+        });
+
+        success.Should().BeTrue();
     }
 
     private static IEnumerable<TempTbl> GenerateItemsToInsert(int n)

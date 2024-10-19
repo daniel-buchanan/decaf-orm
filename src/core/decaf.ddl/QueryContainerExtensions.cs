@@ -16,4 +16,7 @@ public static class QueryContainerExtensions
 
     public static ICreateTable<T> CreateTable<T>(this IQueryContainer query)
         => Implementation.CreateTable.Create<T>(query.CreateContext<ICreateTableQueryContext>(), query);
+
+    public static IDropTable DropTable(this IQueryContainer query)
+        => Implementation.DropTable.Create(query.CreateContext<IDropTableQueryContext>(), query);
 }

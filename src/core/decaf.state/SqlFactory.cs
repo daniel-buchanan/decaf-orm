@@ -30,6 +30,8 @@ public abstract class SqlFactory : ISqlFactory
             template = ParseQuery(insertContext);
         if (context is ICreateTableQueryContext createTableContext)
             template = ParseQuery(createTableContext);
+        if (context is IDropTableQueryContext dropTableContext)
+            template = ParseQuery(dropTableContext);
 
         if (template == null) return null;
         cache.Add(key, template);
@@ -92,6 +94,13 @@ public abstract class SqlFactory : ISqlFactory
     /// <param name="context">The context to parse</param>
     /// <returns>A SQL template, ready to execute</returns>
     protected abstract SqlTemplate ParseQuery(ICreateTableQueryContext context);
+    
+    /// <summary>
+    /// Parse a drop table query into a sql template.
+    /// </summary>
+    /// <param name="context">The context to parse</param>
+    /// <returns>A SQL template, ready to execute</returns>
+    protected abstract SqlTemplate ParseQuery(IDropTableQueryContext context);
 
     /// <summary>
     /// Parse the parameters from a select context, with their values.

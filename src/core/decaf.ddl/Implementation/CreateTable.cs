@@ -102,6 +102,9 @@ public class CreateTable : Execute<ICreateTableQueryContext>, ICreateTable
 
     public ICreateTable WithPrimaryKey(params Expression<Action<IDdlColumnBuilder>>[] columns)
     {
+        if(string.IsNullOrWhiteSpace(Context.Name))
+            throw new PropertyNotProvidedException(nameof(Context.Name), "Table Name is required before creating indexes");
+        
         var cols = new List<IColumnDefinition>();
         foreach (var c in columns)
         {
@@ -119,6 +122,9 @@ public class CreateTable : Execute<ICreateTableQueryContext>, ICreateTable
 
     public ICreateTable WithPrimaryKey(string name, params Expression<Action<IDdlColumnBuilder>>[] columns)
     {
+        if(string.IsNullOrWhiteSpace(Context.Name))
+            throw new PropertyNotProvidedException(nameof(Context.Name), "Table Name is required before creating indexes");
+        
         var defs = columns.Select(ColumnDefinitionBuilder.Build).ToArray();
         Context.AddPrimaryKey(PrimaryKeyDefinition.Create(name, defs.ToArray()));
         return this;

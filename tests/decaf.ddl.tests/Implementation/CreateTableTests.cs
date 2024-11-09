@@ -17,7 +17,7 @@ namespace decaf.ddl.Implementation;
 
 public class CreateTableTests
 {
-    const string tableName = "bob";
+    const string TableName = "bob";
     readonly IQueryContainer query;
 
     public CreateTableTests()
@@ -38,11 +38,11 @@ public class CreateTableTests
         var impl = query.CreateTable();
         
         // Act
-        impl.Named(tableName);
+        impl.Named(TableName);
 
         // Assert
         var o = query.Context as ICreateTableQueryContext;
-        o!.Name.Should().Be(tableName);
+        o!.Name.Should().Be(TableName);
     }
 
     [Theory]
@@ -55,7 +55,7 @@ public class CreateTableTests
         var impl = query.CreateTable();
 
         // Act
-        impl.Named(tableName)
+        impl.Named(TableName)
             .WithColumns(columnBuilder);
 
         // Assert
@@ -71,7 +71,7 @@ public class CreateTableTests
         var impl = query.CreateTable();
 
         // Act
-        impl.Named(tableName)
+        impl.Named(TableName)
             .WithIndex(columns);
 
         // Assert
@@ -100,7 +100,7 @@ public class CreateTableTests
         var impl = query.CreateTable();
 
         // Act
-        impl.Named(tableName)
+        impl.Named(TableName)
             .WithIndex(indexName, c => c.Named("id"));
 
         // Assert
@@ -109,7 +109,7 @@ public class CreateTableTests
             .ContainEquivalentOf(
                 IndexDefinition.Create(
                     indexName, 
-                    tableName, 
+                    TableName, 
                     ColumnDefinition.Create("id")));
     }
 
@@ -125,7 +125,69 @@ public class CreateTableTests
         // Assert
         method.Should().Throw<PropertyNotProvidedException>();
     }
+    
+    [Theory]
+    [MemberData(nameof(PrimaryKeyTests))]
+    public void WithPrimaryKeySucceeds(Expression<Action<IDdlColumnBuilder>>[] columns, IPrimaryKeyDefinition index)
+    {
+        // Arrange
+        var impl = query.CreateTable();
 
+        // Act
+        impl.Named("pk")
+            .WithPrimaryKey(columns);
+
+        // Assert
+        var c = query.Context as ICreateTableQueryContext;
+        c!.PrimaryKey.Should().BeEquivalentTo(index);
+    }
+
+    [Fact]
+    public void WithPrimaryThrowsWhenNoTable()
+    {
+        // Arrange
+        var impl = query.CreateTable();
+
+        // Act
+        Action method = () => impl.WithPrimaryKey(c => c.Named("id"));
+
+        // Assert
+        method.Should().Throw<PropertyNotProvidedException>();
+    }
+
+    [Fact]
+    public void WithPrimaryKeyNameSucceeds()
+    {
+        // Arrange
+        const string pkName = "pk";
+        var impl = query.CreateTable();
+
+        // Act
+        impl.Named(TableName)
+            .WithPrimaryKey(pkName, c => c.Named("id"));
+
+        // Assert
+        var c = query.Context as ICreateTableQueryContext;
+        c!.PrimaryKey.Should()
+            .BeEquivalentTo(
+                PrimaryKeyDefinition.Create(
+                    pkName, 
+                    ColumnDefinition.Create("id")));
+    }
+
+    [Fact]
+    public void WithPrimaryKeyNameThrowsWhenNoTable()
+    {
+        // Arrange
+        var impl = query.CreateTable();
+
+        // Act
+        Action method = () => impl.WithPrimaryKey("pk", c => c.Named("id"));
+
+        // Assert
+        method.Should().Throw<PropertyNotProvidedException>();
+    }
+    
     public static IEnumerable<object[]> ColumnTests
     {
         get
@@ -143,8 +205,17 @@ public class CreateTableTests
     {
         get
         {
-            yield return GetIndex(tableName, [c => c.Named("id")]);
-            yield return GetIndex(tableName, [c => c.Named("id"), c => c.Named("sub")]);
+            yield return GetIndex(TableName, [c => c.Named("id")]);
+            yield return GetIndex(TableName, [c => c.Named("id"), c => c.Named("sub")]);
+        }
+    }
+    
+    public static IEnumerable<object[]> PrimaryKeyTests
+    {
+        get
+        {
+            yield return GetPrimaryKey("pk", [c => c.Named("id")]);
+            yield return GetPrimaryKey("pk", [c => c.Named("id"), c => c.Named("sub")]);
         }
     }
 
@@ -168,6 +239,19 @@ public class CreateTableTests
         }).ToArray());
 
         return [columns, id];
+    }
+
+    private static object[] GetPrimaryKey(string name, Expression<Action<IDdlColumnBuilder>>[] columns)
+    {
+        var cols = columns.Select(a =>
+        {
+            var c = new DdlColumnBuilder(new ExpressionHelper(new ReflectionHelper()));
+            var f = a.Compile();
+            f(c);
+            return c.Build();
+        }).ToArray();
+        
+        return [columns, PrimaryKeyDefinition.Create(name, cols)];
     }
 
     private static Expression<Action<IDdlColumnBuilder>> GetExpression(Expression<Action<IDdlColumnBuilder>> input)

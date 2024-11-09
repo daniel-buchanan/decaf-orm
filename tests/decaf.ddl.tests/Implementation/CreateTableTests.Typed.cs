@@ -118,4 +118,20 @@ public partial class CreateTableTests
         // Assert
         method.Should().Throw<ArgumentNullException>();
     }
+    
+    [Fact]
+    public void TypedPrimaryKeySucceeds()
+    {
+        // Arrange
+        var impl = query.CreateTable<Note>();
+
+        // Act
+        impl.WithPrimaryKey(c => c.PersonId);
+
+        // Assert
+        var c = query.Context as ICreateTableQueryContext;
+        c!.PrimaryKey.Should()
+            .BeEquivalentTo(PrimaryKeyDefinition.Create("pk_" + nameof(Note),
+                ColumnDefinition.Create(nameof(Note.PersonId), typeof(int))));
+    }
 }

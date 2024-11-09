@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using decaf.common;
 using decaf.common.Connections;
+using decaf.common.Exceptions;
 using decaf.common.Utilities.Reflection;
 using decaf.state;
 using decaf.state.Ddl.Definitions;
@@ -76,6 +77,40 @@ public class CreateTableTests
         // Assert
         var c = query.Context as ICreateTableQueryContext;
         c!.Indexes.Should().ContainEquivalentOf(index);
+    }
+
+    [Fact]
+    public void WithIndexThrowsWhenNoTable()
+    {
+        // Arrange
+        var impl = query.CreateTable();
+
+        // Act
+        Action method = () => impl.WithIndex(c => c.Named("id"));
+
+        // Assert
+        method.Should().Throw<PropertyNotProvidedException>();
+    }
+
+    [Fact]
+    public void WithIndexNameSucceeds()
+    {
+        // Arrange
+        const string indexName = "pk";
+        var impl = query.CreateTable();
+
+        // Act
+        impl.Named(tableName)
+            .WithIndex(indexName, c => c.Named("id"));
+
+        // Assert
+        var c = query.Context as ICreateTableQueryContext;
+        c!.Indexes.Should()
+            .ContainEquivalentOf(
+                IndexDefinition.Create(
+                    indexName, 
+                    tableName, 
+                    ColumnDefinition.Create("id")));
     }
 
     public static IEnumerable<object[]> ColumnTests

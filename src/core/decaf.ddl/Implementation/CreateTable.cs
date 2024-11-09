@@ -40,7 +40,8 @@ public class CreateTable : Execute<ICreateTableQueryContext>, ICreateTable
     public ICreateTable FromType<T>(string named = null)
     {
         var tbl = CreateTable.Create<T>(Context, Query);
-        if (!string.IsNullOrWhiteSpace(named)) tbl.WithName(named);
+        if (string.IsNullOrWhiteSpace(named)) named = typeof(T).Name;
+        tbl.WithName(named);
         tbl.WithAllColumns();
         tbl.WithPrimaryKey();
         tbl.WithIndexes();

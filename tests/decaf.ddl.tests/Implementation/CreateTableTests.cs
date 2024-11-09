@@ -15,7 +15,7 @@ using Xunit;
 
 namespace decaf.ddl.Implementation;
 
-public class CreateTableTests
+public partial class CreateTableTests
 {
     const string TableName = "bob";
     readonly IQueryContainer query;

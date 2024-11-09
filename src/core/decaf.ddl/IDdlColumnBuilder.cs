@@ -17,6 +17,8 @@ public interface IDdlColumnBuilder
 
     IDdlColumnBuilder IsNullable();
 
+    IDdlColumnBuilder IsNullable(bool nullable);
+
     IDdlColumnBuilder AsType<T>();
 
     IDdlColumnBuilder AsType(Type type);

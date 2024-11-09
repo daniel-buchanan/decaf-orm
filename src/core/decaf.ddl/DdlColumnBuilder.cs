@@ -41,6 +41,12 @@ public class DdlColumnBuilder : IDdlColumnBuilder
         return this;
     }
 
+    public IDdlColumnBuilder IsNullable(bool nullable)
+    {
+        Nullable = nullable;
+        return this;
+    }
+
     public IDdlColumnBuilder AsType<T>()
     {
         Type = typeof(T);

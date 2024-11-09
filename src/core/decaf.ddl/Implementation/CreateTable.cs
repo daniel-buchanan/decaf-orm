@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using decaf.common;
+using decaf.common.Exceptions;
 using decaf.common.Utilities.Reflection;
 using decaf.ddl.Utilities;
 using decaf.Implementation.Execute;
@@ -79,17 +80,23 @@ public class CreateTable : Execute<ICreateTableQueryContext>, ICreateTable
         return this;
     }
 
-    public ICreateTable WithIndex(string name, string table, params Expression<Action<IDdlColumnBuilder>>[] columns)
+    public ICreateTable WithIndex(string name, params Expression<Action<IDdlColumnBuilder>>[] columns)
     {
+        if(string.IsNullOrWhiteSpace(Context.Name))
+            throw new PropertyNotProvidedException(nameof(Context.Name), "Table Name is required before creating indexes");
+        
         var defs = columns.Select(ColumnDefinitionBuilder.Build).ToArray();
-        Context.AddIndexes(IndexDefinition.Create(name, table, defs));
+        Context.AddIndexes(IndexDefinition.Create(name, Context.Name, defs));
         return this;
     }
 
-    public ICreateTable WithIndex(string table, params Expression<Action<IDdlColumnBuilder>>[] columns)
+    public ICreateTable WithIndex(params Expression<Action<IDdlColumnBuilder>>[] columns)
     {
+        if(string.IsNullOrWhiteSpace(Context.Name))
+            throw new PropertyNotProvidedException(nameof(Context.Name), "Table Name is required before creating indexes");
+        
         var defs = columns.Select(ColumnDefinitionBuilder.Build).ToArray();
-        Context.AddIndexes(IndexDefinition.Create(null, table, defs));
+        Context.AddIndexes(IndexDefinition.Create(null, Context.Name, defs));
         return this;
     }
 

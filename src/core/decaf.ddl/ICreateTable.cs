@@ -39,18 +39,16 @@ public interface ICreateTable : IExecute
     /// Create an index using the provided name and columns.
     /// </summary>
     /// <param name="name">The name of the index to create.</param>
-    /// <param name="table">The table this index is on.</param>
     /// <param name="columns">The columns to be included in the index.</param>
     /// <returns>(FluentAPI) The ability to continue to create a table.</returns>
-    ICreateTable WithIndex(string name, string table, params Expression<Action<IDdlColumnBuilder>>[] columns);
+    ICreateTable WithIndex(string name, params Expression<Action<IDdlColumnBuilder>>[] columns);
     
     /// <summary>
     /// Create an index using the provided columns.
     /// </summary>
-    /// <param name="table">The table this index is on.</param>
     /// <param name="columns">The columns to be included in the index.</param>
     /// <returns>(FluentAPI) The ability to continue to create a table.</returns>
-    ICreateTable WithIndex(string table, params Expression<Action<IDdlColumnBuilder>>[] columns);
+    ICreateTable WithIndex(params Expression<Action<IDdlColumnBuilder>>[] columns);
 
     /// <summary>
     /// Add a primary key to the table being created. 

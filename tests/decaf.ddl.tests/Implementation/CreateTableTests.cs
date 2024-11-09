@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using decaf.common;
 using decaf.common.Connections;
+using decaf.common.Utilities.Reflection;
 using decaf.state;
 using decaf.state.Ddl.Definitions;
 using decaf.tests.common.Mocks;
@@ -60,6 +62,22 @@ public class CreateTableTests
         c!.Columns.Should().ContainEquivalentOf(expected);
     }
 
+    [Theory]
+    [MemberData(nameof(IndexTests))]
+    public void WithIndexSucceeds(Expression<Action<IDdlColumnBuilder>>[] columns, IIndexDefinition index)
+    {
+        // Arrange
+        var impl = query.CreateTable();
+
+        // Act
+        impl.Named(tableName)
+            .WithIndex(columns);
+
+        // Assert
+        var c = query.Context as ICreateTableQueryContext;
+        c!.Indexes.Should().ContainEquivalentOf(index);
+    }
+
     public static IEnumerable<object[]> ColumnTests
     {
         get
@@ -73,6 +91,15 @@ public class CreateTableTests
         }
     }
 
+    public static IEnumerable<object[]> IndexTests
+    {
+        get
+        {
+            yield return GetIndex(tableName, [c => c.Named("id")]);
+            yield return GetIndex(tableName, [c => c.Named("id"), c => c.Named("sub")]);
+        }
+    }
+
     private static object[] GetColumn<T>(string name, bool nullable = true)
         => GetColumn(name, typeof(T), nullable);
 
@@ -81,6 +108,19 @@ public class CreateTableTests
         GetExpression(b => b.Named(name).AsType(type).IsNullable(nullable)),
         ColumnDefinition.Create(name, type, nullable)
     ];
+    
+    private static object[] GetIndex(string table, Expression<Action<IDdlColumnBuilder>>[] columns)
+    {
+        var id = IndexDefinition.Create(table, columns.Select(a =>
+        {
+            var c = new DdlColumnBuilder(new ExpressionHelper(new ReflectionHelper()));
+            var f = a.Compile();
+            f(c);
+            return c.Build();
+        }).ToArray());
+
+        return [columns, id];
+    }
 
     private static Expression<Action<IDdlColumnBuilder>> GetExpression(Expression<Action<IDdlColumnBuilder>> input)
         => input;

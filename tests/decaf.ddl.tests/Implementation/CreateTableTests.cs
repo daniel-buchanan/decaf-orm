@@ -113,6 +113,19 @@ public class CreateTableTests
                     ColumnDefinition.Create("id")));
     }
 
+    [Fact]
+    public void WithIndexNameThrowsWhenNoTable()
+    {
+        // Arrange
+        var impl = query.CreateTable();
+
+        // Act
+        Action method = () => impl.WithIndex("pk", c => c.Named("id"));
+
+        // Assert
+        method.Should().Throw<PropertyNotProvidedException>();
+    }
+
     public static IEnumerable<object[]> ColumnTests
     {
         get

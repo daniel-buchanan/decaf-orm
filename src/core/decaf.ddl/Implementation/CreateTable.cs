@@ -54,6 +54,9 @@ public class CreateTable : Execute<ICreateTableQueryContext>, ICreateTable
 
     public ICreateTable Named(string name)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentNullException(nameof(name), "Table name is required.");
+        
         Context.WithName(name);
         return this;
     }
@@ -87,6 +90,9 @@ public class CreateTable : Execute<ICreateTableQueryContext>, ICreateTable
 
     public ICreateTable WithIndex(string name, params Expression<Action<IDdlColumnBuilder>>[] columns)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentNullException(nameof(name), "Index name is required.");
+        
         if(string.IsNullOrWhiteSpace(Context.Name))
             throw new PropertyNotProvidedException(nameof(Context.Name), "Table Name is required before creating indexes");
         
@@ -127,6 +133,9 @@ public class CreateTable : Execute<ICreateTableQueryContext>, ICreateTable
 
     public ICreateTable WithPrimaryKey(string name, params Expression<Action<IDdlColumnBuilder>>[] columns)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentNullException(nameof(name), "Primary Key name is required.");
+        
         if(string.IsNullOrWhiteSpace(Context.Name))
             throw new PropertyNotProvidedException(nameof(Context.Name), "Table Name is required before creating indexes");
         

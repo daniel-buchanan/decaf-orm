@@ -71,6 +71,9 @@ public class CreateTable<T> :
 
     public ICreateTable<T> WithIndex(string name, params Expression<Func<T, object>>[] columns)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentNullException(nameof(name), "Index name is required.");
+        
         var tbl = reflectionHelper.GetTableName<T>();
         var defs = GetDefinitions(columns);
         Context.AddIndexes(IndexDefinition.Create(name, tbl, defs));

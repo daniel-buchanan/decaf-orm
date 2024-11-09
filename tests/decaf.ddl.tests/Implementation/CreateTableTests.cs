@@ -127,6 +127,21 @@ public partial class CreateTableTests
     }
     
     [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void IndexWithNullOrEmptyNameThrows(string name)
+    {
+        // Arrange
+        var impl = query.CreateTable();
+
+        // Act
+        Action method = () => impl.WithIndex(name, c => c.Named("id"));
+
+        // Assert
+        method.Should().Throw<ArgumentNullException>();
+    }
+    
+    [Theory]
     [MemberData(nameof(PrimaryKeyTests))]
     public void WithPrimaryKeySucceeds(Expression<Action<IDdlColumnBuilder>>[] columns, IPrimaryKeyDefinition index)
     {
@@ -186,6 +201,21 @@ public partial class CreateTableTests
 
         // Assert
         method.Should().Throw<PropertyNotProvidedException>();
+    }
+    
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void PrimaryKeyWithNullOrEmptyNameThrows(string name)
+    {
+        // Arrange
+        var impl = query.CreateTable();
+
+        // Act
+        Action method = () => impl.WithPrimaryKey(name, c => c.Named("id"));
+
+        // Assert
+        method.Should().Throw<ArgumentNullException>();
     }
     
     public static IEnumerable<object[]> ColumnTests

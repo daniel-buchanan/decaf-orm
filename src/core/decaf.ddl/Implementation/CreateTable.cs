@@ -35,11 +35,15 @@ public class CreateTable : Execute<ICreateTableQueryContext>, ICreateTable
     public static CreateTable<T> Create<T>(
         ICreateTableQueryContext context,
         IQueryContainer query)
-        => new CreateTable<T>(context, query as IQueryContainerInternal);
+    {
+        var n = new CreateTable<T>(context, query as IQueryContainerInternal);
+        n.WithName(typeof(T).Name);
+        return n;
+    }
 
     public ICreateTable FromType<T>(string named = null)
     {
-        var tbl = CreateTable.Create<T>(Context, Query);
+        var tbl = Create<T>(Context, Query);
         if (string.IsNullOrWhiteSpace(named)) named = typeof(T).Name;
         tbl.WithName(named);
         tbl.WithAllColumns();

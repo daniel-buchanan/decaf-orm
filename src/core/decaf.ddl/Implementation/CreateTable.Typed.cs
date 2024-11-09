@@ -25,6 +25,7 @@ public class CreateTable<T> :
     {
         expressionHelper = context.ToInternal().ExpressionHelper;
         reflectionHelper = context.ToInternal().ReflectionHelper;
+        query.SetContext(context);
     }
 
     private IColumnDefinition[] GetDefinitions(IEnumerable<Expression<Func<T, object>>> columns)

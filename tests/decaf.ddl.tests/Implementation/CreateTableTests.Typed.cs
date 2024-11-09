@@ -39,4 +39,20 @@ public partial class CreateTableTests
         o!.Columns.Should().ContainEquivalentOf(ColumnDefinition.Create(nameof(Note.PersonId), typeof(int)));
         o!.Columns.Should().ContainEquivalentOf(ColumnDefinition.Create(nameof(Note.Value), typeof(string)));
     }
+    
+    [Fact]
+    public void TypedColumnsSucceeds()
+    {
+        // Arrange
+        var impl = query.CreateTable<Note>();
+        
+        // Act
+        impl.WithColumns(c => c.PersonId, c => c.Value);
+
+        // Assert
+        var o = query.Context as ICreateTableQueryContext;
+        o!.Name.Should().Be(nameof(Note));
+        o!.Columns.Should().ContainEquivalentOf(ColumnDefinition.Create(nameof(Note.PersonId), typeof(int)));
+        o!.Columns.Should().ContainEquivalentOf(ColumnDefinition.Create(nameof(Note.Value), typeof(string)));
+    }
 }

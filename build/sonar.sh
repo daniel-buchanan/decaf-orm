@@ -57,7 +57,7 @@ dotnet build --no-incremental decaf-orm.sln
     --target "dotnet" \
     --targetargs "test --no-build" \
     --merge-with "sqlite-merged.json" \
-    -f=opencover \
+    -f=json \
     -o="decaf-merged.json"
     
 ./.coverlet/coverlet ./tests/decaf.ddl.tests/bin/Debug/net8.0/decaf.ddl.tests.dll \

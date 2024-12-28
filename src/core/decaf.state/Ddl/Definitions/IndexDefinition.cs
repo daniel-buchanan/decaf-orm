@@ -39,7 +39,7 @@ public class IndexDefinition : IIndexDefinition
     /// <inheritdoc />
     public IEnumerable<IColumnDefinition> Columns { get; }
     
-    private string GenerateName(IEnumerable<IColumnDefinition> columns)
+    private static string GenerateName(IEnumerable<IColumnDefinition> columns)
     {
         var sb = new StringBuilder("idx");
         foreach (var c in columns)

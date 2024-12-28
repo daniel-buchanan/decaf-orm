@@ -19,8 +19,8 @@ public class MockSqlFactory : SqlFactory
         IBuilderPipeline<IInsertQueryContext> insert,
         IBuilderPipeline<IUpdateQueryContext> update,
         IBuilderPipeline<ISelectQueryContext> select,
-        IBuilderPipeline<ICreateTableQueryContext> createTable = null,
-        IBuilderPipeline<IDropTableQueryContext> dropTable = null)
+        IBuilderPipeline<ICreateTableQueryContext> createTable,
+        IBuilderPipeline<IDropTableQueryContext> dropTable)
     {
         this.delete = delete;
         this.insert = insert;

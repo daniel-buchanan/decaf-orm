@@ -18,8 +18,8 @@ public class CreateTableBuilderPipeline : db.common.Builders.CreateTableBuilderP
         base(options, constants, parameterManager) 
         => this.typeParser = typeParser;
 
-    protected override void AddStartTable(IPipelineStageInput<ICreateTableQueryContext> input) 
-        => input.Builder.AppendLine("create table {0} (", input.Context.Name);
+    protected override void AddCreateTable(IPipelineStageInput<ICreateTableQueryContext> input)
+        => input.Builder.AppendLine("create table {0} {1}", input.Context.Name, Constants.OpeningParen);
 
     protected override void AddColumns(IPipelineStageInput<ICreateTableQueryContext> input)
     {
@@ -57,7 +57,7 @@ public class CreateTableBuilderPipeline : db.common.Builders.CreateTableBuilderP
     }
 
     protected override void AddEndTable(IPipelineStageInput<ICreateTableQueryContext> input) 
-        => input.Builder.AppendLine(");");
+        => input.Builder.AppendLine("{0}{1}", Constants.ClosingParen, Constants.EndStatement);
 
     protected override void AddPrimaryKey(IPipelineStageInput<ICreateTableQueryContext> input)
     {

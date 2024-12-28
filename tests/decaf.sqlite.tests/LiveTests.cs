@@ -121,9 +121,10 @@ public class LiveTests
     {
         // Arrange
         var decaf = provider.GetRequiredService<IDecaf>();
+        var query = await decaf.QueryAsync();
         
         // Act
-        await decaf.Query().DropTable().FromType<TempTbl>().ExecuteAsync();
+        await query.DropTable().FromType<TempTbl>().ExecuteAsync();
 
         // Assert
         var success = false;

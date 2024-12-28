@@ -24,6 +24,9 @@
         string Values { get; }
         string Limit { get; }
         string ParameterPrefix { get; }
+        string EndStatement { get; }
+        string Cascade { get; }
+        string QuoteFormat { get; }
     }
 }
 

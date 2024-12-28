@@ -1,8 +1,7 @@
 using decaf.common.Templates;
-using decaf.db.common;
 using decaf.db.common.Builders;
 
-namespace decaf.sqlite.Builders;
+namespace decaf.db.common.ANSISQL;
 
 public class DropTableBuilderPipeline : db.common.Builders.DropTableBuilderPipeline
 {
@@ -10,6 +9,6 @@ public class DropTableBuilderPipeline : db.common.Builders.DropTableBuilderPipel
         DecafOptions options, 
         IConstants constants, 
         IParameterManager parameterManager,
-        IValueParser valueParser) : 
-        base(options, constants, parameterManager, valueParser) { }
+        IValueParser valueParser) 
+        : base(options, constants, parameterManager, valueParser) { }
 }

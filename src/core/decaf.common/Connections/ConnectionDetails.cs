@@ -59,7 +59,7 @@ namespace decaf.common.Connections
         /// <param name="input">The string to match.</param>
         /// <param name="parse">A function to conver the match into the output type.</param>
         /// <returns>A match if found, otherwise the default value for the type.</returns>
-        protected T MatchAndFetch<T>(string regex, string input, Func<string, T> parse)
+        protected static T MatchAndFetch<T>(string regex, string input, Func<string, T> parse)
         {
             var regExp = new Regex(regex);
             var match = regExp.Match(input);

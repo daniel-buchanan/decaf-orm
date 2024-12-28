@@ -28,7 +28,7 @@ public class CreateTable<T> :
         query.SetContext(context);
     }
 
-    private IColumnDefinition[] GetDefinitions(IEnumerable<Expression<Func<T, object>>> columns)
+    private static IColumnDefinition[] GetDefinitions(IEnumerable<Expression<Func<T, object>>> columns)
     {
         return columns
             .Select(ColumnDefinitionBuilder.Build)

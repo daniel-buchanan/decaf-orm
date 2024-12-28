@@ -29,6 +29,7 @@ public class IndexAttribute : Attribute
     }
 }
 
+[AttributeUsage(AttributeTargets.Class)]
 public class IndexAttribute<T> : IndexAttribute
 {
     public IndexAttribute(string name) 

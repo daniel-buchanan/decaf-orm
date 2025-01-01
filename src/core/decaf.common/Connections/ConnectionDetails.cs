@@ -61,7 +61,10 @@ namespace decaf.common.Connections
         /// <returns>A match if found, otherwise the default value for the type.</returns>
         protected static T MatchAndFetch<T>(string regex, string input, Func<string, T> parse)
         {
-            var regExp = new Regex(regex);
+            var regExp = new Regex(
+                regex, 
+                RegexOptions.CultureInvariant, 
+                TimeSpan.FromMilliseconds(100));
             var match = regExp.Match(input);
             
             if (!match.Success) return default(T);

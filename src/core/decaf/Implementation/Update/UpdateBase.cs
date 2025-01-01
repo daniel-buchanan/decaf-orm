@@ -62,7 +62,7 @@ namespace decaf.Implementation.Execute
             }
         }
 
-        private bool PropertyIsKey<T>(T value, DynamicColumnInfo info)
+        private static bool PropertyIsKey<T>(T value, DynamicColumnInfo info)
         {
             var metadata = value.GetPropertyValue("KeyMetadata");
             if (metadata == null) return false;

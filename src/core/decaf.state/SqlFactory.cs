@@ -139,7 +139,7 @@ public abstract class SqlFactory : ISqlFactory
     /// </summary>
     /// <param name="dict">The dictionary to parse.</param>
     /// <returns>An anonymous object with the properties in the source dictionary.</returns>
-    private object MapDictionary(IDictionary<string, object> dict)
+    private static object MapDictionary(IDictionary<string, object> dict)
         => ParameterMapper.Map(dict);
 
     /// <summary>
@@ -148,7 +148,7 @@ public abstract class SqlFactory : ISqlFactory
     /// <param name="parameterNames">THe names of the parameters.</param>
     /// <param name="template">An existing SQL Template to check against.</param>
     /// <returns>True if the parameters are valid, False if they aren't.</returns>
-    private bool CheckParameters(string[] parameterNames, SqlTemplate template)
+    private static bool CheckParameters(string[] parameterNames, SqlTemplate template)
     {
         if (parameterNames.Length != (template.Parameters?.Count() ?? 0))
             return false;

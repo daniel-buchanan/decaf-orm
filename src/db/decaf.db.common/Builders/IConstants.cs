@@ -27,6 +27,8 @@
         string EndStatement { get; }
         string Cascade { get; }
         string QuoteFormat { get; }
+        string True { get; }
+        string False { get; }
     }
 }
 

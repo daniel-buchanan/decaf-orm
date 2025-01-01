@@ -14,6 +14,7 @@ namespace decaf.ddl.Implementation;
 
 public class CreateTable : Execute<ICreateTableQueryContext>, ICreateTable
 {
+    private const string TableNameRequiredForIndexReason = "Table Name is required before creating indexes";
     private readonly IExpressionHelper expressionHelper;
     private readonly IReflectionHelper reflectionHelper;
 
@@ -94,7 +95,7 @@ public class CreateTable : Execute<ICreateTableQueryContext>, ICreateTable
             throw new ArgumentNullException(nameof(name), "Index name is required.");
         
         if(string.IsNullOrWhiteSpace(Context.Name))
-            throw new PropertyNotProvidedException(nameof(Context.Name), "Table Name is required before creating indexes");
+            throw new PropertyNotProvidedException(nameof(Context.Name), TableNameRequiredForIndexReason);
         
         var defs = columns.Select(ColumnDefinitionBuilder.Build).ToArray();
         Context.AddIndexes(IndexDefinition.Create(name, Context.Name, defs));
@@ -104,7 +105,7 @@ public class CreateTable : Execute<ICreateTableQueryContext>, ICreateTable
     public ICreateTable WithIndex(params Expression<Action<IDdlColumnBuilder>>[] columns)
     {
         if(string.IsNullOrWhiteSpace(Context.Name))
-            throw new PropertyNotProvidedException(nameof(Context.Name), "Table Name is required before creating indexes");
+            throw new PropertyNotProvidedException(nameof(Context.Name), TableNameRequiredForIndexReason);
         
         var defs = columns.Select(ColumnDefinitionBuilder.Build).ToArray();
         Context.AddIndexes(IndexDefinition.Create(null, Context.Name, defs));
@@ -114,7 +115,7 @@ public class CreateTable : Execute<ICreateTableQueryContext>, ICreateTable
     public ICreateTable WithPrimaryKey(params Expression<Action<IDdlColumnBuilder>>[] columns)
     {
         if(string.IsNullOrWhiteSpace(Context.Name))
-            throw new PropertyNotProvidedException(nameof(Context.Name), "Table Name is required before creating indexes");
+            throw new PropertyNotProvidedException(nameof(Context.Name), TableNameRequiredForIndexReason);
         
         var cols = new List<IColumnDefinition>();
         foreach (var c in columns)

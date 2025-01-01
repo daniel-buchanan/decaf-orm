@@ -9,7 +9,7 @@ namespace decaf.db.common
     public abstract class ValueParser(IReflectionHelper reflectionHelper, IConstants constants) : IValueParser
     {
         protected readonly IReflectionHelper ReflectionHelper = reflectionHelper;
-        private readonly IConstants Constants = constants;
+        protected readonly IConstants Constants = constants;
 
         protected abstract List<Tuple<string, string>> Replacements { get; }
 
@@ -55,7 +55,8 @@ namespace decaf.db.common
 
         protected abstract byte[] BytesFromString(string input);
 
-        protected abstract bool BooleanFromString(string input);
+        protected virtual bool BooleanFromString(string input)
+            => input == Constants.True; 
 
         /// <inheritdoc/>
         public string ToString<T>(T value) => ToString(value, value?.GetType() ?? typeof(T));
@@ -101,10 +102,27 @@ namespace decaf.db.common
 
         protected abstract string BytesToString(byte[] input);
 
-        protected abstract string BooleanToString(bool input);
+        protected virtual string BooleanToString(bool input)
+            => input ? Constants.True : Constants.False;
 
         /// <inheritdoc/>
-        public abstract bool ValueNeedsQuoting(Type type);
+        public virtual bool ValueNeedsQuoting(Type type)
+        {
+            var underlyingType = ReflectionHelper.GetUnderlyingType(type);
+
+            if (underlyingType == typeof(bool)) return true;
+            if (underlyingType == typeof(byte[])) return true;
+            if (underlyingType == typeof(DateTime)) return true;
+            if (underlyingType == typeof(int)) return false;
+            if (underlyingType == typeof(uint)) return false;
+            if (underlyingType == typeof(double) ||
+                underlyingType == typeof(float) ||
+                underlyingType == typeof(decimal))
+                return true;
+
+            // default to true, including string types
+            return true;
+        }
 
         /// <inheritdoc/>
         public bool ValueNeedsQuoting<T>(T value)

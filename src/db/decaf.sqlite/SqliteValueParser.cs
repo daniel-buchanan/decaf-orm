@@ -14,31 +14,6 @@ namespace decaf.sqlite
             new Tuple<string, string>("--", "")
         };
 
-        /// <inheritdoc/>
-        public override bool ValueNeedsQuoting(Type type)
-        {
-            var underlyingType = ReflectionHelper.GetUnderlyingType(type);
-
-            if (underlyingType == typeof(bool)) return true;
-            else if (underlyingType == typeof(byte[])) return true;
-            else if (underlyingType == typeof(DateTime)) return true;
-            else if (underlyingType == typeof(int)) return false;
-            else if (underlyingType == typeof(uint)) return false;
-            else if (underlyingType == typeof(double) ||
-                     underlyingType == typeof(float) ||
-                     underlyingType == typeof(decimal))
-                return true;
-            else if (underlyingType == typeof(string)) return true;
-
-            return true;
-        }
-
-        protected override bool BooleanFromString(string input)
-            => input == "1";
-
-        protected override string BooleanToString(bool input)
-            => input ? "1" : "0";
-
         protected override byte[] BytesFromString(string input)
         {
             if (!(input.StartsWith(@"\x") || input.StartsWith(@"\\x")))

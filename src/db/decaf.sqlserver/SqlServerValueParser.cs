@@ -34,21 +34,15 @@ namespace decaf.sqlserver
             else return true;
         }
 
-        protected override bool BooleanFromString(string input)
-            => input == "1";
-
-        protected override string BooleanToString(bool input)
-            => input ? "1" : "0";
-
         protected override byte[] BytesFromString(string input)
         {
-            if (!input.StartsWith("0x")) return new byte[0];
+            if (!input.StartsWith("0x")) return [];
 
             input = input.Substring(2);
 
-            int NumberChars = input.Length;
-            byte[] bytes = new byte[NumberChars / 2];
-            for (int i = 0; i < NumberChars; i += 2)
+            int numberChars = input.Length;
+            var bytes = new byte[numberChars / 2];
+            for (var i = 0; i < numberChars; i += 2)
                 bytes[i / 2] = Convert.ToByte(input.Substring(i, 2), 16);
             return bytes;
         }

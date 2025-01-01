@@ -1,25 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using decaf.common.Utilities.Reflection;
+using decaf.db.common.Builders;
 
 namespace decaf.db.common
 {
-    public abstract class ValueParser : IValueParser
-	{
-        protected readonly IReflectionHelper reflectionHelper;
-
-        protected ValueParser(IReflectionHelper reflectionHelper)
-		{
-            this.reflectionHelper = reflectionHelper;
-		}
+    public abstract class ValueParser(IReflectionHelper reflectionHelper, IConstants constants) : IValueParser
+    {
+        protected readonly IReflectionHelper ReflectionHelper = reflectionHelper;
+        private readonly IConstants Constants = constants;
 
         protected abstract List<Tuple<string, string>> Replacements { get; }
 
         /// <inheritdoc/>
         public T FromString<T>(string value)
         {
-            var isNullable = reflectionHelper.IsNullableType<T>();
-            var underlyingType = reflectionHelper.GetUnderlyingType<T>();
+            var isNullable = ReflectionHelper.IsNullableType<T>();
+            var underlyingType = ReflectionHelper.GetUnderlyingType<T>();
 
             if (isNullable && value == null) return default(T);
             if (string.IsNullOrWhiteSpace(value)) return default(T);
@@ -52,7 +50,7 @@ namespace decaf.db.common
             return ChangeType<T>(Convert.ToString(value));
         }
 
-        private T ChangeType<T>(object input)
+        private static T ChangeType<T>(object input)
             => (T)Convert.ChangeType(input, typeof(T));
 
         protected abstract byte[] BytesFromString(string input);
@@ -65,7 +63,7 @@ namespace decaf.db.common
         /// <inheritdoc/>
         public string ToString(object value, Type type)
         {
-            var underlyingType = reflectionHelper.GetUnderlyingType(type);
+            var underlyingType = ReflectionHelper.GetUnderlyingType(type);
 
             if (value == null) return string.Empty;
 
@@ -85,7 +83,7 @@ namespace decaf.db.common
                 underlyingType == typeof(float) ||
                 underlyingType == typeof(Single) ||
                 underlyingType == typeof(decimal))
-                return Convert.ToDecimal(value).ToString();
+                return Convert.ToDecimal(value).ToString(CultureInfo.InvariantCulture);
 
             if (underlyingType == typeof(string))
             {
@@ -111,6 +109,22 @@ namespace decaf.db.common
         /// <inheritdoc/>
         public bool ValueNeedsQuoting<T>(T value)
             => ValueNeedsQuoting(typeof(T));
+
+        /// <inheritdoc/>
+        public string QuoteIfNecessary<T>(T value, bool useColumnQuotes = false)
+            => QuoteIfNecessary(typeof(T), value.ToString(), useColumnQuotes);
+
+        public string QuoteIfNecessary(Type type, string value, bool useColumnQuotes = false)
+        {
+            var quote = useColumnQuotes
+                ? Constants.ColumnQuote
+                : Constants.ValueQuote;
+            var requiresQuoting = ValueNeedsQuoting(type);
+            
+            return !requiresQuoting 
+                ? ToString(value) 
+                : string.Format(Constants.QuoteFormat, quote, value);
+        }
     }
 }
 

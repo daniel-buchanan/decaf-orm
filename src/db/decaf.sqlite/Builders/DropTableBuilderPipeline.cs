@@ -4,12 +4,9 @@ using decaf.db.common.Builders;
 
 namespace decaf.sqlite.Builders;
 
-public class DropTableBuilderPipeline : db.common.Builders.DropTableBuilderPipeline
-{
-    public DropTableBuilderPipeline(
-        DecafOptions options, 
-        IConstants constants, 
-        IParameterManager parameterManager,
-        IValueParser valueParser) : 
-        base(options, constants, parameterManager, valueParser) { }
-}
+public class DropTableBuilderPipeline(
+    DecafOptions options,
+    IConstants constants,
+    IParameterManager parameterManager,
+    IValueParser valueParser)
+    : db.common.Builders.DropTableBuilderPipeline(options, constants, parameterManager, valueParser);

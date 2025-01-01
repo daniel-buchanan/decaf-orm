@@ -2,28 +2,24 @@
 using System.Collections.Generic;
 using decaf.common.Utilities.Reflection;
 using decaf.db.common;
+using decaf.db.common.Builders;
 
 namespace decaf.sqlserver
 {
-    public class SqlServerValueParser : ValueParser
+    public class SqlServerValueParser(IReflectionHelper reflectionHelper, IConstants constants)
+        : ValueParser(reflectionHelper, constants)
     {
-        public SqlServerValueParser(IReflectionHelper reflectionHelper)
-            : base(reflectionHelper)
+        protected override List<Tuple<string, string>> Replacements { get; } = new()
         {
-            Replacements = new List<Tuple<string, string>>()
-            {
-                new Tuple<string, string>("'", "''"),
-                new Tuple<string, string>("%%", ""),
-                new Tuple<string, string>("--", "")
-            };
-        }
-
-        protected override List<Tuple<string, string>> Replacements { get; }
+            new Tuple<string, string>("'", "''"),
+            new Tuple<string, string>("%%", ""),
+            new Tuple<string, string>("--", "")
+        };
 
         /// <inheritdoc/>
         public override bool ValueNeedsQuoting(Type type)
         {
-            var underlyingType = reflectionHelper.GetUnderlyingType(type);
+            var underlyingType = ReflectionHelper.GetUnderlyingType(type);
 
             if (underlyingType == typeof(bool)) return false;
             else if (underlyingType == typeof(byte[])) return false;

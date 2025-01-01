@@ -34,9 +34,10 @@ public class LiveTests
             .Named(nameof(TempTbl))
             .WithColumns(
                 c => c.Named(nameof(TempTbl.Id)).AsType<int>(),
-                c => c.Named(nameof(TempTbl.Name)).AsType<string>())
-            .WithPrimaryKey(c => c.Named(nameof(TempTbl.Id)));
+                c => c.Named(nameof(TempTbl.Name)).AsType<string>());
+            // .WithPrimaryKey(c => c.Named(nameof(TempTbl.Id)));
         var sql = d.GetSql();
+        Console.WriteLine(sql);
         d.Execute();
     }
 

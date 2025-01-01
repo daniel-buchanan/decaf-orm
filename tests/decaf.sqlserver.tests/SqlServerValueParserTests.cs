@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using decaf.common.Utilities.Reflection;
+using decaf.sqlserver.Builders;
 using FluentAssertions;
 using Xunit;
 
@@ -8,7 +9,7 @@ namespace decaf.sqlserver.tests
 {
 	public class SqlServerValueParserTests
 	{
-		private readonly SqlServerValueParser parser = new(new ReflectionHelper());
+		private readonly SqlServerValueParser parser = new(new ReflectionHelper(), new Constants());
 
 		[Theory]
 		[MemberData(nameof(FromStringCases))]

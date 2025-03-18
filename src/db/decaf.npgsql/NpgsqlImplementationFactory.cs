@@ -34,13 +34,15 @@ namespace decaf.npgsql
             => typeof(Builders.UpdateBuilderPipeline);
 
         /// <inheritdoc/>
-        protected override Type CreateTablePipeline() => null;
+        protected override Type CreateTablePipeline()
+            => typeof(Builders.CreateTableBuilderPipeline);
 
         /// <inheritdoc/>
         protected override Type AlterTablePipeline() => null;
 
         /// <inheritdoc/>
-        protected override Type DropTablePipeline() => null;
+        protected override Type DropTablePipeline()
+            => typeof(Builders.DropTableBuilderPipeline);
 
         /// <inheritdoc/>
         protected override Type ValueParser()

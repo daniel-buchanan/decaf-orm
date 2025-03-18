@@ -94,7 +94,6 @@ public class AttributeHelperTests
     {
         [PrimaryKeyComponent]
         public int Id { get; set; }
-        public string Name { get; set; }
     }
 
     private class MultipleKeyModel
@@ -103,6 +102,5 @@ public class AttributeHelperTests
         public int ComponentOne { get; set; }
         [PrimaryKeyComponent]
         public int ComponentTwo { get; set; }
-        public string Name { get; set; }
     }
 }

@@ -156,21 +156,23 @@ namespace decaf.common.Utilities.Reflection
                 }
             }
 
-
             if (expression.NodeType == ExpressionType.MemberAccess)
             {
                 return MemberAccess.GetValue(expression);
             }
-            else if (expression.NodeType == ExpressionType.Constant)
+
+            if (expression.NodeType == ExpressionType.Constant)
             {
                 return ConstantAccess.GetValue(expression);
             }
-            else if (expression.NodeType == ExpressionType.Lambda)
+
+            if (expression.NodeType == ExpressionType.Lambda)
             {
                 var body = ((LambdaExpression)expression).Body;
                 return GetValue(body);
             }
-            else if (expression.NodeType == ExpressionType.Call)
+
+            if (expression.NodeType == ExpressionType.Call)
             {
                 try
                 {

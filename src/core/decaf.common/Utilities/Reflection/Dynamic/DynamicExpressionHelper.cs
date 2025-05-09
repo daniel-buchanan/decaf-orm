@@ -140,17 +140,14 @@ namespace decaf.common.Utilities.Reflection.Dynamic
             return TryGetColumnDetailsConcrete(expression, out info);
         }
 
-        private bool TryGetColumnDetailsDynamic(
+        private static bool TryGetColumnDetailsDynamic(
             Expression expression,
             out DynamicColumnInfo info)
         {
             info = null;
-            string column, alias = null;
+            string column, alias;
 
-            if (expression == null) return false;
-            var methodCallExpression = expression as MethodCallExpression;
-            if (methodCallExpression == null) return false;
-
+            if (expression is not MethodCallExpression methodCallExpression) return false;
             if (methodCallExpression.Method.DeclaringType == typeof(ISelectColumnBuilder))
                 GetColumnAliasForSelectBuilder(methodCallExpression, out column, out alias);
             else if (methodCallExpression.Method.DeclaringType == typeof(IInsertColumnBuilder))

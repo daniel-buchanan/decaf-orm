@@ -5,13 +5,9 @@ using decaf.state.Ddl.Definitions;
 
 namespace decaf.ddl;
 
-public class DdlColumnBuilder : IDdlColumnBuilder
+public class DdlColumnBuilder(IExpressionHelper expressionHelper) : 
+    IDdlColumnBuilder
 {
-    private readonly IExpressionHelper _expressionHelper;
-    
-    public DdlColumnBuilder(IExpressionHelper expressionHelper) 
-        => _expressionHelper = expressionHelper;
-
     public string Name { get; private set; }
     public bool Nullable { get; private set; }
     public Type Type { get; private set; }
@@ -30,8 +26,14 @@ public class DdlColumnBuilder : IDdlColumnBuilder
 
     public IDdlColumnBuilder Named<T, TValue>(Expression<Func<T, TValue>> expression)
     {
-        Name = _expressionHelper.GetMemberName(expression);
-        Type = _expressionHelper.GetMemberType(expression);
+        Name = expressionHelper.GetMemberName(expression);
+        Type = expressionHelper.GetMemberType(expression);
+        return this;
+    }
+
+    public IDdlColumnBuilder Named(Expression expression)
+    {
+        Name = expressionHelper.GetMemberName(expression);
         return this;
     }
 
@@ -59,9 +61,15 @@ public class DdlColumnBuilder : IDdlColumnBuilder
         return this;
     }
 
-    public IDdlColumnBuilder AsType<T>(Expression<Func<T, object>> expression)
+    IDdlColumnBuilder IDdlColumnBuilder.AsType<T>(Expression<Func<T, object>> expression)
+        => AsType(expression);
+
+    IDdlColumnBuilder IDdlColumnBuilder.AsType<T, TValue>(Expression<Func<T, TValue>> expression)
+        => AsType(expression);
+
+    public IDdlColumnBuilder AsType(Expression expression)
     {
-        Type = _expressionHelper.GetMemberType(expression);
+        Type = expressionHelper.GetMemberType(expression);
         return this;
     }
 

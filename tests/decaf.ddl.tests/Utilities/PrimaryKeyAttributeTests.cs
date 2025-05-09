@@ -5,11 +5,11 @@ using Xunit;
 
 namespace decaf.ddl.Utilities;
 
-public class AttributeHelperTests
+public class PrimaryKeyAttributeTests
 {
     private readonly AttributeHelper attributeHelper;
 
-    public AttributeHelperTests()
+    public PrimaryKeyAttributeTests()
     {
         var reflectionHelper = new ReflectionHelper();
         var expressionHelper = new ExpressionHelper(reflectionHelper);

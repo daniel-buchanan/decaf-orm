@@ -14,6 +14,8 @@ public interface IDdlColumnBuilder
     IDdlColumnBuilder Named<T>();
 
     IDdlColumnBuilder Named<T, TValue>(Expression<Func<T, TValue>> expression);
+    
+    IDdlColumnBuilder Named(Expression expression);
 
     IDdlColumnBuilder IsNullable();
 
@@ -24,4 +26,8 @@ public interface IDdlColumnBuilder
     IDdlColumnBuilder AsType(Type type);
 
     IDdlColumnBuilder AsType<T>(Expression<Func<T, object>> expression);
+    
+    IDdlColumnBuilder AsType<T, TValue>(Expression<Func<T, TValue>> expression);
+    
+    IDdlColumnBuilder AsType(Expression expression);
 }

@@ -14,6 +14,12 @@ public static class ColumnDefinitionBuilder
     public static IColumnDefinition Build<T>(Expression<Func<T, object>> col)
         => Build(b => b.Named(col).AsType(col));
 
+    public static IColumnDefinition Build<T, TValue>(Expression<Func<T, TValue>> col)
+        => Build(b => b.Named(col).AsType(col));
+
+    public static IColumnDefinition Build(Expression col)
+        => Build(b => b.Named(col).AsType(col));
+
     public static IColumnDefinition Build(Expression<Action<IDdlColumnBuilder>> expr)
     {
         var reflectionHelper = new ReflectionHelper();

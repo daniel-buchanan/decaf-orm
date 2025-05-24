@@ -13,5 +13,12 @@ namespace decaf.common.Utilities
             value = self[index];
             return true;
         }
+
+        public static int LastIndex<T>(this T[] self)
+        {
+            var length = self.Length;
+            if (length == 0) return 0;
+            return length - 1;
+        }
     }
 }

@@ -64,33 +64,20 @@ namespace decaf.common.Utilities.Reflection
                 throw new ArgumentNullException(nameof(expression), "The provided expression cannot be null.");
 
             // check for member expressions
-            if (expression is MemberExpression)
+            if (expression is MemberExpression { Expression: ParameterExpression parameterExpression })
             {
-                // get member expression
-                var memberExpression = expression as MemberExpression;
-
-                // check if we have a parameter expression
-                if (memberExpression?.Expression is ParameterExpression)
-                {
-                    var parameterExpression = memberExpression.Expression as ParameterExpression;
-                    return parameterExpression?.Name;
-                }
+                return parameterExpression.Name;
             }
 
-            if (expression is MethodCallExpression)
+            if (expression is MethodCallExpression callExpression)
             {
-                var call = expression as MethodCallExpression;
-                if (call == null) return null;
-                if (call.Object == null) return GetParameterName(call.Arguments[0]);
-
-                return GetParameterName(call.Object);
+                return GetParameterName(callExpression.Object ?? callExpression.Arguments[0]);
             }
 
             // if the expression is not a lambda, return nothing
-            if (!(expression is LambdaExpression)) return null;
+            if (expression is not LambdaExpression lambdaExpr) return null;
 
             // get lambda and parameter
-            var lambdaExpr = (LambdaExpression)expression;
             var param = lambdaExpr.Parameters[0];
 
             // if no parameter, return null
@@ -260,19 +247,21 @@ namespace decaf.common.Utilities.Reflection
             }
 
             if (methodCallExpression == null) return false;
-            if (methodCallExpression.Arguments.Count == 0) return false;
+            var arguments = methodCallExpression.Arguments.ToArray();
+            if (arguments.Length == 0) return false;
 
             if (methodCallExpression.Object is MemberExpression &&
-                methodCallExpression.Arguments.All(a => a.NodeType == ExpressionType.Constant) ||
-                methodCallExpression.Arguments.All(a => a.NodeType == ExpressionType.MemberAccess))
+                arguments.All(a => a.NodeType == ExpressionType.Constant) ||
+                arguments.All(a => a.NodeType == ExpressionType.MemberAccess))
             {
                 var memberExpression = methodCallExpression.Object as MemberExpression ??
-                    methodCallExpression.Arguments[0] as MemberExpression;
+                    arguments[0] as MemberExpression;
                 var innerExpression = memberExpression?.Expression as ConstantExpression;
                 return innerExpression is null;
             }
 
-            var lastArgument = methodCallExpression.Arguments.Last();
+            var lastIndex = arguments.LastIndex();
+            var lastArgument = arguments[lastIndex];
             return lastArgument.NodeType == ExpressionType.MemberAccess ||
                    lastArgument.NodeType == ExpressionType.Constant;
         }
@@ -284,15 +273,16 @@ namespace decaf.common.Utilities.Reflection
             if (methodCallExpression == null)
             {
                 var binaryExpression = expression as BinaryExpression;
-                methodCallExpression = binaryExpression.Left as MethodCallExpression ??
-                                       binaryExpression.Right as MethodCallExpression;
+                methodCallExpression = binaryExpression?.Left as MethodCallExpression ??
+                                       binaryExpression?.Right as MethodCallExpression;
 
                 if (methodCallExpression is null) return false;
             }
 
-            if (methodCallExpression.Arguments.Count == 0) return false;
+            var arguments = methodCallExpression.Arguments.ToArray();
+            if (arguments.Length == 0) return false;
 
-            var firstArgument = methodCallExpression.Arguments.First();
+            var firstArgument = methodCallExpression.Arguments[0];
             return firstArgument.NodeType == ExpressionType.MemberAccess ||
                    firstArgument.NodeType == ExpressionType.Constant;
         }

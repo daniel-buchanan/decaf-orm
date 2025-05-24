@@ -18,11 +18,11 @@ public class IndexDefinition : IIndexDefinition
             !columns.Any())
             throw new ArgumentNullException(nameof(columns));
         
+        Columns = columns;
+        Table = table;
         Name = string.IsNullOrWhiteSpace(name)
             ? GenerateName(columns)
             : name;
-        Columns = columns;
-        Table = table;
     }
 
     public static IIndexDefinition Create(string table, params IColumnDefinition[] columns)
@@ -30,20 +30,21 @@ public class IndexDefinition : IIndexDefinition
 
     public static IIndexDefinition Create(string name, string table, params IColumnDefinition[] columns)
         => new IndexDefinition(name, table, columns);
-    
+
     /// <inheritdoc />
     public string Name { get; }
     
+    /// <inheritdoc />
     public string Table { get; }
     
     /// <inheritdoc />
     public IEnumerable<IColumnDefinition> Columns { get; }
     
-    private static string GenerateName(IEnumerable<IColumnDefinition> columns)
+    private string GenerateName(IEnumerable<IColumnDefinition> columns)
     {
-        var sb = new StringBuilder("idx");
-        foreach (var c in columns)
-            sb.AppendFormat("_{0}", c.Name);
+        var sb = new StringBuilder("idx_");
+        sb.AppendFormat("_{0}_", Table);
+        sb.AppendFormat("{0}_", string.Join("_", columns.Select(c => c.Name)));
         return sb.ToString();
     }
 }

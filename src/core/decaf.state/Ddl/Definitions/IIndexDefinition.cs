@@ -10,9 +10,12 @@ public interface IIndexDefinition
     string Name { get; }
     
     /// <summary>
+    /// The table this Index is for.
+    /// </summary>
+    string Table { get; }
+    
+    /// <summary>
     /// The columns which make up this Index.
     /// </summary>
     IEnumerable<IColumnDefinition> Columns { get; }
 }
-
-public interface IIndexDefinition<T> : IIndexDefinition;

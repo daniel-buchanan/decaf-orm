@@ -49,15 +49,21 @@ public class DdlColumnBuilder(IExpressionHelper expressionHelper) :
         return this;
     }
 
-    public IDdlColumnBuilder AsType<T>()
-    {
-        Type = typeof(T);
-        return this;
-    }
-
     public IDdlColumnBuilder AsType(Type type)
     {
         Type = type;
+        return this;
+    }
+    
+    public IDdlColumnBuilder AsType(Expression expression)
+    {
+        Type = expressionHelper.GetMemberType(expression);
+        return this;
+    }
+    
+    public IDdlColumnBuilder AsType<T>()
+    {
+        Type = typeof(T);
         return this;
     }
 
@@ -66,12 +72,6 @@ public class DdlColumnBuilder(IExpressionHelper expressionHelper) :
 
     IDdlColumnBuilder IDdlColumnBuilder.AsType<T, TValue>(Expression<Func<T, TValue>> expression)
         => AsType(expression);
-
-    public IDdlColumnBuilder AsType(Expression expression)
-    {
-        Type = expressionHelper.GetMemberType(expression);
-        return this;
-    }
 
     public IColumnDefinition Build()
         => ColumnDefinition.Create(Name, Type, Nullable);

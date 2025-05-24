@@ -4,16 +4,8 @@ using System.Linq.Expressions;
 
 namespace decaf.common.Utilities.Reflection
 {
-    public class ExpressionHelper : IExpressionHelper
+    public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionHelper
     {
-        private readonly IReflectionHelper reflectionHelper;
-
-        public ExpressionHelper(IReflectionHelper reflectionHelper)
-        {
-            // setup helpers
-            this.reflectionHelper = reflectionHelper;
-        }
-
         /// <inheritdoc/>
         public string GetMemberName(Expression expression)
         {

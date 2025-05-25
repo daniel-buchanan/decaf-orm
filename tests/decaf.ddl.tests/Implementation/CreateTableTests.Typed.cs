@@ -131,7 +131,7 @@ public partial class CreateTableTests
         // Assert
         var c = query.Context as ICreateTableQueryContext;
         c!.PrimaryKey.Should()
-            .BeEquivalentTo(PrimaryKeyDefinition.Create("pk_" + nameof(Note),
+            .BeEquivalentTo(PrimaryKeyDefinition.Create(nameof(Note),
                 ColumnDefinition.Create(nameof(Note.PersonId), typeof(int))));
     }
 }

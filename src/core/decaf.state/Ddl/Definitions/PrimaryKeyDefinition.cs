@@ -9,13 +9,19 @@ public class PrimaryKeyDefinition : IPrimaryKeyDefinition
 {
     private PrimaryKeyDefinition(string table, params IColumnDefinition[] columns)
     {
+        if (string.IsNullOrWhiteSpace(table))
+            throw new ArgumentNullException(nameof(table), "PrimaryKey must reference a table.");
+        
         Table = table;
         Columns = columns;
-        Name = GenerateName(columns);
+        Name = $"pk_{table}";
     }
     
     private PrimaryKeyDefinition(string name, string table, params IColumnDefinition[] columns) : this(table, columns)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentNullException(nameof(name), "PrimaryKey must have a name.");
+        
         Name = name;
     }
 
@@ -32,12 +38,4 @@ public class PrimaryKeyDefinition : IPrimaryKeyDefinition
 
     /// <inheritdoc />
     public IEnumerable<IColumnDefinition> Columns { get; }
-    
-    private string GenerateName(IEnumerable<IColumnDefinition> columns)
-    {
-        var sb = new StringBuilder("pk_");
-        sb.AppendFormat("_{0}_", Table);
-        sb.AppendFormat("{0}_", string.Join("_", columns.Select(c => c.Name)));
-        return sb.ToString();
-    }
 }

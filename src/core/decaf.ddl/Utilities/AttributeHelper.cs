@@ -35,8 +35,9 @@ public class AttributeHelper(IReflectionHelper reflectionHelper, IExpressionHelp
     
     public IPrimaryKeyDefinition GetPrimaryKey<T>(string name)
     {
+        var tbl = reflectionHelper.GetTableName<T>();
         var components = GetComponents<T, PrimaryKeyComponentAttribute>();
-        return PrimaryKeyDefinition.Create(name, components.ToArray());
+        return PrimaryKeyDefinition.Create(name, tbl, components.ToArray());
     }
 
     public IIndexDefinition[] GetIndexes<T>()

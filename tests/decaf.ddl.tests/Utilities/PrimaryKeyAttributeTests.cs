@@ -30,7 +30,7 @@ public class PrimaryKeyAttributeTests
     public void SingleKey_PrimaryKeyWithDefaultName()
     {
         // Arrange
-        var keyName = $"pk_{typeof(SingleKeyModel).Name}";
+        var keyName = $"pk_{nameof(SingleKeyModel)}";
         
         // Act
         var pk = attributeHelper.GetPrimaryKey<SingleKeyModel>();
@@ -68,7 +68,7 @@ public class PrimaryKeyAttributeTests
     public void MultipleKey_PrimaryKeyWithDefaultName()
     {
         // Arrange
-        var keyName = $"pk_{typeof(MultipleKeyModel).Name}";
+        const string keyName = $"pk_{nameof(MultipleKeyModel)}";
         
         // Act
         var pk = attributeHelper.GetPrimaryKey<MultipleKeyModel>();

@@ -28,8 +28,9 @@ public class AttributeHelper(IReflectionHelper reflectionHelper, IExpressionHelp
 
     public IPrimaryKeyDefinition GetPrimaryKey<T>()
     {
+        var tbl = reflectionHelper.GetTableName<T>();
         var components = GetComponents<T, PrimaryKeyComponentAttribute>();
-        return PrimaryKeyDefinition.Create<T>(components.ToArray());
+        return PrimaryKeyDefinition.Create(tbl, components.ToArray());
     }
     
     public IPrimaryKeyDefinition GetPrimaryKey<T>(string name)

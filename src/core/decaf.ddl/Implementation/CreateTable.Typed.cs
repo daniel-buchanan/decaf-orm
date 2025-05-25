@@ -91,17 +91,19 @@ public class CreateTable<T> :
 
     public ICreateTable<T> WithPrimaryKey(params Expression<Func<T, object>>[] columns)
     {
+        var tbl = reflectionHelper.GetTableName<T>();
         var defs = columns
             .Select(ColumnDefinitionBuilder.Build)
             .ToArray();
-        Context.AddPrimaryKey(PrimaryKeyDefinition.Create<T>(defs));
+        Context.AddPrimaryKey(PrimaryKeyDefinition.Create(tbl, defs));
         return this;
     }
 
     public ICreateTable<T> WithPrimaryKey(string name, params Expression<Func<T, object>>[] columns)
     {
+        var tbl = reflectionHelper.GetTableName<T>();
         var defs = GetDefinitions(columns);
-        Context.AddPrimaryKey(PrimaryKeyDefinition.Create(name, defs));
+        Context.AddPrimaryKey(PrimaryKeyDefinition.Create(name, tbl, defs));
         return this;
     }
 

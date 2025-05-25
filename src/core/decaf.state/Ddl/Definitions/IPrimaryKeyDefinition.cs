@@ -10,9 +10,12 @@ public interface IPrimaryKeyDefinition
     string Name { get; }
     
     /// <summary>
+    /// The table this Primary Key is for.
+    /// </summary>
+    string Table { get; }
+    
+    /// <summary>
     /// The columns that define this Primary Key.
     /// </summary>
     IEnumerable<IColumnDefinition> Columns { get; }
 }
-
-public interface IPrimaryKeyDefinition<T> : IPrimaryKeyDefinition;

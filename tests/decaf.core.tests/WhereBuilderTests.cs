@@ -425,8 +425,8 @@ namespace decaf.core_tests
         {
             // Arrange
             select.From("person", "p");
-            var value = getValue();
-            List<T> values = [value];
+            getValue();
+            List<T> values = null;
 
             // Act
             select.Where(b =>

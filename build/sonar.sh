@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-echo "SONAR_TOKEN=${SONAR_TOKEN}";
+#echo "SONAR_TOKEN=${SONAR_TOKEN}";
 
 ./.sonar/scanner/dotnet-sonarscanner begin \
     /k:"daniel-buchanan_pdq" \
@@ -10,9 +10,6 @@ echo "SONAR_TOKEN=${SONAR_TOKEN}";
     /d:sonar.cs.opencover.reportsPaths=coverage.xml \
     /d:sonar.scanner.scanAll=false
 
-dotnet build --no-incremental decaf-orm.sln 
-dotnet publish decaf-orm.sln --output ./output
-./.coverlet/coverlet ./output \
 dotnet build --no-incremental decaf-orm.sln;
 dotnet publish decaf-orm.sln -c Debug --output ./output;
 

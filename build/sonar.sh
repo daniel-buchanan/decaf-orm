@@ -1,15 +1,16 @@
 #!/usr/bin/bash
 
-echo "SONAR_TOKEN=${SONAR_TOKEN}";
+#echo "SONAR_TOKEN=${SONAR_TOKEN}";
 
 ./.sonar/scanner/dotnet-sonarscanner begin \
     /k:"daniel-buchanan_pdq" \
     /o:"daniel-buchanan" \
     /d:sonar.token="${SONAR_TOKEN}" \
     /d:sonar.host.url="https://sonarcloud.io" \
-    /d:sonar.cs.opencover.reportsPaths=coverage.xml
+    /d:sonar.cs.opencover.reportsPaths=coverage.xml \
+    /d:sonar.scanner.scanAll=false
 
-dotnet build --no-incremental decaf-orm.sln 
+dotnet build --no-incremental decaf-orm.sln;
 
 ./.coverlet/coverlet ./tests/decaf.db.common.tests/bin/Debug/net8.0/decaf.db.common.tests.dll \
     --target "dotnet" \
@@ -56,6 +57,13 @@ dotnet build --no-incremental decaf-orm.sln
     --target "dotnet" \
     --targetargs "test --no-build" \
     --merge-with "sqlite-merged.json" \
+    -f=json \
+    -o="decaf-merged.json"
+    
+./.coverlet/coverlet ./tests/decaf.ddl.tests/bin/Debug/net8.0/decaf.ddl.tests.dll \
+    --target "dotnet" \
+    --targetargs "test --no-build" \
+    --merge-with "decaf-merged.json" \
     -f=opencover \
     -o="coverage.xml"
 

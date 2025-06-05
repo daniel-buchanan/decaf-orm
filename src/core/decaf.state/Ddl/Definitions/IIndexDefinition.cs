@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace decaf.state.DDL;
+namespace decaf.state.Ddl.Definitions;
 
 public interface IIndexDefinition
 {
@@ -8,6 +8,11 @@ public interface IIndexDefinition
     /// The name of this Index.
     /// </summary>
     string Name { get; }
+    
+    /// <summary>
+    /// The table this Index is for.
+    /// </summary>
+    string Table { get; }
     
     /// <summary>
     /// The columns which make up this Index.

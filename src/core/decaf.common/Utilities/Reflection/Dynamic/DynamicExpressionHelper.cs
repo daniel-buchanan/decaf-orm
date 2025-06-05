@@ -62,16 +62,16 @@ namespace decaf.common.Utilities.Reflection.Dynamic
             return properties.ToList();
         }
 
-        private List<DynamicColumnInfo> GetPropertiesForConstant(
+        private static List<DynamicColumnInfo> GetPropertiesForConstant(
             LambdaExpression expression,
             IQueryContextExtended context)
         {
             var results = new List<DynamicColumnInfo>();
             var constExpression = expression.Body as ConstantExpression;
-            var obj = constExpression.Value;
+            var obj = constExpression?.Value;
 
             // get object type and properties
-            var objType = obj.GetType();
+            var objType = obj?.GetType();
             var properties = context.ReflectionHelper.GetMemberDetails(obj, context.Kind);
 
             // iternate through properties
@@ -140,17 +140,14 @@ namespace decaf.common.Utilities.Reflection.Dynamic
             return TryGetColumnDetailsConcrete(expression, out info);
         }
 
-        private bool TryGetColumnDetailsDynamic(
+        private static bool TryGetColumnDetailsDynamic(
             Expression expression,
             out DynamicColumnInfo info)
         {
             info = null;
-            string column, alias = null;
+            string column, alias;
 
-            if (expression == null) return false;
-            var methodCallExpression = expression as MethodCallExpression;
-            if (methodCallExpression == null) return false;
-
+            if (expression is not MethodCallExpression methodCallExpression) return false;
             if (methodCallExpression.Method.DeclaringType == typeof(ISelectColumnBuilder))
                 GetColumnAliasForSelectBuilder(methodCallExpression, out column, out alias);
             else if (methodCallExpression.Method.DeclaringType == typeof(IInsertColumnBuilder))
@@ -177,7 +174,7 @@ namespace decaf.common.Utilities.Reflection.Dynamic
             return true;
         }
 
-        private void GetColumnAliasForSelectBuilder(
+        private static void GetColumnAliasForSelectBuilder(
             MethodCallExpression expression,
             out string column,
             out string alias)
@@ -200,7 +197,7 @@ namespace decaf.common.Utilities.Reflection.Dynamic
             }
         }
 
-        private void GetColumnAliasForInsertBuilder(
+        private static void GetColumnAliasForInsertBuilder(
             out string column,
             out string alias)
         {
@@ -217,9 +214,8 @@ namespace decaf.common.Utilities.Reflection.Dynamic
             var methodCallExpression = expression as MethodCallExpression;
             MemberExpression memberExpression = null;
 
-            if (expression is UnaryExpression)
+            if (expression is UnaryExpression unaryExpression)
             {
-                var unaryExpression = expression as UnaryExpression;
                 methodCallExpression = unaryExpression.Operand as MethodCallExpression;
             }
 

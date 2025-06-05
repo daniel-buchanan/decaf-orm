@@ -17,7 +17,11 @@ namespace decaf.common.Utilities.Reflection.Dynamic
             this.memberType = memberType;
         }
 
-        public override Type DeclaringType => typeof(DynamicObject);
+        private Type declaringType = typeof(DynamicObject);
+
+        public override Type DeclaringType => declaringType;
+
+        public void SetDeclaringType(Type type) => declaringType = type;
 
         public override MemberTypes MemberType => memberType;
 

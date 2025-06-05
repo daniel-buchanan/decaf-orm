@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using decaf.common;
 using decaf.common.Utilities;
 using decaf.Exceptions;
-using decaf.Implementation;
+using decaf.Implementation.Execute;
 using decaf.state;
 using decaf.state.Conditionals;
 using FluentAssertions;
@@ -16,7 +16,7 @@ namespace decaf.core_tests
 {
     public class WhereBuilderTests
     {
-        private DecafOptions options;
+        private readonly DecafOptions options;
         private readonly ISelectQueryContext context;
         private readonly Select select;
 
@@ -58,7 +58,7 @@ namespace decaf.core_tests
             // Assert
             var and = context.WhereClause as And;
             and.Should().NotBeNull();
-            and.Children.Should().HaveCount(2);
+            and?.Children.Should().HaveCount(2);
         }
 
         [Theory]
@@ -82,7 +82,7 @@ namespace decaf.core_tests
             // Assert
             var or = context.WhereClause as Or;
             or.Should().NotBeNull();
-            or.Children.Should().HaveCount(2);
+            or?.Children.Should().HaveCount(2);
         }
 
         [Theory]
@@ -102,10 +102,10 @@ namespace decaf.core_tests
             // Assert
             var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
-            column.Details.Name.Should().Be("name");
-            column.Value.Should().Be(value);
-            column.ValueType.Should().Be(typeof(T));
-            column.EqualityOperator.Should().Be(EqualityOperator.Equals);
+            column?.Details.Name.Should().Be("name");
+            column?.Value.Should().Be(value);
+            column?.ValueType.Should().Be(typeof(T));
+            column?.EqualityOperator.Should().Be(EqualityOperator.Equals);
         }
 
         [Theory]
@@ -125,11 +125,11 @@ namespace decaf.core_tests
             // Assert
             var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
-            column.Details.Name.Should().Be("name");
-            column.Details.Source.Alias.Should().Be("p");
-            column.Value.Should().Be(value);
-            column.ValueType.Should().Be(typeof(T));
-            column.EqualityOperator.Should().Be(EqualityOperator.Equals);
+            column?.Details.Name.Should().Be("name");
+            column?.Details.Source.Alias.Should().Be("p");
+            column?.Value.Should().Be(value);
+            column?.ValueType.Should().Be(typeof(T));
+            column?.EqualityOperator.Should().Be(EqualityOperator.Equals);
         }
 
         [Theory]
@@ -149,13 +149,13 @@ namespace decaf.core_tests
             // Assert
             var inversion = context.WhereClause as Not;
             inversion.Should().NotBeNull();
-            var column = inversion.Item as IColumn;
+            var column = inversion?.Item as IColumn;
             column.Should().NotBeNull();
-            column.Details.Name.Should().Be("name");
-            column.Details.Source.Alias.Should().Be("p");
-            column.Value.Should().Be(value);
-            column.ValueType.Should().Be(typeof(T));
-            column.EqualityOperator.Should().Be(EqualityOperator.Equals);
+            column?.Details.Name.Should().Be("name");
+            column?.Details.Source.Alias.Should().Be("p");
+            column?.Value.Should().Be(value);
+            column?.ValueType.Should().Be(typeof(T));
+            column?.EqualityOperator.Should().Be(EqualityOperator.Equals);
         }
 
         [Theory]
@@ -176,11 +176,11 @@ namespace decaf.core_tests
             // Assert
             var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
-            column.Details.Name.Should().Be("name");
-            column.Details.Source.Alias.Should().Be("p");
-            column.Value.Should().Be(value);
-            column.ValueType.Should().Be(typeof(T));
-            column.EqualityOperator.Should().Be(EqualityOperator.LessThan);
+            column?.Details.Name.Should().Be("name");
+            column?.Details.Source.Alias.Should().Be("p");
+            column?.Value.Should().Be(value);
+            column?.ValueType.Should().Be(typeof(T));
+            column?.EqualityOperator.Should().Be(EqualityOperator.LessThan);
         }
 
         [Theory]
@@ -201,13 +201,13 @@ namespace decaf.core_tests
             // Assert
             var inversion = context.WhereClause as Not;
             inversion.Should().NotBeNull();
-            var column = inversion.Item as IColumn;
+            var column = inversion?.Item as IColumn;
             column.Should().NotBeNull();
-            column.Details.Name.Should().Be("name");
-            column.Details.Source.Alias.Should().Be("p");
-            column.Value.Should().Be(value);
-            column.ValueType.Should().Be(typeof(T));
-            column.EqualityOperator.Should().Be(EqualityOperator.LessThan);
+            column?.Details.Name.Should().Be("name");
+            column?.Details.Source.Alias.Should().Be("p");
+            column?.Value.Should().Be(value);
+            column?.ValueType.Should().Be(typeof(T));
+            column?.EqualityOperator.Should().Be(EqualityOperator.LessThan);
         }
 
         [Theory]
@@ -228,11 +228,11 @@ namespace decaf.core_tests
             // Assert
             var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
-            column.Details.Name.Should().Be("name");
-            column.Details.Source.Alias.Should().Be("p");
-            column.Value.Should().Be(value);
-            column.ValueType.Should().Be(typeof(T));
-            column.EqualityOperator.Should().Be(EqualityOperator.LessThanOrEqualTo);
+            column?.Details.Name.Should().Be("name");
+            column?.Details.Source.Alias.Should().Be("p");
+            column?.Value.Should().Be(value);
+            column?.ValueType.Should().Be(typeof(T));
+            column?.EqualityOperator.Should().Be(EqualityOperator.LessThanOrEqualTo);
         }
 
         [Theory]
@@ -253,13 +253,13 @@ namespace decaf.core_tests
             // Assert
             var inversion = context.WhereClause as Not;
             inversion.Should().NotBeNull();
-            var column = inversion.Item as IColumn;
+            var column = inversion?.Item as IColumn;
             column.Should().NotBeNull();
-            column.Details.Name.Should().Be("name");
-            column.Details.Source.Alias.Should().Be("p");
-            column.Value.Should().Be(value);
-            column.ValueType.Should().Be(typeof(T));
-            column.EqualityOperator.Should().Be(EqualityOperator.LessThanOrEqualTo);
+            column?.Details.Name.Should().Be("name");
+            column?.Details.Source.Alias.Should().Be("p");
+            column?.Value.Should().Be(value);
+            column?.ValueType.Should().Be(typeof(T));
+            column?.EqualityOperator.Should().Be(EqualityOperator.LessThanOrEqualTo);
         }
 
         [Theory]
@@ -280,11 +280,11 @@ namespace decaf.core_tests
             // Assert
             var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
-            column.Details.Name.Should().Be("name");
-            column.Details.Source.Alias.Should().Be("p");
-            column.Value.Should().Be(value);
-            column.ValueType.Should().Be(typeof(T));
-            column.EqualityOperator.Should().Be(EqualityOperator.GreaterThan);
+            column?.Details.Name.Should().Be("name");
+            column?.Details.Source.Alias.Should().Be("p");
+            column?.Value.Should().Be(value);
+            column?.ValueType.Should().Be(typeof(T));
+            column?.EqualityOperator.Should().Be(EqualityOperator.GreaterThan);
         }
 
         [Theory]
@@ -305,11 +305,10 @@ namespace decaf.core_tests
             // Assert
             var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
-            column.Details.Name.Should().Be("name");
-            column.Details.Source.Alias.Should().Be("p");
-            column.Value.Should().Be(value);
-            //column.ValueType.Should().Be(type);
-            column.EqualityOperator.Should().Be(EqualityOperator.GreaterThanOrEqualTo);
+            column?.Details.Name.Should().Be("name");
+            column?.Details.Source.Alias.Should().Be("p");
+            column?.Value.Should().Be(value);
+            column?.EqualityOperator.Should().Be(EqualityOperator.GreaterThanOrEqualTo);
         }
 
         [Theory]
@@ -330,11 +329,11 @@ namespace decaf.core_tests
             // Assert
             var column = context.WhereClause as IBetween;
             column.Should().NotBeNull();
-            column.Column.Name.Should().Be("name");
-            column.Column.Source.Alias.Should().Be("p");
-            column.Start.Should().Be(value);
-            column.End.Should().Be(value);
-            column.ValueType.Should().Be(typeof(T));
+            column?.Column.Name.Should().Be("name");
+            column?.Column.Source.Alias.Should().Be("p");
+            column?.Start.Should().Be(value);
+            column?.End.Should().Be(value);
+            column?.ValueType.Should().Be(typeof(T));
         }
 
         [Theory]
@@ -355,13 +354,13 @@ namespace decaf.core_tests
             // Assert
             var inversion = context.WhereClause as Not;
             inversion.Should().NotBeNull();
-            var column = inversion.Item as IBetween;
+            var column = inversion?.Item as IBetween;
             column.Should().NotBeNull();
-            column.Column.Name.Should().Be("name");
-            column.Column.Source.Alias.Should().Be("p");
-            column.Start.Should().Be(value);
-            column.End.Should().Be(value);
-            column.ValueType.Should().Be(typeof(T));
+            column?.Column.Name.Should().Be("name");
+            column?.Column.Source.Alias.Should().Be("p");
+            column?.Start.Should().Be(value);
+            column?.End.Should().Be(value);
+            column?.ValueType.Should().Be(typeof(T));
         }
 
         [Theory]
@@ -382,13 +381,13 @@ namespace decaf.core_tests
             // Assert
             var column = context.WhereClause as IInValues;
             column.Should().NotBeNull();
-            column.Column.Name.Should().Be("name");
-            column.Column.Source.Alias.Should().Be("p");
-            column.GetValues().Should().HaveCount(4);
-            column.ValueType.Should().Be(typeof(T));
+            column?.Column.Name.Should().Be("name");
+            column?.Column.Source.Alias.Should().Be("p");
+            column?.GetValues().Should().HaveCount(4);
+            column?.ValueType.Should().Be(typeof(T));
             var typedColumn = column as InValues<T>;
             typedColumn.Should().NotBeNull();
-            typedColumn.ValueSet.Should().HaveCount(4);
+            typedColumn?.ValueSet.Should().HaveCount(4);
         }
 
         [Theory]
@@ -410,13 +409,13 @@ namespace decaf.core_tests
             // Assert
             var column = context.WhereClause as IInValues;
             column.Should().NotBeNull();
-            column.Column.Name.Should().Be("name");
-            column.Column.Source.Alias.Should().Be("p");
-            column.GetValues().Should().HaveCount(4);
-            column.ValueType.Should().Be(typeof(T));
+            column?.Column.Name.Should().Be("name");
+            column?.Column.Source.Alias.Should().Be("p");
+            column?.GetValues().Should().HaveCount(4);
+            column?.ValueType.Should().Be(typeof(T));
             var typedColumn = column as InValues<T>;
             typedColumn.Should().NotBeNull();
-            typedColumn.ValueSet.Should().HaveCount(4);
+            typedColumn?.ValueSet.Should().HaveCount(4);
         }
 
         [Theory]
@@ -426,7 +425,7 @@ namespace decaf.core_tests
         {
             // Arrange
             select.From("person", "p");
-            var value = getValue();
+            getValue();
             List<T> values = null;
 
             // Act
@@ -438,10 +437,10 @@ namespace decaf.core_tests
             // Assert
             var column = context.WhereClause as IInValues;
             column.Should().NotBeNull();
-            column.Column.Name.Should().Be("name");
-            column.Column.Source.Alias.Should().Be("p");
-            column.GetValues().Should().HaveCount(0);
-            column.ValueType.Should().Be(typeof(T));
+            column?.Column.Name.Should().Be("name");
+            column?.Column.Source.Alias.Should().Be("p");
+            column?.GetValues().Should().HaveCount(0);
+            column?.ValueType.Should().Be(typeof(T));
         }
 
         [Theory]
@@ -461,11 +460,11 @@ namespace decaf.core_tests
             // Assert
             var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
-            column.Details.Name.Should().Be("name");
-            column.Details.Source.Alias.Should().Be("p");
-            column.Value.Should().Be(value);
-            column.ValueType.Should().Be(typeof(T));
-            column.EqualityOperator.Should().Be(EqualityOperator.StartsWith);
+            column?.Details.Name.Should().Be("name");
+            column?.Details.Source.Alias.Should().Be("p");
+            column?.Value.Should().Be(value);
+            column?.ValueType.Should().Be(typeof(T));
+            column?.EqualityOperator.Should().Be(EqualityOperator.StartsWith);
         }
 
         [Theory]
@@ -485,11 +484,11 @@ namespace decaf.core_tests
             // Assert
             var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
-            column.Details.Name.Should().Be("name");
-            column.Details.Source.Alias.Should().Be("p");
-            column.Value.Should().Be(value);
-            column.ValueType.Should().Be(typeof(T));
-            column.EqualityOperator.Should().Be(EqualityOperator.EndsWith);
+            column?.Details.Name.Should().Be("name");
+            column?.Details.Source.Alias.Should().Be("p");
+            column?.Value.Should().Be(value);
+            column?.ValueType.Should().Be(typeof(T));
+            column?.EqualityOperator.Should().Be(EqualityOperator.EndsWith);
         }
 
         [Theory]
@@ -509,11 +508,11 @@ namespace decaf.core_tests
             // Assert
             var column = context.WhereClause as IColumn;
             column.Should().NotBeNull();
-            column.Details.Name.Should().Be("name");
-            column.Details.Source.Alias.Should().Be("p");
-            column.Value.Should().Be(value);
-            column.ValueType.Should().Be(typeof(T));
-            column.EqualityOperator.Should().Be(EqualityOperator.Like);
+            column?.Details.Name.Should().Be("name");
+            column?.Details.Source.Alias.Should().Be("p");
+            column?.Value.Should().Be(value);
+            column?.ValueType.Should().Be(typeof(T));
+            column?.EqualityOperator.Should().Be(EqualityOperator.Like);
         }
 
         [Theory]
@@ -533,13 +532,13 @@ namespace decaf.core_tests
             // Assert
             var inversion = context.WhereClause as Not;
             inversion.Should().NotBeNull();
-            var column = inversion.Item as IColumn;
+            var column = inversion?.Item as IColumn;
             column.Should().NotBeNull();
-            column.Details.Name.Should().Be("name");
-            column.Details.Source.Alias.Should().Be("p");
-            column.Value.Should().Be(value);
-            column.ValueType.Should().Be(typeof(T));
-            column.EqualityOperator.Should().Be(EqualityOperator.Like);
+            column?.Details.Name.Should().Be("name");
+            column?.Details.Source.Alias.Should().Be("p");
+            column?.Value.Should().Be(value);
+            column?.ValueType.Should().Be(typeof(T));
+            column?.EqualityOperator.Should().Be(EqualityOperator.Like);
         }
 
         [Fact]
@@ -599,10 +598,10 @@ namespace decaf.core_tests
         {
             get
             {
-                yield return new object[]
-                {
+                yield return
+                [
                     (Func<string>)(() => GetValue<string>("smith"))
-                };
+                ];
 
                 foreach (var r in NonStringTests)
                     yield return r;
@@ -614,40 +613,40 @@ namespace decaf.core_tests
             get
             {
 
-                yield return new object[]
-                {
+                yield return
+                [
                     (Func<int>)(() => GetValue<int>(42))
-                };
+                ];
 
-                yield return new object[]
-                {
+                yield return
+                [
                     (Func<double>)(() => GetValue<double>(42))
-                };
+                ];
 
-                yield return new object[]
-                {
+                yield return
+                [
                     (Func<float>)(() => GetValue<float>(42))
-                };
+                ];
 
-                yield return new object[]
-                {
+                yield return
+                [
                     (Func<decimal>)(() => GetValue<decimal>(42))
-                };
+                ];
 
-                yield return new object[]
-                {
+                yield return
+                [
                     (Func<short>)(() => GetValue<short>(42))
-                };
+                ];
 
-                yield return new object[]
-                {
+                yield return
+                [
                     (Func<uint>)(() => GetValue<uint>(42))
-                };
+                ];
 
-                yield return new object[]
-                {
+                yield return
+                [
                     (Func<DateTime>)(() => GetValue<DateTime>(DateTime.UtcNow))
-                };
+                ];
             }
         }
 

@@ -22,16 +22,15 @@ namespace decaf.sqlserver
             var underlyingType = ReflectionHelper.GetUnderlyingType(type);
 
             if (underlyingType == typeof(bool)) return false;
-            else if (underlyingType == typeof(byte[])) return false;
-            else if (underlyingType == typeof(DateTime)) return true;
-            else if (underlyingType == typeof(int)) return false;
-            else if (underlyingType == typeof(double) ||
-                        underlyingType == typeof(Single) ||
-                        underlyingType == typeof(float) ||
-                        underlyingType == typeof(decimal))
+            if (underlyingType == typeof(byte[])) return false;
+            if (underlyingType == typeof(DateTime)) return true;
+            if (underlyingType == typeof(int)) return false;
+            if (underlyingType == typeof(double) ||
+                underlyingType == typeof(Single) ||
+                underlyingType == typeof(float) ||
+                underlyingType == typeof(decimal))
                 return false;
-            else if (underlyingType == typeof(string)) return true;
-            else return true;
+            return underlyingType == typeof(string);
         }
 
         protected override byte[] BytesFromString(string input)

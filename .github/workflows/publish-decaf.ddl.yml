@@ -19,7 +19,7 @@ jobs:
           dotnet build ${CSPROJ} -c Release
           dotnet pack ${CSPROJ} -p:Version=${FULL_PACKAGE_VERSION} -o ./output
       - name: Save Archive
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: package
           path: ./output
@@ -30,7 +30,7 @@ jobs:
     needs: [pack]
     steps:
     - name: Download Artifact
-      uses: actions/download-artifact@v2.0.10
+      uses: actions/download-artifact@v4.3.0
       with:
         name: package
         path: ./output

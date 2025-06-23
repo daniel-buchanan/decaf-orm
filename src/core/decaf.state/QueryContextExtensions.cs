@@ -5,7 +5,6 @@ using System.Reflection;
 using decaf.common;
 using decaf.common.Utilities.Reflection.Dynamic;
 
-[assembly:System.Runtime.CompilerServices.InternalsVisibleTo("decaf.ddl")]
 namespace decaf.state;
 
 public static class QueryContextExtensions
@@ -16,7 +15,7 @@ public static class QueryContextExtensions
         return new HelperExtensions(internalContext);
     }
 
-    internal static IQueryContextExtended ToInternal(this IQueryContext context)
+    private static IQueryContextExtended ToInternal(this IQueryContext context)
         => context as IQueryContextExtended;
 
     public static string GetTableName(

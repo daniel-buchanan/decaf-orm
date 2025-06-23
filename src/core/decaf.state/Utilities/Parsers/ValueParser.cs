@@ -7,27 +7,19 @@ using decaf.state.Conditionals;
 
 namespace decaf.state.Utilities.Parsers;
 
-internal class ValueParser : BaseParser
+internal class ValueParser(
+    IExpressionHelper expressionHelper,
+    CallExpressionHelper callExpressionHelper,
+    IReflectionHelper reflectionHelper)
+    : BaseParser(expressionHelper, reflectionHelper)
 {
-    private readonly CallExpressionHelper callExpressionHelper;
-
-    public ValueParser(
-        IExpressionHelper expressionHelper,
-        CallExpressionHelper callExpressionHelper,
-        IReflectionHelper reflectionHelper)
-        : base(expressionHelper, reflectionHelper)
-    {
-        this.callExpressionHelper = callExpressionHelper;
-    }
-
     public override IWhere Parse(Expression expression, IQueryContextExtended context)
     {
         var earlyResult = callExpressionHelper.ParseExpression(expression, context);
         if (earlyResult != null) return earlyResult;
 
-        var valueResult = ParseMemberExpression(expression, context);
-        if (valueResult == null) valueResult = ParseBinaryExpression(expression, context);
-            
+        var valueResult = ParseMemberExpression(expression, context) ?? ParseBinaryExpression(expression, context);
+
         var col = Column.Create(valueResult.Field, valueResult.Table);
 
         var isNotEquals = valueResult.Operator == EqualityOperator.NotEquals;
@@ -42,7 +34,7 @@ internal class ValueParser : BaseParser
 
         //get the generic type definition for the model
         var genericType = typeof(Column<>);
-        var genericTypeArguments = new Type[] { valueResult.ValueType };
+        Type[] genericTypeArguments = [valueResult.ValueType];
         var constructedType = genericType.MakeGenericType(genericTypeArguments);
         var ctor = constructedType.GetConstructor(bindingFlags, null, parameterTypes, null);
 
@@ -102,32 +94,27 @@ internal class ValueParser : BaseParser
     private ValueResult ParseBinaryExpression(Expression expression, IQueryContextExtended context)
     {
         BinaryExpression operation;
-        if (expression.NodeType == ExpressionType.Lambda)
-        {
-            var lambda = expression as LambdaExpression;
-            operation = lambda.Body as BinaryExpression;
-        }
-        else
-        {
-            operation = expression as BinaryExpression;
-        }
+        if (expression is LambdaExpression lambda) operation = lambda.Body as BinaryExpression;
+        else operation = expression as BinaryExpression;
 
+        if (operation is null) return null;
+        
         var op = expressionHelper.ConvertExpressionTypeToEqualityOperator(operation.NodeType);
         Expression valueExpression = null;
         MemberExpression memberExpression = null;
 
-        if(operation.Left is MemberExpression)
+        if(operation.Left is MemberExpression left)
         {
-            memberExpression = operation.Left as MemberExpression;
+            memberExpression = left;
             valueExpression = operation.Right;
         }
-        else if(operation.Right is MemberExpression)
+        else if(operation.Right is MemberExpression right)
         {
-            memberExpression = operation.Right as MemberExpression;
+            memberExpression = right;
             valueExpression = operation.Left;
         }
 
-        if (valueExpression == null || memberExpression == null)
+        if (valueExpression is null)
             return null;
 
         var field = expressionHelper.GetMemberName(memberExpression);
@@ -146,23 +133,17 @@ internal class ValueParser : BaseParser
         return new ValueResult(field, target, value, valueType, op);
     }
 
-    private sealed class ValueResult
+    private sealed class ValueResult(
+        string field,
+        IQueryTarget table,
+        object value,
+        Type valueType,
+        EqualityOperator op)
     {
-        public ValueResult() { }
-
-        public ValueResult(string field, IQueryTarget table, object value, Type valueType, EqualityOperator op)
-        {
-            Field = field;
-            Table = table;
-            Value = value;
-            ValueType = valueType;
-            Operator = op;
-        }
-
-        public object Value { get; set; }
-        public Type ValueType { get; set; }
-        public string Field { get; set; }
-        public IQueryTarget Table { get; set; }
-        public EqualityOperator Operator { get; set; }
+        public object Value { get; set; } = value;
+        public Type ValueType { get; set; } = valueType;
+        public string Field { get; set; } = field;
+        public IQueryTarget Table { get; set; } = table;
+        public EqualityOperator Operator { get; set; } = op;
     }
 }

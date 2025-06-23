@@ -8,16 +8,13 @@ using decaf.common.Utilities;
 
 namespace decaf.Implementation.Execute;
 
-public abstract class Execute<TContext> :
-    ExecuteBase<TContext>,
+public abstract class Execute<TContext>(
+    IQueryContainerInternal query,
+    TContext context) :
+    ExecuteBase<TContext>(query, context, query.SqlFactory),
     IExecute
-    where TContext: IQueryContext
+    where TContext : IQueryContext
 {
-    protected Execute(
-        IQueryContainerInternal query,
-        TContext context)
-        : base(query, context, query.SqlFactory) { }
-
     /// <inheritdoc/>
     public IExecuteDynamic Dynamic() => this;
 

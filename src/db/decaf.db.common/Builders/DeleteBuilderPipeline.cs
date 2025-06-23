@@ -22,7 +22,7 @@ public abstract class DeleteBuilderPipeline : BuilderPipeline<IDeleteQueryContex
         Add(AddOutput, providesParameters: false);
     }
 
-    private void AddDelete(IPipelineStageInput<IDeleteQueryContext> input)
+    private static void AddDelete(IPipelineStageInput<IDeleteQueryContext> input)
         => input.Builder.AppendLine("{0} from", Builders.Constants.Delete);
 
     protected abstract void AddTables(IPipelineStageInput<IDeleteQueryContext> input);

@@ -144,7 +144,7 @@ internal class Command<TEntity> :
             skip += take;
         } while (skip < numKeys);
 
-        if (disposeOnExit) t.Dispose();
+        if (DisposeOnExit) t.Dispose();
     }
 
     public virtual async Task<TEntity> AddAsync(

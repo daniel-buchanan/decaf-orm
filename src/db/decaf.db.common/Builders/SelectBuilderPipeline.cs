@@ -32,7 +32,7 @@ public abstract class SelectBuilderPipeline : BuilderPipeline<ISelectQueryContex
     /// </summary>
     protected abstract bool LimitBeforeGroupBy { get; }
 
-    private void AddSelect(IPipelineStageInput<ISelectQueryContext> input)
+    private static void AddSelect(IPipelineStageInput<ISelectQueryContext> input)
         => input.Builder.AppendLine(Builders.Constants.Select);
 
     /// <summary>

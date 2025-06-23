@@ -18,7 +18,7 @@ public abstract class InsertBuilderPipeline : BuilderPipeline<IInsertQueryContex
         Add(AddOutput, providesParameters: false);
     }
 
-    private void AddInsert(IPipelineStageInput<IInsertQueryContext> input)
+    private static void AddInsert(IPipelineStageInput<IInsertQueryContext> input)
         => input.Builder.AppendLine("{0} into", Builders.Constants.Insert);
 
     protected abstract void AddTable(IPipelineStageInput<IInsertQueryContext> input);

@@ -5,29 +5,24 @@ using decaf.state.Conditionals;
 
 namespace decaf.state.Utilities.Parsers;
 
-internal class JoinParser : BaseParser
+internal class JoinParser(
+    IExpressionHelper expressionHelper,
+    IReflectionHelper reflectionHelper)
+    : BaseParser(expressionHelper, reflectionHelper)
 {
-    public JoinParser(
-        IExpressionHelper expressionHelper,
-        IReflectionHelper reflectionHelper)
-        : base(expressionHelper, reflectionHelper)
-    {
-    }
-
     public override IWhere Parse(Expression expression, IQueryContextExtended context)
     {
         BinaryExpression binaryExpression = null;
         LambdaExpression lambdaExpression = null;
 
-        if (expression.NodeType == ExpressionType.Lambda)
+        if (expression is LambdaExpression lambda)
         {
-            lambdaExpression = expression as LambdaExpression;
-            binaryExpression = lambdaExpression.Body as BinaryExpression;
+            lambdaExpression = lambda;
+            binaryExpression = lambda.Body as BinaryExpression;
         }
-        else
+        else if (expression is not MemberExpression)
         {
-            if (!(expression is MemberExpression))
-                binaryExpression = expression as BinaryExpression;
+            binaryExpression = expression as BinaryExpression;
         }
 
         IWhere result;
@@ -80,9 +75,8 @@ internal class JoinParser : BaseParser
         MemberExpression leftExpression;
         MemberExpression rightExpression;
 
-        if (operation.Left is UnaryExpression)
+        if (operation.Left is UnaryExpression unaryLeft)
         {
-            var unaryLeft = operation.Left as UnaryExpression;
             leftExpression = unaryLeft.Operand as MemberExpression;
         }
         else
@@ -90,9 +84,8 @@ internal class JoinParser : BaseParser
             leftExpression = operation.Left as MemberExpression;
         }
 
-        if (operation.Right is UnaryExpression)
+        if (operation.Right is UnaryExpression unaryRight)
         {
-            var unaryRight = operation.Right as UnaryExpression;
             rightExpression = unaryRight.Operand as MemberExpression;
         }
         else if (operation.Right is ConstantExpression)
@@ -103,6 +96,9 @@ internal class JoinParser : BaseParser
         {
             rightExpression = operation.Right as MemberExpression;
         }
+        
+        if(leftExpression is null || rightExpression is null)
+            return false;
 
         var leftParam = (ParameterExpression)leftExpression.Expression;
         var rightParam = (ParameterExpression)rightExpression.Expression;

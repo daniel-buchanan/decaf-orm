@@ -6,20 +6,14 @@ using decaf.state.QueryTargets;
 
 namespace decaf.Implementation.Execute;
 
-internal abstract class SelectTyped : SelectCommon
+internal abstract class SelectTyped(
+    ISelectQueryContext context,
+    IQueryContainerInternal query)
+    : SelectCommon(context, query)
 {
-    protected SelectTyped(
-        ISelectQueryContext context,
-        IQueryContainerInternal query)
-        : base(context, query)
-    {
-    }
-
     protected void AddJoin<T1, T2>(Expression expression, JoinType type)
     {
-        var conditions = Context.Helpers().ParseJoin(expression);
-        if (conditions == null)
-            conditions = Context.Helpers().ParseWhere(expression);
+        var conditions = Context.Helpers().ParseJoin(expression) ?? Context.Helpers().ParseWhere(expression);
         var left = GetQueryTarget<T1>();
         var right = GetQueryTarget<T2>();
 

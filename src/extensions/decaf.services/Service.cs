@@ -13,7 +13,7 @@ internal abstract class Service : IService
     private readonly IUnitOfWork unitOfWork;
     private readonly ISqlFactory sqlFactory;
     private readonly IDecaf decaf;
-    protected readonly bool disposeOnExit;
+    protected readonly bool DisposeOnExit;
     private string lastExecutedSql;
 
     protected Service(
@@ -22,7 +22,7 @@ internal abstract class Service : IService
     {
         this.unitOfWork = unitOfWork;
         this.sqlFactory = sqlFactory;
-        disposeOnExit = false;
+        DisposeOnExit = false;
         PreExecution += SelfNotifyPreExecution;
     }
 
@@ -32,7 +32,7 @@ internal abstract class Service : IService
     {
         this.decaf = decaf;
         this.sqlFactory = sqlFactory;
-        disposeOnExit = true;
+        DisposeOnExit = true;
         PreExecution += SelfNotifyPreExecution;
     }
 
@@ -74,7 +74,7 @@ internal abstract class Service : IService
             await method(q, cancellationToken);
         }
 
-        if (disposeOnExit) t.Dispose();
+        if (DisposeOnExit) t.Dispose();
     }
         
     protected async Task<T> ExecuteQueryAsync<T>(Func<IQueryContainer, CancellationToken, Task<T>> method, CancellationToken cancellationToken = default)
@@ -86,7 +86,7 @@ internal abstract class Service : IService
             result = await method(q, cancellationToken);
         }
 
-        if (disposeOnExit) t.Dispose();
+        if (DisposeOnExit) t.Dispose();
 
         return result;
     }
@@ -108,7 +108,7 @@ internal abstract class Service : IService
     /// <typeparam name="TEntity">The type of Entity to work with.</typeparam>
     /// <param name="q">The <see cref="IQuery"/> to use.</param>
     /// <returns>The name of the table for this <see cref="IQueryContext"/>.</returns>
-    protected string GetTableInfo<TEntity>(IQueryContainer q)
+    protected static string GetTableInfo<TEntity>(IQueryContainer q)
         where TEntity : new()
         => q.Context.Helpers().GetTableName<TEntity>();
 

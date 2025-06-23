@@ -27,62 +27,58 @@ var provider = services.BuildServiceProvider();
 Console.WriteLine("Hello, World!");
 
 var decaf = provider.GetService<IDecaf>();
-using (var q = decaf.Query())
-{
-    q.CreateTable()
-        .Named("users")
-        .WithColumns(c => c.Named("username").AsType<string>().IsNullable())
-        .WithPrimaryKey("users_idx", c => c.Named("id"));
-    q.Select()
-        .From("bob", "b")
-        .Where(b =>
-        {
-            b.ClauseHandling.DefaultToOr();
+using var q = decaf.Query();
+q.CreateTable()
+    .Named("users")
+    .WithColumns(c => c.Named("username").AsType<string>().IsNullable())
+    .WithPrimaryKey("users_idx", c => c.Named("id"));
+q.Select()
+    .From("bob", "b")
+    .Where(b =>
+    {
+        b.ClauseHandling.DefaultToOr();
 
-            b.Column("name").Is().EqualTo("hello");
-            b.Column("email").Is().Like("my name");
-        })
-        .Select(b => new
-        {
-            Name = b.Is("name", "b"),
-            City = b.Is("city", "b")
-        })
-        .Execute();
+        b.Column("name").Is().EqualTo("hello");
+        b.Column("email").Is().Like("my name");
+    })
+    .Select(b => new
+    {
+        Name = b.Is("name", "b"),
+        City = b.Is("city", "b")
+    });
 
-    q.Select()
-        .From<Person>(x => x)
-        .Join<Address>((p, a) => p.AddressId == a.Id)
-        .Where((p, a) => p.LastName.Contains("smith"))
-        .Select((p, a) => new Result
-        {
-            Name = p.FirstName,
-            City = a.City
-        });
+q.Select()
+    .From<Person>(x => x)
+    .Join<Address>((p, a) => p.AddressId == a.Id)
+    .Where((p, a) => p.LastName.Contains("smith"))
+    .Select((p, a) => new Result
+    {
+        Name = p.FirstName,
+        City = a.City
+    });
 
-    q.Insert()
-        .Into("bob")
-        .Columns(b => new
-        {
-            id = b.Is<int>(),
-            name = b.Is<string>()
-        })
-        .Value(new
-        {
-            id = 42,
-            name = "smith"
-        });
+q.Insert()
+    .Into("bob")
+    .Columns(b => new
+    {
+        id = b.Is<int>(),
+        name = b.Is<string>()
+    })
+    .Value(new
+    {
+        id = 42,
+        name = "smith"
+    });
 
-    q.Update()
-        .Table<Person>()
-        .From<Person>(b =>
-        {
-            b.KnownAs("x");
-            b.From<Person>(p => p)
-                .Where(p => p.CreatedAt < DateTime.Now)
-                ;
-        })
-        .Set(x => x.Email, y => y.Email)
-        .Where((x, y) => x.Id == y.Id)
-        .Output(x => x.Id);
-
-}
+q.Update()
+    .Table<Person>()
+    .From<Person>(b =>
+    {
+        b.KnownAs("x");
+        b.From<Person>(p => p)
+            .Where(p => p.CreatedAt < DateTime.Now)
+            ;
+    })
+    .Set(x => x.Email, y => y.Email)
+    .Where((x, y) => x.Id == y.Id)
+    .Output(x => x.Id);

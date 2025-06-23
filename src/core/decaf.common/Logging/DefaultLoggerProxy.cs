@@ -2,22 +2,17 @@
 
 namespace decaf.common.Logging;
 
-public class DefaultLoggerProxy : LoggerProxy
+public class DefaultLoggerProxy(
+    DecafOptions options,
+    IStdOutputWrapper output) : LoggerProxy(options.DefaultLogLevel)
 {
-    private readonly IStdOutputWrapper output;
-
-    public DefaultLoggerProxy(
-        DecafOptions options,
-        IStdOutputWrapper output) : base(options.DefaultLogLevel)
-        => this.output = output;
-
     protected override void WriteMessage(LogLevel level, string message)
     {
         var timestamp = DateTime.Now.ToString("yy-MM-dd hh:mm:ss:fff");
         output.WriteOut($"[{timestamp}] :: {LogLevelToString(level)} :: {message}");
     }
 
-    private string LogLevelToString(LogLevel level)
+    private static string LogLevelToString(LogLevel level)
     {
         switch(level)
         {

@@ -9,25 +9,15 @@ using decaf.state.Conditionals;
 
 namespace decaf.state.Utilities;
 
-class CallExpressionHelper
+class CallExpressionHelper(
+    IExpressionHelper expressionHelper,
+    IValueFunctionHelper valueFunctionHelper)
 {
-    private readonly IExpressionHelper expressionHelper;
-    private readonly IValueFunctionHelper valueFunctionHelper;
-
-    public CallExpressionHelper(
-        IExpressionHelper expressionHelper,
-        IValueFunctionHelper valueFunctionHelper)
-    {
-        this.expressionHelper = expressionHelper;
-        this.valueFunctionHelper = valueFunctionHelper;
-    }
-
     public IWhere ParseExpression(Expression expression, IQueryContextExtended context)
     {
         Expression expressionToParse;
-        if (expression is LambdaExpression)
+        if (expression is LambdaExpression lambda)
         {
-            var lambda = expression as LambdaExpression;
             var unary = lambda.Body as UnaryExpression;
             if (unary?.NodeType == ExpressionType.Not)
             {
@@ -45,38 +35,32 @@ class CallExpressionHelper
 
         if(expressionHelper.IsMethodCallOnProperty(expressionToParse))
         {
-            var binaryExpression = expressionToParse as BinaryExpression;
-            if(binaryExpression == null)
-            {
-                var constantExpression = Expression.Constant(true);
-                binaryExpression = Expression.Equal(expressionToParse, constantExpression);
-            }
-            return ParseBinaryExpression(binaryExpression, context);
+            if (expressionToParse is BinaryExpression binaryExprMethodCall) return ParseBinaryExpression(binaryExprMethodCall, context);
+            var constantExpression = Expression.Constant(true);
+            binaryExprMethodCall = Expression.Equal(expressionToParse, constantExpression);
+            return ParseBinaryExpression(binaryExprMethodCall, context);
         }
 
-        if(expressionHelper.IsMethodCallOnConstantOrMemberAccess(expressionToParse))
+        if (!expressionHelper.IsMethodCallOnConstantOrMemberAccess(expressionToParse))
+            return ParseBinaryExpression(expressionToParse, context);
+        
+        if (expressionToParse is not BinaryExpression binaryExpression)
         {
-            var binaryExpression = expressionToParse as BinaryExpression;
-            if (binaryExpression == null)
-            {
-                return ParseMethodAccessCall(expressionToParse, context);
-            }
-
-            var call = binaryExpression.Left as MethodCallExpression ??
-                       binaryExpression.Right as MethodCallExpression;
-            var constant = binaryExpression.Left as ConstantExpression ??
-                           binaryExpression.Right as ConstantExpression;
-            var result = ParseMethodAccessCall(call, context);
-            var constantValue = (bool)expressionHelper.GetValue(constant);
-
-            if (binaryExpression.NodeType == ExpressionType.NotEqual ||
-                !constantValue)
-                return Not.This(result);
-
-            return result;
+            return ParseMethodAccessCall(expressionToParse, context);
         }
 
-        return ParseBinaryExpression(expressionToParse, context);
+        var call = binaryExpression.Left as MethodCallExpression ??
+                   binaryExpression.Right as MethodCallExpression;
+        var constant = binaryExpression.Left as ConstantExpression ??
+                       binaryExpression.Right as ConstantExpression;
+        var result = ParseMethodAccessCall(call, context);
+        var constantValue = (bool)expressionHelper.GetValue(constant);
+
+        if (binaryExpression.NodeType == ExpressionType.NotEqual ||
+            !constantValue)
+            return Not.This(result);
+
+        return result;
     }
 
     private IWhere ParseBinaryExpression(
@@ -108,19 +92,15 @@ class CallExpressionHelper
         {
             var value = expressionHelper.GetValue(nonCallExpr);
 
-            if(value is bool)
+            if(value is false && op == EqualityOperator.Equals)
             {
-                var boolValue = (bool)value;
-                if(!boolValue && op == EqualityOperator.Equals)
-                {
-                    value = invertResult = true;
-                }
+                value = invertResult = true;
             }
 
             var functionType = typeof(Column<>);
             var genericType = value?.GetType() ?? memberExpression?.Type;
             var implementedType = functionType.MakeGenericType(genericType);
-            var parameters = new object[] { col, op, valueFunction, value };
+            object[] parameters = [col, op, valueFunction, value];
             var bindingFlags = BindingFlags.Instance | BindingFlags.Public;
             result = (IWhere)Activator.CreateInstance(
                 implementedType,
@@ -243,7 +223,7 @@ class CallExpressionHelper
         var target = context.GetQueryTarget(memberAccessExp);
         var col = Column.Create(fieldName, target);
 
-        var parameters = new object[] { col, input };
+        object[] parameters = [col, input];
         var enumerableGenericType = typeof(IEnumerable<>);
         var enumerableType = enumerableGenericType.MakeGenericType(typeArgs);
 

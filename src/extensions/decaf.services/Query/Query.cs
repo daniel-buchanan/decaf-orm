@@ -153,7 +153,7 @@ internal class Query<TEntity> :
             skip += take;
         } while (skip < numKeys);
 
-        if (disposeOnExit) t.Dispose();
+        if (DisposeOnExit) t.Dispose();
 
         return results;
     }

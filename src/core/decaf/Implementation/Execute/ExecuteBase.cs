@@ -10,23 +10,17 @@ using decaf.common.Utilities;
 
 namespace decaf.Implementation.Execute;
 
-public abstract class ExecuteBase<TContext> :
-    IGetSql
-    where TContext: IQueryContext
+public abstract class ExecuteBase<TContext>(
+    IQueryContainer query,
+    TContext context,
+    ISqlFactory sqlFactory)
+    :
+        IGetSql
+    where TContext : IQueryContext
 {
-    protected readonly IQueryContainerInternal Query;
-    protected TContext Context;
-    protected readonly ISqlFactory SqlFactory;
-
-    protected ExecuteBase(
-        IQueryContainer query,
-        TContext context,
-        ISqlFactory sqlFactory)
-    {
-        Query = query as IQueryContainerInternal;
-        Context = context;
-        SqlFactory = sqlFactory;
-    }
+    protected readonly IQueryContainerInternal Query = query as IQueryContainerInternal;
+    protected TContext Context = context;
+    protected readonly ISqlFactory SqlFactory = sqlFactory;
 
     protected IDbTransaction GetTransaction()
     {

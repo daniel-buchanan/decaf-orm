@@ -105,33 +105,30 @@ public abstract class QueryContext : IQueryContextExtended
         Expression exprAlias, exprTable;
         exprAlias = exprTable = expression;
 
-        if (expression is LambdaExpression)
+        if (expression is LambdaExpression lambda)
         {
-            var lambda = expression as LambdaExpression;
             if (lambda.Parameters.Count > 1) return;
             exprAlias = lambda.Body;
             exprTable = lambda.Body;
         }
 
-        if (exprAlias is MethodCallExpression)
+        if (exprAlias is MethodCallExpression call)
         {
-            var call = exprAlias as MethodCallExpression;
             var obj = call.Object as MemberExpression;
+            if (obj is null) return;
             exprAlias = obj;
             exprTable = obj.Expression;
         }
 
-        if (expression is ParameterExpression)
+        if (expression is ParameterExpression paramExpr)
         {
-            var paramExpr = expression as ParameterExpression;
             alias = paramExpr.Name;
             table = reflectionHelper.GetTableName(paramExpr.Type);
             return;
         }
 
-        if (expression is MemberExpression)
+        if (expression is MemberExpression memberExpr)
         {
-            var memberExpr = expression as MemberExpression;
             alias = expressionHelper.GetParameterName(exprAlias);
             table = reflectionHelper.GetTableName(memberExpr.Member.DeclaringType);
             return;

@@ -18,7 +18,7 @@ public abstract class UpdateBuilderPipeline : BuilderPipeline<IUpdateQueryContex
         Add(AddOutput, providesParameters: false);
     }
 
-    private void AddUpdate(IPipelineStageInput<IUpdateQueryContext> input)
+    private static void AddUpdate(IPipelineStageInput<IUpdateQueryContext> input)
         => input.Builder.AppendLine("{0}", Builders.Constants.Update);
 
     protected abstract void AddTable(IPipelineStageInput<IUpdateQueryContext> input);

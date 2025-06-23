@@ -1,7 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <PackageId>decaf-orm.ddl</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>Daniel Buchanan</Authors>
+        <PackageTags>ORM,SQL,Lite</PackageTags>
+        <Description>This package adds DDL support to decaf.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <LangVersion>12</LangVersion>
     </PropertyGroup>
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 </Project>

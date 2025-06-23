@@ -19,7 +19,7 @@ jobs:
       - name: Save Archive
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: package
+          name: decaf.db
           path: ./output
           retention-days: 0
 
@@ -30,7 +30,7 @@ jobs:
     - name: Download Artifact
       uses: actions/download-artifact@v4.3.0
       with:
-        name: package
+        name: decaf.db
         path: ./output
     - name: Upload to NuGet
       env:

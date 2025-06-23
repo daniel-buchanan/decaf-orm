@@ -2,14 +2,8 @@
 
 namespace decaf.common.Attributes;
 
-public class IgnoreColumnForAttribute : Attribute
+[AttributeUsage(AttributeTargets.Property)]
+public class IgnoreColumnForAttribute(QueryTypes toIgnore = QueryTypes.None) : Attribute
 {
-    public QueryTypes QueryType { get; set; }
-
-    public IgnoreColumnForAttribute() { QueryType = QueryTypes.None; }
-
-    public IgnoreColumnForAttribute(QueryTypes toIgnore)
-    {
-        QueryType = toIgnore;
-    }
+    public QueryTypes QueryType { get; set; } = toIgnore;
 }

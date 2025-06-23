@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
     <RootNamespace>decaf.common</RootNamespace>
     <LangVersion>12</LangVersion>
   </PropertyGroup>

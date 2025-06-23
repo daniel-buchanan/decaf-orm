@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using decaf.common;
 using decaf.common.Utilities;
 using FluentAssertions;
@@ -9,12 +8,7 @@ namespace decaf.core_tests;
 
 public class AliasManagerTests
 {
-	private readonly IAliasManager aliasManager;
-
-	public AliasManagerTests()
-	{
-		aliasManager = AliasManager.Create();
-	}
+	private readonly IAliasManager aliasManager = AliasManager.Create();
 
 	[Theory]
 	[MemberData(nameof(AddTests))]
@@ -54,21 +48,26 @@ public class AliasManagerTests
 		aliasManager.Add(alias, name);
 
 		// Act
-		var foundAlias = aliasManager.FindByAssociation(name);
+		var foundAlias = aliasManager.FindByAssociation(name).ToArray();
 
 		// Assert
 		foundAlias.Should().ContainSingle();
-		foundAlias.First().Should().BeEquivalentTo(expectedAlias);
+		foundAlias[0].Should().BeEquivalentTo(expectedAlias);
 	}
 
-	public static IEnumerable<object[]> AddTests
+	public static TheoryData<string,string,string> AddTests
 	{
 		get
 		{
-			yield return new object[] { null, "test", "t0" };
-			yield return new object[] { null, "hello", "h0" };
-			yield return new object[] { null, "bob", "b0" };
-			yield return new object[] { "ts", "test", "ts" };
+			var data = new TheoryData<string, string, string>
+			{
+				{ null, "test", "t0" },
+				{ null, "hello", "h0" },
+				{ null, "bob", "b0" },
+				{ "ts", "test", "ts" }
+			};
+
+			return data;
 		}
 	}
 }

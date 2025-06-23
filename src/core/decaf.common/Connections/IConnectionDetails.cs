@@ -9,7 +9,7 @@ public interface IConnectionDetails : IDisposable
 	/// <summary>
 	/// The hostname of the database server.
 	/// </summary>
-	string Hostname { get; set; }
+	string? Hostname { get; set; }
 
 	/// <summary>
 	/// The port the database runs on.
@@ -19,7 +19,7 @@ public interface IConnectionDetails : IDisposable
 	/// <summary>
 	/// The name  of the database.
 	/// </summary>
-	string DatabaseName { get; set; }
+	string? DatabaseName { get; set; }
 
 	/// <summary>
 	/// The authentication for the connection.

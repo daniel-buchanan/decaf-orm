@@ -31,7 +31,7 @@ public class SqliteConnectionDetails :
         => new SqliteConnectionDetails(connectionString);
 
     /// <inheritdoc />
-    protected override ConnectionStringParsingException ValidateConnectionString(string connectionString)
+    protected override ConnectionStringParsingException? ValidateConnectionString(string connectionString)
     {
         if (string.IsNullOrWhiteSpace(connectionString))
             return new ConnectionStringParsingException("Cannot parse NULL connection string.");

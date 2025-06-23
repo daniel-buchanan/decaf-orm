@@ -9,11 +9,11 @@ namespace decaf.common.Connections;
 
 public abstract class ConnectionDetails : IConnectionDetails
 {
-    private string connectionString;
-    private string hostname;
+    private string? connectionString;
+    private string? hostname;
     private int? port;
-    private string databaseName;
-    private IConnectionAuthentication authentication;
+    private string? databaseName;
+    private IConnectionAuthentication? authentication;
 
     protected ConnectionDetails()
         => connectionString = null;
@@ -66,7 +66,7 @@ public abstract class ConnectionDetails : IConnectionDetails
     /// <param name="input">The string to match.</param>
     /// <param name="parse">A function to conver the match into the output type.</param>
     /// <returns>A match if found, otherwise the default value for the type.</returns>
-    protected static T MatchAndFetch<T>(string regex, string input, Func<string, T> parse)
+    protected static T? MatchAndFetch<T>(string regex, string input, Func<string?, T> parse)
     {
         var regExp = new Regex(
             regex, 
@@ -74,7 +74,7 @@ public abstract class ConnectionDetails : IConnectionDetails
             TimeSpan.FromMilliseconds(100));
         var match = regExp.Match(input);
             
-        if (!match.Success) return default(T);
+        if (!match.Success) return default;
             
         var matchedValue = match.Groups[1].Value;
         var nextSeparator = matchedValue?.IndexOf(";") ?? 0;
@@ -90,7 +90,7 @@ public abstract class ConnectionDetails : IConnectionDetails
     /// </summary>
     /// <param name="connectionString">The connection string to validate.</param>
     /// <returns>Any issues with the connection string that were found.</returns>
-    protected abstract ConnectionStringParsingException ValidateConnectionString(string connectionString);
+    protected abstract ConnectionStringParsingException? ValidateConnectionString(string connectionString);
 
     /// <summary>
     /// The Regex for obtaining the host of the server.
@@ -108,7 +108,7 @@ public abstract class ConnectionDetails : IConnectionDetails
     protected abstract string DatabaseRegex { get; }
 
     /// <inheritdoc/>
-    public string Hostname
+    public string? Hostname
     {
         get => hostname ?? String.Empty;
         set
@@ -132,11 +132,7 @@ public abstract class ConnectionDetails : IConnectionDetails
     {
         get
         {
-            if(port == null)
-            {
-                port = DefaultPort;
-                return port.GetValueOrDefault();
-            }
+            port ??= DefaultPort;
             return port.GetValueOrDefault();
         }
         set
@@ -151,9 +147,9 @@ public abstract class ConnectionDetails : IConnectionDetails
     }
 
     /// <inheritdoc/>
-    public string DatabaseName
+    public string? DatabaseName
     {
-        get => databaseName ?? String.Empty;
+        get => databaseName;
         set
         {
             if (!string.IsNullOrWhiteSpace(databaseName))

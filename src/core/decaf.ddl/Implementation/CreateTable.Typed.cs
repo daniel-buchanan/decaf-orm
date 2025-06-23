@@ -23,8 +23,9 @@ public class CreateTable<T> :
         IQueryContainerInternal query) : 
         base(query, context)
     {
-        expressionHelper = context.ToInternal().ExpressionHelper;
-        reflectionHelper = context.ToInternal().ReflectionHelper;
+        var extendedContext = context as IQueryContextExtended;
+        reflectionHelper = extendedContext?.ReflectionHelper;
+        expressionHelper = extendedContext?.ExpressionHelper;
         query.SetContext(context);
     }
 

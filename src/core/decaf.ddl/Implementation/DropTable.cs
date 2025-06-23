@@ -14,7 +14,8 @@ public class DropTable : Execute<IDropTableQueryContext>, IDropTable
         IQueryContainerInternal query) :
         base(query, context)
     {
-        reflectionHelper = context.ToInternal().ReflectionHelper;
+        var extendedContext = context as IQueryContextExtended;
+        reflectionHelper = extendedContext?.ReflectionHelper;
         query.SetContext(context);
     }
 

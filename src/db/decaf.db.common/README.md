@@ -9,8 +9,7 @@ The `decaf-orm.db` package is designed to provide a consistent, performant way t
 
 ### Status:
 **Build**  
-[![Build](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/sonar.yml/badge.svg)](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/sonar.yml)
-[![CodeQL](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/codeql-analysis.yml)  
+[![Build](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/sonar.yml/badge.svg)](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/sonar.yml)  
 **Sonar Cloud**  
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=daniel-buchanan_pdq&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=daniel-buchanan_pdq)

@@ -11,7 +11,8 @@ public class QuotedIdentifierBuilder : IQuotedIdentifierBuilder
     protected readonly string Quote = string.Empty;
     protected readonly IConstants Constants;
 
-    protected QuotedIdentifierBuilder(
+    // ReSharper disable once MemberCanBeProtected.Global
+    public QuotedIdentifierBuilder(
         IDatabaseOptions options,
         IConstants constants)
     {

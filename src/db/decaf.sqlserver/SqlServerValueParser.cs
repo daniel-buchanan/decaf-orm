@@ -26,7 +26,6 @@ namespace decaf.sqlserver
             if (underlyingType == typeof(DateTime)) return true;
             if (underlyingType == typeof(int)) return false;
             if (underlyingType == typeof(double) ||
-                underlyingType == typeof(Single) ||
                 underlyingType == typeof(float) ||
                 underlyingType == typeof(decimal))
                 return false;

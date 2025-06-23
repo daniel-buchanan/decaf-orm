@@ -19,24 +19,10 @@ public class SqlServerConnectionDetails :
     private bool isTrustedConnection;
     private bool isMarsEnabled;
 
-    public SqlServerConnectionDetails() : base()
+    public SqlServerConnectionDetails()
         => isTrustedConnection = false;
 
-    private SqlServerConnectionDetails(string connectionString)
-        : base(connectionString)
-        => ParseConnectionString(connectionString, (c) =>
-        {
-            if (c.Contains(MarsEnabled))
-                isMarsEnabled = true;
-
-            isTrustedConnection = c.Contains(TrustedConnection);
-
-            if (!c.Contains(UserId)) return;
-                
-            var username = MatchAndFetch(UsernameRegex, c, s => s);
-            var password = MatchAndFetch(PasswordRegex, c, s => s);
-            Authentication = new UsernamePasswordAuthentication(username, password);
-        });
+    private SqlServerConnectionDetails(string connectionString) : base(connectionString) { }
 
     /// <inheritdoc/>
     protected override string HostRegex => @"Server=(.+),(\d+);";
@@ -116,7 +102,8 @@ public class SqlServerConnectionDetails :
             
         return sb.ToString();
     }
-
+    
+    /// <inheritdoc />
     protected override ConnectionStringParsingException ValidateConnectionString(string connectionString)
     {
         if (connectionString?.Contains("Server") == false)
@@ -138,5 +125,20 @@ public class SqlServerConnectionDetails :
 
 
         return null;
+    }
+
+    /// <inheritdoc />
+    protected override void ParseConnectionStringInternal(string input)
+    {
+        if (input.Contains(MarsEnabled))
+            isMarsEnabled = true;
+
+        isTrustedConnection = input.Contains(TrustedConnection);
+
+        if (!input.Contains(UserId)) return;
+                
+        var username = MatchAndFetch(UsernameRegex, input, s => s);
+        var password = MatchAndFetch(PasswordRegex, input, s => s);
+        Authentication = new UsernamePasswordAuthentication(username, password);
     }
 }

@@ -15,26 +15,27 @@ public class NpgsqlConnectionDetails :
     INpgsqlConnectionDetails
 {
 
-    private readonly string UsernameRegex = @"Username=(.+);";
-    private readonly string PasswordRegex = @"Password=(.+);";
+    private const string UsernameRegex = @"Username=(.+);";
+    private const string PasswordRegex = @"Password=(.+);";
     private readonly List<string> schemasToSearch;
 
     public NpgsqlConnectionDetails() : base()
         => schemasToSearch = new List<string>();
 
-    private NpgsqlConnectionDetails(string connectionString)
-        : base(connectionString)
-        => ParseConnectionString(connectionString, (c) =>
-        {
-            var username = MatchAndFetch(UsernameRegex, c, s => s);
-            var password = MatchAndFetch(PasswordRegex, c, s => s);
-            if (string.IsNullOrWhiteSpace(username) ||
-                string.IsNullOrWhiteSpace(password))
-                return;
+    private NpgsqlConnectionDetails(string connectionString) : base(connectionString) { }
 
-            Authentication = new UsernamePasswordAuthentication(username, password);
-        });
+    /// <inheritdoc />
+    protected override void ParseConnectionStringInternal(string input)
+    {
+        var username = MatchAndFetch(UsernameRegex, input, s => s);
+        var password = MatchAndFetch(PasswordRegex, input, s => s);
+        if (string.IsNullOrWhiteSpace(username) ||
+            string.IsNullOrWhiteSpace(password))
+            return;
 
+        Authentication = new UsernamePasswordAuthentication(username, password);
+    }
+    
     /// <summary>
     /// Create an <see cref="INpgsqlConnectionDetails"/> from a provided connection string.
     /// </summary>

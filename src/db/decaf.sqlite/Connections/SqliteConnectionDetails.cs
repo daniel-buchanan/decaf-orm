@@ -9,6 +9,8 @@ public class SqliteConnectionDetails :
     ConnectionDetails, 
     ISqliteConnectionDetails
 {
+    private const string ConnectionStringRegex = @"Data Source=([a-zA-Z0-9\\_\-\.\:\/]+);(?:Mode=((?:[Rr]eadOnly){0,1}(?:[Rr]ead[Ww]rite){0,1}(?:[Rr]ead[Ww]rite[Cc]reate){0,1});){0,1}";
+    
     private bool? createNew;
     private bool? inMemory;
     private string? fullUri;
@@ -16,8 +18,7 @@ public class SqliteConnectionDetails :
     
     public SqliteConnectionDetails() { }
 
-    public SqliteConnectionDetails(string connectionString) : base(connectionString) 
-        => ParseConnectionString(connectionString);
+    public SqliteConnectionDetails(string connectionString) : base(connectionString) { }
 
     public SqliteConnectionDetails(SqliteOptions options)
     {
@@ -28,20 +29,55 @@ public class SqliteConnectionDetails :
 
     public static ISqliteConnectionDetails FromConnectionString(string connectionString)
         => new SqliteConnectionDetails(connectionString);
-    
-    /// <summary>
-    /// Not Implemented as only called from base, and calling method is overridden.
-    /// </summary>
-    /// <param name="connectionString"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    protected override ConnectionStringParsingException ValidateConnectionString(string connectionString) 
-        => throw new NotImplementedException();
 
-    protected override string HostRegex => throw new NotImplementedException();
-    protected override string PortRegex => throw new NotImplementedException();
-    protected override string DatabaseRegex => throw new NotImplementedException();
-    protected override int DefaultPort => throw new NotImplementedException();
+    /// <inheritdoc />
+    protected override ConnectionStringParsingException ValidateConnectionString(string connectionString)
+    {
+        if (string.IsNullOrWhiteSpace(connectionString))
+            return new ConnectionStringParsingException("Cannot parse NULL connection string.");
+        
+        var regex = new Regex(ConnectionStringRegex, RegexOptions.Compiled | RegexOptions.Singleline, TimeSpan.FromMilliseconds(100));
+        var match = regex.Match(connectionString);
+        if (!match.Success)
+            return new ConnectionStringParsingException("Cannot parse Connection String: " + connectionString);
+
+        return null;
+    }
+
+    /// <inheritdoc />
+    protected override void ParseConnectionStringInternal(string input)
+    {
+        var regex = new Regex(ConnectionStringRegex, RegexOptions.Compiled | RegexOptions.Singleline, TimeSpan.FromMilliseconds(100));
+        var match = regex.Match(input);
+
+        FullUri = match.Groups[1].Value;
+
+        var mode = match.Groups[2].Value;
+        switch (mode.ToLower())
+        {
+            case "readonly":
+                ReadOnly = true;
+                break;
+            case "readwritecreate":
+                ReadOnly = false;
+                CreateNew = true;
+                break;
+            default:
+                ReadOnly = false;
+                break;
+        }
+        
+        if (match.Groups[3].Value == "New=True;")
+            CreateNew = true;
+
+        if (FullUri == ":memory:")
+            InMemory = true;
+    }
+
+    protected override string HostRegex => ".*";
+    protected override string PortRegex => ".*";
+    protected override string DatabaseRegex => ".*";
+    protected override int DefaultPort => 0;
 
     public string? FullUri
     {
@@ -97,40 +133,6 @@ public class SqliteConnectionDetails :
 
             readOnly = value;
         }
-    }
-
-    protected sealed override void ParseConnectionString(string input, Action<string>? additionalParsing = null)
-    {
-        if (string.IsNullOrWhiteSpace(input))
-            throw new ConnectionStringParsingException("Cannot parse NULL connection string.");
-        
-        var regex = new Regex(@"Data Source=([a-zA-Z0-9\\_\-\.\:\/]+);(?:Mode=((?:[Rr]eadOnly){0,1}(?:[Rr]ead[Ww]rite){0,1}(?:[Rr]ead[Ww]rite[Cc]reate){0,1});){0,1}", RegexOptions.Compiled | RegexOptions.Singleline, TimeSpan.FromMilliseconds(100));
-        var match = regex.Match(input);
-        if (!match.Success)
-            throw new ConnectionStringParsingException("Cannot parse Connection String: " + input);
-
-        FullUri = match.Groups[1].Value;
-
-        var mode = match.Groups[2].Value;
-        switch (mode.ToLower())
-        {
-            case "readonly":
-                ReadOnly = true;
-                break;
-            case "readwritecreate":
-                ReadOnly = false;
-                CreateNew = true;
-                break;
-            default:
-                ReadOnly = false;
-                break;
-        }
-        
-        if (match.Groups[3].Value == "New=True;")
-            CreateNew = true;
-
-        if (FullUri == ":memory:")
-            InMemory = true;
     }
 
     protected override Task<string> ConstructConnectionStringAsync(CancellationToken cancellationToken = default)

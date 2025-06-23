@@ -21,6 +21,8 @@ public class MockConnectionDetails : ConnectionDetails
         return Task.FromResult(connStr);
     }
 
+    protected override void ParseConnectionStringInternal(string input) { }
+
     protected override ConnectionStringParsingException ValidateConnectionString(string connectionString)
         => null;
 }

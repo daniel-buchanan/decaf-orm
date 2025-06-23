@@ -19,15 +19,17 @@ public abstract class ConnectionDetails : IConnectionDetails
         => connectionString = null;
 
     protected ConnectionDetails(string connectionString)
-        => this.connectionString = connectionString;
+    {
+        this.connectionString = connectionString;
+        ParseConnectionString(connectionString);
+    }
 
     /// <summary>
     /// Parse the provided connection string into the properties of this object.
     /// </summary>
     /// <param name="input">The connection string to parse.</param>
-    /// <param name="additionalParsing">A function for any additional parsing.</param>
     /// <exception cref="ConnectionStringParsingException">An error that occured during the parsing of the connection string.</exception>
-    protected virtual void ParseConnectionString(string input, Action<string> additionalParsing = null)
+    protected void ParseConnectionString(string input)
     {
         try
         {
@@ -41,14 +43,19 @@ public abstract class ConnectionDetails : IConnectionDetails
             Port = MatchAndFetch(PortRegex, input, int.Parse);
             DatabaseName = MatchAndFetch(DatabaseRegex, input, s => s);
 
-            if (additionalParsing != null)
-                additionalParsing(input);
+            ParseConnectionStringInternal(input);
         }
         catch (Exception e)
         {
             throw new ConnectionStringParsingException(e, "Failed to parse connection string, see Inner Exception for more information.");
         }
     }
+
+    /// <summary>
+    /// Any additional connection string processing required.
+    /// </summary>
+    /// <param name="input">The connection string to parse/process.</param>
+    protected abstract void ParseConnectionStringInternal(string input);
 
     /// <summary>
     /// Perform a match against a regular expression and return the result
@@ -70,10 +77,12 @@ public abstract class ConnectionDetails : IConnectionDetails
         if (!match.Success) return default(T);
             
         var matchedValue = match.Groups[1].Value;
-        var nextSeperator = matchedValue?.IndexOf(";") ?? 0;
-        if (nextSeperator <= 0) return parse(matchedValue);
-        var trimmed = matchedValue.Substring(0, nextSeperator);
-        return parse(trimmed);
+        var nextSeparator = matchedValue?.IndexOf(";") ?? 0;
+        if (nextSeparator <= 0)
+            return string.IsNullOrWhiteSpace(matchedValue) ? default : parse(matchedValue);
+        
+        var trimmed = matchedValue.Substring(0, nextSeparator);
+        return string.IsNullOrWhiteSpace(trimmed) ? default : parse(trimmed);
     }
 
     /// <summary>

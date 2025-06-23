@@ -6,127 +6,125 @@ using Microsoft.Extensions.DependencyInjection;
 using decaf.tests.common.Mocks;
 using Xunit;
 
-namespace decaf.core_tests
-{
-    public class SelectResultTests
-    {
-        private IQueryContainerInternal query;
+namespace decaf.core_tests;
 
-        public SelectResultTests()
+public class SelectResultTests
+{
+    private IQueryContainerInternal query;
+
+    public SelectResultTests()
+    {
+        var services = new ServiceCollection();
+        services.AddDecaf(o =>
         {
-            var services = new ServiceCollection();
-            services.AddDecaf(o =>
+            o.TrackUnitsOfWork();
+            o.OverrideDefaultLogLevel(LogLevel.Debug);
+            o.UseMockDatabase().WithMockConnectionDetails();
+        });
+
+        var provider = services.BuildServiceProvider();
+        var decaf = provider.GetService<IDecaf>();
+        var transient = decaf.BuildUnit();
+        query = transient.GetQuery() as IQueryContainerInternal;
+    }
+
+    [Fact]
+    public void ParseDynamicSucceeds()
+    {
+        // Arrange
+        var interim = query.Select()
+            .From("users", "u")
+            .Where(b =>
             {
-                o.TrackUnitsOfWork();
-                o.OverrideDefaultLogLevel(LogLevel.Debug);
-                o.UseMockDatabase().WithMockConnectionDetails();
+                b.ClauseHandling.DefaultToAnd();
+                b.Column("first_name", "u").Is().StartsWith("daniel");
             });
 
-            var provider = services.BuildServiceProvider();
-            var decaf = provider.GetService<IDecaf>();
-            var transient = decaf.BuildUnit();
-            query = transient.GetQuery() as IQueryContainerInternal;
-        }
-
-        [Fact]
-        public void ParseDynamicSucceeds()
+        // Act
+        Action method = () =>
         {
-            // Arrange
-            var interim = query.Select()
-                .From("users", "u")
-                .Where(b =>
-                {
-                    b.ClauseHandling.DefaultToAnd();
-                    b.Column("first_name", "u").Is().StartsWith("daniel");
-                });
-
-            // Act
-            Action method = () =>
+            interim.Select(b => new
             {
-                interim.Select(b => new
-                {
-                    Id = b.Is("id", "u"),
-                    FirstName = b.Is("first_name", "u"),
-                    LastName = b.Is("last_name", "u")
-                });
-            };
+                Id = b.Is("id", "u"),
+                FirstName = b.Is("first_name", "u"),
+                LastName = b.Is("last_name", "u")
+            });
+        };
 
-            // Assert
-            method.Should().NotThrow();
-        }
+        // Assert
+        method.Should().NotThrow();
+    }
 
-        [Fact]
-        public void ParseConcreteSucceeds()
+    [Fact]
+    public void ParseConcreteSucceeds()
+    {
+        // Arrange
+        var interim = query.Select()
+            .From("users", "u")
+            .Where(b =>
+            {
+                b.ClauseHandling.DefaultToAnd();
+                b.Column("first_name", "u").Is().StartsWith("daniel");
+            });
+
+        // Act
+        Action method = () =>
         {
-            // Arrange
-            var interim = query.Select()
-                .From("users", "u")
-                .Where(b =>
-                {
-                    b.ClauseHandling.DefaultToAnd();
-                    b.Column("first_name", "u").Is().StartsWith("daniel");
-                });
-
-            // Act
-            Action method = () =>
+            interim.Select(b => new Person
             {
-                interim.Select(b => new Person
-                {
-                    Id = b.Is<int>("id", "u"),
-                    FirstName = b.Is<string>("first_name", "u"),
-                    LastName = b.Is<string>("last_name", "u")
-                });
-            };
+                Id = b.Is<int>("id", "u"),
+                FirstName = b.Is<string>("first_name", "u"),
+                LastName = b.Is<string>("last_name", "u")
+            });
+        };
 
-            // Assert
-            method.Should().NotThrow();
-        }
+        // Assert
+        method.Should().NotThrow();
+    }
 
-        [Fact]
-        public void ParseConcreteWithExtensionsSucceeds()
+    [Fact]
+    public void ParseConcreteWithExtensionsSucceeds()
+    {
+        // Arrange
+        var interim = query.Select()
+            .From<Person>(p => p)
+            .Where(p => p.FirstName.Contains("smith"));
+
+        // Act
+        Action method = () =>
         {
-            // Arrange
-            var interim = query.Select()
-                .From<Person>(p => p)
-                .Where(p => p.FirstName.Contains("smith"));
-
-            // Act
-            Action method = () =>
+            interim.Select(p => new Person
             {
-                interim.Select(p => new Person
-                {
-                    Id = p.Id,
-                    FirstName = p.FirstName.ToLower(),
-                    LastName = p.LastName.ToUpper()
-                });
-            };
+                Id = p.Id,
+                FirstName = p.FirstName.ToLower(),
+                LastName = p.LastName.ToUpper()
+            });
+        };
 
-            // Assert
-            method.Should().NotThrow();
-        }
+        // Assert
+        method.Should().NotThrow();
+    }
 
-        [Fact]
-        public void ParseConcreteWithSubstringSucceeds()
+    [Fact]
+    public void ParseConcreteWithSubstringSucceeds()
+    {
+        // Arrange
+        var interim = query.Select()
+            .From<Person>(p => p)
+            .Where(p => p.FirstName.Contains("smith"));
+
+        // Act
+        Action method = () =>
         {
-            // Arrange
-            var interim = query.Select()
-                .From<Person>(p => p)
-                .Where(p => p.FirstName.Contains("smith"));
-
-            // Act
-            Action method = () =>
+            interim.Select(p => new Person
             {
-                interim.Select(p => new Person
-                {
-                    Id = p.Id,
-                    FirstName = p.FirstName.Substring(1),
-                    LastName = p.LastName
-                });
-            };
+                Id = p.Id,
+                FirstName = p.FirstName.Substring(1),
+                LastName = p.LastName
+            });
+        };
 
-            // Assert
-            method.Should().NotThrow();
-        }
+        // Assert
+        method.Should().NotThrow();
     }
 }
-

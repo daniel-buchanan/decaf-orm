@@ -1,17 +1,16 @@
-﻿namespace decaf.state.ValueSources.Insert
+﻿namespace decaf.state.ValueSources.Insert;
+
+public class QueryValuesSource : IInsertQueryValuesSource
 {
-	public class QueryValuesSource : IInsertQueryValuesSource
+	private QueryValuesSource(ISelectQueryContext context)
 	{
-		private QueryValuesSource(ISelectQueryContext context)
-		{
-			Query = context;
-		}
+		Query = context;
+	}
 
-		public ISelectQueryContext Query { get; private set; }
+	public ISelectQueryContext Query { get; private set; }
 
-		public static QueryValuesSource Create(ISelectQueryContext context)
-        {
-			return new QueryValuesSource(context);
-        }
+	public static QueryValuesSource Create(ISelectQueryContext context)
+	{
+		return new QueryValuesSource(context);
 	}
 }

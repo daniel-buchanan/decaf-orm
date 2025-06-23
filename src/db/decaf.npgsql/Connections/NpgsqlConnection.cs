@@ -2,22 +2,20 @@
 using decaf.common.Connections;
 using decaf.common.Logging;
 
-namespace decaf.npgsql
-{
-	public class NpgsqlConnection : Connection, IConnection
-	{
-        public NpgsqlConnection(
-            ILoggerProxy logger,
-            IConnectionDetails connectionDetails)
-            : base(logger, connectionDetails)
-        {
-        }
+namespace decaf.npgsql;
 
-        public override IDbConnection GetUnderlyingConnection()
-        {
-            var details = connectionDetails as INpgsqlConnectionDetails;
-            return new Npgsql.NpgsqlConnection(details.GetConnectionString());
-        }
+public class NpgsqlConnection : Connection, IConnection
+{
+    public NpgsqlConnection(
+        ILoggerProxy logger,
+        IConnectionDetails connectionDetails)
+        : base(logger, connectionDetails)
+    {
+    }
+
+    public override IDbConnection GetUnderlyingConnection()
+    {
+        var details = connectionDetails as INpgsqlConnectionDetails;
+        return new Npgsql.NpgsqlConnection(details.GetConnectionString());
     }
 }
-

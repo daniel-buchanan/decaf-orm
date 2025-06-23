@@ -1,7 +1,6 @@
-namespace decaf.services
+namespace decaf.services;
+
+public interface IService
 {
-    public interface IService
-    {
-        string LastExecutedSql { get; }
-    }
+    string LastExecutedSql { get; }
 }

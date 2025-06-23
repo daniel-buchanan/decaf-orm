@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace decaf
+namespace decaf;
+
+public interface IInsert
 {
-    public interface IInsert
-    {
-        IInsertInto Into(string table, string alias = null);
+    IInsertInto Into(string table, string alias = null);
 
-        IInsertInto<T> Into<T>();
+    IInsertInto<T> Into<T>();
 
-        IInsertInto<T> Into<T>(Expression<Func<T, object>> expression);
-    }
+    IInsertInto<T> Into<T>(Expression<Func<T, object>> expression);
 }
-

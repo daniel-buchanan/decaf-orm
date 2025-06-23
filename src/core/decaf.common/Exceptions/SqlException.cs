@@ -1,22 +1,21 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace decaf.common.Exceptions
+namespace decaf.common.Exceptions;
+
+public abstract class SqlException : Exception
 {
-    public abstract class SqlException : Exception
-    {
-        protected SqlException(string reason)
-            : base(reason) { }
+    protected SqlException(string reason)
+        : base(reason) { }
 
-        protected SqlException(Exception innerException, string reason = null)
-            : base(reason, innerException) { }
+    protected SqlException(Exception innerException, string reason = null)
+        : base(reason, innerException) { }
 
 
-        protected SqlException(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
+    protected SqlException(SerializationInfo info, StreamingContext context)
+        : base(info, context) { }
         
-        public string LastExecutedSql { get; private set; }
+    public string LastExecutedSql { get; private set; }
 
-        public void AddSql(string sql) => LastExecutedSql = sql;
-    }
+    public void AddSql(string sql) => LastExecutedSql = sql;
 }

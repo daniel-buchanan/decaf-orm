@@ -1,6 +1,6 @@
 # decaf-orm.db
 This package forms the basis for the actual implementations which generate the SQL to be executed.  
-Mostly this package provides common classes, and abstract implementations to provide a consistent execution experience.
+Mostly this package provides common classes, as well as a base ANSI-SQL implementation.
 
 **So what is decaf?**  
 Decaf is so named because it's like coffee without the kick.

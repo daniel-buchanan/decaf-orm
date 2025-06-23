@@ -1,10 +1,8 @@
-﻿namespace decaf.state
-{
-	public enum OutputSources
-	{
-		Inserted,
-		Updated,
-		Deleted
-	}
-}
+﻿namespace decaf.state;
 
+public enum OutputSources
+{
+	Inserted,
+	Updated,
+	Deleted
+}

@@ -1,13 +1,12 @@
 using System;
 using decaf.db.common;
 
-namespace decaf.npgsql
+namespace decaf.npgsql;
+
+public class NpgsqlTypeParser : TypeParser
 {
-    public class NpgsqlTypeParser : TypeParser
+    public override string Parse(Type type)
     {
-        public override string Parse(Type type)
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
     }
 }

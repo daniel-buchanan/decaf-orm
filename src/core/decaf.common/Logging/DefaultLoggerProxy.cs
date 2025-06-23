@@ -1,32 +1,30 @@
 ﻿using System;
 
-namespace decaf.common.Logging
+namespace decaf.common.Logging;
+
+public class DefaultLoggerProxy : LoggerProxy
 {
-	public class DefaultLoggerProxy : LoggerProxy
+    private readonly IStdOutputWrapper output;
+
+    public DefaultLoggerProxy(
+        DecafOptions options,
+        IStdOutputWrapper output) : base(options.DefaultLogLevel)
+        => this.output = output;
+
+    protected override void WriteMessage(LogLevel level, string message)
     {
-        private readonly IStdOutputWrapper output;
+        var timestamp = DateTime.Now.ToString("yy-MM-dd hh:mm:ss:fff");
+        output.WriteOut($"[{timestamp}] :: {LogLevelToString(level)} :: {message}");
+    }
 
-        public DefaultLoggerProxy(
-            DecafOptions options,
-            IStdOutputWrapper output) : base(options.DefaultLogLevel)
-            => this.output = output;
-
-        protected override void WriteMessage(LogLevel level, string message)
+    private string LogLevelToString(LogLevel level)
+    {
+        switch(level)
         {
-            var timestamp = DateTime.Now.ToString("yy-MM-dd hh:mm:ss:fff");
-            output.WriteOut($"[{timestamp}] :: {LogLevelToString(level)} :: {message}");
-        }
-
-        private string LogLevelToString(LogLevel level)
-        {
-            switch(level)
-            {
-                case LogLevel.Debug: return "DEBUG";
-                case LogLevel.Warning: return "WARN ";
-                case LogLevel.Error: return "ERROR";
-                default: return "INFO ";
-            }
+            case LogLevel.Debug: return "DEBUG";
+            case LogLevel.Warning: return "WARN ";
+            case LogLevel.Error: return "ERROR";
+            default: return "INFO ";
         }
     }
 }
-

@@ -1,16 +1,15 @@
 ﻿using System;
 
-namespace decaf.services
-{
-    /// <summary>
-    /// Meta data about a Key for an <see cref="IEntity"/> or <see cref="IEntity{TKey}"/>.
-    /// </summary>
-    public interface IExecutionNotifiable
-    {
+namespace decaf.services;
 
-        /// <summary>
-        /// Event fired before the query is executed.
-        /// </summary>
-        event EventHandler<PreExecutionEventArgs> OnBeforeExecution;
-    }
+/// <summary>
+/// Meta data about a Key for an <see cref="IEntity"/> or <see cref="IEntity{TKey}"/>.
+/// </summary>
+public interface IExecutionNotifiable
+{
+
+    /// <summary>
+    /// Event fired before the query is executed.
+    /// </summary>
+    event EventHandler<PreExecutionEventArgs> OnBeforeExecution;
 }

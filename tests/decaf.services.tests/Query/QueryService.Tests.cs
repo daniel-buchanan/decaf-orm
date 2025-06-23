@@ -8,275 +8,273 @@ using Microsoft.Extensions.DependencyInjection;
 using decaf.tests.common.Mocks;
 using Xunit;
 
-namespace decaf.services.tests.Query
+namespace decaf.services.tests.Query;
+
+public class QueryServiceTests
 {
-    public class QueryServiceTests
+    private readonly IService<Person> personService;
+
+    public QueryServiceTests()
     {
-        private readonly IService<Person> personService;
-
-        public QueryServiceTests()
+        var services = new ServiceCollection();
+        services.AddDecaf(o =>
         {
-            var services = new ServiceCollection();
-            services.AddDecaf(o =>
-            {
-                o.TrackUnitsOfWork();
-                o.OverrideDefaultLogLevel(LogLevel.Debug);
-                o.UseMockDatabase().WithMockConnectionDetails();
-            });
-            services.AddDecafService<Person>().AsScoped();
+            o.TrackUnitsOfWork();
+            o.OverrideDefaultLogLevel(LogLevel.Debug);
+            o.UseMockDatabase().WithMockConnectionDetails();
+        });
+        services.AddDecafService<Person>().AsScoped();
 
-            var provider = services.BuildServiceProvider();
-            personService = provider.GetService<IService<Person>>();
-        }
+        var provider = services.BuildServiceProvider();
+        personService = provider.GetService<IService<Person>>();
+    }
 
-        [Fact]
-        public void GetAllDoesNotThrow()
+    [Fact]
+    public void GetAllDoesNotThrow()
+    {
+        // Arrange
+
+        // Act
+        Action method = () =>
         {
-            // Arrange
-
-            // Act
-            Action method = () =>
-            {
-                personService.All();
-            };
-
-            // Assert
-            method.Should().NotThrow();
-        }
-
-        [Fact]
-        public void AllContextIsCorrect()
-        {
-            // Arrange
-            IQueryContext context = null;
-            personService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
-
-            // Act
             personService.All();
+        };
 
-            // Assert
-            context.Should().NotBeNull();
-            var selectContext = context as ISelectQueryContext;
-            selectContext.QueryTargets.Should().HaveCount(1);
-            selectContext.Columns.Should().Satisfy(
-                c => c.Name.Equals(nameof(Person.Id)),
-                c => c.Name.Equals(nameof(Person.FirstName)),
-                c => c.Name.Equals(nameof(Person.LastName)),
-                c => c.Name.Equals(nameof(Person.Email)),
-                c => c.Name.Equals(nameof(Person.CreatedAt)),
-                c => c.Name.Equals(nameof(Person.AddressId)));
-        }
+        // Assert
+        method.Should().NotThrow();
+    }
 
-        [Fact]
-        public void FindContextIsCorrect()
+    [Fact]
+    public void AllContextIsCorrect()
+    {
+        // Arrange
+        IQueryContext context = null;
+        personService.OnBeforeExecution += (_, args) =>
         {
-            // Arrange
-            IQueryContext context = null;
-            personService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
+            context = args.Context;
+        };
 
-            // Act
-            personService.Find(p => p.Id == 42);
+        // Act
+        personService.All();
 
-            // Assert
-            context.Should().NotBeNull();
-            var selectContext = context as ISelectQueryContext;
-            selectContext.QueryTargets.Should().HaveCount(1);
-            selectContext.Columns.Should().Satisfy(
-                c => c.Name.Equals(nameof(Person.Id)),
-                c => c.Name.Equals(nameof(Person.FirstName)),
-                c => c.Name.Equals(nameof(Person.LastName)),
-                c => c.Name.Equals(nameof(Person.Email)),
-                c => c.Name.Equals(nameof(Person.CreatedAt)),
-                c => c.Name.Equals(nameof(Person.AddressId)));
-            var where = selectContext.WhereClause as IColumn;
-            where.EqualityOperator.Should().Be(EqualityOperator.Equals);
-            where.Value.Should().Be(42);
-        }
+        // Assert
+        context.Should().NotBeNull();
+        var selectContext = context as ISelectQueryContext;
+        selectContext.QueryTargets.Should().HaveCount(1);
+        selectContext.Columns.Should().Satisfy(
+            c => c.Name.Equals(nameof(Person.Id)),
+            c => c.Name.Equals(nameof(Person.FirstName)),
+            c => c.Name.Equals(nameof(Person.LastName)),
+            c => c.Name.Equals(nameof(Person.Email)),
+            c => c.Name.Equals(nameof(Person.CreatedAt)),
+            c => c.Name.Equals(nameof(Person.AddressId)));
+    }
 
-        [Fact]
-        public void SingleWithEmptyThrows()
+    [Fact]
+    public void FindContextIsCorrect()
+    {
+        // Arrange
+        IQueryContext context = null;
+        personService.OnBeforeExecution += (_, args) =>
         {
-            // Arrange
-            Action method = () => personService.Single(p => p.Id == 42);
+            context = args.Context;
+        };
+
+        // Act
+        personService.Find(p => p.Id == 42);
+
+        // Assert
+        context.Should().NotBeNull();
+        var selectContext = context as ISelectQueryContext;
+        selectContext.QueryTargets.Should().HaveCount(1);
+        selectContext.Columns.Should().Satisfy(
+            c => c.Name.Equals(nameof(Person.Id)),
+            c => c.Name.Equals(nameof(Person.FirstName)),
+            c => c.Name.Equals(nameof(Person.LastName)),
+            c => c.Name.Equals(nameof(Person.Email)),
+            c => c.Name.Equals(nameof(Person.CreatedAt)),
+            c => c.Name.Equals(nameof(Person.AddressId)));
+        var where = selectContext.WhereClause as IColumn;
+        where.EqualityOperator.Should().Be(EqualityOperator.Equals);
+        where.Value.Should().Be(42);
+    }
+
+    [Fact]
+    public void SingleWithEmptyThrows()
+    {
+        // Arrange
+        Action method = () => personService.Single(p => p.Id == 42);
             
-            // Assert
-            method.Should().Throw<InvalidOperationException>();
-        }
+        // Assert
+        method.Should().Throw<InvalidOperationException>();
+    }
 
-        [Fact]
-        public void SingleWithManyThrows()
-        {
-            // Arrange
-            personService.Add(new() { Id = 41 }, new() { Id = 42 });
-            Action method = () => personService.Single(p => p.Id == 42);
+    [Fact]
+    public void SingleWithManyThrows()
+    {
+        // Arrange
+        personService.Add(new() { Id = 41 }, new() { Id = 42 });
+        Action method = () => personService.Single(p => p.Id == 42);
 
-            // Assert
-            method.Should().Throw<InvalidOperationException>();
-        }
+        // Assert
+        method.Should().Throw<InvalidOperationException>();
+    }
         
-        [Fact]
-        public void SingleContextIsCorrect()
+    [Fact]
+    public void SingleContextIsCorrect()
+    {
+        // Arrange
+        personService.Add(new Person() { Id = 42 });
+        IQueryContext context = null;
+        personService.OnBeforeExecution += (_, args) =>
         {
-            // Arrange
-            personService.Add(new Person() { Id = 42 });
-            IQueryContext context = null;
-            personService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
+            context = args.Context;
+        };
 
-            // Act
-            try
-            {
-                personService.Single(p => p.Id == 42);
-            }
-            catch
-            {
-                // ignored
-            }
-
-            // Assert
-            context.Should().NotBeNull();
-            var selectContext = context as ISelectQueryContext;
-            selectContext.QueryTargets.Should().HaveCount(1);
-            selectContext.Columns.Should().Satisfy(
-                c => c.Name.Equals(nameof(Person.Id)),
-                c => c.Name.Equals(nameof(Person.FirstName)),
-                c => c.Name.Equals(nameof(Person.LastName)),
-                c => c.Name.Equals(nameof(Person.Email)),
-                c => c.Name.Equals(nameof(Person.CreatedAt)),
-                c => c.Name.Equals(nameof(Person.AddressId)));
-            var where = selectContext.WhereClause as IColumn;
-            where.EqualityOperator.Should().Be(EqualityOperator.Equals);
-            where.Value.Should().Be(42);
+        // Act
+        try
+        {
+            personService.Single(p => p.Id == 42);
         }
+        catch
+        {
+            // ignored
+        }
+
+        // Assert
+        context.Should().NotBeNull();
+        var selectContext = context as ISelectQueryContext;
+        selectContext.QueryTargets.Should().HaveCount(1);
+        selectContext.Columns.Should().Satisfy(
+            c => c.Name.Equals(nameof(Person.Id)),
+            c => c.Name.Equals(nameof(Person.FirstName)),
+            c => c.Name.Equals(nameof(Person.LastName)),
+            c => c.Name.Equals(nameof(Person.Email)),
+            c => c.Name.Equals(nameof(Person.CreatedAt)),
+            c => c.Name.Equals(nameof(Person.AddressId)));
+        var where = selectContext.WhereClause as IColumn;
+        where.EqualityOperator.Should().Be(EqualityOperator.Equals);
+        where.Value.Should().Be(42);
+    }
         
-        [Fact]
-        public void SingleOrDefaultContextIsCorrect()
+    [Fact]
+    public void SingleOrDefaultContextIsCorrect()
+    {
+        // Arrange
+        IQueryContext context = null;
+        personService.OnBeforeExecution += (_, args) =>
         {
-            // Arrange
-            IQueryContext context = null;
-            personService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
+            context = args.Context;
+        };
 
-            // Act
-            personService.SingleOrDefault(p => p.Id == 42);
+        // Act
+        personService.SingleOrDefault(p => p.Id == 42);
 
-            // Assert
-            context.Should().NotBeNull();
-            var selectContext = context as ISelectQueryContext;
-            selectContext.QueryTargets.Should().HaveCount(1);
-            selectContext.Columns.Should().Satisfy(
-                c => c.Name.Equals(nameof(Person.Id)),
-                c => c.Name.Equals(nameof(Person.FirstName)),
-                c => c.Name.Equals(nameof(Person.LastName)),
-                c => c.Name.Equals(nameof(Person.Email)),
-                c => c.Name.Equals(nameof(Person.CreatedAt)),
-                c => c.Name.Equals(nameof(Person.AddressId)));
-            var where = selectContext.WhereClause as IColumn;
-            where.EqualityOperator.Should().Be(EqualityOperator.Equals);
-            where.Value.Should().Be(42);
-        }
+        // Assert
+        context.Should().NotBeNull();
+        var selectContext = context as ISelectQueryContext;
+        selectContext.QueryTargets.Should().HaveCount(1);
+        selectContext.Columns.Should().Satisfy(
+            c => c.Name.Equals(nameof(Person.Id)),
+            c => c.Name.Equals(nameof(Person.FirstName)),
+            c => c.Name.Equals(nameof(Person.LastName)),
+            c => c.Name.Equals(nameof(Person.Email)),
+            c => c.Name.Equals(nameof(Person.CreatedAt)),
+            c => c.Name.Equals(nameof(Person.AddressId)));
+        var where = selectContext.WhereClause as IColumn;
+        where.EqualityOperator.Should().Be(EqualityOperator.Equals);
+        where.Value.Should().Be(42);
+    }
         
-        [Fact]
-        public void FirstContextIsCorrect()
+    [Fact]
+    public void FirstContextIsCorrect()
+    {
+        // Arrange
+        IQueryContext context = null;
+        personService.OnBeforeExecution += (_, args) =>
         {
-            // Arrange
-            IQueryContext context = null;
-            personService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
+            context = args.Context;
+        };
 
-            // Act
-            try
-            {
-                personService.First(p => p.Id == 42);
-            }
-            catch
-            {
-                // ignored
-            }
-
-            // Assert
-            context.Should().NotBeNull();
-            var selectContext = context as ISelectQueryContext;
-            selectContext.QueryTargets.Should().HaveCount(1);
-            selectContext.Columns.Should().Satisfy(
-                c => c.Name.Equals(nameof(Person.Id)),
-                c => c.Name.Equals(nameof(Person.FirstName)),
-                c => c.Name.Equals(nameof(Person.LastName)),
-                c => c.Name.Equals(nameof(Person.Email)),
-                c => c.Name.Equals(nameof(Person.CreatedAt)),
-                c => c.Name.Equals(nameof(Person.AddressId)));
-            var where = selectContext.WhereClause as IColumn;
-            where.EqualityOperator.Should().Be(EqualityOperator.Equals);
-            where.Value.Should().Be(42);
+        // Act
+        try
+        {
+            personService.First(p => p.Id == 42);
         }
+        catch
+        {
+            // ignored
+        }
+
+        // Assert
+        context.Should().NotBeNull();
+        var selectContext = context as ISelectQueryContext;
+        selectContext.QueryTargets.Should().HaveCount(1);
+        selectContext.Columns.Should().Satisfy(
+            c => c.Name.Equals(nameof(Person.Id)),
+            c => c.Name.Equals(nameof(Person.FirstName)),
+            c => c.Name.Equals(nameof(Person.LastName)),
+            c => c.Name.Equals(nameof(Person.Email)),
+            c => c.Name.Equals(nameof(Person.CreatedAt)),
+            c => c.Name.Equals(nameof(Person.AddressId)));
+        var where = selectContext.WhereClause as IColumn;
+        where.EqualityOperator.Should().Be(EqualityOperator.Equals);
+        where.Value.Should().Be(42);
+    }
         
-        [Fact]
-        public void FirstOrDefaultContextIsCorrect()
+    [Fact]
+    public void FirstOrDefaultContextIsCorrect()
+    {
+        // Arrange
+        IQueryContext context = null;
+        personService.OnBeforeExecution += (_, args) =>
         {
-            // Arrange
-            IQueryContext context = null;
-            personService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
+            context = args.Context;
+        };
 
-            // Act
-            personService.FirstOrDefault(p => p.Id == 42);
+        // Act
+        personService.FirstOrDefault(p => p.Id == 42);
 
-            // Assert
-            context.Should().NotBeNull();
-            var selectContext = context as ISelectQueryContext;
-            selectContext.QueryTargets.Should().HaveCount(1);
-            selectContext.Columns.Should().Satisfy(
-                c => c.Name.Equals(nameof(Person.Id)),
-                c => c.Name.Equals(nameof(Person.FirstName)),
-                c => c.Name.Equals(nameof(Person.LastName)),
-                c => c.Name.Equals(nameof(Person.Email)),
-                c => c.Name.Equals(nameof(Person.CreatedAt)),
-                c => c.Name.Equals(nameof(Person.AddressId)));
-            var where = selectContext.WhereClause as IColumn;
-            where.EqualityOperator.Should().Be(EqualityOperator.Equals);
-            where.Value.Should().Be(42);
-        }
+        // Assert
+        context.Should().NotBeNull();
+        var selectContext = context as ISelectQueryContext;
+        selectContext.QueryTargets.Should().HaveCount(1);
+        selectContext.Columns.Should().Satisfy(
+            c => c.Name.Equals(nameof(Person.Id)),
+            c => c.Name.Equals(nameof(Person.FirstName)),
+            c => c.Name.Equals(nameof(Person.LastName)),
+            c => c.Name.Equals(nameof(Person.Email)),
+            c => c.Name.Equals(nameof(Person.CreatedAt)),
+            c => c.Name.Equals(nameof(Person.AddressId)));
+        var where = selectContext.WhereClause as IColumn;
+        where.EqualityOperator.Should().Be(EqualityOperator.Equals);
+        where.Value.Should().Be(42);
+    }
 
-        [Fact]
-        public void UpdateContextIsCorrect()
+    [Fact]
+    public void UpdateContextIsCorrect()
+    {
+        // Arrange
+        IQueryContext context = null;
+        personService.OnBeforeExecution += (_, args) =>
         {
-            // Arrange
-            IQueryContext context = null;
-            personService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
+            context = args.Context;
+        };
 
-            // Act
-            personService.Update(new
+        // Act
+        personService.Update(new
             {
                 FirstName = "bob"
             },
             p => p.Id == 42);
 
-            // Assert
-            context.Should().NotBeNull();
-            var updateContext = context as IUpdateQueryContext;
-            updateContext.QueryTargets.Should().HaveCount(1);
-            updateContext.Updates.Should().HaveCount(1);
-            var where = updateContext.WhereClause as IColumn;
-            where.EqualityOperator.Should().Be(EqualityOperator.Equals);
-            where.Value.Should().Be(42);
-        }
+        // Assert
+        context.Should().NotBeNull();
+        var updateContext = context as IUpdateQueryContext;
+        updateContext.QueryTargets.Should().HaveCount(1);
+        updateContext.Updates.Should().HaveCount(1);
+        var where = updateContext.WhereClause as IColumn;
+        where.EqualityOperator.Should().Be(EqualityOperator.Equals);
+        where.Value.Should().Be(42);
     }
 }
-

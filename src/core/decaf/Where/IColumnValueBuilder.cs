@@ -1,44 +1,42 @@
 ﻿using System.Collections.Generic;
 
-namespace decaf
+namespace decaf;
+
+public interface IColumnValueBuilder
 {
-    public interface IColumnValueBuilder
-    {
-        void EqualTo<T>(T value);
+    void EqualTo<T>(T value);
 
-        IColumnMatchBuilder EqualTo();
+    IColumnMatchBuilder EqualTo();
 
-        void Like<T>(T value);
+    void Like<T>(T value);
 
-        void StartsWith<T>(T value);
+    void StartsWith<T>(T value);
 
-        void EndsWith<T>(T value);
+    void EndsWith<T>(T value);
 
-        void In<T>(params T[] values);
+    void In<T>(params T[] values);
 
-        void In<T>(IEnumerable<T> values);
+    void In<T>(IEnumerable<T> values);
 
-        void LessThan<T>(T value);
+    void LessThan<T>(T value);
 
-        IColumnMatchBuilder LessThan();
+    IColumnMatchBuilder LessThan();
 
-        void LessThanOrEqualTo<T>(T value);
+    void LessThanOrEqualTo<T>(T value);
 
-        IColumnMatchBuilder LessThanOrEqualTo();
+    IColumnMatchBuilder LessThanOrEqualTo();
 
-        void GreaterThan<T>(T value);
+    void GreaterThan<T>(T value);
 
-        IColumnMatchBuilder GreaterThan();
+    IColumnMatchBuilder GreaterThan();
 
-        void GreaterThanOrEqualTo<T>(T value);
+    void GreaterThanOrEqualTo<T>(T value);
 
-        IColumnMatchBuilder GreaterThanOrEqualTo();
+    IColumnMatchBuilder GreaterThanOrEqualTo();
 
-        void Between<T>(T start, T end);
+    void Between<T>(T start, T end);
 
-        void Null();
+    void Null();
 
-        void NullOrWhitespace();
-    }
+    void NullOrWhitespace();
 }
-

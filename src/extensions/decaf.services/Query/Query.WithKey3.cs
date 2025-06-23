@@ -6,65 +6,63 @@ using decaf.common;
 using decaf.common.Connections;
 using decaf.common.Utilities;
 
-namespace decaf.services
+namespace decaf.services;
+
+internal class Query<TEntity, TKey1, TKey2, TKey3> :
+    Query<TEntity>,
+    IQuery<TEntity, TKey1, TKey2, TKey3>
+    where TEntity : class, IEntity<TKey1, TKey2, TKey3>, new()
 {
-    internal class Query<TEntity, TKey1, TKey2, TKey3> :
-        Query<TEntity>,
-        IQuery<TEntity, TKey1, TKey2, TKey3>
-        where TEntity : class, IEntity<TKey1, TKey2, TKey3>, new()
+    public Query(IDecaf decaf, ISqlFactory sqlFactory) : base(decaf, sqlFactory) { }
+
+    private Query(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+
+    public new static IQuery<TEntity, TKey1, TKey2, TKey3> Create(IUnitOfWork unitOfWork)
+        => new Query<TEntity, TKey1, TKey2, TKey3>(unitOfWork);
+
+    /// <inheritdoc/>
+    public TEntity Get(TKey1 key1, TKey2 key2, TKey3 key3)
+        => GetAsync(key1, key2, key3).WaitFor();
+
+    /// <inheritdoc/>
+    public IEnumerable<TEntity> Get(params ICompositeKeyValue<TKey1, TKey2, TKey3>[] keys)
+        => GetAsync(keys?.AsEnumerable()).WaitFor();
+
+    /// <inheritdoc/>
+    public IEnumerable<TEntity> Get(IEnumerable<ICompositeKeyValue<TKey1, TKey2, TKey3>> keys)
+        => GetAsync(keys).WaitFor();
+
+    /// <inheritdoc/>
+    public async Task<TEntity> GetAsync(TKey1 key1, TKey2 key2, TKey3 key3, CancellationToken cancellationToken = default)
     {
-        public Query(IDecaf decaf, ISqlFactory sqlFactory) : base(decaf, sqlFactory) { }
+        var results = await GetAsync(new[] { CompositeKeyValue.Create(key1, key2, key3) }, cancellationToken);
+        return results.FirstOrDefault();
+    }
 
-        private Query(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+    /// <inheritdoc/>
+    public async Task<IEnumerable<TEntity>> GetAsync(ICompositeKeyValue<TKey1, TKey2, TKey3>[] keys, CancellationToken cancellationToken = default)
+        => await GetAsync(keys.AsEnumerable(), cancellationToken);
 
-        public new static IQuery<TEntity, TKey1, TKey2, TKey3> Create(IUnitOfWork unitOfWork)
-            => new Query<TEntity, TKey1, TKey2, TKey3>(unitOfWork);
+    /// <inheritdoc/>
+    public async Task<IEnumerable<TEntity>> GetAsync(IEnumerable<ICompositeKeyValue<TKey1, TKey2, TKey3>> keys, CancellationToken cancellationToken = default)
+    {
+        var tmp = new TEntity();
 
-        /// <inheritdoc/>
-        public TEntity Get(TKey1 key1, TKey2 key2, TKey3 key3)
-            => GetAsync(key1, key2, key3).WaitFor();
-
-        /// <inheritdoc/>
-        public IEnumerable<TEntity> Get(params ICompositeKeyValue<TKey1, TKey2, TKey3>[] keys)
-            => GetAsync(keys?.AsEnumerable()).WaitFor();
-
-        /// <inheritdoc/>
-        public IEnumerable<TEntity> Get(IEnumerable<ICompositeKeyValue<TKey1, TKey2, TKey3>> keys)
-            => GetAsync(keys).WaitFor();
-
-        /// <inheritdoc/>
-        public async Task<TEntity> GetAsync(TKey1 key1, TKey2 key2, TKey3 key3, CancellationToken cancellationToken = default)
+        return await GetByKeysAsync(keys, (keyBatch, q, b) =>
         {
-            var results = await GetAsync(new[] { CompositeKeyValue.Create(key1, key2, key3) }, cancellationToken);
-            return results.FirstOrDefault();
-        }
-
-        /// <inheritdoc/>
-        public async Task<IEnumerable<TEntity>> GetAsync(ICompositeKeyValue<TKey1, TKey2, TKey3>[] keys, CancellationToken cancellationToken = default)
-            => await GetAsync(keys.AsEnumerable(), cancellationToken);
-
-        /// <inheritdoc/>
-        public async Task<IEnumerable<TEntity>> GetAsync(IEnumerable<ICompositeKeyValue<TKey1, TKey2, TKey3>> keys, CancellationToken cancellationToken = default)
-        {
-            var tmp = new TEntity();
-
-            return await GetByKeysAsync(keys, (keyBatch, q, b) =>
+            var key1Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentOne);
+            var key2Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentTwo);
+            var key3Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentThree);
+            b.ClauseHandling.DefaultToOr();
+            foreach (var k in keyBatch)
             {
-                var key1Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentOne);
-                var key2Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentTwo);
-                var key3Name = GetKeyColumnName<TEntity>(q, tmp.KeyMetadata.ComponentThree);
-                b.ClauseHandling.DefaultToOr();
-                foreach (var k in keyBatch)
+                b.And(ab =>
                 {
-                    b.And(ab =>
-                    {
-                        ab.Column(key1Name, "t").Is().EqualTo(k.ComponentOne);
-                        ab.Column(key2Name, "t").Is().EqualTo(k.ComponentTwo);
-                        ab.Column(key3Name, "t").Is().EqualTo(k.ComponentThree);
-                    });
-                }
-            }, cancellationToken);
-        }
+                    ab.Column(key1Name, "t").Is().EqualTo(k.ComponentOne);
+                    ab.Column(key2Name, "t").Is().EqualTo(k.ComponentTwo);
+                    ab.Column(key3Name, "t").Is().EqualTo(k.ComponentThree);
+                });
+            }
+        }, cancellationToken);
     }
 }
-

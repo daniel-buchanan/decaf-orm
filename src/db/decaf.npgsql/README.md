@@ -7,9 +7,9 @@ The package has two dependencies:
 
 Both of these packages are .Net Standard 2.0 only, and thus are usable across almost all .Net Core, .Net Framework and other .Net Standard projects.
 
-To use Npgsql:
+To use Npgsql (for example):
 ```csharp
-services.AddDecaf(o => o.UseNpgsql(b => b.WithConnectionDetails(...)));
+services.AddDecaf(o => o.UseNpgsql(b => b.WithConnectionDetails(...).UseQuotedIdentifiers()));
 ```  
 
 Ideally your `IConnectionDetails` would be injected already so you don't need to use `WithConnectionDetails` or `WithConnectionString`.

@@ -1,6 +1,5 @@
-﻿namespace decaf.state
+﻿namespace decaf.state;
+
+public interface IUpdateSource
 {
-    public interface IUpdateSource
-    {
-    }
 }

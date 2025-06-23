@@ -4,146 +4,144 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace decaf.sqlserver.tests
+namespace decaf.sqlserver.tests;
+
+public class DeleteBuilderTests : SqlServerTest
 {
-    public class DeleteBuilderTests : SqlServerTest
+    private readonly IQueryContainer query;
+
+    public DeleteBuilderTests() : base()
     {
-        private readonly IQueryContainer query;
+        BuildServiceProvider();
 
-        public DeleteBuilderTests() : base()
-        {
-            BuildServiceProvider();
+        var decaf = provider.GetService<IDecaf>();
+        var transient = decaf.BuildUnit();
+        query = transient.GetQuery() as IQueryContainer;
+    }
 
-            var decaf = provider.GetService<IDecaf>();
-            var transient = decaf.BuildUnit();
-            query = transient.GetQuery() as IQueryContainer;
-        }
+    [Fact]
+    public void SimpleDeleteSucceeds()
+    {
+        // Arrange
+        var expected = "delete from\\r\\n  users u\\r\\nwhere\\r\\n(u.sub = @p1)\\r\\noutput\\r\\n  id\\r\\n";
+        expected = expected.Replace("\\r\\n", Environment.NewLine);
+        var subValue = Guid.NewGuid();
 
-        [Fact]
-        public void SimpleDeleteSucceeds()
-        {
-            // Arrange
-            var expected = "delete from\\r\\n  users u\\r\\nwhere\\r\\n(u.sub = @p1)\\r\\noutput\\r\\n  id\\r\\n";
-            expected = expected.Replace("\\r\\n", Environment.NewLine);
-            var subValue = Guid.NewGuid();
+        // Act
+        var q = query.Delete()
+            .From("users", "u")
+            .Where(b => b.Column("sub", "u").Is().EqualTo(subValue))
+            .Output("id");
 
-            // Act
-            var q = query.Delete()
-                .From("users", "u")
-                .Where(b => b.Column("sub", "u").Is().EqualTo(subValue))
-                .Output("id");
+        var sql = q.GetSql();
 
-            var sql = q.GetSql();
+        // Assert
+        sql.Should().Be(expected);
+    }
 
-            // Assert
-            sql.Should().Be(expected);
-        }
+    [Fact]
+    public void SimpleDeleteReturnsCorrectParameters()
+    {
+        // Arrange
+        var subValue = Guid.NewGuid();
 
-        [Fact]
-        public void SimpleDeleteReturnsCorrectParameters()
-        {
-            // Arrange
-            var subValue = Guid.NewGuid();
+        // Act
+        var q = query.Delete()
+            .From("users", "u")
+            .Where(b => b.Column("sub", "u").Is().EqualTo(subValue));
 
-            // Act
-            var q = query.Delete()
-                .From("users", "u")
-                .Where(b => b.Column("sub", "u").Is().EqualTo(subValue));
+        var parameters = q.GetSqlParameters();
 
-            var parameters = q.GetSqlParameters();
+        // Assert
+        parameters.Should().Satisfy(
+            p => p.Key == "p1" && ((Guid)p.Value) == subValue);
+    }
 
-            // Assert
-            parameters.Should().Satisfy(
-                p => p.Key == "p1" && ((Guid)p.Value) == subValue);
-        }
+    [Fact]
+    public void DeleteWithLikeSucceeds()
+    {
+        // Arrange
+        var expected = "delete from\\r\\n  users u\\r\\nwhere\\r\\n(u.sub like '%@p1%')\\r\\noutput\\r\\n  id\\r\\n";
+        expected = expected.Replace("\\r\\n", Environment.NewLine);
+        var subValue = Guid.NewGuid();
 
-        [Fact]
-        public void DeleteWithLikeSucceeds()
-        {
-            // Arrange
-            var expected = "delete from\\r\\n  users u\\r\\nwhere\\r\\n(u.sub like '%@p1%')\\r\\noutput\\r\\n  id\\r\\n";
-            expected = expected.Replace("\\r\\n", Environment.NewLine);
-            var subValue = Guid.NewGuid();
+        // Act
+        var q = query.Delete()
+            .From("users", "u")
+            .Where(b => b.Column("sub", "u").Is().Like("bob"))
+            .Output("id");
 
-            // Act
-            var q = query.Delete()
-                .From("users", "u")
-                .Where(b => b.Column("sub", "u").Is().Like("bob"))
-                .Output("id");
+        var sql = q.GetSql();
 
-            var sql = q.GetSql();
+        // Assert
+        sql.Should().Be(expected);
+    }
 
-            // Assert
-            sql.Should().Be(expected);
-        }
+    [Fact]
+    public void DeleteWithStartsWithSucceeds()
+    {
+        // Arrange
+        var expected = "delete from\\r\\n  users u\\r\\nwhere\\r\\n(u.sub like '@p1%')\\r\\noutput\\r\\n  id\\r\\n";
+        expected = expected.Replace("\\r\\n", Environment.NewLine);
+        var subValue = Guid.NewGuid();
 
-        [Fact]
-        public void DeleteWithStartsWithSucceeds()
-        {
-            // Arrange
-            var expected = "delete from\\r\\n  users u\\r\\nwhere\\r\\n(u.sub like '@p1%')\\r\\noutput\\r\\n  id\\r\\n";
-            expected = expected.Replace("\\r\\n", Environment.NewLine);
-            var subValue = Guid.NewGuid();
+        // Act
+        var q = query.Delete()
+            .From("users", "u")
+            .Where(b => b.Column("sub", "u").Is().StartsWith("bob"))
+            .Output("id");
 
-            // Act
-            var q = query.Delete()
-                .From("users", "u")
-                .Where(b => b.Column("sub", "u").Is().StartsWith("bob"))
-                .Output("id");
+        var sql = q.GetSql();
 
-            var sql = q.GetSql();
+        // Assert
+        sql.Should().Be(expected);
+    }
 
-            // Assert
-            sql.Should().Be(expected);
-        }
+    [Fact]
+    public void DeleteWithEndsWithSucceeds()
+    {
+        // Arrange
+        var expected = "delete from\\r\\n  users u\\r\\nwhere\\r\\n(u.sub like '%@p1')\\r\\noutput\\r\\n  id\\r\\n";
+        expected = expected.Replace("\\r\\n", Environment.NewLine);
+        var subValue = Guid.NewGuid();
 
-        [Fact]
-        public void DeleteWithEndsWithSucceeds()
-        {
-            // Arrange
-            var expected = "delete from\\r\\n  users u\\r\\nwhere\\r\\n(u.sub like '%@p1')\\r\\noutput\\r\\n  id\\r\\n";
-            expected = expected.Replace("\\r\\n", Environment.NewLine);
-            var subValue = Guid.NewGuid();
+        // Act
+        var q = query.Delete()
+            .From("users", "u")
+            .Where(b => b.Column("sub", "u").Is().EndsWith("bob"))
+            .Output("id");
 
-            // Act
-            var q = query.Delete()
-                .From("users", "u")
-                .Where(b => b.Column("sub", "u").Is().EndsWith("bob"))
-                .Output("id");
+        var sql = q.GetSql();
 
-            var sql = q.GetSql();
+        // Assert
+        sql.Should().Be(expected);
+    }
 
-            // Assert
-            sql.Should().Be(expected);
-        }
+    [Fact]
+    public void DeleteWithMultipleConditionsSucceeds()
+    {
+        // Arrange
+        var expected = "delete from\\r\\n  users u\\r\\nwhere\\r\\n(\\r\\n  (u.sub = @p1)\\r\\n  and\\r\\n  (u.email like '%@p2')\\r\\n)\\r\\noutput\\r\\n  id,\\r\\n  sub\\r\\n";
+        expected = expected.Replace("\\r\\n", Environment.NewLine);
+        var subValue = Guid.NewGuid();
 
-        [Fact]
-        public void DeleteWithMultipleConditionsSucceeds()
-        {
-            // Arrange
-            var expected = "delete from\\r\\n  users u\\r\\nwhere\\r\\n(\\r\\n  (u.sub = @p1)\\r\\n  and\\r\\n  (u.email like '%@p2')\\r\\n)\\r\\noutput\\r\\n  id,\\r\\n  sub\\r\\n";
-            expected = expected.Replace("\\r\\n", Environment.NewLine);
-            var subValue = Guid.NewGuid();
-
-            // Act
-            var q = query.Delete()
-                .From("users", "u")
-                .Where(b =>
+        // Act
+        var q = query.Delete()
+            .From("users", "u")
+            .Where(b =>
+            {
+                b.And(ba =>
                 {
-                    b.And(ba =>
-                    {
-                        ba.Column("sub", "u").Is().EqualTo("bob");
-                        ba.Column("email", "u").Is().EndsWith(".com");
-                    });
-                })
-                .Output("id")
-                .Output("sub");
+                    ba.Column("sub", "u").Is().EqualTo("bob");
+                    ba.Column("email", "u").Is().EndsWith(".com");
+                });
+            })
+            .Output("id")
+            .Output("sub");
 
-            var sql = q.GetSql();
+        var sql = q.GetSql();
 
-            // Assert
-            sql.Should().Be(expected);
-        }
+        // Assert
+        sql.Should().Be(expected);
     }
 }
-

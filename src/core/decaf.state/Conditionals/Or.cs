@@ -2,21 +2,19 @@
 using System.Linq;
 using decaf.common;
 
-namespace decaf.state.Conditionals
+namespace decaf.state.Conditionals;
+
+public class Or : Where
 {
-	public class Or : Where
+	private Or(params IWhere[] children) : base(children) { }
+
+	public static Or Where(params IWhere[] items)
 	{
-		private Or(params IWhere[] children) : base(children) { }
+		return new Or(items);
+	}
 
-		public static Or Where(params IWhere[] items)
-        {
-			return new Or(items);
-        }
-
-        public static Or Where(IEnumerable<IWhere> items)
-        {
-            return new Or(items.ToArray());
-        }
-    }
+	public static Or Where(IEnumerable<IWhere> items)
+	{
+		return new Or(items.ToArray());
+	}
 }
-

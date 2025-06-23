@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace decaf.common.Connections
+namespace decaf.common.Connections;
+
+[Serializable]
+public class ConnectionModificationException : Exception
 {
-    [Serializable]
-	public class ConnectionModificationException : Exception
-	{
-		public ConnectionModificationException() { }
+	public ConnectionModificationException() { }
 
-        protected ConnectionModificationException(SerializationInfo info, StreamingContext context)
-			: base(info, context) { }
+	protected ConnectionModificationException(SerializationInfo info, StreamingContext context)
+		: base(info, context) { }
 
-        public ConnectionModificationException(string message) : base(message) { }
-	}
+	public ConnectionModificationException(string message) : base(message) { }
 }
-

@@ -1,9 +1,7 @@
-﻿namespace decaf.common
-{
-	public enum SortOrder
-	{
-		Ascending,
-		Descending
-	}
-}
+﻿namespace decaf.common;
 
+public enum SortOrder
+{
+	Ascending,
+	Descending
+}

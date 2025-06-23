@@ -1,10 +1,8 @@
-﻿namespace decaf.state.ValueSources.Update
+﻿namespace decaf.state.ValueSources.Update;
+
+public class EmptySource : IUpdateSource
 {
-	public class EmptySource : IUpdateSource
-	{
-		private EmptySource() { }
+	private EmptySource() { }
 
-		public static EmptySource Create() => new EmptySource();
-	}
+	public static EmptySource Create() => new EmptySource();
 }
-

@@ -1,19 +1,18 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace decaf.common.Exceptions
+namespace decaf.common.Exceptions;
+
+[Serializable]
+public class RollbackException : SqlException
 {
-    [Serializable]
-    public class RollbackException : SqlException
-    {
-        public RollbackException(string reason)
-            : base(reason) { }
+    public RollbackException(string reason)
+        : base(reason) { }
 
-        public RollbackException(Exception innerException, string reason = null)
-            : base(innerException, reason) { }
+    public RollbackException(Exception innerException, string reason = null)
+        : base(innerException, reason) { }
 
 
-        protected RollbackException(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-    }
+    protected RollbackException(SerializationInfo info, StreamingContext context)
+        : base(info, context) { }
 }

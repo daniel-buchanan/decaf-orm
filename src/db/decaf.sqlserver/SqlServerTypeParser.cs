@@ -1,13 +1,12 @@
 using System;
 using decaf.db.common;
 
-namespace decaf.sqlserver
+namespace decaf.sqlserver;
+
+public class SqlServerTypeParser : TypeParser
 {
-    public class SqlServerTypeParser : TypeParser
+    public override string Parse(Type type)
     {
-        public override string Parse(Type type)
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
     }
 }

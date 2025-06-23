@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace decaf.common.Exceptions
+namespace decaf.common.Exceptions;
+
+[Serializable]
+public class DecafOptionsInvalidException : Exception
 {
-    [Serializable]
-    public class DecafOptionsInvalidException : Exception
-	{
-		public DecafOptionsInvalidException(string reason)
-            : base(reason) { }
+    public DecafOptionsInvalidException(string reason)
+        : base(reason) { }
 
 
-        protected DecafOptionsInvalidException(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-    }
+    protected DecafOptionsInvalidException(SerializationInfo info, StreamingContext context)
+        : base(info, context) { }
 }
-

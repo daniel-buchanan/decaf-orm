@@ -1,13 +1,11 @@
-﻿namespace decaf.common.ValueFunctions
+﻿namespace decaf.common.ValueFunctions;
+
+public class DatePart : ValueFunction<int>
 {
-	public class DatePart : ValueFunction<int>
+	private DatePart(common.DatePart part)
+		: base(ValueFunction.DatePart, part)
 	{
-		private DatePart(common.DatePart part)
-			: base(ValueFunction.DatePart, part)
-		{
-		}
-
-		public static DatePart Create(common.DatePart part) => new DatePart(part);
 	}
-}
 
+	public static DatePart Create(common.DatePart part) => new DatePart(part);
+}

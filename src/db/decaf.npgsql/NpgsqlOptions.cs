@@ -1,19 +1,17 @@
 ﻿using System.Data;
 using decaf.db.common;
 
-namespace decaf.npgsql
+namespace decaf.npgsql;
+
+public class NpgsqlOptions : DatabaseOptions
 {
-    public class NpgsqlOptions : DatabaseOptions
+	public NpgsqlOptions()
 	{
-		public NpgsqlOptions()
-		{
-			TransactionIsolationLevel = IsolationLevel.ReadCommitted;
-		}
+		TransactionIsolationLevel = IsolationLevel.ReadCommitted;
+	}
 
-		/// <summary>
-		/// The transaction isolation level, <see cref="IsolationLevel"/>.
-		/// </summary>
-		public IsolationLevel TransactionIsolationLevel { get; private set; }
-    }
+	/// <summary>
+	/// The transaction isolation level, <see cref="IsolationLevel"/>.
+	/// </summary>
+	public IsolationLevel TransactionIsolationLevel { get; private set; }
 }
-

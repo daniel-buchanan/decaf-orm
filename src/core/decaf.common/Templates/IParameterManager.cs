@@ -1,16 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace decaf.common.Templates
+namespace decaf.common.Templates;
+
+public interface IParameterManager
 {
-	public interface IParameterManager
-	{
-		void Clear();
+	void Clear();
 
-		SqlParameter Add<T>(T state, object value);
+	SqlParameter Add<T>(T state, object value);
 
-		IEnumerable<SqlParameter> GetParameters();
+	IEnumerable<SqlParameter> GetParameters();
 
-		Dictionary<string, object> GetParameterValues(bool includePrefix = false);
-	}
+	Dictionary<string, object> GetParameterValues(bool includePrefix = false);
 }
-

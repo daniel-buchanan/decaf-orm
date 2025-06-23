@@ -2,39 +2,37 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace decaf
+namespace decaf;
+
+public interface IExecute<T> : IGetSql
 {
-	public interface IExecute<T> : IGetSql
-	{
-		IEnumerable<T> AsEnumerable();
+	IEnumerable<T> AsEnumerable();
 
-		Task<IEnumerable<T>> AsEnumerableAsync(CancellationToken cancellationToken = default);
+	Task<IEnumerable<T>> AsEnumerableAsync(CancellationToken cancellationToken = default);
 
-		IList<T> ToList();
+	IList<T> ToList();
 
-		Task<IList<T>> ToListAsync(CancellationToken cancellationToken = default);
+	Task<IList<T>> ToListAsync(CancellationToken cancellationToken = default);
 
-		T FirstOrDefault();
+	T FirstOrDefault();
 
-		Task<T> FirstOrDefaultAsync(CancellationToken cancellationToken = default);
+	Task<T> FirstOrDefaultAsync(CancellationToken cancellationToken = default);
 
-		T First();
+	T First();
 
-		Task<T> FirstAsync(CancellationToken cancellationToken = default);
+	Task<T> FirstAsync(CancellationToken cancellationToken = default);
 
-		T Single();
+	T Single();
 
-		Task<T> SingleAsync(CancellationToken cancellationToken = default);
+	Task<T> SingleAsync(CancellationToken cancellationToken = default);
 
-		T SingleOrDefault();
+	T SingleOrDefault();
 
-		Task<T> SingleOrDefaultAsync(CancellationToken cancellationToken = default);
+	Task<T> SingleOrDefaultAsync(CancellationToken cancellationToken = default);
 
-		void Execute();
+	void Execute();
 
-		Task ExecuteAsync(CancellationToken cancellationToken = default);
+	Task ExecuteAsync(CancellationToken cancellationToken = default);
 
-		IExecuteDynamic Dynamic();
-	}
+	IExecuteDynamic Dynamic();
 }
-

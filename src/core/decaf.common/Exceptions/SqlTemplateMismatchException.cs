@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace decaf.common.Exceptions
+namespace decaf.common.Exceptions;
+
+[Serializable]
+public class SqlTemplateMismatchException : Exception
 {
-    [Serializable]
-	public class SqlTemplateMismatchException : Exception
-    {
-        public SqlTemplateMismatchException(string reason)
-            : base(reason) { }
+    public SqlTemplateMismatchException(string reason)
+        : base(reason) { }
 
 
-        protected SqlTemplateMismatchException(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-    }
+    protected SqlTemplateMismatchException(SerializationInfo info, StreamingContext context)
+        : base(info, context) { }
 }
-

@@ -1,10 +1,8 @@
 ﻿using decaf.common;
 
-namespace decaf.state
-{
-	public interface ISelectQueryTarget : IQueryTarget
-	{
-        ISelectQueryContext Context { get; }
-    }
-}
+namespace decaf.state;
 
+public interface ISelectQueryTarget : IQueryTarget
+{
+	ISelectQueryContext Context { get; }
+}

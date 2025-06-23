@@ -1,13 +1,11 @@
-﻿namespace decaf.Implementation.Execute
+﻿namespace decaf.Implementation.Execute;
+
+public class InsertColumnBuilder : IInsertColumnBuilder
 {
-    public class InsertColumnBuilder : IInsertColumnBuilder
-    {
-        private InsertColumnBuilder() { }
+    private InsertColumnBuilder() { }
 
-        public static IInsertColumnBuilder Create()
-            => new InsertColumnBuilder();
+    public static IInsertColumnBuilder Create()
+        => new InsertColumnBuilder();
 
-        public T Is<T>() => default(T);
-    }
+    public T Is<T>() => default(T);
 }
-

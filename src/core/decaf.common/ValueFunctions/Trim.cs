@@ -1,13 +1,11 @@
-﻿namespace decaf.common.ValueFunctions
+﻿namespace decaf.common.ValueFunctions;
+
+public class Trim : ValueFunction<string>
 {
-	public class Trim : ValueFunction<string>
+	private Trim()
+		: base(ValueFunction.Trim)
 	{
-		private Trim()
-			: base(ValueFunction.Trim)
-		{
-		}
-
-		public static Trim Create() => new Trim();
 	}
-}
 
+	public static Trim Create() => new Trim();
+}

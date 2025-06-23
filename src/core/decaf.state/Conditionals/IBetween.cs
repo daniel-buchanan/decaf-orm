@@ -1,17 +1,15 @@
 ﻿using System;
 using decaf.common;
 
-namespace decaf.state.Conditionals
+namespace decaf.state.Conditionals;
+
+public interface IBetween : IWhere
 {
-	public interface IBetween : IWhere
-	{
-        state.Column Column { get; }
+	state.Column Column { get; }
 
-        object Start { get; }
+	object Start { get; }
 
-        object End { get; }
+	object End { get; }
 
-        Type ValueType { get; }
-    }
+	Type ValueType { get; }
 }
-

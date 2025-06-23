@@ -1,17 +1,15 @@
 ﻿using System;
 
-namespace decaf.common.Attributes
+namespace decaf.common.Attributes;
+
+public class RenameColumnAttribute : Attribute
 {
-	public class RenameColumnAttribute : Attribute
-	{
-        public string Name { get; set; }
+    public string Name { get; set; }
 
-        public RenameColumnAttribute() { }
+    public RenameColumnAttribute() { }
 
-        public RenameColumnAttribute(string name)
-        {
-            Name = name;
-        }
+    public RenameColumnAttribute(string name)
+    {
+        Name = name;
     }
 }
-

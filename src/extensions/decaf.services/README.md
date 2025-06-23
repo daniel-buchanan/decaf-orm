@@ -44,6 +44,13 @@ The above method registers the following:
 - `ICommand<Person>`
 - `IService<Person>`
 
+Alternatively, if you are using the `IUnitOfWork` patter, you may use the following extension methods:
+```csharp
+uow.GetQuery<Person>();
+uow.GetCommand<Person>();
+uow.GetService<Person>();
+```
+
 ### Status:
 **Build**  
 [![Build](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/sonar.yml/badge.svg)](https://github.com/daniel-buchanan/decaf-orm/actions/workflows/sonar.yml)

@@ -1,28 +1,26 @@
 ﻿using System;
 using System.Data;
 
-namespace decaf.common.Connections
+namespace decaf.common.Connections;
+
+public interface ITransaction : IDisposable
 {
-	public interface ITransaction : IDisposable
-	{
-		Guid Id { get; }
+	Guid Id { get; }
 
-		IConnection Connection { get; }
+	IConnection Connection { get; }
 
-		void Begin();
+	void Begin();
 
-		void Commit();
+	void Commit();
 
-		void Rollback();
+	void Rollback();
 
-		IDbTransaction GetUnderlyingTransaction();
+	IDbTransaction GetUnderlyingTransaction();
 		
-		TransactionState State { get; }
-	}
-
-	internal interface ITransactionInternal : ITransaction
-    {
-		bool CloseConnectionOnCommitOrRollback { get; }
-	}
+	TransactionState State { get; }
 }
 
+internal interface ITransactionInternal : ITransaction
+{
+	bool CloseConnectionOnCommitOrRollback { get; }
+}

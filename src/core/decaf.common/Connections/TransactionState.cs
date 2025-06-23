@@ -1,13 +1,12 @@
-namespace decaf.common.Connections
+namespace decaf.common.Connections;
+
+public enum TransactionState
 {
-    public enum TransactionState
-    {
-        Created,
-        Begun,
-        Committed,
-        CommitFailed,
-        RolledBack,
-        RollbackFailed,
-        Disposed
-    }
+    Created,
+    Begun,
+    Committed,
+    CommitFailed,
+    RolledBack,
+    RollbackFailed,
+    Disposed
 }

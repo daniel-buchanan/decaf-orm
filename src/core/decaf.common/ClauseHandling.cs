@@ -1,10 +1,8 @@
-﻿namespace decaf.common
-{
-	public enum ClauseHandling
-	{
-        Unspecified,
-        And,
-        Or
-    }
-}
+﻿namespace decaf.common;
 
+public enum ClauseHandling
+{
+	Unspecified,
+	And,
+	Or
+}

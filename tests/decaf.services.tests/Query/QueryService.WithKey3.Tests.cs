@@ -8,118 +8,116 @@ using Microsoft.Extensions.DependencyInjection;
 using decaf.tests.common.Mocks;
 using Xunit;
 
-namespace decaf.services.tests.Query
+namespace decaf.services.tests.Query;
+
+public class QueryServiceWithKey3Tests
 {
-    public class QueryServiceWithKey3Tests
+    private readonly IService<AddressNote, int, int, int> addressService;
+
+    public QueryServiceWithKey3Tests()
     {
-        private readonly IService<AddressNote, int, int, int> addressService;
-
-        public QueryServiceWithKey3Tests()
+        var services = new ServiceCollection();
+        services.AddDecaf(o =>
         {
-            var services = new ServiceCollection();
-            services.AddDecaf(o =>
-            {
-                o.TrackUnitsOfWork();
-                o.OverrideDefaultLogLevel(LogLevel.Debug);
-                o.UseMockDatabase().WithMockConnectionDetails();
-            });
-            services.AddDecafService<AddressNote, int, int, int>().AsScoped();
+            o.TrackUnitsOfWork();
+            o.OverrideDefaultLogLevel(LogLevel.Debug);
+            o.UseMockDatabase().WithMockConnectionDetails();
+        });
+        services.AddDecafService<AddressNote, int, int, int>().AsScoped();
 
-            var provider = services.BuildServiceProvider();
-            addressService = provider.GetService<IService<AddressNote, int, int, int>>();
-        }
+        var provider = services.BuildServiceProvider();
+        addressService = provider.GetService<IService<AddressNote, int, int, int>>();
+    }
 
-        [Fact]
-        public void GetAllDoesNotThrow()
+    [Fact]
+    public void GetAllDoesNotThrow()
+    {
+        // Arrange
+
+        // Act
+        Action method = () =>
         {
-            // Arrange
-
-            // Act
-            Action method = () =>
-            {
-                addressService.All();
-            };
-
-            // Assert
-            method.Should().NotThrow();
-        }
-
-        [Fact]
-        public void GetAllContextIsCorrect()
-        {
-            // Arrange
-            IQueryContext context = null;
-            addressService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
-
-            // Act
             addressService.All();
+        };
 
-            // Assert
-            context.Should().NotBeNull();
-            var selectContext = context as ISelectQueryContext;
-            selectContext.QueryTargets.Should().HaveCount(1);
-            selectContext.Columns.Should().Satisfy(
-                c => c.Name.Equals(nameof(AddressNote.Id)),
-                c => c.Name.Equals(nameof(AddressNote.AddressId)),
-                c => c.Name.Equals(nameof(AddressNote.PersonId)),
-                c => c.Name.Equals(nameof(AddressNote.Value)));
-        }
+        // Assert
+        method.Should().NotThrow();
+    }
 
-        [Fact]
-        public void GetContextIsCorrect()
+    [Fact]
+    public void GetAllContextIsCorrect()
+    {
+        // Arrange
+        IQueryContext context = null;
+        addressService.OnBeforeExecution += (_, args) =>
         {
-            // Arrange
-            IQueryContext context = null;
-            addressService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
+            context = args.Context;
+        };
 
-            // Act
-            addressService.Find(p => p.Id == 42);
+        // Act
+        addressService.All();
 
-            // Assert
-            context.Should().NotBeNull();
-            var selectContext = context as ISelectQueryContext;
-            selectContext.QueryTargets.Should().HaveCount(1);
-            selectContext.Columns.Should().Satisfy(
-                c => c.Name.Equals(nameof(AddressNote.Id)),
-                c => c.Name.Equals(nameof(AddressNote.AddressId)),
-                c => c.Name.Equals(nameof(AddressNote.PersonId)),
-                c => c.Name.Equals(nameof(AddressNote.Value)));
-            var where = selectContext.WhereClause as IColumn;
-            where.EqualityOperator.Should().Be(EqualityOperator.Equals);
-            where.Value.Should().Be(42);
-        }
+        // Assert
+        context.Should().NotBeNull();
+        var selectContext = context as ISelectQueryContext;
+        selectContext.QueryTargets.Should().HaveCount(1);
+        selectContext.Columns.Should().Satisfy(
+            c => c.Name.Equals(nameof(AddressNote.Id)),
+            c => c.Name.Equals(nameof(AddressNote.AddressId)),
+            c => c.Name.Equals(nameof(AddressNote.PersonId)),
+            c => c.Name.Equals(nameof(AddressNote.Value)));
+    }
 
-        [Fact]
-        public void GetByIdContextIsCorrect()
+    [Fact]
+    public void GetContextIsCorrect()
+    {
+        // Arrange
+        IQueryContext context = null;
+        addressService.OnBeforeExecution += (_, args) =>
         {
-            // Arrange
-            IQueryContext context = null;
-            addressService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
+            context = args.Context;
+        };
 
-            // Act
-            addressService.Get(1, 42, 43);
+        // Act
+        addressService.Find(p => p.Id == 42);
 
-            // Assert
-            context.Should().NotBeNull();
-            var selectContext = context as ISelectQueryContext;
-            selectContext.QueryTargets.Should().HaveCount(1);
-            selectContext.Columns.Should().Satisfy(
-                c => c.Name.Equals(nameof(AddressNote.Id)),
-                c => c.Name.Equals(nameof(AddressNote.AddressId)),
-                c => c.Name.Equals(nameof(AddressNote.PersonId)),
-                c => c.Name.Equals(nameof(AddressNote.Value)));
-            var where = selectContext.WhereClause as And;
-            where.Children.Should().HaveCount(3);
-        }
+        // Assert
+        context.Should().NotBeNull();
+        var selectContext = context as ISelectQueryContext;
+        selectContext.QueryTargets.Should().HaveCount(1);
+        selectContext.Columns.Should().Satisfy(
+            c => c.Name.Equals(nameof(AddressNote.Id)),
+            c => c.Name.Equals(nameof(AddressNote.AddressId)),
+            c => c.Name.Equals(nameof(AddressNote.PersonId)),
+            c => c.Name.Equals(nameof(AddressNote.Value)));
+        var where = selectContext.WhereClause as IColumn;
+        where.EqualityOperator.Should().Be(EqualityOperator.Equals);
+        where.Value.Should().Be(42);
+    }
+
+    [Fact]
+    public void GetByIdContextIsCorrect()
+    {
+        // Arrange
+        IQueryContext context = null;
+        addressService.OnBeforeExecution += (_, args) =>
+        {
+            context = args.Context;
+        };
+
+        // Act
+        addressService.Get(1, 42, 43);
+
+        // Assert
+        context.Should().NotBeNull();
+        var selectContext = context as ISelectQueryContext;
+        selectContext.QueryTargets.Should().HaveCount(1);
+        selectContext.Columns.Should().Satisfy(
+            c => c.Name.Equals(nameof(AddressNote.Id)),
+            c => c.Name.Equals(nameof(AddressNote.AddressId)),
+            c => c.Name.Equals(nameof(AddressNote.PersonId)),
+            c => c.Name.Equals(nameof(AddressNote.Value)));
+        var where = selectContext.WhereClause as And;
+        where.Children.Should().HaveCount(3);
     }
 }
-

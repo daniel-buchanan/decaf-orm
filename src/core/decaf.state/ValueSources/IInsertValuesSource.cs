@@ -1,17 +1,16 @@
 ﻿using System.Collections.Generic;
 
-namespace decaf.state
+namespace decaf.state;
+
+public interface IInsertValuesSource { }
+
+public interface IInsertStaticValuesSource : IInsertValuesSource
 {
-    public interface IInsertValuesSource { }
+    void AddValue(object[] value);
+    IReadOnlyCollection<object[]> Values { get; }
+}
 
-    public interface IInsertStaticValuesSource : IInsertValuesSource
-    {
-        void AddValue(object[] value);
-        IReadOnlyCollection<object[]> Values { get; }
-    }
-
-    public interface IInsertQueryValuesSource : IInsertValuesSource
-    {
-        ISelectQueryContext Query { get; }
-    }
+public interface IInsertQueryValuesSource : IInsertValuesSource
+{
+    ISelectQueryContext Query { get; }
 }

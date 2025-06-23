@@ -1,19 +1,17 @@
 ﻿using System.Data;
 using decaf.db.common;
 
-namespace decaf.sqlserver
+namespace decaf.sqlserver;
+
+public class SqlServerOptions : DatabaseOptions
 {
-    public class SqlServerOptions : DatabaseOptions
+	public SqlServerOptions()
 	{
-		public SqlServerOptions()
-		{
-			TransactionIsolationLevel = IsolationLevel.ReadCommitted;
-		}
+		TransactionIsolationLevel = IsolationLevel.ReadCommitted;
+	}
 
-		/// <summary>
-		/// The transaction isolation level, <see cref="IsolationLevel"/>.
-		/// </summary>
-		public IsolationLevel TransactionIsolationLevel { get; private set; }
-    }
+	/// <summary>
+	/// The transaction isolation level, <see cref="IsolationLevel"/>.
+	/// </summary>
+	public IsolationLevel TransactionIsolationLevel { get; private set; }
 }
-

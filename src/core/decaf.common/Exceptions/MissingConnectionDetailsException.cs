@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace decaf.common.Exceptions
+namespace decaf.common.Exceptions;
+
+[Serializable]
+public class MissingConnectionDetailsException : Exception
 {
-    [Serializable]
-    public class MissingConnectionDetailsException : Exception
-	{
-		public MissingConnectionDetailsException(string reason)
-            : base(reason) { }
+    public MissingConnectionDetailsException(string reason)
+        : base(reason) { }
 
 
-        protected MissingConnectionDetailsException(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
-    }
+    protected MissingConnectionDetailsException(SerializationInfo info, StreamingContext context)
+        : base(info, context) { }
 }
-

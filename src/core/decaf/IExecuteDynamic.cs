@@ -2,35 +2,33 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace decaf
+namespace decaf;
+
+public interface IExecuteDynamic : IGetSql
 {
-	public interface IExecuteDynamic : IGetSql
-	{
-		IEnumerable<dynamic> AsEnumerable();
+	IEnumerable<dynamic> AsEnumerable();
 
-        Task<IEnumerable<dynamic>> AsEnumerableAsync(CancellationToken cancellationToken = default);
+	Task<IEnumerable<dynamic>> AsEnumerableAsync(CancellationToken cancellationToken = default);
 
-		IList<dynamic> ToList();
+	IList<dynamic> ToList();
 
-		Task<IList<dynamic>> ToListAsync(CancellationToken cancellationToken = default);
+	Task<IList<dynamic>> ToListAsync(CancellationToken cancellationToken = default);
 
-		dynamic FirstOrDefault();
+	dynamic FirstOrDefault();
 
-		Task<dynamic> FirstOrDefaultAsync(CancellationToken cancellationToken = default);
+	Task<dynamic> FirstOrDefaultAsync(CancellationToken cancellationToken = default);
 
-		dynamic First();
+	dynamic First();
 
-		Task<dynamic> FirstAsync(CancellationToken cancellationToken = default);
+	Task<dynamic> FirstAsync(CancellationToken cancellationToken = default);
 
-		dynamic Single();
+	dynamic Single();
 
-		Task<dynamic> SingleAsync(CancellationToken cancellationToken = default);
+	Task<dynamic> SingleAsync(CancellationToken cancellationToken = default);
 
-		dynamic SingleOrDefault();
+	dynamic SingleOrDefault();
 
-		Task<dynamic> SingleOrDefaultAsync(CancellationToken cancellationToken = default);
+	Task<dynamic> SingleOrDefaultAsync(CancellationToken cancellationToken = default);
 
-		IExecute<T> Typed<T>();
-	}
+	IExecute<T> Typed<T>();
 }
-

@@ -1,13 +1,11 @@
-﻿namespace decaf.common.ValueFunctions
+﻿namespace decaf.common.ValueFunctions;
+
+public class ToLower : ValueFunction<string>
 {
-	public class ToLower : ValueFunction<string>
+	private ToLower()
+		: base(ValueFunction.ToLower)
 	{
-		private ToLower()
-			: base(ValueFunction.ToLower)
-		{
-		}
-
-		public static ToLower Create() => new ToLower();
 	}
-}
 
+	public static ToLower Create() => new ToLower();
+}

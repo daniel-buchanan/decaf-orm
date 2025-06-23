@@ -1,8 +1,6 @@
-﻿namespace decaf.state.Utilities
-{
-	public class DynamicExpressionParser
-	{
-		
-	}
-}
+﻿namespace decaf.state.Utilities;
 
+public class DynamicExpressionParser
+{
+		
+}

@@ -7,9 +7,9 @@ The package has two dependencies:
 
 Both of these packages are .Net Standard 2.0 only, and thus are usable across almost all .Net Core, .Net Framework and other .Net Standard projects.
 
-To use SQLite:
+To use SQLite (for example):
 ```csharp
-services.AddDecaf(o => o.UseSqlite(b => b.WithConnectionDetails(...)));
+services.AddDecaf(o => o.UseSqlite(b => b.WithConnectionDetails(...).InMemory().CreateNewDatabase()));
 ```  
 
 Ideally your `IConnectionDetails` would be injected already so you don't need to use `WithConnectionDetails` or `WithConnectionString`.

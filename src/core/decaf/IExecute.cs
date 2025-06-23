@@ -2,39 +2,37 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace decaf
+namespace decaf;
+
+public interface IExecute : IExecuteDynamic
 {
-	public interface IExecute : IExecuteDynamic
-	{
-		IEnumerable<T> AsEnumerable<T>();
+	IEnumerable<T> AsEnumerable<T>();
 
-		Task<IEnumerable<T>> AsEnumerableAsync<T>(CancellationToken cancellationToken = default);
+	Task<IEnumerable<T>> AsEnumerableAsync<T>(CancellationToken cancellationToken = default);
 
-		IList<T> ToList<T>();
+	IList<T> ToList<T>();
 
-		Task<IList<T>> ToListAsync<T>(CancellationToken cancellationToken = default);
+	Task<IList<T>> ToListAsync<T>(CancellationToken cancellationToken = default);
 
-		T FirstOrDefault<T>();
+	T FirstOrDefault<T>();
 
-		Task<T> FirstOrDefaultAsync<T>(CancellationToken cancellationToken = default);
+	Task<T> FirstOrDefaultAsync<T>(CancellationToken cancellationToken = default);
 
-		T First<T>();
+	T First<T>();
 
-		Task<T> FirstAsync<T>(CancellationToken cancellationToken = default);
+	Task<T> FirstAsync<T>(CancellationToken cancellationToken = default);
 
-		T Single<T>();
+	T Single<T>();
 
-		Task<T> SingleAsync<T>(CancellationToken cancellationToken = default);
+	Task<T> SingleAsync<T>(CancellationToken cancellationToken = default);
 
-		T SingleOrDefault<T>();
+	T SingleOrDefault<T>();
 
-		Task<T> SingleOrDefaultAsync<T>(CancellationToken cancellationToken = default);
+	Task<T> SingleOrDefaultAsync<T>(CancellationToken cancellationToken = default);
 
-		void Execute();
+	void Execute();
 
-		Task ExecuteAsync(CancellationToken cancellationToken = default);
+	Task ExecuteAsync(CancellationToken cancellationToken = default);
 
-		IExecuteDynamic Dynamic();
-	}
+	IExecuteDynamic Dynamic();
 }
-

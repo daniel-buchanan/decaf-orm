@@ -1,13 +1,11 @@
-﻿namespace decaf.common.ValueFunctions
+﻿namespace decaf.common.ValueFunctions;
+
+public class ToUpper : ValueFunction<string>
 {
-	public class ToUpper : ValueFunction<string>
+	private ToUpper()
+		: base(ValueFunction.ToUpper)
 	{
-		private ToUpper()
-			: base(ValueFunction.ToUpper)
-		{
-		}
-
-		public static ToUpper Create() => new ToUpper();
 	}
-}
 
+	public static ToUpper Create() => new ToUpper();
+}

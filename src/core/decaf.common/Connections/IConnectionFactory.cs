@@ -2,13 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace decaf.common.Connections
+namespace decaf.common.Connections;
+
+public interface IConnectionFactory : IDisposable
 {
-	public interface IConnectionFactory : IDisposable
-	{
-		IConnection GetConnection(IConnectionDetails connectionDetails);
+	IConnection GetConnection(IConnectionDetails connectionDetails);
 
-		Task<IConnection> GetConnectionAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default);
-	}
+	Task<IConnection> GetConnectionAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default);
 }
-

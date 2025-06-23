@@ -8,61 +8,61 @@ using Microsoft.Extensions.DependencyInjection;
 using decaf.tests.common.Mocks;
 using Xunit;
 
-namespace decaf.services.tests.Command
+namespace decaf.services.tests.Command;
+
+public class CommandServiceWithKey1Tests
 {
-    public class CommandServiceWithKey1Tests
+    private readonly IService<Person, int> personService;
+
+    public CommandServiceWithKey1Tests()
     {
-        private readonly IService<Person, int> personService;
-
-        public CommandServiceWithKey1Tests()
+        var services = new ServiceCollection();
+        services.AddDecaf(o =>
         {
-            var services = new ServiceCollection();
-            services.AddDecaf(o =>
-            {
-                o.TrackUnitsOfWork();
-                o.OverrideDefaultLogLevel(LogLevel.Debug);
-                o.UseMockDatabase().WithMockConnectionDetails();
-            });
-            services.AddDecafService<Person, int>().AsScoped();
+            o.TrackUnitsOfWork();
+            o.OverrideDefaultLogLevel(LogLevel.Debug);
+            o.UseMockDatabase().WithMockConnectionDetails();
+        });
+        services.AddDecafService<Person, int>().AsScoped();
 
-            var provider = services.BuildServiceProvider();
-            personService = provider.GetService<IService<Person, int>>();
-        }
+        var provider = services.BuildServiceProvider();
+        personService = provider.GetService<IService<Person, int>>();
+    }
 
-        [Fact]
-        public void AddSucceeds()
+    [Fact]
+    public void AddSucceeds()
+    {
+        // Arrange
+        IQueryContext context = null;
+        personService.OnBeforeExecution += (_, args) =>
         {
-            // Arrange
-            IQueryContext context = null;
-            personService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
+            context = args.Context;
+        };
 
-            // Act
-            personService.Add(new Person
-            {
-                Email = "bob@bob.com"
-            });
-
-            // Assert
-            context.Should().NotBeNull();
-            var insertContext = context as IInsertQueryContext;
-            insertContext.Source.Should().BeOfType<state.ValueSources.Insert.StaticValuesSource>();
-        }
-
-        [Fact]
-        public void AddSetSucceeds()
+        // Act
+        personService.Add(new Person
         {
-            // Arrange
-            IQueryContext context = null;
-            personService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
+            Email = "bob@bob.com"
+        });
 
-            // Act
-            personService.Add(new Person
+        // Assert
+        context.Should().NotBeNull();
+        var insertContext = context as IInsertQueryContext;
+        insertContext.Source.Should().BeOfType<state.ValueSources.Insert.StaticValuesSource>();
+    }
+
+    [Fact]
+    public void AddSetSucceeds()
+    {
+        // Arrange
+        IQueryContext context = null;
+        personService.OnBeforeExecution += (_, args) =>
+        {
+            context = args.Context;
+        };
+
+        // Act
+        personService.Add(new Person
             {
                 Email = "bob@bob.com"
             },
@@ -71,141 +71,139 @@ namespace decaf.services.tests.Command
                 Email = "james@bob.com"
             });
 
-            // Assert
-            context.Should().NotBeNull();
-            var insertContext = context as IInsertQueryContext;
-            insertContext.Source.Should().BeOfType<state.ValueSources.Insert.StaticValuesSource>();
-            var values = insertContext.Source as IInsertStaticValuesSource;
-            values.Values.Should().HaveCount(2);
-        }
+        // Assert
+        context.Should().NotBeNull();
+        var insertContext = context as IInsertQueryContext;
+        insertContext.Source.Should().BeOfType<state.ValueSources.Insert.StaticValuesSource>();
+        var values = insertContext.Source as IInsertStaticValuesSource;
+        values.Values.Should().HaveCount(2);
+    }
 
-        [Fact]
-        public void AddEnumerableSetSucceeds()
+    [Fact]
+    public void AddEnumerableSetSucceeds()
+    {
+        // Arrange
+        IQueryContext context = null;
+        personService.OnBeforeExecution += (_, args) =>
         {
-            // Arrange
-            IQueryContext context = null;
-            personService.OnBeforeExecution += (_, args) =>
+            context = args.Context;
+        };
+
+        // Act
+        personService.Add(new List<Person> {
+            new Person
             {
-                context = args.Context;
-            };
+                Email = "bob@bob.com"
+            },
+            new Person
+            {
+                Email = "james@bob.com"
+            }
+        });
 
-            // Act
-            personService.Add(new List<Person> {
-                new Person
-                {
-                    Email = "bob@bob.com"
-                },
-                new Person
-                {
-                    Email = "james@bob.com"
-                }
-            });
+        // Assert
+        context.Should().NotBeNull();
+        var insertContext = context as IInsertQueryContext;
+        insertContext.Source.Should().BeOfType<state.ValueSources.Insert.StaticValuesSource>();
+        var values = insertContext.Source as IInsertStaticValuesSource;
+        values.Values.Should().HaveCount(2);
+    }
 
-            // Assert
-            context.Should().NotBeNull();
-            var insertContext = context as IInsertQueryContext;
-            insertContext.Source.Should().BeOfType<state.ValueSources.Insert.StaticValuesSource>();
-            var values = insertContext.Source as IInsertStaticValuesSource;
-            values.Values.Should().HaveCount(2);
-        }
-
-        [Fact]
-        public void AddEnumerableWithEmptyReturnsEmptyEnumeration()
+    [Fact]
+    public void AddEnumerableWithEmptyReturnsEmptyEnumeration()
+    {
+        // Arrange
+        IQueryContext context = null;
+        personService.OnBeforeExecution += (_, args) =>
         {
-            // Arrange
-            IQueryContext context = null;
-            personService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
-            var items = Enumerable.Empty<Person>();
+            context = args.Context;
+        };
+        var items = Enumerable.Empty<Person>();
 
-            // Act
-            var results = personService.Add(items);
+        // Act
+        var results = personService.Add(items);
 
-            // Assert
-            results.Should().BeEmpty();
-        }
+        // Assert
+        results.Should().BeEmpty();
+    }
 
-        [Fact]
-        public void UpdateDynamicSucceeds()
+    [Fact]
+    public void UpdateDynamicSucceeds()
+    {
+        // Arrange
+        IQueryContext context = null;
+        personService.OnBeforeExecution += (_, args) =>
         {
-            // Arrange
-            IQueryContext context = null;
-            personService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
+            context = args.Context;
+        };
 
-            // Act
-            personService.Update(new
-            {
-                Email = "smith@bob.com"
-            }, p => p.Email == "bob@bob.com");
-
-            // Assert
-            context.Should().NotBeNull();
-            var updateContext = context as IUpdateQueryContext;
-            updateContext.Updates.Should().HaveCount(1);
-            updateContext.WhereClause.Should().BeOfType<state.Conditionals.Column<string>>();
-            var values = updateContext.Updates;
-            var value = values.First() as state.ValueSources.Update.StaticValueSource;
-            value.Column.Should().NotBeNull();
-            value.Column.Name.Should().Be(nameof(Person.Email));
-            value.Value.Should().BeEquivalentTo("smith@bob.com");
-        }
-
-        [Fact]
-        public void UpdateTypedSucceeds()
+        // Act
+        personService.Update(new
         {
-            // Arrange
-            IQueryContext context = null;
-            personService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
+            Email = "smith@bob.com"
+        }, p => p.Email == "bob@bob.com");
 
-            // Act
-            personService.Update(new Person
-            {
-                Id = 36,
-                Email = "smith@bob.com"
-            });
+        // Assert
+        context.Should().NotBeNull();
+        var updateContext = context as IUpdateQueryContext;
+        updateContext.Updates.Should().HaveCount(1);
+        updateContext.WhereClause.Should().BeOfType<state.Conditionals.Column<string>>();
+        var values = updateContext.Updates;
+        var value = values.First() as state.ValueSources.Update.StaticValueSource;
+        value.Column.Should().NotBeNull();
+        value.Column.Name.Should().Be(nameof(Person.Email));
+        value.Value.Should().BeEquivalentTo("smith@bob.com");
+    }
 
-            // Assert
-            context.Should().NotBeNull();
-            var updateContext = context as IUpdateQueryContext;
-            updateContext.Updates.Should().HaveCount(1);
-            updateContext.WhereClause.Should().BeOfType<state.Conditionals.Column<int>>();
-            var values = updateContext.Updates;
-            values.Should().HaveCount(1);
-            var value = values.First() as state.ValueSources.Update.StaticValueSource;
-            value.Column.Name.Should().Be(nameof(Person.Email));
-            value.GetValue<string>().Should().Be("smith@bob.com");
-        }
-
-        [Fact]
-        public void DeleteSucceeds()
+    [Fact]
+    public void UpdateTypedSucceeds()
+    {
+        // Arrange
+        IQueryContext context = null;
+        personService.OnBeforeExecution += (_, args) =>
         {
-            // Arrange
-            IQueryContext context = null;
-            personService.OnBeforeExecution += (_, args) =>
-            {
-                context = args.Context;
-            };
-            const int key = 42;
+            context = args.Context;
+        };
 
-            // Act
-            personService.Delete(key);
+        // Act
+        personService.Update(new Person
+        {
+            Id = 36,
+            Email = "smith@bob.com"
+        });
 
-            // Assert
-            context.Should().NotBeNull();
-            var deleteContext = context as IDeleteQueryContext;
-            var valueClause = deleteContext.WhereClause as state.Conditionals.InValues<int>;
-            valueClause.Should().NotBeNull();
-            valueClause.Column.Name.Should().Be(nameof(Person.Id));
-            valueClause.ValueSet.Should().Contain(key);
-        }
+        // Assert
+        context.Should().NotBeNull();
+        var updateContext = context as IUpdateQueryContext;
+        updateContext.Updates.Should().HaveCount(1);
+        updateContext.WhereClause.Should().BeOfType<state.Conditionals.Column<int>>();
+        var values = updateContext.Updates;
+        values.Should().HaveCount(1);
+        var value = values.First() as state.ValueSources.Update.StaticValueSource;
+        value.Column.Name.Should().Be(nameof(Person.Email));
+        value.GetValue<string>().Should().Be("smith@bob.com");
+    }
+
+    [Fact]
+    public void DeleteSucceeds()
+    {
+        // Arrange
+        IQueryContext context = null;
+        personService.OnBeforeExecution += (_, args) =>
+        {
+            context = args.Context;
+        };
+        const int key = 42;
+
+        // Act
+        personService.Delete(key);
+
+        // Assert
+        context.Should().NotBeNull();
+        var deleteContext = context as IDeleteQueryContext;
+        var valueClause = deleteContext.WhereClause as state.Conditionals.InValues<int>;
+        valueClause.Should().NotBeNull();
+        valueClause.Column.Name.Should().Be(nameof(Person.Id));
+        valueClause.ValueSet.Should().Contain(key);
     }
 }
-

@@ -1,10 +1,8 @@
-﻿namespace decaf
+﻿namespace decaf;
+
+public interface IClauseHandlingBehaviour
 {
-    public interface IClauseHandlingBehaviour
-    {
-        void DefaultToAnd();
+    void DefaultToAnd();
 
-        void DefaultToOr();
-    }
+    void DefaultToOr();
 }
-

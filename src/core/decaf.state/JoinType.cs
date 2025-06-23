@@ -1,11 +1,9 @@
-﻿namespace decaf.state
-{
-	public enum JoinType
-	{
-		Default,
-		Left,
-		Right,
-		Inner
-	}
-}
+﻿namespace decaf.state;
 
+public enum JoinType
+{
+	Default,
+	Left,
+	Right,
+	Inner
+}

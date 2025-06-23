@@ -1,10 +1,8 @@
-﻿namespace decaf.common.Connections
-{
-    public enum ConnectionState
-    {
-        Unknown,
-        Closed,
-        Open
-    }
-}
+﻿namespace decaf.common.Connections;
 
+public enum ConnectionState
+{
+    Unknown,
+    Closed,
+    Open
+}

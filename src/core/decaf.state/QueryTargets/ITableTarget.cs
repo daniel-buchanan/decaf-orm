@@ -1,14 +1,12 @@
 ﻿using decaf.common;
 
-namespace decaf.state
+namespace decaf.state;
+
+public interface ITableTarget : IQueryTarget
 {
-	public interface ITableTarget : IQueryTarget
-    {
-		string Name { get; }
+	string Name { get; }
 
-		string Schema { get; }
+	string Schema { get; }
 
-		bool IsEquivalentTo(ITableTarget target);
-    }
+	bool IsEquivalentTo(ITableTarget target);
 }
-

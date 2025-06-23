@@ -4,31 +4,29 @@ using decaf.tests.common.Mocks;
 using FluentAssertions;
 using Xunit;
 
-namespace decaf.core_tests.Connections
+namespace decaf.core_tests.Connections;
+
+public class ConnectionDetailsTests
 {
-    public class ConnectionDetailsTests
+    private readonly MockConnectionDetails connectionDetails = new();
+
+    [Fact]
+    public void GetConnectionStringSucceeds()
     {
-        private readonly MockConnectionDetails connectionDetails = new();
+        // Act
+        Action method = () => connectionDetails.GetConnectionString();
 
-        [Fact]
-        public void GetConnectionStringSucceeds()
-        {
-            // Act
-            Action method = () => connectionDetails.GetConnectionString();
+        // Assert
+        method.Should().NotThrow<Exception>();
+    }
 
-            // Assert
-            method.Should().NotThrow<Exception>();
-        }
+    [Fact]
+    public async Task GetConnectionStringAsyncSucceeds()
+    {
+        // Act
+        Func<Task<string>> method = () => connectionDetails.GetConnectionStringAsync();
 
-        [Fact]
-        public async Task GetConnectionStringAsyncSucceeds()
-        {
-            // Act
-            Func<Task<string>> method = () => connectionDetails.GetConnectionStringAsync();
-
-            // Assert
-            await method.Should().NotThrowAsync<Exception>();
-        }
+        // Assert
+        await method.Should().NotThrowAsync<Exception>();
     }
 }
-

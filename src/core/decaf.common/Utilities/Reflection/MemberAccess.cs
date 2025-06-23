@@ -1,41 +1,40 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace decaf.common.Utilities.Reflection
+namespace decaf.common.Utilities.Reflection;
+
+static class MemberAccess
 {
-    static class MemberAccess
+    public static object GetValue(Expression expression)
     {
-        public static object GetValue(Expression expression)
+        var objectMember = Expression.Convert(expression, expression.Type);
+        var getterLambda = Expression.Lambda(objectMember);
+
+        try
         {
-            var objectMember = Expression.Convert(expression, expression.Type);
-            var getterLambda = Expression.Lambda(objectMember);
+            var getter = getterLambda.Compile();
 
-            try
-            {
-                var getter = getterLambda.Compile();
-
-                return getter.DynamicInvoke();
-            }
-            catch
-            {
-                return null;
-            }
+            return getter.DynamicInvoke();
         }
-
-        public static Type GetMemberType(Expression expression)
+        catch
         {
-            return ((MemberExpression)expression).Type;
+            return null;
         }
+    }
 
-        public static Type GetParameterType(Expression expression)
-        {
-            return ((MemberExpression)expression).Member.DeclaringType;
-        }
+    public static Type GetMemberType(Expression expression)
+    {
+        return ((MemberExpression)expression).Type;
+    }
 
-        public static string GetName(Expression expression, IReflectionHelper helper)
-        {
-            var memberExpr = (MemberExpression)expression;
-            return helper.GetFieldName(memberExpr.Member);
-        }
+    public static Type GetParameterType(Expression expression)
+    {
+        return ((MemberExpression)expression).Member.DeclaringType;
+    }
+
+    public static string GetName(Expression expression, IReflectionHelper helper)
+    {
+        var memberExpr = (MemberExpression)expression;
+        return helper.GetFieldName(memberExpr.Member);
     }
 }

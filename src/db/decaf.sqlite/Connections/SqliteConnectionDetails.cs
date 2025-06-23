@@ -104,7 +104,7 @@ public class SqliteConnectionDetails :
         if (string.IsNullOrWhiteSpace(input))
             throw new ConnectionStringParsingException("Cannot parse NULL connection string.");
         
-        var regex = new Regex(@"Data Source=([a-zA-Z0-9\\_\-\.\:\/]+);(?:Mode=((?:[Rr]eadOnly){0,1}(?:[Rr]ead[Ww]rite){0,1}(?:[Rr]ead[Ww]rite[Cc]reate){0,1});){0,1}");
+        var regex = new Regex(@"Data Source=([a-zA-Z0-9\\_\-\.\:\/]+);(?:Mode=((?:[Rr]eadOnly){0,1}(?:[Rr]ead[Ww]rite){0,1}(?:[Rr]ead[Ww]rite[Cc]reate){0,1});){0,1}", RegexOptions.Compiled | RegexOptions.Singleline, TimeSpan.FromMilliseconds(100));
         var match = regex.Match(input);
         if (!match.Success)
             throw new ConnectionStringParsingException("Cannot parse Connection String: " + input);

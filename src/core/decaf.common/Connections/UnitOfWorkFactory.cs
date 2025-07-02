@@ -9,42 +9,16 @@ using decaf.common.Utilities;
 
 namespace decaf.common.Connections;
 
-public sealed class UnitOfWorkFactory : IUnitOfWorkFactoryInternal
+public sealed class UnitOfWorkFactory(
+    DecafOptions options,
+    ILoggerProxy logger,
+    ITransactionFactory transactionFactory,
+    ISqlFactory sqlFactory,
+    IHashProvider hashProvider,
+    IConnectionDetails? providedConnectionDetails = null)
+    : IUnitOfWorkFactoryInternal
 {
-    private readonly List<IUnitOfWork> tracker;
-    private readonly DecafOptions options;
-    private readonly ILoggerProxy logger;
-    private readonly ITransactionFactory transactionFactory;
-    private readonly ISqlFactory sqlFactory;
-    private readonly IHashProvider hashProvider;
-    private readonly IConnectionDetails providedConnectionDetails;
-
-    public UnitOfWorkFactory(
-        DecafOptions options,
-        ILoggerProxy logger,
-        ITransactionFactory transactionFactory,
-        ISqlFactory sqlFactory,
-        IHashProvider hashProvider)
-    {
-        tracker = new List<IUnitOfWork>();
-        this.options = options;
-        this.logger = logger;
-        this.transactionFactory = transactionFactory;
-        this.sqlFactory = sqlFactory;
-        this.hashProvider = hashProvider;
-    }
-        
-    public UnitOfWorkFactory(
-        DecafOptions options,
-        ILoggerProxy logger,
-        ITransactionFactory transactionFactory,
-        ISqlFactory sqlFactory,
-        IHashProvider hashProvider,
-        IConnectionDetails connectionDetails) : 
-        this(options, logger, transactionFactory, sqlFactory, hashProvider)
-    {
-        providedConnectionDetails = connectionDetails;
-    }
+    private readonly List<IUnitOfWork> tracker = [];
 
     /// <inheritdoc/>
     public IUnitOfWork Create() => CreateAsync().WaitFor();

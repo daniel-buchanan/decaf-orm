@@ -24,12 +24,12 @@ public class ManagedAlias
     /// <param name="name">The name of the alias.</param>
     /// <param name="relation">The relation that the alias is associated with.</param>
     /// <returns>A new instance of <see cref="ManagedAlias"/>.</returns>
-    public static ManagedAlias Create(string name, string relation) => new ManagedAlias(name, relation);
+    public static ManagedAlias Create(string name, string relation) => new (name, relation);
 
     /// <summary>
     /// /// Create a <see cref="ManagedAlias"/> for a given relation.
     /// </summary>
     /// <param name="relation">The relation to generate an alias for.</param>
     /// <returns>A new instance of <see cref="ManagedAlias"/>.</returns>
-    public static ManagedAlias Create(string relation) => new ManagedAlias(null, relation);
+    public static ManagedAlias Create(string relation) => new (null, relation);
 }

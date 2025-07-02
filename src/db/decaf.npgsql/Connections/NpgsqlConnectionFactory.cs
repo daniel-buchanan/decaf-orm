@@ -5,16 +5,12 @@ using decaf.common.Logging;
 
 namespace decaf.npgsql;
 
-public class NpgsqlConnectionFactory : ConnectionFactory
+public class NpgsqlConnectionFactory(ILoggerProxy logger) 
+    : ConnectionFactory(logger)
 {
-    public NpgsqlConnectionFactory(ILoggerProxy logger)
-        : base(logger)
-    {
-    }
-
     protected override Task<IConnection> ConstructConnectionAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default)
     {
-        var conn = new NpgsqlConnection(logger, connectionDetails);
-        return Task.FromResult(conn as IConnection);
+        IConnection conn = new NpgsqlConnection(connectionDetails);
+        return Task.FromResult(conn);
     }
 }

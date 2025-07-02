@@ -12,7 +12,7 @@ public interface IValueFunction : IWhere
 	/// <summary>
 	/// 
 	/// </summary>
-	object[] Arguments { get; }
+	object?[] Arguments { get; }
 
 	/// <summary>
 	/// 

@@ -7,46 +7,27 @@ using decaf.common.Utilities;
 
 namespace decaf.common;
 
-public class Decaf : IDecaf
+public class Decaf(
+    ILoggerProxy logger,
+    IUnitOfWorkFactory unitOfWorkFactory,
+    IConnectionDetails? injectedConnectionDetails = null)
+    : IDecaf
 {
-    private readonly ILoggerProxy logger;
-    private readonly IUnitOfWorkFactory unitOfWorkFactory;
-    private readonly IConnectionDetails injectedConnectionDetails;
-
-    public Decaf(
-        ILoggerProxy logger,
-        IUnitOfWorkFactory unitOfWorkFactory)
-    {
-        this.logger = logger;
-        this.unitOfWorkFactory = unitOfWorkFactory;
-    }
-
-    public Decaf(
-        ILoggerProxy logger,
-        IUnitOfWorkFactory unitOfWorkFactory,
-        IConnectionDetails connectionDetails)
-        : this(logger, unitOfWorkFactory)
-    {
-        injectedConnectionDetails = connectionDetails;
-    }
-
-    private IUnitOfWork GetUnitOfWork(IConnectionDetails connectionDetails = null)
+    private IUnitOfWork GetUnitOfWork(IConnectionDetails? connectionDetails = null)
         => GetUnitOfWorkAsync(connectionDetails).WaitFor();
 
     private async Task<IUnitOfWork> GetUnitOfWorkAsync(
-        IConnectionDetails connectionDetails = null,
+        IConnectionDetails? connectionDetails = null,
         CancellationToken cancellationToken = default)
     {
-        if (injectedConnectionDetails == null &&
-            connectionDetails == null)
+        if (injectedConnectionDetails is null &&
+            connectionDetails is null)
         {
             logger.Error("ConnectionDetails could not be found, either not injected or provided to method");
             throw new MissingConnectionDetailsException("ConnectionDetails were not injected or provided. Please ensure that either method is used.");
         }
 
-        IConnectionDetails connectionDetailsToUse;
-        if (connectionDetails != null) connectionDetailsToUse = connectionDetails;
-        else connectionDetailsToUse = injectedConnectionDetails;
+        var connectionDetailsToUse = connectionDetails ?? injectedConnectionDetails!;
 
         return await unitOfWorkFactory.CreateAsync(connectionDetailsToUse, cancellationToken);
     }
@@ -83,7 +64,7 @@ public class Decaf : IDecaf
 
     /// <inheritdoc/>
     public async Task<IQueryContainer> QueryAsync(
-        IConnectionDetails connectionDetails,
+        IConnectionDetails? connectionDetails,
         CancellationToken cancellationToken = default)
     {
         var t = await GetUnitOfWorkAsync(connectionDetails, cancellationToken);

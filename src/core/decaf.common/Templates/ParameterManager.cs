@@ -4,25 +4,15 @@ using decaf.common.Utilities;
 
 namespace decaf.common.Templates;
 
-public class ParameterManager : IParameterManager
+public class ParameterManager(IHashProvider hashProvider) : IParameterManager
 {
     private const string DefaultPrefix = "@";
     private const string ParameterName = "p";
-    private string parameterPrefix;
+    private string? parameterPrefix;
 
-    private readonly IHashProvider hashProvider;
-
-    private readonly Dictionary<string, SqlParameter> parameters;
-    private readonly Dictionary<string, object> parameterValues;
+    private readonly Dictionary<string, SqlParameter> parameters = new();
+    private readonly Dictionary<string, object> parameterValues = new();
     private int parameterCount;
-
-    public ParameterManager(IHashProvider hashProvider)
-    {
-        this.hashProvider = hashProvider;
-        parameters = new Dictionary<string, SqlParameter>();
-        parameterValues = new Dictionary<string, object>();
-        parameterCount = 0;
-    }
 
     protected virtual string GetParameterPrefix()
         => DefaultPrefix;
@@ -31,9 +21,9 @@ public class ParameterManager : IParameterManager
     {
         get
         {
-            if (string.IsNullOrEmpty(parameterPrefix))
+            if (parameterPrefix.IsNullOrWhiteSpace())
                 parameterPrefix = GetParameterPrefix();
-            return parameterPrefix;
+            return parameterPrefix!;
         }
     }
         
@@ -43,8 +33,8 @@ public class ParameterManager : IParameterManager
     public SqlParameter Add<T>(T state, object value)
     {
         var hash = hashProvider.GetHash(state, value);
-        var existing = parameters.TryGetValue(hash, out var existingParameter);
-        if (existing) return existingParameter;
+        if (parameters.TryGetValue(hash, out SqlParameter existingParameter))
+            return existingParameter;
 
         var parameterNumber = parameterCount + 1;
 

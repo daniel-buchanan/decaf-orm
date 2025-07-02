@@ -12,7 +12,7 @@ public interface IQueryContainerInternal : IQueryContainer
 	/// Get the hash that represents this query.
 	/// </summary>
 	/// <returns>A <see cref="string"/> that represents the hash.</returns>
-	string GetHash();
+	string? GetHash();
 
 	/// <summary>
 	/// Gets the <see cref="IAliasManager"/> for this query.
@@ -42,8 +42,8 @@ public interface IQueryContainerInternal : IQueryContainer
 	/// <summary>
 	/// Set the <see cref="IQueryContext"/> associated with this query.
 	/// </summary>
-	/// <param name="context">The <see cref="IQueryContext"/> to use.</param>
-	void SetContext(IQueryContext context);
+	/// <param name="val">The <see cref="IQueryContext"/> to use.</param>
+	void SetContext(IQueryContext val);
 
 	/// <summary>
 	/// Gets the <see cref="DecafOptions"/> to use for this query.

@@ -24,7 +24,7 @@ public interface IConnectionDetails : IDisposable
 	/// <summary>
 	/// The authentication for the connection.
 	/// </summary>
-	IConnectionAuthentication Authentication { get; set; }
+	IConnectionAuthentication? Authentication { get; set; }
 
 	/// <summary>
 	/// Gets the connection string to use to connect to the database.

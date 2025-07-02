@@ -1,27 +1,21 @@
 using System.Data;
 using decaf.common.Connections;
 using decaf.common.Exceptions;
-using decaf.common.Logging;
 
 namespace decaf.sqlite;
 
-public class SqliteConnection : Connection, IConnection
+public class SqliteConnection(IConnectionDetails connectionDetails) 
+    : Connection(connectionDetails), IConnection
 {
-    /// <inheritdoc />
-    public SqliteConnection(
-        ILoggerProxy logger, 
-        IConnectionDetails connectionDetails) : 
-        base(logger, connectionDetails) { }
-
     public override IDbConnection GetUnderlyingConnection()
     {
-        var details = connectionDetails as ISqliteConnectionDetails;
-        if (details is null) throw new MissingConnectionDetailsException("No ISqliteConnectionDetails found.");
+        var details = ConnectionDetails as ISqliteConnectionDetails;
+        if (details is null) throw new MissingConnectionDetailsException("No ConnectionDetails found.");
 
-        if (dbConnection != null)
-            return dbConnection;
+        if (DbConnection != null)
+            return DbConnection;
         
-        dbConnection = new Microsoft.Data.Sqlite.SqliteConnection(details.GetConnectionString());
-        return dbConnection;
+        DbConnection = new Microsoft.Data.Sqlite.SqliteConnection(details.GetConnectionString());
+        return DbConnection;
     }
 }

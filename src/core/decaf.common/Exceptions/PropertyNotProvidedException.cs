@@ -12,10 +12,10 @@ public class PropertyNotProvidedException : InvalidOperationException
     public PropertyNotProvidedException(string property, string reason)
         : base(GetMessage(property, reason)) { }
         
-    public PropertyNotProvidedException(string property, Exception innerException, string reason = null)
-        : base(GetMessage(property, reason), innerException) { }
+    public PropertyNotProvidedException(string property, Exception innerException, string? reason = null)
+        : base(GetMessage(property, reason ?? string.Empty), innerException) { }
         
-    public PropertyNotProvidedException(Exception innerException, string reason = null)
+    public PropertyNotProvidedException(Exception innerException, string? reason = null)
         : base(reason, innerException) { }
 
 

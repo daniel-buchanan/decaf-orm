@@ -11,7 +11,7 @@ public static class ListExtensions
         {
             foreach(var item in list)
             {
-                var disposableItem = (IDisposable)item;
+                var disposableItem = (IDisposable)item!;
                 disposableItem.Dispose();
             }
         }

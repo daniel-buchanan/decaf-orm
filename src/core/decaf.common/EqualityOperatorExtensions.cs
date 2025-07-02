@@ -2,7 +2,7 @@
 
 public static class EqualityOperatorExtensions
 {
-	public static string ToOperatorString(this EqualityOperator op)
+	public static string? ToOperatorString(this EqualityOperator op)
 	{
 		switch (op)
 		{

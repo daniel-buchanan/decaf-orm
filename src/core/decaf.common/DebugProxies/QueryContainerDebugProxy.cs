@@ -33,5 +33,5 @@ internal class QueryContainerDebugProxy(IQueryContainer queryContainer)
     /// <summary>
     /// The current query context.
     /// </summary>
-    public IQueryContext Context => queryContainer.Context;
+    public IQueryContext? Context => queryContainer?.Context;
 }

@@ -2,7 +2,7 @@
 
 public class ManagedAlias
 {
-    private ManagedAlias(string name, string relation)
+    private ManagedAlias(string? name, string relation)
     {
         Name = name;
         Relation = relation;
@@ -11,7 +11,7 @@ public class ManagedAlias
     /// <summary>
     /// The name of the Alias.
     /// </summary>
-    public string Name { get; }
+    public string? Name { get; }
 
     /// <summary>
     /// The relation that this alias is associated with.

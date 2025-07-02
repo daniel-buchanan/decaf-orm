@@ -5,16 +5,14 @@ using decaf.common.Logging;
 
 namespace decaf.sqlserver;
 
-public class SqlServerConnectionFactory : ConnectionFactory
+public class SqlServerConnectionFactory(ILoggerProxy logger) 
+    : ConnectionFactory(logger)
 {
-    public SqlServerConnectionFactory(ILoggerProxy logger)
-        : base(logger)
+    protected override Task<IConnection> ConstructConnectionAsync(
+        IConnectionDetails connectionDetails, 
+        CancellationToken cancellationToken = default)
     {
-    }
-
-    protected override Task<IConnection> ConstructConnectionAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default)
-    {
-        var conn = new SqlServerConnection(logger, connectionDetails);
-        return Task.FromResult(conn as IConnection);
+        IConnection conn = new SqlServerConnection(connectionDetails);
+        return Task.FromResult(conn);
     }
 }

@@ -14,10 +14,9 @@ public class ConnectionTests
 
     public ConnectionTests()
     {
-        var logger = new DefaultLoggerProxy(new DecafOptions(), new StdOutputWrapper());
         var connectionDetails = new MockConnectionDetails();
         var dbOptions = new MockDatabaseOptions();
-        connection = new MockConnection(dbOptions, logger, connectionDetails);
+        connection = new MockConnection(dbOptions, connectionDetails);
     }
 
     [Fact]

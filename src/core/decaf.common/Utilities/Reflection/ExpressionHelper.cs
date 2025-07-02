@@ -7,7 +7,7 @@ namespace decaf.common.Utilities.Reflection;
 public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionHelper
 {
     /// <inheritdoc/>
-    public string GetMemberName(Expression expression)
+    public string? GetMemberName(Expression expression)
     {
         // switch on node type
         switch (expression.NodeType)
@@ -37,19 +37,18 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
     }
 
     /// <inheritdoc/>
-    public string GetMethodName(Expression expression)
+    public string? GetMethodName(Expression expression)
     {
         if (expression.NodeType == ExpressionType.Lambda) expression = ((LambdaExpression)expression).Body;
         if (expression.NodeType == ExpressionType.Convert) expression = ((UnaryExpression)expression).Operand;
 
         var methodExpression = expression as MethodCallExpression;
-        if (methodExpression == null) return null;
 
-        return methodExpression.Method.Name;
+        return methodExpression?.Method.Name;
     }
 
     /// <inheritdoc/>
-    public string GetParameterName(Expression expression)
+    public string? GetParameterName(Expression expression)
     {
         // check the expression for null
         if (expression == null)
@@ -71,17 +70,11 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
 
         // get lambda and parameter
         var param = lambdaExpr.Parameters[0];
-
-        // if no parameter, return null
-        if (param == null)
-            return null;
-
-        // return parameter name
-        return param.Name;
+        return param?.Name;
     }
 
     /// <inheritdoc/>
-    public string GetTypeName<TObject>()
+    public string? GetTypeName<TObject>()
     {
         // use the reflection helper to get the table name
         // NOTE: this will use the [TableName] attribute if present
@@ -121,7 +114,7 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
     }
 
     /// <inheritdoc/>
-    public object GetValue(Expression expression)
+    public object? GetValue(Expression expression)
     {
         if (expression.NodeType == ExpressionType.Convert)
         {
@@ -166,60 +159,64 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
         return null;
     }
 
-    /// <inheritdoc/>
-    public Type GetMemberType(Expression expression)
+    public bool TryGetValue(Expression expression, out object? value)
     {
-        if (expression.NodeType == ExpressionType.Convert)
-        {
-            return ConvertAccess.GetMemberType(expression, this);
-        }
-        else if (expression.NodeType == ExpressionType.MemberAccess)
-        {
-            return MemberAccess.GetMemberType(expression);
-        }
-        else if (expression.NodeType == ExpressionType.Constant)
-        {
-            return ConstantAccess.GetType(expression);
-        }
-        else if(expression.NodeType == ExpressionType.Parameter)
-        {
-            return ParameterAccess.GetType(expression);
-        }
-        else if (expression.NodeType == ExpressionType.Lambda)
-        {
-            var body = ((LambdaExpression)expression).Body;
-            return GetMemberType(body);
-        }
+        value = GetValue(expression);
+        return value is not null;
+    }
 
-        return null;
+    public bool TryGetValue<TObject>(Expression expression, out TObject? value)
+    {
+        var val = GetValue(expression);
+        var exists = val is not null;
+        var boxedVal = (TObject)Convert.ChangeType(val, typeof(TObject));
+        value = !exists ? default : boxedVal;
+        return exists;
     }
 
     /// <inheritdoc/>
-    public Type GetParameterType(Expression expression)
+    public Type? GetMemberType(Expression expression)
     {
-        if (expression.NodeType == ExpressionType.Convert)
+        switch (expression)
         {
-            return ConvertAccess.GetParameterType(expression, this);
+            case { NodeType: ExpressionType.Convert }:
+                return ConvertAccess.GetMemberType(expression, this);
+            case { NodeType: ExpressionType.MemberAccess }:
+                return MemberAccess.GetMemberType(expression);
+            case { NodeType: ExpressionType.Constant }:
+                return ConstantAccess.GetType(expression);
+            case { NodeType: ExpressionType.Parameter }:
+                return ParameterAccess.GetType(expression);
+            case { NodeType: ExpressionType.Lambda }:
+            {
+                var body = ((LambdaExpression)expression).Body;
+                return GetMemberType(body);
+            }
+            default:
+                return null;
         }
-        else if (expression.NodeType == ExpressionType.MemberAccess)
-        {
-            return MemberAccess.GetParameterType(expression);
-        }
-        else if (expression.NodeType == ExpressionType.Constant)
-        {
-            return ConstantAccess.GetType(expression);
-        }
-        else if (expression.NodeType == ExpressionType.Parameter)
-        {
-            return ParameterAccess.GetType(expression);
-        }
-        else if (expression.NodeType == ExpressionType.Lambda)
-        {
-            var body = ((LambdaExpression)expression).Body;
-            return GetParameterType(body);
-        }
+    }
 
-        return null;
+    /// <inheritdoc/>
+    public Type? GetParameterType(Expression expression)
+    {
+        switch (expression)
+        {
+            case { NodeType: ExpressionType.Convert }:
+                return ConvertAccess.GetParameterType(expression, this);
+            case { NodeType: ExpressionType.MemberAccess }:
+                return MemberAccess.GetParameterType(expression);
+            case { NodeType: ExpressionType.Constant }:
+                return ConstantAccess.GetType(expression);
+            case { NodeType: ExpressionType.Parameter }:
+                return ParameterAccess.GetType(expression);
+            case { NodeType: ExpressionType.Lambda }:
+            {
+                var body = ((LambdaExpression)expression).Body;
+                return GetParameterType(body);
+            }
+            default: return null;
+        }
     }
 
     /// <inheritdoc/>

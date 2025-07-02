@@ -6,21 +6,16 @@ namespace decaf.common.Connections;
 
 public abstract class Connection : IConnection
 {
-    protected IDbConnection dbConnection;
-    protected readonly ILoggerProxy logger;
-    protected IConnectionDetails connectionDetails;
+    protected IDbConnection? DbConnection;
+    protected readonly IConnectionDetails ConnectionDetails;
 
     /// <summary>
     /// Create an instance of a Connection.
     /// </summary>
-    /// <param name="logger">The logger to use to log any details.</param>
     /// <param name="connectionDetails">The connection details to use.</param>
-    protected Connection(
-        ILoggerProxy logger,
-        IConnectionDetails connectionDetails)
+    protected Connection(IConnectionDetails connectionDetails)
     {
-        this.logger = logger;
-        this.connectionDetails = connectionDetails;
+        ConnectionDetails = connectionDetails;
         State = ConnectionState.Unknown;
     }
 
@@ -30,13 +25,13 @@ public abstract class Connection : IConnection
     /// <inheritdoc/>
     public void Close()
     {
-        if (dbConnection == null) return;
-        if (dbConnection.State != System.Data.ConnectionState.Open &&
-            dbConnection.State != System.Data.ConnectionState.Connecting &&
-            dbConnection.State != System.Data.ConnectionState.Fetching &&
-            dbConnection.State != System.Data.ConnectionState.Executing) return;
+        if (DbConnection is null) return;
+        if (DbConnection.State != System.Data.ConnectionState.Open &&
+            DbConnection.State != System.Data.ConnectionState.Connecting &&
+            DbConnection.State != System.Data.ConnectionState.Fetching &&
+            DbConnection.State != System.Data.ConnectionState.Executing) return;
             
-        dbConnection.Close();
+        DbConnection.Close();
         State = ConnectionState.Closed;
     }
 
@@ -50,26 +45,24 @@ public abstract class Connection : IConnection
     protected virtual void Dispose(bool disposing)
     {
         if (!disposing) return;
-        dbConnection.Dispose();
+        DbConnection?.Dispose();
     }
 
     /// <inheritdoc/>
     public void Open()
     {
-        if (dbConnection == null)
-            dbConnection = GetUnderlyingConnection();
+        DbConnection ??= GetUnderlyingConnection();
 
-        if (dbConnection.State == System.Data.ConnectionState.Closed ||
-            dbConnection.State == System.Data.ConnectionState.Broken)
-        {
-            dbConnection.Open();
-            State = ConnectionState.Open;
-        }
+        if (DbConnection.State != System.Data.ConnectionState.Closed &&
+            DbConnection.State != System.Data.ConnectionState.Broken) return;
+        
+        DbConnection.Open();
+        State = ConnectionState.Open;
     }
 
     /// <inheritdoc/>
     public string GetHash()
-        => connectionDetails.GetHash();
+        => ConnectionDetails.GetHash();
 
     /// <inheritdoc/>
     public abstract IDbConnection GetUnderlyingConnection();

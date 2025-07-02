@@ -6,30 +6,23 @@ using decaf.common.Logging;
 
 namespace decaf.sqlserver;
 
-public class SqlServerTransaction : Transaction
+public class SqlServerTransaction(
+    Guid id,
+    ILoggerProxy logger,
+    IConnection connection,
+    DecafOptions options,
+    SqlServerOptions npgsqlOptions)
+    : Transaction(id, logger, connection, options)
 {
-    private readonly SqlServerOptions sqlServerOptions;
-
-    public SqlServerTransaction(
-        Guid id,
-        ILoggerProxy logger,
-        IConnection connection,
-        DecafOptions options,
-        SqlServerOptions npgsqlOptions)
-        : base(id, logger, connection, options)
-    {
-        sqlServerOptions = npgsqlOptions;
-    }
-
     /// <inheritdoc/>
     /// <exception cref="InvalidConnectionException"></exception>
     public override IDbTransaction GetUnderlyingTransaction()
     {
-        var sqlConnection = connection as SqlServerConnection;
+        var sqlConnection = Connection as SqlServerConnection;
         if (sqlConnection == null)
             throw new InvalidConnectionException($"The provided connection for Transaction {Id} is not of the type \"NpgsqlConnection\"");
 
         return sqlConnection.GetUnderlyingConnection()
-            .BeginTransaction(sqlServerOptions.TransactionIsolationLevel);
+            .BeginTransaction(npgsqlOptions.TransactionIsolationLevel);
     }
 }

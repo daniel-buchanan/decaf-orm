@@ -28,7 +28,7 @@ public interface IQueryContainer : IDisposable
 	/// <summary>
 	/// Gets the <see cref="IQueryContext"/> for this query.
 	/// </summary>
-	IQueryContext Context { get; }
+	IQueryContext? Context { get; }
 
 	/// <summary>
 	/// Discard the current query.

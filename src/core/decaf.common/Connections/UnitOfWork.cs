@@ -18,8 +18,8 @@ public sealed class UnitOfWork : IUnitOfWorkExtended
     private readonly DecafOptions options;
     private readonly IHashProvider hashProvider;
     private readonly List<IQueryContainer> queries;
-    private Func<Exception, bool> catchHandler;
-    private Action successHandler;
+    private Func<Exception, bool>? catchHandler;
+    private Action? successHandler;
 
     private UnitOfWork(
         ITransaction transaction,
@@ -30,7 +30,7 @@ public sealed class UnitOfWork : IUnitOfWorkExtended
         Action<Guid> notifyDisposed)
     {
         connection = transaction.Connection;
-        this.transaction = transaction as ITransactionInternal;
+        this.transaction = (transaction as ITransactionInternal)!;
         this.sqlFactory = sqlFactory;
         this.logger = logger;
         this.options = options;
@@ -70,6 +70,7 @@ public sealed class UnitOfWork : IUnitOfWorkExtended
     public void Dispose()
     {
         Dispose(true);
+        // ReSharper disable once GCSuppressFinalizeForTypeWithoutDestructor
         GC.SuppressFinalize(this);
     }
 
@@ -111,13 +112,13 @@ public sealed class UnitOfWork : IUnitOfWorkExtended
             {
                 logger.Debug($"UnitOfWork({Id}) :: Rolling back Transaction");
                 transaction.Rollback();
-                if (reThrow == true && !options.SwallowCommitExceptions) throw;
+                if (reThrow is true && !options.SwallowCommitExceptions) throw;
             }
             catch (Exception rollbackException)
             {
                 logger.Error(rollbackException, $"UnitOfWork({Id}) :: Rolling back Transaction Failed");
                 reThrow = catchHandler?.Invoke(rollbackException);
-                if (reThrow == true && !options.SwallowCommitExceptions) throw;
+                if (reThrow is true && !options.SwallowCommitExceptions) throw;
             }
         }
         finally
@@ -146,7 +147,7 @@ public sealed class UnitOfWork : IUnitOfWorkExtended
         catch (Exception e)
         {
             var reThrow = catchHandler?.Invoke(e);
-            if (reThrow == true && !options.SwallowCommitExceptions) throw;
+            if (reThrow is true && !options.SwallowCommitExceptions) throw;
         }
 
         return this;

@@ -9,8 +9,7 @@ public abstract class Transaction : ITransactionInternal
 {
     private readonly ILoggerProxy logger;
     private readonly DecafOptions options;
-    protected readonly IConnection connection;
-    private IDbTransaction transaction;
+    private IDbTransaction? transaction;
 
     protected Transaction(
         Guid id,
@@ -20,15 +19,15 @@ public abstract class Transaction : ITransactionInternal
     {
         Id = id;
         this.logger = logger;
-        this.connection = connection;
         this.options = options;
+        Connection = connection;
         State = TransactionState.Created;
 
         this.logger.Debug($"ITransaction({Id}) :: Transaction created");
     }
 
     /// <inheritdoc/>
-    public IConnection Connection => connection;
+    public IConnection Connection { get; protected set; }
 
     /// <inheritdoc/>
     public Guid Id { get; }

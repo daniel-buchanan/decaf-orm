@@ -5,20 +5,12 @@ namespace decaf.common.Utilities.Reflection;
 
 public interface IValueFunctionHelper
 {
-    IValueFunction ParseFunction(Expression expression);
+    IValueFunction? ParseFunction(Expression expression);
 }
 
-public class ValueFunctionHelper : IValueFunctionHelper
+public class ValueFunctionHelper(IExpressionHelper expressionHelper) : IValueFunctionHelper
 {
-    private readonly IExpressionHelper expressionHelper;
-
-    public ValueFunctionHelper(
-        IExpressionHelper expressionHelper)
-    {
-        this.expressionHelper = expressionHelper;
-    }
-
-    public IValueFunction ParseFunction(Expression expression)
+    public IValueFunction? ParseFunction(Expression expression)
     {
         var callExpression = expression as MethodCallExpression;
         if (callExpression == null) return null;
@@ -71,7 +63,7 @@ public class ValueFunctionHelper : IValueFunctionHelper
     {
         var arguments = expression.Arguments;
         var datePartExpression = arguments[1];
-        var dp = (DatePart)expressionHelper.GetValue(datePartExpression);
+        expressionHelper.TryGetValue<DatePart>(datePartExpression, out var dp);
         return ValueFunctions.DatePart.Create(dp);
     }
 
@@ -79,17 +71,15 @@ public class ValueFunctionHelper : IValueFunctionHelper
     {
         var arguments = expression.Arguments;
         var startExpression = arguments[0];
-        Expression lengthExpression = null;
+        Expression? lengthExpression = null;
         if (arguments.Count > 1) lengthExpression = arguments[1];
 
-        var startValue = (int)expressionHelper.GetValue(startExpression);
-        if (lengthExpression != null)
-        {
-            var lengthValue = (int)expressionHelper.GetValue(lengthExpression);
-            return Substring.Create(startValue, lengthValue);
-        }
+        expressionHelper.TryGetValue<int>(startExpression, out var startValue);
+        if (lengthExpression == null) return Substring.Create(startValue);
+        expressionHelper.TryGetValue<int>(lengthExpression, out var lengthValue);
+        
+        return Substring.Create(startValue, lengthValue);
 
-        return Substring.Create(startValue);
     }
 
     public static class SupportedMethods

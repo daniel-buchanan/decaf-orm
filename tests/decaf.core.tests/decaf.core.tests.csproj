@@ -39,7 +39,4 @@
     <None Remove="Microsoft.Extensions.DependencyInjection" />
     <None Remove="Connections\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Helpers\" />
-  </ItemGroup>
 </Project>

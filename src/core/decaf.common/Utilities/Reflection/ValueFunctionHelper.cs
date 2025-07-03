@@ -13,29 +13,27 @@ public class ValueFunctionHelper(IExpressionHelper expressionHelper) : IValueFun
     public IValueFunction? ParseFunction(Expression expression)
     {
         var callExpression = expression as MethodCallExpression;
+
+        if (callExpression is null)
+        {
+            if (expression is UnaryExpression unaryExpression)
+                callExpression = unaryExpression.Operand as MethodCallExpression;
+        }
+        
         if (callExpression == null) return null;
 
-        switch (callExpression.Method.Name)
+        return callExpression.Method.Name switch
         {
-            case SupportedMethods.ToLower:
-                return ToLower.Create();
-            case SupportedMethods.ToUpper:
-                return ToUpper.Create();
-            case SupportedMethods.DatePart:
-                return ParseDatePart(callExpression);
-            case SupportedMethods.Contains:
-                return ParseContains(callExpression);
-            case SupportedMethods.Substring:
-                return ParseSubString(callExpression);
-            case SupportedMethods.Trim:
-                return Trim.Create();
-            case SupportedMethods.StartsWith:
-                return ParseStartsWith(callExpression);
-            case SupportedMethods.EndsWith:
-                return ParseEndsWith(callExpression);
-        }
-
-        return null;
+            SupportedMethods.ToLower => ToLower.Create(),
+            SupportedMethods.ToUpper => ToUpper.Create(),
+            SupportedMethods.DatePart => ParseDatePart(callExpression),
+            SupportedMethods.Contains => ParseContains(callExpression),
+            SupportedMethods.Substring => ParseSubString(callExpression),
+            SupportedMethods.Trim => Trim.Create(),
+            SupportedMethods.StartsWith => ParseStartsWith(callExpression),
+            SupportedMethods.EndsWith => ParseEndsWith(callExpression),
+            _ => null
+        };
     }
 
     private IValueFunction ParseContains(MethodCallExpression expression)

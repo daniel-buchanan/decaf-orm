@@ -28,6 +28,8 @@ public class ValueFunctionHelperTests
     {
         // Arrange 
         var expr = expression.Body;
+        if (expr is UnaryExpression unaryExpression)
+            expr = unaryExpression.Operand as MethodCallExpression;
         
         // Act 
         var func = helper.ParseFunction(expr);

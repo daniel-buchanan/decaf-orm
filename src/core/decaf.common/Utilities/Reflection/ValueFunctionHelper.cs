@@ -12,15 +12,7 @@ public class ValueFunctionHelper(IExpressionHelper expressionHelper) : IValueFun
 {
     public IValueFunction? ParseFunction(Expression expression)
     {
-        var callExpression = expression as MethodCallExpression;
-
-        if (callExpression is null)
-        {
-            if (expression is UnaryExpression unaryExpression)
-                callExpression = unaryExpression.Operand as MethodCallExpression;
-        }
-        
-        if (callExpression == null) return null;
+        if (expression is not MethodCallExpression callExpression) return null;
 
         return callExpression.Method.Name switch
         {

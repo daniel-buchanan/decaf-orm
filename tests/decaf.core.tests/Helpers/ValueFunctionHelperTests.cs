@@ -23,7 +23,7 @@ public class ValueFunctionHelperTests
 
     [Theory]
     [MemberData(nameof(FunctionCalls))]
-    public void ParseFunction<TResult>(Expression<Func<string, object>> expression, ValueFunction functionType,
+    private void ParseFunction<TResult>(Expression<Func<string, object>> expression, ValueFunction functionType,
         Func<IValueFunction, bool> additionalVerification)
     {
         // Arrange 

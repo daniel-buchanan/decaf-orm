@@ -12,7 +12,7 @@ namespace decaf.core_tests.Helpers;
 
 public class ValueFunctionHelperTests
 {
-    private readonly IValueFunctionHelper helper;
+    private readonly ValueFunctionHelper helper;
     
     public ValueFunctionHelperTests()
     {

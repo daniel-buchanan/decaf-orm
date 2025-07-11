@@ -7,5 +7,5 @@ public class TableNameAttribute(string name) : Attribute
 {
     public string Name { get; } = name;
 
-    public bool CaseSensitive { get; set; }
+    public bool CaseSensitive { get; set; } = false;
 }

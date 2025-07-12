@@ -78,7 +78,7 @@ public class CreateTable : Execute<ICreateTableQueryContext>, ICreateTable
 
     public ICreateTable WithColumns<T>()
     {
-        var members = reflectionHelper.GetMemberDetails(typeof(T));
+        var members = reflectionHelper.GetColumnsForType(typeof(T));
         foreach (var m in members)
         {
             var cb = new DdlColumnBuilder(expressionHelper);

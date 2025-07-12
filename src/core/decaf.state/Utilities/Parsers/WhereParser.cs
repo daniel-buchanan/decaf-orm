@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using decaf.common;
+using decaf.common.Exceptions;
 using decaf.common.Utilities;
 using decaf.common.Utilities.Reflection;
 using decaf.state.Conditionals;
@@ -25,14 +26,14 @@ internal class WhereParser : BaseParser
         this.valueParser = valueParser;
     }
 
-    public override IWhere Parse(Expression expression, IQueryContextExtended context)
+    public override IWhere? Parse(Expression expression, IQueryContextExtended context)
     {
         ExpressionType nodeType;
-        BinaryExpression binaryExpr;
-        IWhere left, right;
+        BinaryExpression? binaryExpr;
+        IWhere? left, right;
         Expression body;
 
-        var lambda = expression as LambdaExpression;
+        var lambda = expression.CastAs<LambdaExpression>();
         if(lambda != null)
         {
             nodeType = lambda.Body.NodeType;
@@ -47,16 +48,19 @@ internal class WhereParser : BaseParser
         // check to see if we have a normal where
         if (nodeType != ExpressionType.OrElse && nodeType != ExpressionType.AndAlso)
         {
-            return Parse(expression, context, false);
+            return ParseInternal(expression, context);
         }
 
         // check for and
         if (nodeType == ExpressionType.AndAlso)
         {
             // get binary expression
-            binaryExpr = body as BinaryExpression;
+            binaryExpr = body.ForceCastAs<BinaryExpression>();
             left = Parse(binaryExpr.Left, context);
             right = Parse(binaryExpr.Right, context);
+            
+            if (left is null || right is null)
+                throw new TemplateParsingException($"Unable to parse where clause for {expression}");
 
             // return and
             return And.Where(left, right);
@@ -64,43 +68,52 @@ internal class WhereParser : BaseParser
 
         // check for or
         // get binary expression
-        binaryExpr = body as BinaryExpression;
+        binaryExpr = body.ForceCastAs<BinaryExpression>();
         left = Parse(binaryExpr.Left, context);
         right = Parse(binaryExpr.Right, context);
+        
+        if (left is null || right is null)
+            throw new TemplateParsingException($"Unable to parse where clause for {expression}");
 
         // return or
         return Or.Where(left, right);
     }
 
-    private IWhere Parse(Expression expression, IQueryContextExtended context, bool excludeAlias)
+    private IWhere? ParseInternal(Expression expression, IQueryContextExtended context)
     {
         var earlyResult = callExpressionHelper.ParseExpression(expression, context);
         if (earlyResult != null) return earlyResult;
 
-        BinaryExpression binaryExpr = null;
+        BinaryExpression? binaryExpr = null;
 
-        if (!(expression is MemberExpression))
-            binaryExpr = expression as BinaryExpression;
+        if (expression is not MemberExpression)
+            binaryExpr = expression.CastAs<BinaryExpression>();
 
-        if (binaryExpr == null) return valueParser.Parse(expression, context);
+        if (binaryExpr is null) return valueParser.Parse(expression, context);
 
-        IWhere left, right;
+        IWhere? left, right;
 
         if (binaryExpr.NodeType == ExpressionType.AndAlso)
         {
             // get left and right
-            left = Parse(binaryExpr.Left, context, excludeAlias);
-            right = Parse(binaryExpr.Right, context, excludeAlias);
+            left = ParseInternal(binaryExpr.Left, context);
+            right = ParseInternal(binaryExpr.Right, context);
+
+            if (left is null || right is null)
+                throw new TemplateParsingException($"Unable to parse where clause for {expression}");
 
             // return and
             return And.Where(left, right);
         }
-        else if (binaryExpr.NodeType == ExpressionType.OrElse)
+        if (binaryExpr.NodeType == ExpressionType.OrElse)
         {
             // get left and right
-            left = Parse(binaryExpr.Left, context, excludeAlias);
-            right = Parse(binaryExpr.Right, context, excludeAlias);
+            left = ParseInternal(binaryExpr.Left, context);
+            right = ParseInternal(binaryExpr.Right, context);
 
+            if (left is null || right is null)
+                throw new TemplateParsingException($"Unable to parse where clause for {expression}");
+            
             // return or
             return Or.Where(left, right);
         }
@@ -112,8 +125,8 @@ internal class WhereParser : BaseParser
         var leftType = leftExpression.NodeType;
         var rightType = rightExpression.NodeType;
 
-        var leftParam = expressionHelper.GetParameterName(leftExpression);
-        var rightParam = expressionHelper.GetParameterName(rightExpression);
+        var leftParam = ExpressionHelper.GetParameterName(leftExpression);
+        var rightParam = ExpressionHelper.GetParameterName(rightExpression);
         var bothMemberAccess = leftType == ExpressionType.MemberAccess &&
                                rightType == ExpressionType.MemberAccess;
         var bothHaveParam = !string.IsNullOrWhiteSpace(leftParam) &&

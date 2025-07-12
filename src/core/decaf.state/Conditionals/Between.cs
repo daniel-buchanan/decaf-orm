@@ -29,9 +29,9 @@ public class Between<T> : Between, IBetween
 
 	public T End { get; private set; }
 
-	public override Type ValueType { get; protected set; }
+	public sealed override Type ValueType { get; protected set; }
 
-	object IBetween.Start => Start;
+	object IBetween.Start => Start!;
 
-	object IBetween.End => End;
+	object IBetween.End => End!;
 }

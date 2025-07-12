@@ -29,7 +29,7 @@ public abstract class ConnectionDetails : IConnectionDetails
     /// </summary>
     /// <param name="input">The connection string to parse.</param>
     /// <exception cref="ConnectionStringParsingException">An error that occured during the parsing of the connection string.</exception>
-    protected void ParseConnectionString(string input)
+    private void ParseConnectionString(string input)
     {
         try
         {
@@ -77,7 +77,8 @@ public abstract class ConnectionDetails : IConnectionDetails
         if (!match.Success) return default;
             
         var matchedValue = match.Groups[1].Value;
-        var nextSeparator = matchedValue?.IndexOf(";") ?? 0;
+        if(matchedValue is null) throw new ConnectionStringParsingException("Invalid connection string");
+        var nextSeparator = matchedValue.IndexOf(";", StringComparison.Ordinal);
         if (nextSeparator <= 0)
             return string.IsNullOrWhiteSpace(matchedValue) ? default : parse(matchedValue);
         
@@ -162,16 +163,13 @@ public abstract class ConnectionDetails : IConnectionDetails
     }
 
     /// <inheritdoc/>
-    public IConnectionAuthentication Authentication
+    public IConnectionAuthentication? Authentication
     {
         get => authentication;
         set
         {
             if (authentication != null)
-            {
                 throw new ConnectionModificationException($"{nameof(Authentication)} cannot be modified once ConnectionDetails instance created");
-            }
-
             authentication = value;
         }
     }
@@ -200,7 +198,7 @@ public abstract class ConnectionDetails : IConnectionDetails
     public async Task<string> GetConnectionStringAsync(CancellationToken cancellationToken = default)
     {
         if(!string.IsNullOrWhiteSpace(connectionString))
-            return connectionString;
+            return connectionString!;
 
         connectionString = await ConstructConnectionStringAsync(cancellationToken);
         return connectionString;

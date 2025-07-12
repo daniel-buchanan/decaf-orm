@@ -15,7 +15,7 @@ public sealed class QueryContainer : IQueryContainerInternal
 	private readonly IAliasManager aliasManager;
 	private readonly DecafOptions options;
 	private readonly IHashProvider hashProvider;
-	private IQueryContext context;
+	private IQueryContext? context;
 
 	private QueryContainer(
 		IUnitOfWork unitOfWork,
@@ -24,7 +24,7 @@ public sealed class QueryContainer : IQueryContainerInternal
 		DecafOptions options)
 	{
 		this.logger = logger;
-		this.unitOfWork = unitOfWork as IUnitOfWorkExtended;
+		this.unitOfWork = unitOfWork.ForceCastAs<IUnitOfWorkExtended>();
 		aliasManager = AliasManager.Create();
 		this.options = options;
 		this.hashProvider = hashProvider;
@@ -48,7 +48,7 @@ public sealed class QueryContainer : IQueryContainerInternal
 	IUnitOfWork IQueryContainerInternal.UnitOfWork => unitOfWork;
 
 	/// <inheritdoc/>
-	public IQueryContext Context => context;
+	public IQueryContext? Context => context;
 
 	/// <inheritdoc/>
 	public void Discard() => Dispose();
@@ -66,11 +66,12 @@ public sealed class QueryContainer : IQueryContainerInternal
 	public ILoggerProxy Logger => logger;
 
 	/// <inheritdoc/>
-	string IQueryContainerInternal.GetHash() => context.GetHash();
+	string? IQueryContainerInternal.GetHash() => context?.GetHash();
 
 	/// <summary>
 	/// 
 	/// </summary>
+	/// <param name="hashProvider"></param>
 	/// <param name="options"></param>
 	/// <param name="logger"></param>
 	/// <param name="unitOfWork"></param>
@@ -91,16 +92,16 @@ public sealed class QueryContainer : IQueryContainerInternal
 		=> new QueryContainer(existing.UnitOfWork, existing.Logger, existing.HashProvider, existing.Options);
 
 	/// <inheritdoc/>
-	void IQueryContainerInternal.SetContext(IQueryContext context) => this.context = context;
+	void IQueryContainerInternal.SetContext(IQueryContext val) => context = val;
 
 	/// <inheritdoc/>
 	public void Dispose()
 	{
 		Dispose(true);
+		// ReSharper disable once GCSuppressFinalizeForTypeWithoutDestructor
 		GC.SuppressFinalize(this);
 	}
-
-	/// <inheritdoc/>
+	
 	private void Dispose(bool disposing)
 	{
 		if (!disposing) return;

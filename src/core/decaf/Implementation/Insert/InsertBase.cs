@@ -29,7 +29,7 @@ internal abstract class InsertBase : Execute<IInsertQueryContext>
     protected void AddValues<T>(T value)
     {
         var internalContext = Context as IQueryContextExtended;
-        var properties = internalContext.ReflectionHelper.GetMemberDetails(value);
+        var properties = internalContext.ReflectionHelper.GetColumnsForType(value);
         var values = properties.Select(p => internalContext.ReflectionHelper.GetPropertyValue(value, p.NewName));
         var row = values.ToArray();
         Context.Value(row);

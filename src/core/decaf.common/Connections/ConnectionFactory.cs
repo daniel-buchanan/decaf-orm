@@ -9,8 +9,8 @@ namespace decaf.common.Connections;
 
 public abstract class ConnectionFactory : IConnectionFactory
 {
-    protected readonly ILoggerProxy logger;
-    private IDictionary<string, IConnection> connections;
+    protected readonly ILoggerProxy Logger;
+    private IDictionary<string, IConnection>? connections;
 
     /// <summary>
     /// Create an instance of a ConnectionFactory.
@@ -19,7 +19,7 @@ public abstract class ConnectionFactory : IConnectionFactory
     protected ConnectionFactory(ILoggerProxy logger)
     {
         connections = new Dictionary<string, IConnection>();
-        this.logger = logger;
+        Logger = logger;
     }
 
     /// <inheritdoc/>
@@ -44,17 +44,12 @@ public abstract class ConnectionFactory : IConnectionFactory
         IConnectionDetails connectionDetails,
         CancellationToken cancellationToken = default)
     {
-        ValidateConnectionParameters(connectionDetails);
-        return await GetOrCreateConnectionAsync(connectionDetails, cancellationToken);
-    }
-
-    private void ValidateConnectionParameters(IConnectionDetails connectionDetails)
-    {
-        if (connectionDetails == null)
+        if (connectionDetails is null)
             throw new ArgumentNullException(nameof(connectionDetails), $"The {nameof(connectionDetails)} cannot be null, it MUST be provided when creating a connection.");
 
-        if (connections == null)
-            connections = new Dictionary<string, IConnection>();
+        connections ??= new Dictionary<string, IConnection>();
+        
+        return await GetOrCreateConnectionAsync(connectionDetails, cancellationToken);
     }
 
     private async Task<IConnection> GetOrCreateConnectionAsync(
@@ -69,22 +64,23 @@ public abstract class ConnectionFactory : IConnectionFactory
         }
         catch (Exception e)
         {
-            logger.Error(e, "Error Getting connection Hash");
+            Logger.Error(e, "Error Getting connection Hash");
             throw;
         }
 
-        if (connections.TryGetValue(hash, out var conn)) return conn;
+        if (connections?.TryGetValue(hash, out var conn) ==  true) 
+            return conn;
 
         try
         {
             var connection = await ConstructConnectionAsync(connectionDetails, cancellationToken);
-            connections.Add(hash, connection);
+            connections?.Add(hash, connection);
 
             return connection;
         }
         catch (Exception e)
         {
-            logger.Error(e, $"An error occurred attempting to get the connection.");
+            Logger.Error(e, $"An error occurred attempting to get the connection.");
             throw;
         }
     }

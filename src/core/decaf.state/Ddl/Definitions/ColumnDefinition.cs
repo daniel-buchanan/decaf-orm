@@ -4,7 +4,7 @@ namespace decaf.state.Ddl.Definitions;
 
 public class ColumnDefinition : IColumnDefinition
 {
-    public static IColumnDefinition Create(string name, Type type = null, bool nullable = false)
+    public static IColumnDefinition Create(string name, Type? type = null, bool nullable = false)
         => new ColumnDefinition(name, type ?? typeof(object), nullable);
 
     private ColumnDefinition(string name, Type type, bool nullable)

@@ -1,5 +1,6 @@
 ﻿using decaf.common;
 using decaf.common.Options;
+using decaf.common.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace decaf.db.common;
@@ -34,13 +35,13 @@ public static class DecafOptionsBuilderExtensions
 		return services;
 	}
 
-	public static void ConfigureDbImplementation<T>(
+	private static void ConfigureDbImplementation<T>(
 		this IServiceCollection services,
 		IDatabaseOptions options)
 		where T : IDbImplementationFactory, new()
 	{
 		var x = new T();
-		var internalOptions = options as IDatabaseOptionsExtensions;
+		var internalOptions = options.CastAs<IDatabaseOptionsExtensions>();
 		x.Configure(services, internalOptions);
 	}
 }

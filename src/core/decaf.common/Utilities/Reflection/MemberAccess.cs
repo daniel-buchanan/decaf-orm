@@ -5,7 +5,7 @@ namespace decaf.common.Utilities.Reflection;
 
 static class MemberAccess
 {
-    public static object GetValue(Expression expression)
+    public static object? GetValue(Expression expression)
     {
         var objectMember = Expression.Convert(expression, expression.Type);
         var getterLambda = Expression.Lambda(objectMember);
@@ -29,7 +29,10 @@ static class MemberAccess
 
     public static Type GetParameterType(Expression expression)
     {
-        return ((MemberExpression)expression).Member.DeclaringType;
+        var memberExpression = expression.CastAs<MemberExpression>();
+        if(memberExpression is null)
+            throw new InvalidOperationException("Unable to cast expression to MemberExpression.");
+        return memberExpression.Member.DeclaringType!;
     }
 
     public static string GetName(Expression expression, IReflectionHelper helper)

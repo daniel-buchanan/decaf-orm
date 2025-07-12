@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using decaf.common.Utilities;
 using decaf.common.Utilities.Reflection;
 using decaf.db.common.Builders;
 
@@ -69,7 +70,7 @@ public abstract class ValueParser(IReflectionHelper reflectionHelper, IConstants
         if (value == null) return string.Empty;
 
         if (underlyingType == typeof(byte[]))
-            return BytesToString(value as byte[]);
+            return BytesToString(value.CastAs<byte[]>());
 
         if (underlyingType == typeof(bool))
             return BooleanToString(Convert.ToBoolean(value));

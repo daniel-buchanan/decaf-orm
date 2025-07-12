@@ -8,7 +8,7 @@ public interface IUpdateQueryContext : IQueryContext
 	/// <summary>
 	/// 
 	/// </summary>
-	ITableTarget Table { get; }
+	ITableTarget? Table { get; }
 
 	/// <summary>
 	/// 
@@ -18,12 +18,12 @@ public interface IUpdateQueryContext : IQueryContext
 	/// <summary>
 	/// 
 	/// </summary>
-	IQueryTarget Source { get; }
+	IQueryTarget? Source { get; }
 
 	/// <summary>
 	/// 
 	/// </summary>
-	IWhere WhereClause { get; }
+	IWhere? WhereClause { get; }
 
 	/// <summary>
 	/// 
@@ -45,14 +45,14 @@ public interface IUpdateQueryContext : IQueryContext
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <param name="where"></param>
-	void Where(IWhere where);
+	/// <param name="whereClause"></param>
+	void Where(IWhere whereClause);
 
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <param name="output"></param>
-	void Output(Output output);
+	/// <param name="outputClause"></param>
+	void Output(Output outputClause);
 
 	/// <summary>
 	/// 

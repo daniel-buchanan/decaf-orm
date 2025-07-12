@@ -6,16 +6,13 @@ using decaf.db.common;
 
 namespace decaf.tests.common.Mocks;
 
-public class MockConnectionFactory : ConnectionFactory
+public class MockConnectionFactory(IDatabaseOptions options, ILoggerProxy logger) : ConnectionFactory(logger)
 {
-    private readonly MockDatabaseOptions dbOptions;
-
-    public MockConnectionFactory(IDatabaseOptions options, ILoggerProxy logger) : base(logger)
-        => dbOptions = options as MockDatabaseOptions ?? new MockDatabaseOptions();
+    private readonly MockDatabaseOptions dbOptions = options as MockDatabaseOptions ?? new MockDatabaseOptions();
 
     protected override Task<IConnection> ConstructConnectionAsync(IConnectionDetails connectionDetails, CancellationToken cancellationToken = default)
     {
-        var connection = (IConnection)new MockConnection(dbOptions, logger, connectionDetails);
-        return Task.FromResult(connection);
+        IConnection conn = new MockConnection(dbOptions, connectionDetails);
+        return Task.FromResult(conn);
     }
 }

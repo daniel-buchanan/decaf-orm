@@ -6,7 +6,7 @@ namespace decaf.state;
 
 public interface IDropTableQueryContext : IQueryContext
 {
-    string Name { get; }
+    string? Name { get; }
 
     void WithName(string name);
 

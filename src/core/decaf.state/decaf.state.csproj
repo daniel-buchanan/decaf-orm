@@ -6,6 +6,7 @@
     <Nullable>disable</Nullable>
     <RootNamespace>decaf.state</RootNamespace>
     <LangVersion>12</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

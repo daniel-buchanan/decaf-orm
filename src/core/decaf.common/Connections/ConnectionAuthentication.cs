@@ -12,12 +12,11 @@ public abstract class ConnectionAuthentication : IConnectionAuthentication
 
 public class UsernamePasswordAuthentication : ConnectionAuthentication
 {
-    public UsernamePasswordAuthentication() => AuthenticationType = ConnectionAuthenticationType.UsernamePassword;
-
-    public UsernamePasswordAuthentication(string username, string password) : this()
+    public UsernamePasswordAuthentication(string username, string password)
     {
         Username = username;
         Password = password;
+        AuthenticationType = ConnectionAuthenticationType.UsernamePassword;
     }
 
     /// <summary>

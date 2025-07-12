@@ -3,16 +3,9 @@
 namespace decaf.common.Attributes;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class TableNameAttribute : Attribute
+public class TableNameAttribute(string name) : Attribute
 {
-    public string Name { get; set; }
+    public string Name { get; } = name;
 
-    public bool CaseSensitive { get; set; }
-
-    public TableNameAttribute() { }
-
-    public TableNameAttribute(string name)
-    {
-        Name = name;
-    }
+    public bool CaseSensitive { get; set; } = false;
 }

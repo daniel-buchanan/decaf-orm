@@ -8,7 +8,7 @@ public interface IInsertQueryContext : IQueryContext
 	/// <summary>
 	/// Gets the <see cref="ITableTarget"/> that this insert targets.
 	/// </summary>
-	ITableTarget Target { get; }
+	ITableTarget? Target { get; }
 
 	/// <summary>
 	/// Gets the set of columns being inserted.
@@ -19,7 +19,7 @@ public interface IInsertQueryContext : IQueryContext
 	/// Gets the <see cref="IInsertValuesSource"/> for this context, if it
 	/// has been specified. Which is only when performing an update from a query.
 	/// </summary>
-	IInsertValuesSource Source { get; }
+	IInsertValuesSource? Source { get; }
 
 	/// <summary>
 	/// Gets the set of outputs for this context.

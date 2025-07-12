@@ -7,5 +7,5 @@ public class Substring : ValueFunction<string>
 	{
 	}
 
-	public static Substring Create(int start, int? end = null) => new Substring(start, end);
+	public static Substring Create(int start, int? end = null) => new(start, end);
 }

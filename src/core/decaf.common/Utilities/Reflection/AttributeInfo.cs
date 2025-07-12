@@ -2,15 +2,15 @@ using System;
 
 namespace decaf.common.Utilities.Reflection;
 
-public class AttributeInfo
+public class AttributeInfo(SourceType source, string appliedTo, Type appliedType)
 {
-    public SourceType Source { get; private set; }
-    public string AppliedTo { get; private set; }
-    public Type AppliedType { get; private set; }
-    public object Attribute { get; protected set; }
-    
+    public SourceType Source { get; private set; } = source;
+    public string AppliedTo { get; private set; } = appliedTo;
+    public Type AppliedType { get; private set; } = appliedType;
+    public object? Attribute { get; protected set; }
+
     public static AttributeInfo Create(string appliedTo, Type appliedType, SourceType source, object attribute)
-        => new()
+        => new(source, appliedTo, appliedType)
         {
             AppliedTo = appliedTo,
             AppliedType = appliedType,
@@ -20,7 +20,7 @@ public class AttributeInfo
 
     public static AttributeInfo<T> Create<T>(string appliedTo, Type appliedType, SourceType source, T attribute)
         where T : Attribute
-        => new()
+        => new(source, appliedTo, appliedType)
         {
             AppliedTo = appliedTo,
             AppliedType = appliedType,
@@ -29,12 +29,13 @@ public class AttributeInfo
         };
 }
 
-public class AttributeInfo<T> : AttributeInfo
+public class AttributeInfo<T>(SourceType source, string appliedTo, Type appliedType) :
+    AttributeInfo(source, appliedTo, appliedType)
     where T : Attribute
 {
-    public new T Attribute
+    public new T? Attribute
     {
-        get => (T)base.Attribute;
+        get => base.Attribute?.CastAs<T>();
         set => base.Attribute = value;
     }
 }

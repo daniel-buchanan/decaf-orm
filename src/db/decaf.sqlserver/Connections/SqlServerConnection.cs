@@ -1,21 +1,17 @@
 ﻿using System.Data;
 using decaf.common.Connections;
+using decaf.common.Exceptions;
 using decaf.common.Logging;
 
 namespace decaf.sqlserver;
 
-public class SqlServerConnection : Connection, IConnection
+public class SqlServerConnection(IConnectionDetails connectionDetails) 
+    : Connection(connectionDetails), IConnection
 {
-    public SqlServerConnection(
-        ILoggerProxy logger,
-        IConnectionDetails connectionDetails)
-        : base(logger, connectionDetails)
-    {
-    }
-
     public override IDbConnection GetUnderlyingConnection()
     {
-        var details = connectionDetails as ISqlServerConnectionDetails;
+        var details = ConnectionDetails as ISqlServerConnectionDetails;
+        if (details is null) throw new MissingConnectionDetailsException("No ConnectionDetails provided");
         return new Microsoft.Data.SqlClient.SqlConnection(details.GetConnectionString());
     }
 }

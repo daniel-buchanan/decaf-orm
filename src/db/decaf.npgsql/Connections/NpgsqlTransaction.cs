@@ -6,26 +6,19 @@ using decaf.common.Logging;
 
 namespace decaf.npgsql;
 
-public class NpgsqlTransaction : Transaction
+public class NpgsqlTransaction(
+    Guid id,
+    ILoggerProxy logger,
+    IConnection connection,
+    DecafOptions options,
+    NpgsqlOptions npgsqlOptions)
+    : Transaction(id, logger, connection, options)
 {
-    private readonly NpgsqlOptions npgsqlOptions;
-
-    public NpgsqlTransaction(
-        Guid id,
-        ILoggerProxy logger,
-        IConnection connection,
-        DecafOptions options,
-        NpgsqlOptions npgsqlOptions)
-        : base(id, logger, connection, options)
-    {
-        this.npgsqlOptions = npgsqlOptions;
-    }
-
     /// <inheritdoc/>
     /// <exception cref="InvalidConnectionException"></exception>
     public override IDbTransaction GetUnderlyingTransaction()
     {
-        var npgsqlConnection = connection as NpgsqlConnection;
+        var npgsqlConnection = Connection as NpgsqlConnection;
         if (npgsqlConnection == null)
             throw new InvalidConnectionException($"The provided connection for Transaction {Id} is not of the type \"NpgsqlConnection\"");
 

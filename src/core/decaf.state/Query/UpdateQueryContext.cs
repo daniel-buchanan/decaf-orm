@@ -21,6 +21,7 @@ internal class UpdateQueryContext : QueryContext, IUpdateQueryContext
     /// Create a <see cref="IUpdateQueryContext"/> Context.
     /// </summary>
     /// <param name="aliasManager">The <see cref="IAliasManager"/> to use.</param>
+    /// <param name="hashProvider">The <see cref="IHashProvider"/> to use.</param>
     /// <returns>A new instance which implements <see cref="IUpdateQueryContext"/>.</returns>
     public static IUpdateQueryContext Create(IAliasManager aliasManager, IHashProvider hashProvider)
         => new UpdateQueryContext(aliasManager, hashProvider);
@@ -38,25 +39,25 @@ internal class UpdateQueryContext : QueryContext, IUpdateQueryContext
     public void From(IQueryTarget source) => Source = source;
 
     /// <inheritdoc/>
-    public void Where(IWhere where) => WhereClause = where;
+    public void Where(IWhere whereClause) => WhereClause = whereClause;
 
     /// <inheritdoc/>
-    public void Output(Output output) => outputs.Add(output);
+    public void Output(Output outputClause) => outputs.Add(outputClause);
 
     /// <inheritdoc/>
     public void Set(IUpdateValueSource value) => sets.Add(value);
 
     /// <inheritdoc/>
-    public ITableTarget Table => QueryTargets.FirstOrDefault() as ITableTarget;
+    public ITableTarget? Table => QueryTargets.FirstOrDefault() as ITableTarget;
 
     /// <inheritdoc/>
     public IReadOnlyCollection<IUpdateValueSource> Updates => sets.AsReadOnly();
 
     /// <inheritdoc/>
-    public IQueryTarget Source { get; private set; }
+    public IQueryTarget? Source { get; private set; }
 
     /// <inheritdoc/>
-    public IWhere WhereClause { get; private set; }
+    public IWhere? WhereClause { get; private set; }
 
     /// <inheritdoc/>
     public IReadOnlyCollection<Output> Outputs => outputs.AsReadOnly();

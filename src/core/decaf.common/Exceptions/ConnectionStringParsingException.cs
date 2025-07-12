@@ -9,7 +9,7 @@ public class ConnectionStringParsingException : Exception
     public ConnectionStringParsingException(string reason)
         : base(reason) { }
 
-    public ConnectionStringParsingException(Exception innerException, string reason = null)
+    public ConnectionStringParsingException(Exception innerException, string? reason = null)
         : base(reason, innerException) { }
 
 

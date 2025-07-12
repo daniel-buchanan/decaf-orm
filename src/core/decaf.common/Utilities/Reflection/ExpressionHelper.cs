@@ -7,7 +7,7 @@ namespace decaf.common.Utilities.Reflection;
 public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionHelper
 {
     /// <inheritdoc/>
-    public string GetMemberName(Expression expression)
+    public string? GetMemberName(Expression expression)
     {
         // switch on node type
         switch (expression.NodeType)
@@ -37,19 +37,18 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
     }
 
     /// <inheritdoc/>
-    public string GetMethodName(Expression expression)
+    public string? GetMethodName(Expression expression)
     {
         if (expression.NodeType == ExpressionType.Lambda) expression = ((LambdaExpression)expression).Body;
         if (expression.NodeType == ExpressionType.Convert) expression = ((UnaryExpression)expression).Operand;
 
-        var methodExpression = expression as MethodCallExpression;
-        if (methodExpression == null) return null;
+        var methodExpression = expression.CastAs<MethodCallExpression>();
 
-        return methodExpression.Method.Name;
+        return methodExpression?.Method.Name;
     }
 
     /// <inheritdoc/>
-    public string GetParameterName(Expression expression)
+    public string? GetParameterName(Expression expression)
     {
         // check the expression for null
         if (expression == null)
@@ -71,17 +70,11 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
 
         // get lambda and parameter
         var param = lambdaExpr.Parameters[0];
-
-        // if no parameter, return null
-        if (param == null)
-            return null;
-
-        // return parameter name
-        return param.Name;
+        return param?.Name;
     }
 
     /// <inheritdoc/>
-    public string GetTypeName<TObject>()
+    public string? GetTypeName<TObject>()
     {
         // use the reflection helper to get the table name
         // NOTE: this will use the [TableName] attribute if present
@@ -115,13 +108,13 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
     /// <inheritdoc/>
     public EqualityOperator ConvertExpressionTypeToEqualityOperator(Expression expression)
     {
-        var binaryExpr = expression as BinaryExpression;
+        var binaryExpr = expression.CastAs<BinaryExpression>();
         if (binaryExpr == null) return EqualityOperator.Equals;
         return ConvertExpressionTypeToEqualityOperator(binaryExpr.NodeType);
     }
 
     /// <inheritdoc/>
-    public object GetValue(Expression expression)
+    public object? GetValue(Expression expression)
     {
         if (expression.NodeType == ExpressionType.Convert)
         {
@@ -166,73 +159,84 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
         return null;
     }
 
-    /// <inheritdoc/>
-    public Type GetMemberType(Expression expression)
+    public T? GetValue<T>(Expression expression)
     {
-        if (expression.NodeType == ExpressionType.Convert)
-        {
-            return ConvertAccess.GetMemberType(expression, this);
-        }
-        else if (expression.NodeType == ExpressionType.MemberAccess)
-        {
-            return MemberAccess.GetMemberType(expression);
-        }
-        else if (expression.NodeType == ExpressionType.Constant)
-        {
-            return ConstantAccess.GetType(expression);
-        }
-        else if(expression.NodeType == ExpressionType.Parameter)
-        {
-            return ParameterAccess.GetType(expression);
-        }
-        else if (expression.NodeType == ExpressionType.Lambda)
-        {
-            var body = ((LambdaExpression)expression).Body;
-            return GetMemberType(body);
-        }
+        var fetched = TryGetValue(expression, out var value);
+        if (!fetched) return default;
+        return value != null ? value.CastAs<T>() : default;
+    }
 
-        return null;
+    public bool TryGetValue(Expression expression, out object? value)
+    {
+        value = GetValue(expression);
+        return value is not null;
+    }
+
+    public bool TryGetValue<TObject>(Expression expression, out TObject? value)
+    {
+        var val = GetValue(expression);
+        var exists = val is not null;
+        var boxedVal = (TObject)Convert.ChangeType(val, typeof(TObject));
+        value = !exists ? default : boxedVal;
+        return exists;
     }
 
     /// <inheritdoc/>
-    public Type GetParameterType(Expression expression)
+    public Type? GetMemberType(Expression expression)
     {
-        if (expression.NodeType == ExpressionType.Convert)
+        switch (expression)
         {
-            return ConvertAccess.GetParameterType(expression, this);
+            case { NodeType: ExpressionType.Convert }:
+                return ConvertAccess.GetMemberType(expression, this);
+            case { NodeType: ExpressionType.MemberAccess }:
+                return MemberAccess.GetMemberType(expression);
+            case { NodeType: ExpressionType.Constant }:
+                return ConstantAccess.GetType(expression);
+            case { NodeType: ExpressionType.Parameter }:
+                return ParameterAccess.GetType(expression);
+            case { NodeType: ExpressionType.Lambda }:
+            {
+                var body = ((LambdaExpression)expression).Body;
+                return GetMemberType(body);
+            }
+            default:
+                return null;
         }
-        else if (expression.NodeType == ExpressionType.MemberAccess)
-        {
-            return MemberAccess.GetParameterType(expression);
-        }
-        else if (expression.NodeType == ExpressionType.Constant)
-        {
-            return ConstantAccess.GetType(expression);
-        }
-        else if (expression.NodeType == ExpressionType.Parameter)
-        {
-            return ParameterAccess.GetType(expression);
-        }
-        else if (expression.NodeType == ExpressionType.Lambda)
-        {
-            var body = ((LambdaExpression)expression).Body;
-            return GetParameterType(body);
-        }
+    }
 
-        return null;
+    /// <inheritdoc/>
+    public Type? GetParameterType(Expression expression)
+    {
+        switch (expression)
+        {
+            case { NodeType: ExpressionType.Convert }:
+                return ConvertAccess.GetParameterType(expression, this);
+            case { NodeType: ExpressionType.MemberAccess }:
+                return MemberAccess.GetParameterType(expression);
+            case { NodeType: ExpressionType.Constant }:
+                return ConstantAccess.GetType(expression);
+            case { NodeType: ExpressionType.Parameter }:
+                return ParameterAccess.GetType(expression);
+            case { NodeType: ExpressionType.Lambda }:
+            {
+                var body = ((LambdaExpression)expression).Body;
+                return GetParameterType(body);
+            }
+            default: return null;
+        }
     }
 
     /// <inheritdoc/>
     public bool IsMethodCallOnProperty(Expression expression)
     {
-        var methodCallExpression = expression as MethodCallExpression;
-        var binaryExpression = expression as BinaryExpression;
+        var methodCallExpression = expression.CastAs<MethodCallExpression>();
+        var binaryExpression = expression.CastAs<BinaryExpression>();
         if (binaryExpression != null)
         {
-            var call = binaryExpression.Left as MethodCallExpression ??
-                       binaryExpression.Right as MethodCallExpression;
-            var constant = binaryExpression.Left as ConstantExpression ??
-                           binaryExpression.Right as ConstantExpression;
+            var call = binaryExpression.Left.CastAs<MethodCallExpression>() ??
+                       binaryExpression.Right.CastAs<MethodCallExpression>();
+            var constant = binaryExpression.Left.CastAs<ConstantExpression>() ??
+                           binaryExpression.Right.CastAs<ConstantExpression>();
 
             if (call is null || constant is null) return false;
             methodCallExpression = call;
@@ -246,9 +250,9 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
             arguments.All(a => a.NodeType == ExpressionType.Constant) ||
             arguments.All(a => a.NodeType == ExpressionType.MemberAccess))
         {
-            var memberExpression = methodCallExpression.Object as MemberExpression ??
-                                   arguments[0] as MemberExpression;
-            var innerExpression = memberExpression?.Expression as ConstantExpression;
+            var memberExpression = methodCallExpression.Object?.CastAs<MemberExpression>() ??
+                                   arguments[0].CastAs<MemberExpression>();
+            var innerExpression = memberExpression?.Expression.CastAs<ConstantExpression>();
             return innerExpression is null;
         }
 
@@ -261,12 +265,12 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
     /// <inheritdoc/>
     public bool IsMethodCallOnConstantOrMemberAccess(Expression expression)
     {
-        var methodCallExpression = expression as MethodCallExpression;
+        var methodCallExpression = expression.CastAs<MethodCallExpression>();
         if (methodCallExpression == null)
         {
-            var binaryExpression = expression as BinaryExpression;
-            methodCallExpression = binaryExpression?.Left as MethodCallExpression ??
-                                   binaryExpression?.Right as MethodCallExpression;
+            var binaryExpression = expression.CastAs<BinaryExpression>();
+            methodCallExpression = binaryExpression?.Left.CastAs<MethodCallExpression>() ??
+                                   binaryExpression?.Right.CastAs<MethodCallExpression>();
 
             if (methodCallExpression is null) return false;
         }

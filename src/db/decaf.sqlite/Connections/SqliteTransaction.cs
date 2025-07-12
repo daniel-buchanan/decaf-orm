@@ -6,21 +6,18 @@ using ConnectionState = System.Data.ConnectionState;
 
 namespace decaf.sqlite;
 
-public class SqliteTransaction : Transaction
+public class SqliteTransaction(
+    Guid id,
+    ILoggerProxy logger,
+    IConnection connection,
+    DecafOptions options)
+    : Transaction(id, logger, connection, options)
 {
-    private IDbTransaction? currentTransaction = null;
-    
-    public SqliteTransaction(
-        Guid id,
-        ILoggerProxy logger,
-        IConnection connection,
-        DecafOptions options) :
-        base(id, logger, connection, options)
-    { }
+    private IDbTransaction? currentTransaction;
 
     public override IDbTransaction GetUnderlyingTransaction()
     {
-        var sqliteConnection = connection as SqliteConnection;
+        var sqliteConnection = Connection as SqliteConnection;
         if (sqliteConnection == null)
             throw new InvalidConnectionException($"The provided connection for Transaction {Id} is not of the type \"SQLiteConnection\"");
 

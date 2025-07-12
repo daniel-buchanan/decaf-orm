@@ -26,49 +26,72 @@ public interface IExpressionHelper
     /// </summary>
     /// <param name="expression"></param>
     /// <returns></returns>
-    string GetMethodName(Expression expression);
+    string? GetMethodName(Expression expression);
 
     /// <summary>
     /// Get the field name from the expression. i.e. p => p.ID (ID would be the field name). Note that this *should* be a SIMPLE expression, as in the previous example.
     /// </summary>
     /// <param name="expression">The expression to get the name from</param>
     /// <returns>The name of the field</returns>
-    string GetMemberName(Expression expression);
+    string? GetMemberName(Expression expression);
 
     /// <summary>
     /// Get the name of the parameter used in an expression. i.e. p => p.ID (p would be the parameter name). Note that this *should* be a SIMPLE expression, as in the previous example.
     /// </summary>
     /// <param name="expression">The expression to get the parameter name from</param>
     /// <returns>The paramter name</returns>
-    string GetParameterName(Expression expression);
+    string? GetParameterName(Expression expression);
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="expression"></param>
     /// <returns></returns>
-    Type GetMemberType(Expression expression);
+    Type? GetMemberType(Expression expression);
 
     /// <summary>
     /// Get the type of the parameter used in the expression. i.e. p => p.Id (p would be the parameter).
     /// </summary>
     /// <param name="expression">The expression to parse.</param>
-    /// <returnsThe type of the expression parameter></returns>
-    Type GetParameterType(Expression expression);
+    /// <returns>The type of the expression parameter</returns>
+    Type? GetParameterType(Expression expression);
 
     /// <summary>
     /// Get the table/type name
     /// </summary>
     /// <typeparam name="TObject">The type to get the name for</typeparam>
     /// <returns>The name of the type or table</returns>
-    string GetTypeName<TObject>();
+    string? GetTypeName<TObject>();
 
     /// <summary>
     /// Get the Value from an expression.
     /// </summary>
     /// <param name="expression">The expression to get the value from.</param>
     /// <returns>The value of the expression</returns>
-    object GetValue(Expression expression);
+    object? GetValue(Expression expression);
+    
+    /// <summary>
+    /// Get the Value from an expression.
+    /// </summary>
+    /// <param name="expression">The expression to get the value from.</param>
+    /// <returns>The value of the expression</returns>
+    T? GetValue<T>(Expression expression);
+    
+    /// <summary>
+    /// Attempt to get the value from an expression.
+    /// </summary>
+    /// <param name="expression">The expression to get the value from.</param>
+    /// <param name="value">The output value of the expression.</param>
+    /// <returns>The value of the expression</returns>
+    bool TryGetValue(Expression expression, out object? value);
+    
+    /// <summary>
+    /// Attempt to get the value from an expression.
+    /// </summary>
+    /// <param name="expression">The expression to get the value from.</param>
+    /// <param name="value">The output value of the expression.</param>
+    /// <returns>The value of the expression</returns>
+    bool TryGetValue<TObject>(Expression expression, out TObject? value);
 
     /// <summary>
     /// Checks if the provided expression is a method call on a property.

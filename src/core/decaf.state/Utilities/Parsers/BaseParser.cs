@@ -6,24 +6,19 @@ using decaf.common.Utilities.Reflection;
 
 namespace decaf.state.Utilities;
 
-internal abstract class BaseParser : IParser
+internal abstract class BaseParser(
+    IExpressionHelper expressionHelper,
+    IReflectionHelper reflectionHelper)
+    : IParser
 {
-    protected readonly IExpressionHelper expressionHelper;
-    protected readonly IReflectionHelper reflectionHelper;
-
-    protected BaseParser(
-        IExpressionHelper expressionHelper,
-        IReflectionHelper reflectionHelper)
-    {
-        this.expressionHelper = expressionHelper;
-        this.reflectionHelper = reflectionHelper;
-    }
+    protected readonly IExpressionHelper ExpressionHelper = expressionHelper;
+    protected readonly IReflectionHelper ReflectionHelper = reflectionHelper;
 
     /// <inheritdoc/>
-    public abstract IWhere Parse(Expression expression, IQueryContextExtended context);
+    public abstract IWhere? Parse(Expression expression, IQueryContextExtended context);
 
     /// <summary>
-    /// This is used for the case where we are doing a column.Match<T1,T2>((t1,t2) => t1.someNullable == t2.nonNull)
+    /// This is used for the case where we are doing a column.Match
     /// We check for the null-able and then get the underlying expression to join against
     /// </summary>
     /// <param name="operation">The operation to check for null ables</param>

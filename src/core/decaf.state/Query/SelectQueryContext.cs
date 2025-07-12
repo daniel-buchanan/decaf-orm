@@ -10,7 +10,7 @@ internal class SelectQueryContext : QueryContext, ISelectQueryContext
 {
     private readonly List<Column> columns;
     private readonly List<Join> joins;
-    private IWhere where;
+    private IWhere? where;
     private readonly List<OrderBy> orderByClauses;
     private readonly List<GroupBy> groupByClauses;
     private int? limit;
@@ -20,10 +20,10 @@ internal class SelectQueryContext : QueryContext, ISelectQueryContext
         IHashProvider hashProvider)
         : base(aliasManager, QueryTypes.Select, hashProvider)
     {
-        columns = new List<Column>();
-        joins = new List<Join>();
-        orderByClauses = new List<OrderBy>();
-        groupByClauses = new List<GroupBy>();
+        columns = [];
+        joins = [];
+        orderByClauses = [];
+        groupByClauses = [];
     }
 
     internal static ISelectQueryContext Create(IAliasManager aliasManager, IHashProvider hashProvider)
@@ -36,7 +36,7 @@ internal class SelectQueryContext : QueryContext, ISelectQueryContext
     public IReadOnlyCollection<Join> Joins => joins.AsReadOnly();
 
     /// <inheritdoc/>
-    public IWhere WhereClause => where;
+    public IWhere? WhereClause => where;
 
     /// <inheritdoc/>
     public IReadOnlyCollection<OrderBy> OrderByClauses => orderByClauses.AsReadOnly();
@@ -106,9 +106,9 @@ internal class SelectQueryContext : QueryContext, ISelectQueryContext
     }
 
     /// <inheritdoc/>
-    public void Where(IWhere where) => this.where = where;
+    public void Where(IWhere whereClause) => this.where = whereClause;
 
     /// <inheritdoc/>
-    public void Limit(int limit)
-        => this.limit = limit;
+    public void Limit(int value)
+        => this.limit = value;
 }

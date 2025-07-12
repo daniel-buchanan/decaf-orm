@@ -31,5 +31,5 @@ public interface IAliasManager : IDisposable
     /// </summary>
     /// <param name="alias">The alias to retrieve the associated Entity for.</param>
     /// <returns>The entity associated with the provided Alias.</returns>
-    string GetAssociation(string alias);
+    string? GetAssociation(string alias);
 }

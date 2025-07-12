@@ -5,45 +5,27 @@ namespace decaf.common.Utilities.Reflection;
 
 public interface IValueFunctionHelper
 {
-    IValueFunction ParseFunction(Expression expression);
+    IValueFunction? ParseFunction(Expression expression);
 }
 
-public class ValueFunctionHelper : IValueFunctionHelper
+public class ValueFunctionHelper(IExpressionHelper expressionHelper) : IValueFunctionHelper
 {
-    private readonly IExpressionHelper expressionHelper;
-
-    public ValueFunctionHelper(
-        IExpressionHelper expressionHelper)
+    public IValueFunction? ParseFunction(Expression expression)
     {
-        this.expressionHelper = expressionHelper;
-    }
+        if (expression is not MethodCallExpression callExpression) return null;
 
-    public IValueFunction ParseFunction(Expression expression)
-    {
-        var callExpression = expression as MethodCallExpression;
-        if (callExpression == null) return null;
-
-        switch (callExpression.Method.Name)
+        return callExpression.Method.Name switch
         {
-            case SupportedMethods.ToLower:
-                return ToLower.Create();
-            case SupportedMethods.ToUpper:
-                return ToUpper.Create();
-            case SupportedMethods.DatePart:
-                return ParseDatePart(callExpression);
-            case SupportedMethods.Contains:
-                return ParseContains(callExpression);
-            case SupportedMethods.Substring:
-                return ParseSubString(callExpression);
-            case SupportedMethods.Trim:
-                return Trim.Create();
-            case SupportedMethods.StartsWith:
-                return ParseStartsWith(callExpression);
-            case SupportedMethods.EndsWith:
-                return ParseEndsWith(callExpression);
-        }
-
-        return null;
+            SupportedMethods.ToLower => ToLower.Create(),
+            SupportedMethods.ToUpper => ToUpper.Create(),
+            SupportedMethods.DatePart => ParseDatePart(callExpression),
+            SupportedMethods.Contains => ParseContains(callExpression),
+            SupportedMethods.Substring => ParseSubString(callExpression),
+            SupportedMethods.Trim => Trim.Create(),
+            SupportedMethods.StartsWith => ParseStartsWith(callExpression),
+            SupportedMethods.EndsWith => ParseEndsWith(callExpression),
+            _ => null
+        };
     }
 
     private IValueFunction ParseContains(MethodCallExpression expression)
@@ -71,7 +53,7 @@ public class ValueFunctionHelper : IValueFunctionHelper
     {
         var arguments = expression.Arguments;
         var datePartExpression = arguments[1];
-        var dp = (DatePart)expressionHelper.GetValue(datePartExpression);
+        expressionHelper.TryGetValue<DatePart>(datePartExpression, out var dp);
         return ValueFunctions.DatePart.Create(dp);
     }
 
@@ -79,17 +61,15 @@ public class ValueFunctionHelper : IValueFunctionHelper
     {
         var arguments = expression.Arguments;
         var startExpression = arguments[0];
-        Expression lengthExpression = null;
+        Expression? lengthExpression = null;
         if (arguments.Count > 1) lengthExpression = arguments[1];
 
-        var startValue = (int)expressionHelper.GetValue(startExpression);
-        if (lengthExpression != null)
-        {
-            var lengthValue = (int)expressionHelper.GetValue(lengthExpression);
-            return Substring.Create(startValue, lengthValue);
-        }
+        expressionHelper.TryGetValue<int>(startExpression, out var startValue);
+        if (lengthExpression == null) return Substring.Create(startValue);
+        expressionHelper.TryGetValue<int>(lengthExpression, out var lengthValue);
+        
+        return Substring.Create(startValue, lengthValue);
 
-        return Substring.Create(startValue);
     }
 
     public static class SupportedMethods

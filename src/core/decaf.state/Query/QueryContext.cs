@@ -71,17 +71,17 @@ public abstract class QueryContext : IQueryContextExtended
         => queryTargets.Add(target);
 
     /// <inheritdoc/>
-    IQueryTarget IQueryContextExtended.GetQueryTarget(Expression expression)
+    IQueryTarget? IQueryContextExtended.GetQueryTarget(Expression expression)
     {
         GetAliasAndTable(expression, out var alias, out var table);
-        var managedAlias = aliasManager.FindByAssociation(table)?.FirstOrDefault()?.Name ?? alias;
+        var managedAlias = aliasManager.FindByAssociation(table).FirstOrDefault()?.Name ?? alias;
         managedAlias = aliasManager.Add(managedAlias, table);
 
         return queryTargets.FirstOrDefault(t => t.Alias == managedAlias);
     }
 
     /// <inheritdoc/>
-    IQueryTarget IQueryContextExtended.GetQueryTarget(string alias)
+    IQueryTarget? IQueryContextExtended.GetQueryTarget(string alias)
     {
         return queryTargets.FirstOrDefault(qt => qt.Alias == alias);
     }
@@ -101,9 +101,9 @@ public abstract class QueryContext : IQueryContextExtended
 
     private void GetAliasAndTable(Expression expression, out string alias, out string table)
     {
-        alias = table = null;
-        Expression exprAlias, exprTable;
-        exprAlias = exprTable = expression;
+        alias = table = string.Empty;
+        Expression exprTable;
+        var exprAlias = exprTable = expression;
 
         if (expression is LambdaExpression lambda)
         {
@@ -129,12 +129,12 @@ public abstract class QueryContext : IQueryContextExtended
 
         if (expression is MemberExpression memberExpr)
         {
-            alias = expressionHelper.GetParameterName(exprAlias);
-            table = reflectionHelper.GetTableName(memberExpr.Member.DeclaringType);
+            alias = expressionHelper.GetParameterName(exprAlias) ?? string.Empty;
+            table = reflectionHelper.GetTableName(memberExpr.Member.DeclaringType!);
             return;
         }
 
-        alias = expressionHelper.GetParameterName(exprAlias);
+        alias = expressionHelper.GetParameterName(exprAlias) ?? string.Empty;
         table = reflectionHelper.GetTableName(exprTable.Type);
     }
 

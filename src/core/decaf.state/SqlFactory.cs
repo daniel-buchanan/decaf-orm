@@ -14,11 +14,10 @@ public abstract class SqlFactory : ISqlFactory
     /// <inheritdoc/>
     public SqlTemplate ParseTemplate(IQueryContext context)
     {
-        SqlTemplate template;
         var key = context.GetHash();
-        var existing = cache.TryGetValue(key, out template);
+        var existing = cache.TryGetValue(key, out var template);
 
-        if (existing) return template;
+        if (existing) return template!;
 
         if (context is ISelectQueryContext selectContext)
             template = ParseQuery(selectContext);
@@ -33,7 +32,7 @@ public abstract class SqlFactory : ISqlFactory
         if (context is IDropTableQueryContext dropTableContext)
             template = ParseQuery(dropTableContext);
 
-        if (template == null) return null;
+        if (template == null) throw new TemplateParsingException($"Unable to parse query for context: {context.Id}");
         cache.Add(key, template);
         return template;
     }
@@ -41,7 +40,7 @@ public abstract class SqlFactory : ISqlFactory
     /// <inheritdoc/>
     public object ParseParameters(IQueryContext context, SqlTemplate template, bool includePrefix = true)
     {
-        IDictionary<string, object> values = null;
+        IDictionary<string, object> values = new Dictionary<string, object>();
 
         if (context is ISelectQueryContext selectContext)
             values = ParseParameters(selectContext, includePrefix);
@@ -52,7 +51,7 @@ public abstract class SqlFactory : ISqlFactory
         if (context is IInsertQueryContext insertContext)
             values = ParseParameters(insertContext, includePrefix);
 
-        if (values == null) return new { };
+        if (values.Count == 0) return new { };
 
         if (!CheckParameters(values.Keys.ToArray(), template))
             throw new SqlTemplateMismatchException("Provided template, does not match provided parameters.");
@@ -150,7 +149,7 @@ public abstract class SqlFactory : ISqlFactory
     /// <returns>True if the parameters are valid, False if they aren't.</returns>
     private static bool CheckParameters(string[] parameterNames, SqlTemplate template)
     {
-        if (parameterNames.Length != (template.Parameters?.Count() ?? 0))
+        if (parameterNames.Length != template.Parameters.Count())
             return false;
 
         var result = true;

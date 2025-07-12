@@ -5,7 +5,7 @@ namespace decaf.common.Utilities.Reflection;
 
 static class ParameterAccess
 {
-    public static object GetValue(Expression expression)
+    public static object? GetValue(Expression expression)
     {
         var objectMember = Expression.Convert(expression, expression.Type);
         var getterLambda = Expression.Lambda(objectMember);
@@ -22,16 +22,16 @@ static class ParameterAccess
         }
     }
 
-    public static Type GetType(Expression expression)
+    public static Type? GetType(Expression expression)
     {
-        var parameterExpression = expression as ParameterExpression;
+        var parameterExpression = expression.CastAs<ParameterExpression>();
         if (parameterExpression == null) return null;
         return parameterExpression.Type;
     }
 
-    public static string GetName(Expression expression)
+    public static string? GetName(Expression expression)
     {
-        var parameterExpression = expression as ParameterExpression;
+        var parameterExpression = expression.CastAs<ParameterExpression>();
         if (parameterExpression == null) return null;
         return parameterExpression.Name;
     }

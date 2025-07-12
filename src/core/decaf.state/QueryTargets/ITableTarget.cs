@@ -6,7 +6,7 @@ public interface ITableTarget : IQueryTarget
 {
 	string Name { get; }
 
-	string Schema { get; }
+	string? Schema { get; }
 
 	bool IsEquivalentTo(ITableTarget target);
 }

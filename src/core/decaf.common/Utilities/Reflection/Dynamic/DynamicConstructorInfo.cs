@@ -16,6 +16,9 @@ public class DynamicConstructorInfo : ConstructorInfo
         paramters = new List<ParameterInfo>();
         foreach(var c in columns)
         {
+            if (c is null) continue;
+            if (c.NewName is null || c.ValueType is null)
+                continue;
             paramters.Add(new DynamicParameterInfo(c.NewName, c.ValueType));
         }
     }

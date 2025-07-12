@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using decaf.common;
+using decaf.common.Utilities;
 using decaf.common.Utilities.Reflection.Dynamic;
 
 namespace decaf.state;
@@ -16,14 +17,14 @@ public static class QueryContextExtensions
     }
 
     private static IQueryContextExtended ToInternal(this IQueryContext context)
-        => context as IQueryContextExtended;
+        => context.ForceCastAs<IQueryContextExtended>();
 
     public static string GetTableName(
         this IHelperExtensions self,
         Expression expression)
     {
         var tableType = self.Context.ToInternal().ExpressionHelper.GetParameterType(expression);
-        return GetTableName(self, tableType);
+        return GetTableName(self, tableType!);
     }
 
     public static string GetTableName(
@@ -34,30 +35,30 @@ public static class QueryContextExtensions
     public static string GetTableName<T>(this IHelperExtensions self)
         => self.Context.ToInternal().ReflectionHelper.GetTableName<T>();
 
-    public static string GetFieldName(this IHelperExtensions self, PropertyInfo prop)
+    public static string? GetFieldName(this IHelperExtensions self, PropertyInfo prop)
         => self.Context.ToInternal().ReflectionHelper.GetFieldName(prop);
 
-    public static string GetTableAlias(
+    public static string? GetTableAlias(
         this IHelperExtensions self,
         Expression expression)
         => self.Context.ToInternal().ExpressionHelper.GetParameterName(expression);
 
-    public static string GetColumnName(
+    public static string? GetColumnName(
         this IHelperExtensions self,
         Expression expression)
         => self.Context.ToInternal().ExpressionHelper.GetMemberName(expression);
 
-    public static string GetColumnName(
+    public static string? GetColumnName(
         this IHelperExtensions self,
         PropertyInfo prop)
         => self.Context.ToInternal().ReflectionHelper.GetFieldName(prop);
 
-    public static IWhere ParseWhere(
+    public static IWhere? ParseWhere(
         this IHelperExtensions self,
         Expression expression)
         => self.Context.ToInternal().Parsers.Where.Parse(expression, self.Context.ToInternal());
 
-    public static IWhere ParseJoin(
+    public static IWhere? ParseJoin(
         this IHelperExtensions self,
         Expression expression)
         => self.Context.ToInternal().Parsers.Join.Parse(expression, self.Context.ToInternal());

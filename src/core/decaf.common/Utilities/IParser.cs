@@ -10,5 +10,5 @@ public interface IParser
 	/// <param name="expression">The expression to parse.</param>
 	/// <param name="context">The current query context</param>
 	/// <returns>The parsed where clause.</returns>
-	IWhere Parse(Expression expression, IQueryContextExtended context);
+	IWhere? Parse(Expression expression, IQueryContextExtended context);
 }

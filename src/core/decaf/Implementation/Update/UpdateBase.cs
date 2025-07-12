@@ -52,7 +52,7 @@ internal abstract class UpdateBase : Execute<IUpdateQueryContext>
             var column = Column.Create(p.Name, Context.Table);
             var v = p.Value;
             var valueType = p.ValueType;
-            var defaultValue = DefaultValueHelper.Get(valueType);
+            var defaultValue = DefaultValue.Get(valueType);
             if (v?.Equals(defaultValue) == true ||
                 (v == null && defaultValue == null))
                 continue;

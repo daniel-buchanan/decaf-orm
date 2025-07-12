@@ -1,4 +1,6 @@
 ﻿using decaf.common;
+using decaf.common.Exceptions;
+using decaf.common.Utilities;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("decaf")]
 namespace decaf.state;
@@ -6,17 +8,16 @@ namespace decaf.state;
 public static class QueryFrameworkExtensions
 {
 	/// <summary>
-	/// Create an <see cref="IQueryContext"/> from an <see cref="IQuery"/>.
+	/// Create an <see cref="IQueryContext"/> from an <see cref="IQueryContainer"/>.
 	/// </summary>
 	/// <typeparam name="T">The type of <see cref="IQueryContext"/> to create.</typeparam>
 	/// <param name="query">Self.</param>
 	/// <returns>A newly created <see cref="IQueryContext"/>.</returns>
-	public static T CreateContext<T>(this IQueryContainer query) where T: IQueryContext
+	public static T CreateContext<T>(this IQueryContainer query) 
+		where T: IQueryContext
 	{
-		var internalQuery = query as IQueryContainerInternal;
+		var internalQuery = query.ForceCastAs<IQueryContainerInternal>();
 		var queryContextType = typeof(T);
-
-		if (internalQuery == null) return default(T);
 
 		if(queryContextType.IsAssignableFrom(typeof(ISelectQueryContext)))
 			return (T)SelectQueryContext.Create(internalQuery.AliasManager, internalQuery.HashProvider);
@@ -36,6 +37,6 @@ public static class QueryFrameworkExtensions
 		if (queryContextType.IsAssignableFrom(typeof(IDropTableQueryContext)))
 			return (T)DropTableQueryContext.Create(internalQuery.AliasManager, internalQuery.HashProvider);
 
-		return default(T);
+		throw new ShouldNeverOccurException("Unable to create query context for type " + typeof(T));
 	}
 }

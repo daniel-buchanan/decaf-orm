@@ -54,14 +54,14 @@ public interface IQueryContextExtended : IQueryContext
 	/// </summary>
 	/// <param name="expression">The expression to use to find the query target.</param>
 	/// <returns>A query target if found, otherwise null.</returns>
-	IQueryTarget GetQueryTarget(Expression expression);
+	IQueryTarget? GetQueryTarget(Expression expression);
 
 	/// <summary>
 	/// Get a query target based off an alias.
 	/// </summary>
 	/// <param name="alias">The alias of the query target to find.</param>
 	/// <returns>A query target if found, otherwise null.</returns>
-	IQueryTarget GetQueryTarget(string alias);
+	IQueryTarget? GetQueryTarget(string alias);
 }
 
 public interface IQueryParsers

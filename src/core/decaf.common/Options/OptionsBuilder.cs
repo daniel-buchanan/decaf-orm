@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+using decaf.common.Utilities;
 using decaf.common.Utilities.Reflection;
 
 namespace decaf.common.Options;
@@ -9,7 +10,7 @@ namespace decaf.common.Options;
 public class OptionsBuilder<T> : IOptionsBuilder<T>
     where T: class, new()
 {
-    private readonly Dictionary<string, object> values = new Dictionary<string, object>();
+    private readonly Dictionary<string, object?> values = new Dictionary<string, object?>();
     private readonly ExpressionHelper expressionHelper;
 
     public OptionsBuilder()
@@ -41,7 +42,8 @@ public class OptionsBuilder<T> : IOptionsBuilder<T>
     public void ConfigureProperty<TValue>(Expression<Func<T, TValue>> expr, TValue value)
     {
         var prop = expressionHelper.GetMemberName(expr);
-        ConfigureProperty(prop, value);
+        if (prop.IsNullOrWhiteSpace()) return;
+        ConfigureProperty(prop!, value);
     }
 
     /// <summary>

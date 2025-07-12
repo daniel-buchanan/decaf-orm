@@ -6,15 +6,8 @@ public static class Extensions
 {
     public static T? CastAs<T>(this object obj)
     {
-        try
-        {
-            return (T)obj;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Error casting object to {typeof(T).Name}: {e.Message}");
-            return default;
-        }
+        var success = TryCastAs<T>(obj, out var result);
+        return success ? result : default;
     }
 
     public static T ForceCastAs<T>(this object obj)

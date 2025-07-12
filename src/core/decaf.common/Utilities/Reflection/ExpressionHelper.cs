@@ -42,7 +42,7 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
         if (expression.NodeType == ExpressionType.Lambda) expression = ((LambdaExpression)expression).Body;
         if (expression.NodeType == ExpressionType.Convert) expression = ((UnaryExpression)expression).Operand;
 
-        var methodExpression = expression as MethodCallExpression;
+        var methodExpression = expression.CastAs<MethodCallExpression>();
 
         return methodExpression?.Method.Name;
     }
@@ -108,7 +108,7 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
     /// <inheritdoc/>
     public EqualityOperator ConvertExpressionTypeToEqualityOperator(Expression expression)
     {
-        var binaryExpr = expression as BinaryExpression;
+        var binaryExpr = expression.CastAs<BinaryExpression>();
         if (binaryExpr == null) return EqualityOperator.Equals;
         return ConvertExpressionTypeToEqualityOperator(binaryExpr.NodeType);
     }
@@ -222,14 +222,14 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
     /// <inheritdoc/>
     public bool IsMethodCallOnProperty(Expression expression)
     {
-        var methodCallExpression = expression as MethodCallExpression;
-        var binaryExpression = expression as BinaryExpression;
+        var methodCallExpression = expression.CastAs<MethodCallExpression>();
+        var binaryExpression = expression.CastAs<BinaryExpression>();
         if (binaryExpression != null)
         {
-            var call = binaryExpression.Left as MethodCallExpression ??
-                       binaryExpression.Right as MethodCallExpression;
-            var constant = binaryExpression.Left as ConstantExpression ??
-                           binaryExpression.Right as ConstantExpression;
+            var call = binaryExpression.Left.CastAs<MethodCallExpression>() ??
+                       binaryExpression.Right.CastAs<MethodCallExpression>();
+            var constant = binaryExpression.Left.CastAs<ConstantExpression>() ??
+                           binaryExpression.Right.CastAs<ConstantExpression>();
 
             if (call is null || constant is null) return false;
             methodCallExpression = call;
@@ -243,9 +243,9 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
             arguments.All(a => a.NodeType == ExpressionType.Constant) ||
             arguments.All(a => a.NodeType == ExpressionType.MemberAccess))
         {
-            var memberExpression = methodCallExpression.Object as MemberExpression ??
-                                   arguments[0] as MemberExpression;
-            var innerExpression = memberExpression?.Expression as ConstantExpression;
+            var memberExpression = methodCallExpression.Object.CastAs<MemberExpression>() ??
+                                   arguments[0].CastAs<MemberExpression>();
+            var innerExpression = memberExpression?.Expression.CastAs<ConstantExpression>();
             return innerExpression is null;
         }
 
@@ -258,12 +258,12 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
     /// <inheritdoc/>
     public bool IsMethodCallOnConstantOrMemberAccess(Expression expression)
     {
-        var methodCallExpression = expression as MethodCallExpression;
+        var methodCallExpression = expression.CastAs<MethodCallExpression>();
         if (methodCallExpression == null)
         {
-            var binaryExpression = expression as BinaryExpression;
-            methodCallExpression = binaryExpression?.Left as MethodCallExpression ??
-                                   binaryExpression?.Right as MethodCallExpression;
+            var binaryExpression = expression.CastAs<BinaryExpression>();
+            methodCallExpression = binaryExpression?.Left.CastAs<MethodCallExpression>() ??
+                                   binaryExpression?.Right.CastAs<MethodCallExpression>();
 
             if (methodCallExpression is null) return false;
         }

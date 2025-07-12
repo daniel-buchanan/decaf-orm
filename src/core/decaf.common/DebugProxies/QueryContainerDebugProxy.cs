@@ -1,4 +1,5 @@
 using System;
+using decaf.common.Utilities;
 
 namespace decaf.common.DebugProxies;
 
@@ -14,7 +15,7 @@ internal class QueryContainerDebugProxy(IQueryContainer queryContainer)
             const string notExecuted = "<< Nothing Executed >>";
             if (queryContainer.Context is null) return notExecuted;
             
-            var queryContainerInternal = queryContainer as IQueryContainerInternal;
+            var queryContainerInternal = queryContainer.CastAs<IQueryContainerInternal>();
             var sql = queryContainerInternal?.SqlFactory?.ParseTemplate(queryContainer.Context);
             return sql?.Sql ?? notExecuted;
         }

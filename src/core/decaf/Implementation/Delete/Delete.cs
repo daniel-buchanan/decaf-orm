@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using decaf.common;
+using decaf.common.Utilities;
 using decaf.state;
 
 namespace decaf.Implementation.Execute;
@@ -23,7 +24,7 @@ internal class Delete :
     public static Delete Create(
         IDeleteQueryContext context,
         IQueryContainer query)
-        => new Delete(context, query as IQueryContainerInternal);
+        => new Delete(context, query.CastAs<IQueryContainerInternal>());
 
     /// <inheritdoc />
     public IDeleteFrom From(string name, string alias = null, string schema = null)
@@ -67,7 +68,7 @@ internal class Delete :
     /// <inheritdoc />
     public IDeleteFrom Where(Action<IWhereBuilder> builder)
     {
-        var b = WhereBuilder.Create(Query.Options, Context) as IWhereBuilderInternal;
+        var b = WhereBuilder.Create(Query.Options, Context).CastAs<IWhereBuilderInternal>();
         builder(b);
         var clause = b.GetClauses().First();
         if ((clause is state.Conditionals.And ||

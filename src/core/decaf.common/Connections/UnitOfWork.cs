@@ -30,7 +30,7 @@ public sealed class UnitOfWork : IUnitOfWorkExtended
         Action<Guid> notifyDisposed)
     {
         connection = transaction.Connection;
-        this.transaction = (transaction as ITransactionInternal)!;
+        this.transaction = transaction.ForceCastAs<ITransactionInternal>();
         this.sqlFactory = sqlFactory;
         this.logger = logger;
         this.options = options;
@@ -226,7 +226,7 @@ public sealed class UnitOfWork : IUnitOfWorkExtended
     public Task<IUnitOfWork> OnSuccessAsync(Func<Task> handler, CancellationToken cancellationToken = default)
     {
         successHandler = () => handler().WaitFor(cancellationToken);
-        var uow = this as IUnitOfWork;
+        var uow = this.ForceCastAs<IUnitOfWork>();
         return Task.FromResult(uow);
     }
 
@@ -238,7 +238,7 @@ public sealed class UnitOfWork : IUnitOfWorkExtended
     public Task<IUnitOfWork> PersistChangesAsync(CancellationToken cancellationToken = default)
     {
         Persist();
-        var uow = this as IUnitOfWork;
+        var uow = this.ForceCastAs<IUnitOfWork>();
         return Task.FromResult(uow);
     }
 

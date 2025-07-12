@@ -198,7 +198,7 @@ public abstract class ConnectionDetails : IConnectionDetails
     public async Task<string> GetConnectionStringAsync(CancellationToken cancellationToken = default)
     {
         if(!string.IsNullOrWhiteSpace(connectionString))
-            return connectionString;
+            return connectionString!;
 
         connectionString = await ConstructConnectionStringAsync(cancellationToken);
         return connectionString;

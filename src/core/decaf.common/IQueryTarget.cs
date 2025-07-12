@@ -2,7 +2,7 @@
 
 public interface IQueryTarget
 {
-	string Alias { get; }
+	string? Alias { get; }
 
 	bool IsEquivalentTo(IQueryTarget target);
 }

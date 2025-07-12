@@ -5,7 +5,6 @@ namespace decaf.state.Conditionals;
 public class ColumnMatch : Where
 {
 	internal ColumnMatch(state.Column left, EqualityOperator op, state.Column right)
-		: base()
 	{
 		Left = left;
 		EqualityOperator = op;
@@ -22,7 +21,7 @@ public class ColumnMatch : Where
 
 	public EqualityOperator EqualityOperator { get; private set; }
 
-	public IValueFunction RightFunction { get; private set; }
+	public IValueFunction? RightFunction { get; private set; }
 
 	public state.Column Right { get; private set; }        
 }

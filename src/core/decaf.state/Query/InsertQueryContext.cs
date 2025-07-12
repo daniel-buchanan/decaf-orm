@@ -23,14 +23,14 @@ internal class InsertQueryContext : QueryContext, IInsertQueryContext
         => new InsertQueryContext(aliasManager, hashProvider);
 
     /// <inheritdoc/>
-    public ITableTarget Target
-        => QueryTargets.FirstOrDefault() as ITableTarget;
+    public ITableTarget? Target
+        => QueryTargets.FirstOrDefault()?.CastAs<ITableTarget>();
 
     /// <inheritdoc/>
     public IReadOnlyCollection<Column> Columns => columns.AsReadOnly();
 
     /// <inheritdoc/>
-    public IInsertValuesSource Source { get; private set; }
+    public IInsertValuesSource? Source { get; private set; }
 
     /// <inheritdoc/>
     public IReadOnlyCollection<Output> Outputs => outputs.AsReadOnly();

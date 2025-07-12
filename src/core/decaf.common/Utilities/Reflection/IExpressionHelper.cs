@@ -71,6 +71,13 @@ public interface IExpressionHelper
     object? GetValue(Expression expression);
     
     /// <summary>
+    /// Get the Value from an expression.
+    /// </summary>
+    /// <param name="expression">The expression to get the value from.</param>
+    /// <returns>The value of the expression</returns>
+    T? GetValue<T>(Expression expression);
+    
+    /// <summary>
     /// Attempt to get the value from an expression.
     /// </summary>
     /// <param name="expression">The expression to get the value from.</param>

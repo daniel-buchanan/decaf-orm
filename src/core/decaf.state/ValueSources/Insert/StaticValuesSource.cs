@@ -8,10 +8,10 @@ public class StaticValuesSource : IInsertStaticValuesSource
 {
 	private readonly List<object[]> values;
 
-	private StaticValuesSource(int width, IEnumerable<object[]> values = null)
+	private StaticValuesSource(int width, IEnumerable<object[]>? values = null)
 	{
 		Width = width;
-		this.values = values?.ToList() ?? new List<object[]>();
+		this.values = values?.ToList() ?? [];
 	}
 
 	public int Width { get; private set; }

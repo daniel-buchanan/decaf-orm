@@ -62,9 +62,9 @@ public class DynamicColumnInfo : IComparable<DynamicColumnInfo>
 
 	public void SetNewName(string val) => newName = val;
 
-	public void SetValue(object val) => value = val;
+	public void SetValue(object? val) => value = val;
 
-	public void SetValueType(Type val) => valueType = val;
+	public void SetValueType(Type? val) => valueType = val;
 
 	public void SetType(Type val) => type = val;
 

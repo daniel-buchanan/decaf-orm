@@ -159,6 +159,13 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
         return null;
     }
 
+    public T? GetValue<T>(Expression expression)
+    {
+        var fetched = TryGetValue(expression, out var value);
+        if (!fetched) return default;
+        return value != null ? value.CastAs<T>() : default;
+    }
+
     public bool TryGetValue(Expression expression, out object? value)
     {
         value = GetValue(expression);
@@ -243,7 +250,7 @@ public class ExpressionHelper(IReflectionHelper reflectionHelper) : IExpressionH
             arguments.All(a => a.NodeType == ExpressionType.Constant) ||
             arguments.All(a => a.NodeType == ExpressionType.MemberAccess))
         {
-            var memberExpression = methodCallExpression.Object.CastAs<MemberExpression>() ??
+            var memberExpression = methodCallExpression.Object?.CastAs<MemberExpression>() ??
                                    arguments[0].CastAs<MemberExpression>();
             var innerExpression = memberExpression?.Expression.CastAs<ConstantExpression>();
             return innerExpression is null;

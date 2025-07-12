@@ -5,20 +5,10 @@ using System.Reflection;
 
 namespace decaf.common.Utilities.Reflection.Dynamic;
 
-public class DynamicMethodInfo : MethodInfo
+public class DynamicMethodInfo(string name, Type reflectedType, params ParameterInfo[] inputParameters)
+    : MethodInfo
 {
-    private readonly string name;
-    private readonly Type reflectedType;
-    private readonly ParameterInfo[] parameters;
-
-    public DynamicMethodInfo(string name, Type reflectedType, params ParameterInfo[] parameters)
-    {
-        this.name = name;
-        this.reflectedType = reflectedType;
-        this.parameters = parameters;
-    }
-
-    public override ICustomAttributeProvider ReturnTypeCustomAttributes => null;
+    public override ICustomAttributeProvider ReturnTypeCustomAttributes => new MockCustomAttributeProvider();
 
     public override MethodAttributes Attributes => MethodAttributes.Public;
 
@@ -32,13 +22,13 @@ public class DynamicMethodInfo : MethodInfo
 
     public override MethodInfo GetBaseDefinition() => this;
 
-    public override object[] GetCustomAttributes(bool inherit) => new object[] { };
+    public override object[] GetCustomAttributes(bool inherit) => [];
 
-    public override object[] GetCustomAttributes(Type attributeType, bool inherit) => new object[] { };
+    public override object[] GetCustomAttributes(Type attributeType, bool inherit) => [];
 
     public override MethodImplAttributes GetMethodImplementationFlags() => MethodImplAttributes.Managed;
 
-    public override ParameterInfo[] GetParameters() => parameters;
+    public override ParameterInfo[] GetParameters() => inputParameters;
 
     public override object Invoke(object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture)
         => base.Invoke(obj, parameters);

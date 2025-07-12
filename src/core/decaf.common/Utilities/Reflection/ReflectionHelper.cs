@@ -8,12 +8,13 @@ using System.Runtime.CompilerServices;
 using decaf.common.Utilities.Reflection.Dynamic;
 using Microsoft.CSharp.RuntimeBinder;
 using decaf.common.Attributes;
+using decaf.common.Exceptions;
 
 namespace decaf.common.Utilities.Reflection;
 
 public sealed class ReflectionHelper : IReflectionHelper
 {
-    public object GetPropertyValue(object o, string member)
+    public object? GetPropertyValue(object o, string member)
     {
         // check inputs
         if (o == null) throw new ArgumentNullException(nameof(o));
@@ -23,7 +24,7 @@ public sealed class ReflectionHelper : IReflectionHelper
         var scope = o.GetType();
 
         // convert to metadata provider
-        var provider = o as IDynamicMetaObjectProvider;
+        var provider = o.CastAs<IDynamicMetaObjectProvider>();
 
         // if object is a provider
         if (provider != null)
@@ -115,6 +116,8 @@ public sealed class ReflectionHelper : IReflectionHelper
         // get the property
         var memberObj = memberType.GetProperty(member, BindingFlags.Public | BindingFlags.Instance);
 
+        if (memberObj is null) throw new PropertyNotFoundException(member);
+        
         // get property type
         return memberObj.PropertyType;
     }
@@ -152,7 +155,7 @@ public sealed class ReflectionHelper : IReflectionHelper
         return instance;
     }
 
-    public List<DynamicColumnInfo> GetMemberDetails(dynamic toUse, QueryTypes cmdType = QueryTypes.None)
+    public List<DynamicColumnInfo> GetColumnsForType(dynamic toUse, QueryTypes cmdType = QueryTypes.None)
     {
         // create list
         var tList = new List<DynamicColumnInfo>();
@@ -165,13 +168,13 @@ public sealed class ReflectionHelper : IReflectionHelper
             tList.AddRange(tTarget.GetMetaObject(Expression.Constant(tTarget)).GetDynamicMemberNames().Select(m => DynamicColumnInfo.Create(name: m, newName: m)));
         // get from normal type
         else
-            tList.AddRange(GetMemberDetails((Type)toUse.GetType(), cmdType));
+            tList.AddRange(GetColumnsForType((Type)toUse.GetType(), cmdType));
 
         // return list of members
         return tList;
     }
 
-    public List<DynamicColumnInfo> GetMemberDetails(Type toUse, QueryTypes queryType = QueryTypes.None)
+    public List<DynamicColumnInfo> GetColumnsForType(Type toUse, QueryTypes queryType = QueryTypes.None)
     {
         var fieldNames = new List<DynamicColumnInfo>();
 
@@ -237,10 +240,10 @@ public sealed class ReflectionHelper : IReflectionHelper
         return tp.Name;
     }
 
-    public string GetFieldName(PropertyInfo field, QueryTypes queryType = QueryTypes.None)
+    public string? GetFieldName(PropertyInfo field, QueryTypes queryType = QueryTypes.None)
     {
         // get rename attributes
-        var attributes = field.GetCustomAttributes();
+        var attributes = field.GetCustomAttributes().ToArray();
 
         // there should only be one
         var renameAttr = attributes.FirstOrDefault(a => a is RenameColumnAttribute) as RenameColumnAttribute;
@@ -249,10 +252,9 @@ public sealed class ReflectionHelper : IReflectionHelper
         if (ignoreAttr?.QueryType.HasFlag(queryType) == true) return null;
 
         // if we have an attribute, return specified name
-        if (renameAttr != null) return renameAttr.Name;
-
-        // return property name
-        return field.Name;
+        return renameAttr != null 
+            ? renameAttr.Name 
+            : field.Name;
     }
 
     public string GetFieldName(MemberInfo field)
@@ -338,7 +340,8 @@ public sealed class ReflectionHelper : IReflectionHelper
     {
         // check for properties of anon types
         var hasCompilerGeneratedAttribute = type.GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Any();
-        var nameContainsAnonymousType = type.FullName.Contains("AnonymousType");
+        var typeName = type.FullName ?? type.Name;
+        var nameContainsAnonymousType = typeName.Contains("AnonymousType");
 
         // check if both are true
         var isAnonymousType = hasCompilerGeneratedAttribute && nameContainsAnonymousType;

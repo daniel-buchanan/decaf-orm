@@ -62,7 +62,7 @@ internal sealed class AliasManager : IAliasManager
         => knownAliases.Where(a => a.Relation == assocWith).ToList();
 
     /// <inheritdoc />
-    public string GetAssociation(string alias)
+    public string? GetAssociation(string alias)
     {
         var existing = knownAliases.Find(a => a.Name == alias);
         return existing?.Relation;

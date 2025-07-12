@@ -6,13 +6,9 @@ namespace decaf.state.QueryTargets;
 
 public class TableTarget : ITableTarget
 {
-	private TableTarget()
+	private TableTarget(string name, string? alias, string? schema)
 	{
 		Id = Guid.NewGuid();
-	}
-
-	private TableTarget(string name, string alias, string schema) : this()
-	{
 		Name = name;
 		Alias = alias;
 		Schema = schema;
@@ -22,11 +18,11 @@ public class TableTarget : ITableTarget
 
 	public string Name { get; private set; }
 
-	public string Alias { get; private set; }
+	public string? Alias { get; private set; }
 
-	public string Schema { get; private set; }
+	public string? Schema { get; private set; }
 
-	public static TableTarget Create(string name, string alias = null, string schema = null) => new TableTarget(name, alias, schema);
+	public static TableTarget Create(string name, string? alias = null, string? schema = null) => new TableTarget(name, alias, schema);
 
 	public bool IsEquivalentTo(ITableTarget target)
 	{

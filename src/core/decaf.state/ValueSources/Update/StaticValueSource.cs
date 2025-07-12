@@ -7,7 +7,7 @@ public class StaticValueSource : IUpdateValueSource
 	private StaticValueSource(
 		Column column,
 		Type type,
-		object value)
+		object? value)
 	{
 		Column = column;
 		ValueType = type;
@@ -18,11 +18,11 @@ public class StaticValueSource : IUpdateValueSource
 
 	public Column Column { get; private set; }
 
-	public object Value { get; private set; }
+	public object? Value { get; private set; }
 
-	public T GetValue<T>()
+	public T? GetValue<T>()
 	{
-		if (Value == null) return default(T);
+		if (Value is null) return default;
 
 		var convertedValue = Convert.ChangeType(Value, typeof(T));
 		return (T)convertedValue;
@@ -32,8 +32,8 @@ public class StaticValueSource : IUpdateValueSource
 		Column column,
 		Type type,
 		object value)
-		=> new StaticValueSource(column, type, value);
+		=> new(column, type, value);
 
 	public static StaticValueSource Create<T>(Column column, T value)
-		=> new StaticValueSource(column, typeof(T), value);
+		=> new(column, typeof(T), value);
 }

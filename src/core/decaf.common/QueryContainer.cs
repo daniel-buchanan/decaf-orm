@@ -24,7 +24,7 @@ public sealed class QueryContainer : IQueryContainerInternal
 		DecafOptions options)
 	{
 		this.logger = logger;
-		this.unitOfWork = unitOfWork.CastAs<IUnitOfWorkExtended>();
+		this.unitOfWork = unitOfWork.ForceCastAs<IUnitOfWorkExtended>();
 		aliasManager = AliasManager.Create();
 		this.options = options;
 		this.hashProvider = hashProvider;

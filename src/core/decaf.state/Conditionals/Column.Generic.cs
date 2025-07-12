@@ -10,7 +10,6 @@ public class Column<T> : Where, IColumn
 		state.Column column,
 		EqualityOperator op,
 		T value)
-		: base()
 	{
 		ValueFunction = null;
 		Details = column;
@@ -22,9 +21,8 @@ public class Column<T> : Where, IColumn
 	public Column(
 		state.Column column,
 		EqualityOperator op,
-		IValueFunction valueFunction,
+		IValueFunction? valueFunction,
 		T value)
-		: base()
 	{
 		ValueFunction = valueFunction;
 		Details = column;
@@ -39,11 +37,11 @@ public class Column<T> : Where, IColumn
 
 	public EqualityOperator EqualityOperator { get; private set; }
 
-	public IValueFunction ValueFunction { get; private set; }
+	public IValueFunction? ValueFunction { get; private set; }
 
 	[JsonIgnore]
 	public T Value { get; private set; }
 
 	[JsonIgnore]
-	object IColumn.Value => Value;
+	object? IColumn.Value => Value;
 }

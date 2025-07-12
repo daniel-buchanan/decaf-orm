@@ -9,12 +9,12 @@ public interface IDeleteQueryContext : IQueryContext
 	/// <summary>
 	/// Get the <see cref="IQueryTarget"/> that this delete context targets.
 	/// </summary>
-	ITableTarget Table { get; }
+	ITableTarget? Table { get; }
 
 	/// <summary>
 	/// Get the <see cref="IWhere"/> conditions for this context.
 	/// </summary>
-	IWhere WhereClause { get; }
+	IWhere? WhereClause { get; }
 
 	/// <summary>
 	/// Get the set of outputs for the query.

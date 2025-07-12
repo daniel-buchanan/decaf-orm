@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using decaf.common;
+using decaf.common.Utilities;
 using decaf.common.Utilities.Reflection;
 using decaf.state.Conditionals;
 
@@ -20,7 +21,7 @@ internal class ValueParser(
 
         var valueResult = ParseMemberExpression(expression, context) ?? ParseBinaryExpression(expression, context);
 
-        var col = Column.Create(valueResult.Field, valueResult.Table);
+        var col = Column.Create(valueResult!.Field, valueResult!.Table);
 
         var isNotEquals = valueResult.Operator == EqualityOperator.NotEquals;
         if (isNotEquals)
@@ -49,11 +50,11 @@ internal class ValueParser(
         return (IWhere)instance;
     }
 
-    private object GetConvertedValue(object val, Type valType)
+    private object? GetConvertedValue(object? val, Type valType)
     {
-        if (valType.IsEnum) return Enum.ToObject(valType, val);
-        if (val == null && valType == typeof(bool)) return true;
-        if (val == null) return null;
+        if (val is not null && valType.IsEnum) return Enum.ToObject(valType, val);
+        if (val is null && valType == typeof(bool)) return true;
+        if (val is null) return null;
 
         object convertedValue;
         try
@@ -62,46 +63,46 @@ internal class ValueParser(
         }
         catch
         {
-            var underlyingType = reflectionHelper.GetUnderlyingType(valType);
+            var underlyingType = ReflectionHelper.GetUnderlyingType(valType);
             convertedValue = Convert.ChangeType(val, underlyingType);
         }
 
         return convertedValue;
     }
 
-    private ValueResult ParseMemberExpression(Expression expression, IQueryContextExtended context)
+    private ValueResult? ParseMemberExpression(Expression expression, IQueryContextExtended context)
     {
-        var memberExpression = expression as MemberExpression;
-        if (memberExpression == null) return null;
+        var memberExpression = expression.CastAs<MemberExpression>();
+        if (memberExpression is null) return null;
 
         var val = Parse(expression, context);
-        var valType = expressionHelper.GetMemberType(expression);
-        var field = expressionHelper.GetMemberName(expression);
+        var valType = ExpressionHelper.GetMemberType(expression);
+        var field = ExpressionHelper.GetMemberName(expression);
         var op = EqualityOperator.Equals;
 
         var target = context.GetQueryTarget(memberExpression);
-        if (target == null)
+        if (target is null)
         {
-            var table = reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
-            var alias = expressionHelper.GetParameterName(expression);
+            var table = ReflectionHelper.GetTableName(memberExpression.Member.DeclaringType!);
+            var alias = ExpressionHelper.GetParameterName(expression);
             target = QueryTargets.TableTarget.Create(table, alias);
             context.AddQueryTarget(target);
         }
 
-        return new ValueResult(field, target, val, valType, op);
+        return new ValueResult(field!, target, val, valType!, op);
     }
 
-    private ValueResult ParseBinaryExpression(Expression expression, IQueryContextExtended context)
+    private ValueResult? ParseBinaryExpression(Expression expression, IQueryContextExtended context)
     {
-        BinaryExpression operation;
-        if (expression is LambdaExpression lambda) operation = lambda.Body as BinaryExpression;
-        else operation = expression as BinaryExpression;
+        BinaryExpression? operation;
+        if (expression is LambdaExpression lambda) operation = lambda.Body.CastAs<BinaryExpression>();
+        else operation = expression.CastAs<BinaryExpression>();
 
         if (operation is null) return null;
         
-        var op = expressionHelper.ConvertExpressionTypeToEqualityOperator(operation.NodeType);
-        Expression valueExpression = null;
-        MemberExpression memberExpression = null;
+        var op = ExpressionHelper.ConvertExpressionTypeToEqualityOperator(operation.NodeType);
+        Expression? valueExpression = null;
+        MemberExpression? memberExpression = null;
 
         if(operation.Left is MemberExpression left)
         {
@@ -117,20 +118,20 @@ internal class ValueParser(
         if (valueExpression is null)
             return null;
 
-        var field = expressionHelper.GetMemberName(memberExpression);
-        var value = expressionHelper.GetValue(valueExpression);
-        var valueType = expressionHelper.GetMemberType(valueExpression);
+        var field = ExpressionHelper.GetMemberName(memberExpression!);
+        var value = ExpressionHelper.GetValue(valueExpression);
+        var valueType = ExpressionHelper.GetMemberType(valueExpression);
 
-        var target = context.GetQueryTarget(memberExpression);
+        var target = context.GetQueryTarget(memberExpression!);
         if(target == null)
         {
-            var alias = expressionHelper.GetParameterName(memberExpression);
-            var table = reflectionHelper.GetTableName(memberExpression.Member.DeclaringType);
+            var alias = ExpressionHelper.GetParameterName(memberExpression!);
+            var table = ReflectionHelper.GetTableName(memberExpression!.Member.DeclaringType!);
             target = QueryTargets.TableTarget.Create(table, alias);
             context.AddQueryTarget(target);
         }
 
-        return new ValueResult(field, target, value, valueType, op);
+        return new ValueResult(field!, target, value!, valueType!, op);
     }
 
     private sealed class ValueResult(

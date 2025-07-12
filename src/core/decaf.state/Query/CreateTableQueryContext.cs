@@ -22,7 +22,7 @@ internal class CreateTableQueryContext : QueryContext, ICreateTableQueryContext
     public static ICreateTableQueryContext Create(IAliasManager aliasManager, IHashProvider hashProvider)
         => new CreateTableQueryContext(aliasManager, hashProvider);
 
-    public string Name { get; private set; }
+    public string? Name { get; private set; }
 
     public void WithName(string name)
         => Name = name;
@@ -37,7 +37,7 @@ internal class CreateTableQueryContext : QueryContext, ICreateTableQueryContext
     public void AddIndexes(params IIndexDefinition[] indexes)
         => indicies.AddRange(indexes);
 
-    public IPrimaryKeyDefinition PrimaryKey { get; private set; }
+    public IPrimaryKeyDefinition? PrimaryKey { get; private set; }
 
     public void AddPrimaryKey(IPrimaryKeyDefinition key)
         => PrimaryKey = key;

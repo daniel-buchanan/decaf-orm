@@ -15,18 +15,11 @@ public abstract class Values : Where
     }
 }
 
-public class InValues<T> : Values, IInValues
+public class InValues<T>(state.Column column, IEnumerable<T>? values) : Values, IInValues
 {
-    private readonly List<T> values;
+    private readonly List<T> values = values?.ToList() ?? [];
 
-    public InValues(state.Column column, IEnumerable<T> values)
-    {
-        ValueType = typeof(T);
-        Column = column;
-        this.values = values?.ToList() ?? new List<T>();
-    }
-
-    public state.Column Column { get; private set; }
+    public state.Column Column { get; private set; } = column;
 
     public IReadOnlyCollection<T> ValueSet => values.AsReadOnly();
 
@@ -34,12 +27,15 @@ public class InValues<T> : Values, IInValues
     {
         var result = new List<object>();
         foreach (var o in values)
-            result.Add(o);
+        {
+            result.Add(o!);
+        }
+
         return result.AsReadOnly();
     }
 
 
-    public override Type ValueType { get; protected set; }
+    public sealed override Type ValueType { get; protected set; } = typeof(T);
 
     public int CountValues => values.Count;
 }

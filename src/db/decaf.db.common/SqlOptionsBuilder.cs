@@ -1,6 +1,7 @@
 ﻿using System;
 using decaf.common.Connections;
 using decaf.common.Options;
+using decaf.common.Utilities;
 using Microsoft.Extensions.Configuration;
 
 namespace decaf.db.common;
@@ -36,6 +37,6 @@ public abstract class SqlOptionsBuilder<TOptions, TSelf, TConnectionDetails> :
     protected new TSelf ConfigureProperty<TValue>(string name, TValue value)
     {
         base.ConfigureProperty(name, value);
-        return this as TSelf;
+        return this.ForceCastAs<TSelf>();
     }
 }

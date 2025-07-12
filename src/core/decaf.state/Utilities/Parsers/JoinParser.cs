@@ -1,5 +1,7 @@
 ﻿using System.Linq.Expressions;
 using decaf.common;
+using decaf.common.Exceptions;
+using decaf.common.Utilities;
 using decaf.common.Utilities.Reflection;
 using decaf.state.Conditionals;
 
@@ -10,10 +12,10 @@ internal class JoinParser(
     IReflectionHelper reflectionHelper)
     : BaseParser(expressionHelper, reflectionHelper)
 {
-    public override IWhere Parse(Expression expression, IQueryContextExtended context)
+    public override IWhere? Parse(Expression expression, IQueryContextExtended context)
     {
-        BinaryExpression binaryExpression = null;
-        LambdaExpression lambdaExpression = null;
+        BinaryExpression? binaryExpression = null;
+        LambdaExpression? lambdaExpression = null;
 
         if (expression is LambdaExpression lambda)
         {
@@ -25,14 +27,14 @@ internal class JoinParser(
             binaryExpression = expression as BinaryExpression;
         }
 
-        IWhere result;
-        if (ParseAndOr(binaryExpression, context, out result)) return result;
-        if (ParseLambdaClause(lambdaExpression, binaryExpression, context, out result)) return result;
+        if (ParseAndOr(binaryExpression, context, out var result) || 
+            ParseLambdaClause(lambdaExpression, binaryExpression, context, out result)) 
+            return result;
 
         return null;
     }
 
-    private bool ParseAndOr(BinaryExpression binaryExpression, IQueryContextExtended context, out IWhere result)
+    private bool ParseAndOr(BinaryExpression? binaryExpression, IQueryContextExtended context, out IWhere? result)
     {
         result = null;
         if (binaryExpression == null) return false;
@@ -45,14 +47,21 @@ internal class JoinParser(
             var leftClause = Parse(binaryExpression.Left, context);
             var rightClause = Parse(binaryExpression.Right, context);
 
+            if (leftClause is null || rightClause is null)
+                throw new TemplateParsingException("Unable to parse Join for \"AndAlso\"");
+            
             result = And.Where(leftClause, rightClause);
             return true;
         }
-        else if (binaryExpression.NodeType == ExpressionType.OrElse)
+        
+        if (binaryExpression.NodeType == ExpressionType.OrElse)
         {
             var leftClause = Parse(binaryExpression.Left, context);
             var rightClause = Parse(binaryExpression.Right, context);
 
+            if (leftClause is null || rightClause is null)
+                throw new TemplateParsingException("Unable to parse Join for \"OrElse\"");
+            
             result = Or.Where(leftClause, rightClause);
             return true;
         }
@@ -61,40 +70,38 @@ internal class JoinParser(
     }
 
     private bool ParseLambdaClause(
-        Expression expression,
-        BinaryExpression binaryExpression,
+        Expression? expression,
+        BinaryExpression? binaryExpression,
         IQueryContextExtended context,
-        out IWhere result)
+        out IWhere? result)
     {
         result = null;
-        if (expression == null) return false;
         var lambdaExpression = expression as LambdaExpression;
         if (lambdaExpression == null) return false;
 
         var operation = binaryExpression;
-        MemberExpression leftExpression;
-        MemberExpression rightExpression;
+        MemberExpression? leftExpression;
+        MemberExpression? rightExpression;
 
-        if (operation.Left is UnaryExpression unaryLeft)
+        if (operation?.Left is UnaryExpression unaryLeft)
         {
-            leftExpression = unaryLeft.Operand as MemberExpression;
+            leftExpression = unaryLeft.Operand.CastAs<MemberExpression>();
         }
         else
         {
-            leftExpression = operation.Left as MemberExpression;
+            leftExpression = operation?.Left?.CastAs<MemberExpression>();
         }
 
-        if (operation.Right is UnaryExpression unaryRight)
+        switch (operation?.Right)
         {
-            rightExpression = unaryRight.Operand as MemberExpression;
-        }
-        else if (operation.Right is ConstantExpression)
-        {
-            return false;
-        }
-        else
-        {
-            rightExpression = operation.Right as MemberExpression;
+            case UnaryExpression unaryRight:
+                rightExpression = unaryRight.Operand.CastAs<MemberExpression>();
+                break;
+            case ConstantExpression:
+                return false;
+            default:
+                rightExpression = operation?.Right.CastAs<MemberExpression>();
+                break;
         }
         
         if(leftExpression is null || rightExpression is null)
@@ -104,10 +111,10 @@ internal class JoinParser(
         var rightParam = (ParameterExpression)rightExpression.Expression;
 
         var leftTarget = context.AddQueryTarget(leftParam);
-        var leftField = reflectionHelper.GetFieldName(leftExpression.Member);
-        var op = expressionHelper.ConvertExpressionTypeToEqualityOperator(operation.NodeType);
+        var leftField = ReflectionHelper.GetFieldName(leftExpression.Member);
+        var op = ExpressionHelper.ConvertExpressionTypeToEqualityOperator(operation!.NodeType);
         var rightTarget = context.AddQueryTarget(rightParam);
-        var rightField = reflectionHelper.GetFieldName(rightExpression.Member);
+        var rightField = ReflectionHelper.GetFieldName(rightExpression.Member);
 
         result = Conditionals.Column.Equals(
             Column.Create(leftField, leftTarget),

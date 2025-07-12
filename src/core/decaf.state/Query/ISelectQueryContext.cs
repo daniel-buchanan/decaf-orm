@@ -18,7 +18,7 @@ public interface ISelectQueryContext : IQueryContext
 	/// <summary>
 	/// Any <see cref="IWhere"/> clauses to filter this select query.
 	/// </summary>
-	IWhere WhereClause { get; }
+	IWhere? WhereClause { get; }
 
 	/// <summary>
 	/// The set of <see cref="state.OrderBy"/> clauses for this select query.
@@ -68,12 +68,12 @@ public interface ISelectQueryContext : IQueryContext
 	/// <summary>
 	/// Add a where clause to this select query.
 	/// </summary>
-	/// <param name="where">The <see cref="IWhere"/> to add.</param>
-	void Where(IWhere where);
+	/// <param name="whereClause">The <see cref="IWhere"/> to add.</param>
+	void Where(IWhere whereClause);
 
 	/// <summary>
 	/// Add a row limit on the results.
 	/// </summary>
-	/// <param name="limit">The number of rows to return.</param>
-	void Limit(int limit);
+	/// <param name="value">The number of rows to return.</param>
+	void Limit(int value);
 }

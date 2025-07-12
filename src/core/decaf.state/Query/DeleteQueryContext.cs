@@ -21,10 +21,10 @@ internal class DeleteQueryContext :
 	}
 
 	/// <inheritdoc/>
-	public ITableTarget Table => QueryTargets.FirstOrDefault() as ITableTarget;
+	public ITableTarget? Table => QueryTargets.FirstOrDefault()?.CastAs<ITableTarget>();
 
 	/// <inheritdoc/>
-	public IWhere WhereClause { get; private set; }
+	public IWhere? WhereClause { get; private set; }
 
 	/// <inheritdoc/>
 	public IReadOnlyCollection<Output> Outputs => outputs.AsReadOnly();

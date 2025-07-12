@@ -6,7 +6,7 @@ namespace decaf.state;
 
 public interface ICreateTableQueryContext : IQueryContext
 {
-    string Name { get; }
+    string? Name { get; }
 
     void WithName(string name);
     
@@ -18,7 +18,7 @@ public interface ICreateTableQueryContext : IQueryContext
 
     void AddIndexes(params IIndexDefinition[] indexes);
     
-    IPrimaryKeyDefinition PrimaryKey { get; }
+    IPrimaryKeyDefinition? PrimaryKey { get; }
 
     void AddPrimaryKey(IPrimaryKeyDefinition key);
 }

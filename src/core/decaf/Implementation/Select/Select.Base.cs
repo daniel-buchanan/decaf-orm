@@ -97,7 +97,7 @@ internal abstract class SelectCommon : Execute<ISelectQueryContext>
         var members = new List<PropertyInfo>();
         var arguments = new List<Expression>();
         var parameterExpression = Expression.Parameter(typeof(ISelectColumnBuilder), "b");
-        var properties = internalContext?.ReflectionHelper.GetMemberDetails(entityType, QueryTypes.Select);
+        var properties = internalContext?.ReflectionHelper.GetColumnsForType(entityType, QueryTypes.Select);
         var emptyCtor = new DynamicConstructorInfo(properties, typeof(T));
         var isMethod = typeof(ISelectColumnBuilder).GetMethods().FirstOrDefault(m => m.IsGenericMethod && m.GetParameters().Count() == 2);
 

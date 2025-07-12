@@ -12,8 +12,8 @@ public interface IColumn : IWhere
 
 	EqualityOperator EqualityOperator { get; }
 
-	IValueFunction ValueFunction { get; }
+	IValueFunction? ValueFunction { get; }
 
 	[JsonIgnore]
-	object Value { get; }
+	object? Value { get; }
 }

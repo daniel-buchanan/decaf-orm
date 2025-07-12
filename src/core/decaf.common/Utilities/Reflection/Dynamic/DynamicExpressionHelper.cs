@@ -42,18 +42,18 @@ public class DynamicExpressionHelper : IDynamicExpressionHelper
         var index = 0;
         foreach (var b in initExpr.Bindings)
         {
-            var memberBinding = b as MemberAssignment;
-            if (!TryGetColumnDetails(memberBinding.Expression, out var info))
+            var memberBinding = b.CastAs<MemberAssignment>();
+            if (!TryGetColumnDetails(memberBinding?.Expression, out var info))
                 continue;
 
-            var newName = memberBinding.Member.Name;
-            info.SetNewName(newName);
+            var newName = memberBinding!.Member.Name;
+            info!.SetNewName(newName);
 
             if (memberBinding.Member.MemberType == MemberTypes.Field)
-                info.SetType((memberBinding.Member as FieldInfo).FieldType);
+                info.SetType(memberBinding.Member.CastAs<FieldInfo>()!.FieldType);
 
             if (memberBinding.Member.MemberType == MemberTypes.Property)
-                info.SetType((memberBinding.Member as PropertyInfo).PropertyType);
+                info.SetType(memberBinding.Member.CastAs<PropertyInfo>()!.PropertyType);
 
             properties[index] = info;
             index += 1;
@@ -67,18 +67,19 @@ public class DynamicExpressionHelper : IDynamicExpressionHelper
         IQueryContextExtended context)
     {
         var results = new List<DynamicColumnInfo>();
-        var constExpression = expression.Body as ConstantExpression;
+        var constExpression = expression.Body.CastAs<ConstantExpression>();
         var obj = constExpression?.Value;
 
         // get object type and properties
         var objType = obj?.GetType();
-        var properties = context.ReflectionHelper.GetMemberDetails(obj, context.Kind);
+        var properties = context.ReflectionHelper.GetColumnsForType(obj!, context.Kind);
 
         // iternate through properties
         foreach (var p in properties)
         {
             // get field name
-            var value = context.ReflectionHelper.GetPropertyValue(obj, p.NewName);
+            var propertyName = (p.NewName ?? p.Name)!;
+            var value = context.ReflectionHelper.GetPropertyValue(obj!, propertyName);
 
             // add to set
             var info = DynamicColumnInfo.Create(
@@ -113,7 +114,7 @@ public class DynamicExpressionHelper : IDynamicExpressionHelper
                 info.SetValueType(valueType);
             }
 
-            properties[i] = info;
+            properties[i] = info!;
         }
 
         for (var i = 0; i < body.Members.Count; i += 1)
@@ -131,8 +132,8 @@ public class DynamicExpressionHelper : IDynamicExpressionHelper
     }
 
     private bool TryGetColumnDetails(
-        Expression expression,
-        out DynamicColumnInfo info)
+        Expression? expression,
+        out DynamicColumnInfo? info)
     {
         if (TryGetColumnDetailsDynamic(expression, out info))
             return true;
@@ -141,11 +142,11 @@ public class DynamicExpressionHelper : IDynamicExpressionHelper
     }
 
     private static bool TryGetColumnDetailsDynamic(
-        Expression expression,
-        out DynamicColumnInfo info)
+        Expression? expression,
+        out DynamicColumnInfo? info)
     {
         info = null;
-        string column, alias;
+        string? column, alias;
 
         if (expression is not MethodCallExpression methodCallExpression) return false;
         if (methodCallExpression.Method.DeclaringType == typeof(ISelectColumnBuilder))
@@ -157,16 +158,16 @@ public class DynamicExpressionHelper : IDynamicExpressionHelper
 
         if (methodCallExpression.Arguments.Count == 1)
         {
-            var arg = methodCallExpression.Arguments[0] as ConstantExpression;
-            column = arg.Value as string;
+            var arg = methodCallExpression.Arguments[0].CastAs<ConstantExpression>();
+            column = arg?.Value.CastAs<string>();
         }
         else if (methodCallExpression.Arguments.Count > 1)
         {
-            var arg = methodCallExpression.Arguments[0] as ConstantExpression;
-            column = arg.Value as string;
+            var arg = methodCallExpression.Arguments[0].CastAs<ConstantExpression>();
+            column = arg?.Value.CastAs<string>();
 
-            arg = methodCallExpression.Arguments[1] as ConstantExpression;
-            alias = arg.Value as string;
+            arg = methodCallExpression.Arguments[1].CastAs<ConstantExpression>();
+            alias = arg?.Value.CastAs<string>();
         }
 
         info = DynamicColumnInfo.Create(name: column, alias: alias, type: typeof(object));
@@ -176,56 +177,55 @@ public class DynamicExpressionHelper : IDynamicExpressionHelper
 
     private static void GetColumnAliasForSelectBuilder(
         MethodCallExpression expression,
-        out string column,
-        out string alias)
+        out string? column,
+        out string? alias)
     {
         column = null;
         alias = null;
 
         if (expression.Arguments.Count == 1)
         {
-            var arg = expression.Arguments[0] as ConstantExpression;
-            column = arg.Value as string;
+            var arg = expression.Arguments[0].CastAs<ConstantExpression>();
+            column = arg?.Value.CastAs<string>();
         }
         else
         {
-            var arg = expression.Arguments[0] as ConstantExpression;
-            column = arg.Value as string;
+            var arg = expression.Arguments[0].CastAs<ConstantExpression>();
+            column = arg?.Value.CastAs<string>();
 
-            arg = expression.Arguments[1] as ConstantExpression;
-            alias = arg.Value as string;
+            arg = expression.Arguments[1].CastAs<ConstantExpression>();
+            alias = arg?.Value.CastAs<string>();
         }
     }
 
     private static void GetColumnAliasForInsertBuilder(
-        out string column,
-        out string alias)
+        out string? column,
+        out string? alias)
     {
         column = null;
         alias = null;
     }
 
     private bool TryGetColumnDetailsConcrete(
-        Expression expression,
-        out DynamicColumnInfo info)
+        Expression? expression,
+        out DynamicColumnInfo? info)
     {
         info = null;
 
         var methodCallExpression = expression as MethodCallExpression;
-        MemberExpression memberExpression = null;
+        MemberExpression? memberExpression = null;
 
         if (expression is UnaryExpression unaryExpression)
         {
-            methodCallExpression = unaryExpression.Operand as MethodCallExpression;
+            methodCallExpression = unaryExpression.Operand.CastAs<MethodCallExpression>();
         }
 
         if (methodCallExpression?.Arguments.Count == 0)
-            memberExpression = methodCallExpression.Object as MemberExpression;
+            memberExpression = methodCallExpression.Object?.CastAs<MemberExpression>();
         else if(methodCallExpression != null)
-            memberExpression = methodCallExpression.Arguments[0] as MemberExpression;
+            memberExpression = methodCallExpression.Arguments[0].CastAs<MemberExpression>();
 
-        if (memberExpression == null)
-            memberExpression = expression as MemberExpression;
+        memberExpression ??= expression?.CastAs<MemberExpression>();
 
         GetFunction(methodCallExpression, out var tempMemberExpression, out var function);
         memberExpression = tempMemberExpression ?? memberExpression;
@@ -235,20 +235,20 @@ public class DynamicExpressionHelper : IDynamicExpressionHelper
         var parameterExpression = memberExpression.Expression as ParameterExpression;
         var column = expressionHelper.GetMemberName(memberExpression);
         var alias = expressionHelper.GetParameterName(memberExpression);
-        var type = parameterExpression.Type;
+        var type = parameterExpression?.Type;
         info = DynamicColumnInfo.Create(name: column, alias: alias, type: type, function: function);
 
         return true;
     }
 
     private void GetFunction(
-        MethodCallExpression methodCallExpression,
-        out MemberExpression memberExpression,
-        out IValueFunction function)
+        MethodCallExpression? methodCallExpression,
+        out MemberExpression? memberExpression,
+        out IValueFunction? function)
     {
         function = null;
         memberExpression = null;
-        Expression argument;
+        Expression? argument;
 
         if (methodCallExpression == null)
             return;

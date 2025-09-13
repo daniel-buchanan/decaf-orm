@@ -2,16 +2,12 @@ using decaf.db.common;
 
 namespace decaf.sqlite;
 
-public class SqliteTypeParser : ITypeParser
+public class SqliteTypeParser : TypeParser
 {
     public const string DefaultDatatype = "text";
     
     /// <inheritdoc/>
-    public string Parse<T>()
-        => Parse(typeof(T));
-
-    /// <inheritdoc/>
-    public string Parse(Type type)
+    public override string Parse(Type type)
     {
         if (type == typeof(string))
             return "text";

@@ -12,9 +12,10 @@ public class NpgsqlTypeParser : TypeParser
     {
         if (type == typeof(string))
             return "text";
-        if (type == typeof(int) ||
-            type == typeof(long))
+        if (type == typeof(int))
             return "integer";
+        if (type == typeof(long))
+            return "bigint";
         if (type == typeof(decimal) ||
             type == typeof(float) ||
             type == typeof(double) ||
